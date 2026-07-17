@@ -45,6 +45,7 @@ class User extends Authenticatable implements PasskeyUser
         PasskeyAuthenticatable,
         TwoFactorAuthenticatable;
 
+
     protected function casts(): array
     {
         return [
