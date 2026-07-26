@@ -8,6 +8,18 @@ use Illuminate\View\View;
 class GuestLayout extends Component
 {
     /**
+     * The layout title
+     */
+    public string $title;
+
+    /**
+     * @param string $title
+     */
+    public function __construct(string $title = '') {
+        $this->title = $title;
+    }
+
+    /**
      * Get the view / contents that represents the component.
      */
     public function render(): View
