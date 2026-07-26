@@ -33,6 +33,8 @@ Route::middleware([
 
     Route::get('/admin/dashboard', [AdminController::class,'index'])
         ->name('admin.dashboard');
+    Route::get('/admin/dashboard', [AdminController::class,'roleRequest'])
+        ->name('admin.role-request');
 
 });
 
