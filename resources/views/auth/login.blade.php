@@ -7,9 +7,9 @@
 
         <!-- NIM  -->
         <div>
-            <x-input-label for="nim" :value="__('NIM')" />
+            <x-input-label for="nim" :value="__('NIM')"  class="lg:text-lg"/>
             <div class="relative">
-                <span class="icon-[tabler--id] text-zinc-400 absolute text-2xl top-1/2 left-2 -translate-y-1/2"></span>
+                <span class="icon-[tabler--id] text-zinc-400 absolute text-2xl lg:text-3xl top-1/2 left-2 -translate-y-1/2"></span>
                 <x-text-input id="nim" placeholder="Masukkan NIM anda" class="block mt-1 w-full" type="nim"
                     name="nim" :value="old('nim')" required autofocus autocomplete="username" />
             </div>
@@ -18,11 +18,11 @@
 
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+            <x-input-label for="password" :value="__('Password')"  class="lg:text-lg"/>
 
             <div class="relative">
                 <span
-                    class="icon-[material-symbols--lock-outline] text-zinc-400 absolute text-2xl top-1/2 left-2 -translate-y-1/2"></span>
+                    class="icon-[material-symbols--lock-outline] text-zinc-400 absolute text-2xl lg:text-3xl top-1/2 left-2 -translate-y-1/2"></span>
                 <x-text-input id="password" placeholder="Masukkan password anda" class="block mt-1 w-full"
                     type="password" name="password" required autocomplete="current-password" />
             </div>
