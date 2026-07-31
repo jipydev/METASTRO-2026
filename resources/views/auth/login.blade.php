@@ -40,7 +40,7 @@
             </label>
         </div>
 
-        <div class="min-h-16">
+        <div class="min-h-16 lg:min-h-20">
             <x-primary-button class="w-full text-center mb-4">
                 {{ __('Masuk') }}
             </x-primary-button>

@@ -24,7 +24,7 @@
 <body class="font-sans text-gray-900 antialiased">
     <div class="flex justify-center">
         <div class="min-h-screen bg-zinc-50 px-4 pt-8 flex flex-col md:justify-center md:pt-0 gap-4 max-w-sm sm:max-w-md">
-            <h1 class="font-bold text-xl lg:2xl text-primary-500">METASTRO 2026</h1>
+            <h1 class="font-bold text-xl lg:3xl text-primary-500">METASTRO 2026</h1>
 
             <h2 class="text-3xl lg:text-4xl font-semibold">Selamat datang, <span class="text-primary-500 font-bold">HIROES.</span>
             </h2>
