@@ -5,12 +5,13 @@
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <!-- NIM  -->
+        <!-- NIM -->
         <div>
-            <x-input-label for="nim" :value="__('NIM')"  class="lg:text-lg"/>
-            <div class="relative">
-                <span class="icon-[tabler--id] text-zinc-400 absolute text-2xl lg:text-3xl top-1/2 left-2 -translate-y-1/2"></span>
-                <x-text-input id="nim" placeholder="Masukkan NIM anda" class="block mt-1 w-full" type="nim"
+            <x-input-label for="nim" :value="__('NIM')" class="lg:text-lg" />
+            <div class="relative group">
+                <span
+                    class="icon-[tabler--id] text-zinc-400 absolute text-2xl lg:text-3xl top-1/2 left-2 group-focus-within:text-primary-500 -translate-y-1/2"></span>
+                <x-text-input id="text" placeholder="Masukkan NIM anda" class="block mt-1 w-full" type="nim"
                     name="nim" :value="old('nim')" required autofocus autocomplete="username" />
             </div>
             <x-input-error :messages="$errors->get('nim')" class="mt-2" />
@@ -18,11 +19,11 @@
 
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')"  class="lg:text-lg"/>
+            <x-input-label for="password" :value="__('Password')" class="lg:text-lg" />
 
-            <div class="relative">
+            <div class="relative group">
                 <span
-                    class="icon-[material-symbols--lock-outline] text-zinc-400 absolute text-2xl lg:text-3xl top-1/2 left-2 -translate-y-1/2"></span>
+                    class="icon-[material-symbols--lock-outline] text-zinc-400 absolute text-2xl lg:text-3xl group-focus-within:text-primary-500 top-1/2 left-2 -translate-y-1/2"></span>
                 <x-text-input id="password" placeholder="Masukkan password anda" class="block mt-1 w-full"
                     type="password" name="password" required autocomplete="current-password" />
             </div>
@@ -33,15 +34,18 @@
         <div class="block my-4">
             <label for="remember_me" class="inline-flex items-center">
                 <input id="remember_me" type="checkbox"
-                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 cursor-pointer"
                     name="remember">
                 <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Ingat saya') }}</span>
             </label>
         </div>
 
-        <x-primary-button class="block w-full text-center mb-4">
-            {{ __('Log in') }}
-        </x-primary-button>
+        <div class="min-h-16">
+            <x-primary-button class="w-full text-center mb-4">
+                {{ __('Masuk') }}
+            </x-primary-button>
+        </div>
+
 
         @if (Route::has('password.request'))
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 block text-center"
