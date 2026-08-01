@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\PresensiController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -16,6 +17,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::get('/dashboard/presensi', [PresensiController::class,'index'])
+        ->name('dashboard.presensi');
 });
 
 
@@ -33,7 +36,7 @@ Route::middleware([
 
     Route::get('/admin/dashboard', [AdminController::class,'index'])
         ->name('admin.dashboard');
-    Route::get('/admin/dashboard', [AdminController::class,'roleRequest'])
+    Route::get('/admin/role-request', [AdminController::class,'roleRequest'])
         ->name('admin.role-request');
 
 });

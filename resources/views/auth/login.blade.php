@@ -12,7 +12,7 @@
                 <span
                     class="icon-[tabler--id] text-zinc-400 absolute text-2xl lg:text-3xl top-1/2 left-2 group-focus-within:text-primary-500 -translate-y-1/2"></span>
                 <x-text-input id="text" placeholder="Masukkan NIM anda" class="block mt-1 w-full" type="nim"
-                    name="nim" :value="old('nim')" required autofocus autocomplete="username" />
+                    name="email" :value="old('nim')" required autofocus autocomplete="username" />
             </div>
             <x-input-error :messages="$errors->get('nim')" class="mt-2" />
         </div>
