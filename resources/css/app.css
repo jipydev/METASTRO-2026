@@ -53,5 +53,5 @@
 }
 
 body {
-    @apply font-poppins;
+    @apply font-poppins bg-zinc-50 text-zinc-900;
 }

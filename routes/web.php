@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\PresensiController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -18,7 +20,34 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+/*
+|--------------------------------------------------------------------------
+| SEKRE, RANGER, ADMIN, TAMBAHIN (KETUPLAK, WAKEPLAK, KOORDINATOR)
+|--------------------------------------------------------------------------
+*/
+Route::middleware([
+    'auth',
+    'verified',
+    'role:Admin|Ranger|Sekretaris' 
+])->group(function () {
 
+Route::get('/dashboard/presensi/lihat', [PresensiController::class,'lihat'])
+        ->name('dashboard.presensi.lihat');
+});
+/*
+|--------------------------------------------------------------------------
+| SELURUH PANITIA
+|--------------------------------------------------------------------------
+*/
+Route::middleware([
+    'auth',
+    'verified',
+    'role:Admin|Panitia|Ranger|Sekretaris|Pengawas'
+])->group(function () {
+
+Route::get('/dashboard/presensi', [PresensiController::class,'index'])
+        ->name('dashboard.presensi');
+});
 /*
 |--------------------------------------------------------------------------
 | ADMIN
