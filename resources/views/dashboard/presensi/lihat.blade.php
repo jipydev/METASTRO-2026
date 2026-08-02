@@ -26,6 +26,8 @@ $presensi = [
 
         <div class="max-w-md mx-auto">
 
+            <div class="bg-white rounded-[28px] p-7 min-h-[680px]">
+
             @include('components.back-header', [
                 'href' => route('dashboard'),
                 'title' => 'Lihat Presensi'
