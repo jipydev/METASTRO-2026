@@ -20,7 +20,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-6"
-             class="fixed top-6 left-1/2 transform -translate-x-1/2 z-[100] w-11/12 max-w-sm px-5 py-4 rounded-xl shadow-2xl flex items-center justify-center gap-3 text-center"
+             class="fixed top-6 left-1/2 transform -translate-x-1/2 z-100 w-11/12 max-w-sm px-5 py-4 rounded-xl shadow-2xl flex items-center justify-center gap-3 text-center"
              :class="toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-[#065E75] text-[#EFF8FF]'"
              style="display: none;">
              <span x-text="toast.message" class="text-sm font-bold tracking-wide"></span>
