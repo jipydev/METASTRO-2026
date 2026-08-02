@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\PresensiController;
+use App\Http\Controllers\SekretarisController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -10,9 +11,11 @@ Route::get('/', function () {
 });
 
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
+
+    Route::get('/dashboard/sekretaris', [SekretarisController::class, 'index'])->name('dashboard.sekretaris');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -28,10 +31,10 @@ Route::middleware('auth')->group(function () {
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Ranger|Sekretaris' 
+    'role:Admin|Ranger|Sekretaris'
 ])->group(function () {
 
-Route::get('/dashboard/presensi/lihat', [PresensiController::class,'lihat'])
+    Route::get('/dashboard/presensi/lihat', [PresensiController::class, 'lihat'])
         ->name('dashboard.presensi.lihat');
 });
 /*
@@ -45,7 +48,7 @@ Route::middleware([
     'role:Admin|Panitia|Ranger|Sekretaris|Pengawas'
 ])->group(function () {
 
-Route::get('/dashboard/presensi', [PresensiController::class,'index'])
+    Route::get('/dashboard/presensi', [PresensiController::class, 'index'])
         ->name('dashboard.presensi');
 });
 /*
@@ -59,12 +62,8 @@ Route::middleware([
     'verified',
     'role:Admin'
 ])->group(function () {
-
-    Route::get('/admin/dashboard', [AdminController::class,'index'])
-        ->name('admin.dashboard');
-    Route::get('/admin/role-request', [AdminController::class,'roleRequest'])
+    Route::get('/role-request', [AdminController::class, 'roleRequest'])
         ->name('admin.role-request');
-
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
