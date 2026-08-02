@@ -1,4 +1,4 @@
-<div class="bg-white rounded-[24px] p-6 flex justify-center">
+<div class="bg-white rounded-3xl p-6 flex justify-center">
 
     <img
 

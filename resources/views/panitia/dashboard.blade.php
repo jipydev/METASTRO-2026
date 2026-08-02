@@ -16,10 +16,10 @@
                 <a href="{{ route('scan') }}" class="inline-flex items-center px-4 py-2 bg-[#065e75] text-[#EFF8FF] border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-[#054555] focus:bg-[#065e75] active:bg-[#065e75] focus:outline-none focus:ring-2 focus:ring-[#065e75] focus:ring-offset-2 transition ease-in-out duration-150">
                     Buka Scanner </a>
                 
-                <a href="{{ route('dashboard.presensi.lihat') }}" class="inline-flex items-center px-4 py-2 bg-[#065e75] text-[#EFF8FF] border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-[#054555] focus:bg-[#065e75] active:bg-[#065e75] focus:outline-none focus:ring-2 focus:ring-[#065e75] focus:ring-offset-2 transition ease-in-out duration-150">
+                <a href="{{ route('panitia.lihat') }}" class="inline-flex items-center px-4 py-2 bg-[#065e75] text-[#EFF8FF] border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-[#054555] focus:bg-[#065e75] active:bg-[#065e75] focus:outline-none focus:ring-2 focus:ring-[#065e75] focus:ring-offset-2 transition ease-in-out duration-150">
                     Lihat </a>
                 
-                <a href="{{ route('dashboard.presensi') }}" class="inline-flex items-center px-4 py-2 bg-[#065e75] text-[#EFF8FF] border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-[#054555] focus:bg-[#065e75] active:bg-[#065e75] focus:outline-none focus:ring-2 focus:ring-[#065e75] focus:ring-offset-2 transition ease-in-out duration-150">
+                <a href="{{ route('panitia.presensi') }}" class="inline-flex items-center px-4 py-2 bg-[#065e75] text-[#EFF8FF] border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-[#054555] focus:bg-[#065e75] active:bg-[#065e75] focus:outline-none focus:ring-2 focus:ring-[#065e75] focus:ring-offset-2 transition ease-in-out duration-150">
                     QR </a>
             </div>
         </div>

@@ -11,7 +11,7 @@ Route::get('/', function () {
 
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('panitia.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -31,8 +31,8 @@ Route::middleware([
     'role:Admin|Ranger|Sekretaris' 
 ])->group(function () {
 
-Route::get('/dashboard/presensi/lihat', [PresensiController::class,'lihat'])
-        ->name('dashboard.presensi.lihat');
+Route::get('/panitia/lihat', [PresensiController::class,'lihat'])
+        ->name('panitia.lihat');
 });
 /*
 |--------------------------------------------------------------------------
@@ -45,8 +45,8 @@ Route::middleware([
     'role:Admin|Panitia|Ranger|Sekretaris|Pengawas'
 ])->group(function () {
 
-Route::get('/dashboard/presensi', [PresensiController::class,'index'])
-        ->name('dashboard.presensi');
+Route::get('/panitia/presensi', [PresensiController::class,'index'])
+        ->name('panitia.presensi');
 });
 /*
 |--------------------------------------------------------------------------
