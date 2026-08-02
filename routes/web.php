@@ -67,4 +67,21 @@ Route::middleware([
 
 });
 
+/*
+|--------------------------------------------------------------------------
+| SCAN
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware([
+    'auth',
+    'verified',
+    'role:Admin|Sekretaris'
+])->group(function () {
+
+    Route::get('/scan', function () {
+        return view('scan');
+    })->name('scan');
+});
+
 require __DIR__.'/auth.php';
