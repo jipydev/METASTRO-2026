@@ -4,12 +4,15 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\PresensiController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Sekretaris\DashboardController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-
+Route::get('/sekretaris/dashboard', [DashboardController::class, 'index'])
+    ->name('sekretaris.dashboard');
+    
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
