@@ -5,16 +5,16 @@
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <!-- NIM -->
+        <!-- Email -->
         <div>
-            <x-input-label for="nim" :value="__('NIM')" class="lg:text-lg" />
+            <x-input-label for="email" :value="__('Email')" class="lg:text-lg" />
             <div class="relative group">
                 <span
                     class="icon-[tabler--id] text-zinc-400 absolute text-2xl lg:text-3xl top-1/2 left-2 group-focus-within:text-primary-500 -translate-y-1/2"></span>
-                <x-text-input id="text" placeholder="Masukkan NIM anda" class="block mt-1 w-full" type="nim"
-                    name="email" :value="old('nim')" required autofocus autocomplete="username" />
+                <x-text-input id="text" placeholder="Masukkan Email anda" class="block mt-1 w-full" type="email"
+                    name="email" :value="old('email')" required autofocus autocomplete="username" />
             </div>
-            <x-input-error :messages="$errors->get('nim')" class="mt-2" />
+            <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         <!-- Password -->
