@@ -18,11 +18,11 @@
                 'title' => 'Lihat Presensi'
             ])
 
-                @include('dashboard.presensi.components.profile-card',[
+                @include('components.profile-card',[
                     'user'=>$user
                 ])
 
-                @include('dashboard.presensi.components.qr-card')
+                @include('components.qr-card')
 
             </div>
 

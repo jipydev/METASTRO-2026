@@ -35,7 +35,7 @@ $presensi = [
 
             @foreach ($presensi as $item)
 
-                @include('dashboard.presensi.components.attendance-card', [
+                @include('components.attendance-card', [
                     'item' => $item
                 ])
 
