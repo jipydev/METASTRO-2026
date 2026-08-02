@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\PresensiController;
+use App\Http\Controllers\SekretarisController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 
@@ -16,16 +17,18 @@ Route::get('/', function () {
 | Dashboard
 |--------------------------------------------------------------------------
 */
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/dashboard/sekretaris', [SekretarisController::class, 'index'])->name('dashboard.sekretaris');
+});
 
 
 /*
 |--------------------------------------------------------------------------
 | Scan
 |--------------------------------------------------------------------------
-*/    
+*/
 Route::middleware([
     'auth',
     'verified',
@@ -58,12 +61,12 @@ Route::middleware('auth')->group(function () {
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Ranger|Sekretaris' 
+    'role:Admin|Ranger|Sekretaris'
 ])->group(function () {
 
-Route::get('/lihat', [PresensiController::class,'lihat'])
+    Route::get('/lihat', [PresensiController::class, 'lihat'])
         ->name('kegiatan.lihat');
-Route::get('/lihat/list', [PresensiController::class,'listPanitia'])
+    Route::get('/lihat/list', [PresensiController::class, 'listPanitia'])
         ->name('kegiatan.listPanitia');
 });
 
@@ -78,7 +81,7 @@ Route::middleware([
     'role:Admin|Panitia|Ranger|Sekretaris|Pengawas'
 ])->group(function () {
 
-Route::get('/qr', [PresensiController::class,'index'])
+    Route::get('/qr', [PresensiController::class, 'index'])
         ->name('kegiatan.QR');
 });
 
@@ -94,9 +97,8 @@ Route::middleware([
     'role:Admin'
 ])->group(function () {
 
-    Route::get('/admin/role-request', [AdminController::class,'roleRequest'])
+    Route::get('/admin/role-request', [AdminController::class, 'roleRequest'])
         ->name('admin.role-request');
-
 });
 
 
