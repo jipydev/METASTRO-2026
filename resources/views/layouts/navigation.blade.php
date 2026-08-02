@@ -3,6 +3,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             
+            <!-- Logo -->
             <div class="flex items-center shrink-0">
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-2 sm:gap-3">
                     <img src="{{ asset('images/logo.webp') }}" alt="Logo" class="h-7 w-7 sm:h-8 sm:w-8 object-contain" />
@@ -12,15 +13,37 @@
                 </a>
             </div>
 
+            <!-- Desktop Navigation -->
             <div class="hidden sm:flex sm:items-center sm:ms-6 gap-4">
-                <button class="relative p-1 rounded-full text-black hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-black transition-colors">
-                    <span class="sr-only">Lihat notifikasi</span>
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                    </svg>
-                    {{-- Jika  ada notif, ada ini aktif --}}
-                    {{-- <span class="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span> --}}
-                </button>
+                
+                <!-- Notifikasi Desktop -->
+                <div x-data="{ showNotif: false }" class="relative">
+                    <button @click="showNotif = !showNotif" @click.outside="showNotif = false" class="relative p-1 rounded-full text-black hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-black transition-colors">
+                        <span class="sr-only">Lihat notifikasi</span>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                        </svg>
+                        <span class="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+                    </button>
+
+                   <!-- Pop-up Dropdown Notifikasi -->
+                   <div x-show="showNotif" 
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 scale-95"
+                        x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="opacity-100 scale-100"
+                        x-transition:leave-end="opacity-0 scale-95"
+                        style="display: none;" 
+                        class="absolute right-0 mt-3 w-64 bg-gradient-to-br from-[#1c6989] to-[#3ba1c4] text-white text-sm rounded-2xl p-4 shadow-xl z-50">
+                        
+    <!-- Panah Segitiga CSS (Warnanya disamakan dengan bagian atas gradasi) -->
+    <div class="absolute -top-2 right-3 w-0 h-0 border-l-[8px] border-l-transparent border-b-[8px] border-b-[#1c6989] border-r-[8px] border-r-transparent"></div>
+    
+    <p class="font-semibold leading-snug">Izin Rabes 2 Kamu diterima oleh Ranger</p>
+    <p class="text-xs text-white/80 mt-1">Senin, 20 Juli 2026 18.00</p>
+</div>
+                </div>
 
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
@@ -49,15 +72,39 @@
                 </x-dropdown>
             </div>
 
+            <!-- Mobile Navigation -->
             <div class="-me-2 flex items-center sm:hidden gap-2">
-                <button class="relative p-1 rounded-full text-black hover:text-gray-700 focus:outline-none">
-                    <span class="sr-only">Lihat notifikasi</span>
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                    </svg>
-                    <span class="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-                </button>
+                
+                <!-- Notifikasi Mobile -->
+                <div x-data="{ showNotif: false }" class="relative">
+                    <button @click="showNotif = !showNotif" @click.outside="showNotif = false" class="relative p-1 rounded-full text-black hover:text-gray-700 focus:outline-none">
+                        <span class="sr-only">Lihat notifikasi</span>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                        </svg>
+                        <span class="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+                    </button>
 
+                    <!-- Pop-up Dropdown Notifikasi -->
+                        <div x-show="showNotif" 
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 scale-95"
+                            x-transition:enter-end="opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="opacity-100 scale-100"
+                            x-transition:leave-end="opacity-0 scale-95"
+                            style="display: none;" 
+                            class="absolute right-0 mt-3 w-64 bg-gradient-to-br from-[#1c6989] to-[#3ba1c4] text-white text-sm rounded-2xl p-4 shadow-xl z-50">
+                            
+                            <!-- Panah Segitiga CSS (Warnanya disamakan dengan bagian atas gradasi) -->
+                            <div class="absolute -top-2 right-3 w-0 h-0 border-l-[8px] border-l-transparent border-b-[8px] border-b-[#1c6989] border-r-[8px] border-r-transparent"></div>
+                            
+                            <p class="font-semibold leading-snug">Izin Rabes 2 Kamu diterima oleh Ranger</p>
+                            <p class="text-xs text-white/80 mt-1">Senin, 20 Juli 2026 18.00</p>
+                        </div>
+                </div>
+
+                <!-- Hamburger Button -->
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-black hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -68,6 +115,7 @@
         </div>
     </div>
 
+    <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-white">
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">

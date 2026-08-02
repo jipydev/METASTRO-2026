@@ -27,7 +27,7 @@ $presensi = [
         <div class="max-w-md mx-auto">
 
             @include('components.back-header', [
-                'href' => route('dashboard.presensi'),
+                'href' => route('dashboard'),
                 'title' => 'Lihat Presensi'
             ])
 

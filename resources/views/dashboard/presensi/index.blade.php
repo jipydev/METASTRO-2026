@@ -13,9 +13,10 @@
 
             <div class="bg-sky-50 rounded-[28px] p-7 min-h-[680px]">
 
-                <h2 class="text-3xl font-bold text-cyan-800 mb-8">
-                    Presensi RABES
-                </h2>
+                @include('components.back-header', [
+                'href' => route('dashboard'),
+                'title' => 'Lihat Presensi'
+            ])
 
                 @include('dashboard.presensi.components.profile-card',[
                     'user'=>$user
