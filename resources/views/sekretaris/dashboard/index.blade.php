@@ -1,10 +1,10 @@
 <x-app-layout :$title>
-    <div class="flex flex-col gap-4 p-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 p-4">
 
         {{-- Pengumuman --}}
         <div class="bg-primary-100 text-primary-900 p-4 rounded-md flex flex-col gap-4">
             <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-lg">Pengumuman<span class="text-red-500">*</span></h2>
+                <h2 class="font-semibold text-lg md:text-xl lg:text-2xl">Pengumuman<span class="text-red-500">*</span></h2>
                 <span class="icon-[ci--edit-pencil-line-01] text-2xl"></span>
             </div>
             <p class="text-sm">RABES 2: 2 Agustus 2026 pukul 08:00</p>
@@ -12,19 +12,19 @@
 
         {{-- Presensi Rapat Besar --}}
         <div class="bg-primary-100 text-primary-900 p-4 rounded-md flex flex-col gap-4">
-            <h2 class="font-semibold text-lg">Presensi Rapat Besar</h2>
+            <h2 class="font-semibold text-lg md:text-xl lg:text-2xl">Presensi Rapat Besar</h2>
 
-            <div class="flex flex-col gap-2">
-                <h3 class="text-sm"><span class="font-semibold text-xl">15/120</span> Panitia telah hadir</h3>
+            <div class="flex flex-col gap-4">
+                <h3 class="text-sm"><span class="font-semibold text-xl md:text-2xl lg:text-3xl">15/120</span> Panitia telah hadir</h3>
 
                 <div class="flex items-center justify-evenly gap-1">
-                    <button class="p-2 text-primary-50 bg-primary-700 rounded-md text-xs">QR ABSEN <span
+                    <button class="p-2 text-primary-50 bg-primary-700 rounded-md text-xs md:text-sm lg:text-base">QR ABSEN <span
                             class="icon-[mdi--arrow-right]"></span></button>
-                    <button class="p-2 text-primary-50 bg-primary-700 rounded-md text-xs">IZIN <span
+                    <button class="p-2 text-primary-50 bg-primary-700 rounded-md text-xs md:text-sm lg:text-base">IZIN <span
                             class="icon-[mdi--arrow-right]"></span></button>
-                    <button class="p-2 text-primary-50 bg-primary-700 rounded-md text-xs">SCAN <span
+                    <button class="p-2 text-primary-50 bg-primary-700 rounded-md text-xs md:text-sm lg:text-base">SCAN <span
                             class="icon-[mdi--arrow-right]"></span></button>
-                    <button class="p-2 text-primary-50 bg-primary-700 rounded-md text-xs">LIHAT <span
+                    <button class="p-2 text-primary-50 bg-primary-700 rounded-md text-xs md:text-sm lg:text-base">LIHAT <span
                             class="icon-[mdi--arrow-right]"></span></button>
                 </div>
             </div>
@@ -32,16 +32,16 @@
 
         {{-- Notulensi --}}
         <div class="bg-primary-100 text-primary-900 p-4 rounded-md flex flex-col gap-4">
-            <h2 class="font-semibold text-lg">Notulensi</h2>
+            <h2 class="font-semibold text-lg md:text-xl lg:text-2xl">Notulensi</h2>
 
             <div class="flex flex-col gap-2">
                 <div class="flex items-center justify-between">
                     <h4>RABES 1</h4>
                     <div class="flex items-center justify-evenly gap-2">
-                        <button class="px-2 py-1 text-primary-50 bg-primary-700 rounded-md text-sm">Lihat</button>
-                        <button class="px-2 py-1 text-primary-50 bg-primary-700 rounded-md text-sm">Upload</button>
+                        <button class="px-2 py-1 text-primary-50 bg-primary-700 rounded-md text-sm md:text-base lg:text-lg">Lihat</button>
+                        <button class="px-2 py-1 text-primary-50 bg-primary-700 rounded-md text-sm md:text-base lg:text-lg">Upload</button>
                         <button
-                            class="px-2 py-1 text-primary-700 rounded-md text-xl icon-[mdi--trash-can-outline]"></button>
+                            class="px-2 py-1 text-primary-700 rounded-md text-xl md:text-2xl lg:text-3xl icon-[mdi--trash-can-outline]"></button>
                     </div>
                 </div>
             </div>
@@ -50,7 +50,7 @@
         {{-- Timeline --}}
         <div class="bg-primary-100 text-primary-900 p-4 rounded-md flex flex-col gap-4">
             <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-lg">Timeline</h2>
+                <h2 class="font-semibold text-lg md:text-xl lg:text-2xl ">Timeline</h2>
                 <span class="icon-[ci--edit-pencil-line-01] text-2xl"></span>
             </div>
 
