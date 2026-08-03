@@ -1,6 +1,6 @@
-
 <x-app-layout>
-    <div class="min-h-screen bg-white md:bg-gray-50 pb-10">
+    <!-- TAMBAHKAN x-data DI SINI UNTUK MENGONTROL MODAL -->
+    <div x-data="{ openEditPengumuman: false, openEditTimeline: false }" class="min-h-screen bg-white md:bg-gray-50 pb-10">
         <div class="p-4 md:p-8 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mt-2">
 
             <!-- PENGUMUMAN -->
@@ -8,8 +8,7 @@
                 <h2 class="text-[#105e75] font-bold text-lg md:text-xl mb-2">Pengumuman<span class="text-red-500">*</span></h2>
                 <p class="text-[#105e75] font-medium text-sm md:text-base">RABES 2: 2 Agustus 2026 pukul 08.00</p>
                 
-                
-                <button class="absolute top-5 right-5 text-[#105e75] hover:scale-110 transition-transform">
+                <button @click="openEditPengumuman = true" class="absolute top-5 right-5 text-[#105e75] hover:scale-110 transition-transform">
                     <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                 </button>
                 
@@ -47,11 +46,9 @@
             <div class="bg-[#f2f7fb] md:bg-white md:shadow-sm rounded-2xl p-5 md:p-6 relative border md:border-gray-100 h-full">
                 <h2 class="text-[#105e75] font-bold text-lg md:text-xl mb-3">Timeline</h2>
                 
-                
-                <button class="absolute top-5 right-5 text-[#105e75] hover:scale-110 transition">
+                <button @click="openEditTimeline = true" class="absolute top-5 right-5 text-[#105e75] hover:scale-110 transition">
                     <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                 </button>
-                
                 
                 <div class="text-[#105e75] font-medium text-sm md:text-base md:bg-blue-50/50 md:p-4 rounded-xl">
                     <p class="font-bold mb-1 text-base md:text-lg">RABES 1</p>
@@ -64,14 +61,12 @@
                 </div>
             </div>
 
-            <!-- NOTULENSI -->
             <div class="bg-[#f2f7fb] md:bg-white md:shadow-sm rounded-2xl p-5 md:p-6 border md:border-gray-100 md:col-span-2 lg:col-span-3">
                 <h2 class="text-[#105e75] font-bold text-lg md:text-xl mb-4">Notulensi</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                    (['RABES 1', 'RABES 2', 'RABES 3'] as $rabes)
                     <div class="flex justify-between items-center md:bg-gray-50 md:p-4 rounded-xl md:border md:border-gray-100 mb-3 md:mb-0">
-                        <span class="text-[#105e75] font-bold text-sm md:text-base">{{ $rabes['title'] }}</span>
+                        <span class="text-[#105e75] font-bold text-sm md:text-base">{{ $rabes['title'] ?? 'Rapat Besar 1' }}</span>
                         
                         <div class="flex space-x-2 items-center">
                             <button class="bg-[#105e75] hover:bg-[#0b4354] text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition">Lihat</button>
@@ -89,5 +84,9 @@
             </div>
 
         </div>
+
+        <x-modal-edit-pengumuman />
+        <x-modal-edit-timeline />
+
     </div>
 </x-app-layout>
