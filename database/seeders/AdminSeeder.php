@@ -12,7 +12,7 @@ class AdminSeeder extends Seeder
         $admin = User::firstOrCreate(
             [
                 // 'email' => 'adminmetastro@gmail.com',
-                'nim' => '00000000',
+                'nim' => '12345678',
             ],
             [
                 'name' => 'Administrator',
