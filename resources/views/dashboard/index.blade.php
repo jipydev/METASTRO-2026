@@ -69,7 +69,6 @@
                 <h2 class="text-[#105e75] font-bold text-lg md:text-xl mb-4">Notulensi</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                    (['RABES 1', 'RABES 2', 'RABES 3'] as $rabes)
                     <div class="flex justify-between items-center md:bg-gray-50 md:p-4 rounded-xl md:border md:border-gray-100 mb-3 md:mb-0">
                         <span class="text-[#105e75] font-bold text-sm md:text-base">{{ $rabes['title'] }}</span>
                         
