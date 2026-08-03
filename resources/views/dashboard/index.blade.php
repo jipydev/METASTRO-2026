@@ -33,11 +33,11 @@
                 </div>
 
                 <div class="flex flex-wrap lg:flex-nowrap gap-2 md:gap-3">
-                    <button
+                    <a href="{{ route('kegiatan.QR') }}"
                         class="cursor-pointer flex-1 min-w-30 bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center gap-1 transition">
                         <span class="icon-[material-symbols--qr-code] size-4 md:size-5"></span>
                         QR ABSEN
-                    </button>
+                    </a>
 
                     <button @click="openIzinModal = !openIzinModal"
                         class="cursor-pointer flex-1 min-w-30 bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center gap-1 transition">
@@ -50,10 +50,11 @@
                     </button>
 
 
-                    <button
+                    <a href="{{ route('scan') }}"
                         class="cursor-pointer flex-1 min-w-30 bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center transition gap-1">
                         <span class="icon-[boxicons--scan-filled] size-4 md:size-5"></span>
-                        SCAN</button>
+                        SCAN</a>
+
                     <button
                         class="cursor-pointer flex-1 min-w-30 bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center transition gap-1">
                         <span class="icon-[mdi--eye]"></span>

@@ -31,7 +31,6 @@ Route::middleware([
     'verified',
     'role:Admin|Sekretaris'
 ])->group(function () {
-
     Route::get('/scan', function () {
         return view('kegiatan.scan');
     })->name('scan');
