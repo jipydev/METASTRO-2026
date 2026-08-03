@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard.landingPage');
 });
 
 
@@ -92,10 +92,13 @@ Route::middleware([
     'verified',
     'role:Admin'
 ])->group(function () {
-
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])
+        ->name('admin.dashboard');
     Route::get('/admin/role-request', [AdminController::class, 'roleRequest'])
         ->name('admin.role-request');
 });
+
+
 
 
 require __DIR__ . '/auth.php';
