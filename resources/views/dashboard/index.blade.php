@@ -1,79 +1,93 @@
-<x-app-layout :$title>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 p-4">
 
-        {{-- Pengumuman --}}
-        <div class="bg-primary-100 text-primary-900 p-4 rounded-md flex flex-col gap-4">
-            <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-lg md:text-xl lg:text-2xl">Pengumuman<span class="text-red-500">*</span>
-                </h2>
+<x-app-layout>
+    <div class="min-h-screen bg-white md:bg-gray-50 pb-10">
+        <div class="p-4 md:p-8 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mt-2">
+
+            <!-- PENGUMUMAN -->
+            <div class="bg-[#f2f7fb] md:bg-white md:shadow-sm rounded-2xl p-5 md:p-6 relative md:col-span-2 lg:col-span-3 border md:border-gray-100">
+                <h2 class="text-[#105e75] font-bold text-lg md:text-xl mb-2">Pengumuman<span class="text-red-500">*</span></h2>
+                <p class="text-[#105e75] font-medium text-sm md:text-base">RABES 2: 2 Agustus 2026 pukul 08.00</p>
+                
+                @if(auth()->user()->role === 'Admin' || auth()->user()->role === 'sekretaris')
+                <button class="absolute top-5 right-5 text-[#105e75] hover:scale-110 transition-transform">
+                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                </button>
+                @endif
             </div>
-            <p class="text-sm">RABES 2: 2 Agustus 2026 pukul 08:00</p>
-        </div>
 
-        {{-- Presensi Rapat Besar --}}
-        <div class="bg-primary-100 text-primary-900 p-4 rounded-md flex flex-col gap-4">
-            <h2 class="font-semibold text-lg md:text-xl lg:text-2xl">Presensi Rapat Besar</h2>
+            <!-- PRESENSI -->
+            <div class="bg-[#f2f7fb] md:bg-white md:shadow-sm rounded-2xl p-5 md:p-6 border md:border-gray-100 lg:col-span-2 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-[#105e75] font-bold text-lg md:text-xl mb-1">Presensi Rapat Besar</h2>
+                    <div class="flex items-baseline space-x-2 mb-6">
+                        <span class="text-4xl md:text-5xl font-bold text-[#105e75]">5/120</span>
+                        <span class="text-sm md:text-base font-medium text-gray-500">Panitia telah hadir</span>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap md:flex-nowrap gap-2 md:gap-3">
+                    <button class="flex-1 min-w-[120px] bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center gap-1 transition">
+                        @if(auth()->user()->role !== 'Admin' || auth()->user()->role !== 'sekretaris') <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> @endif
+                        QR ABSEN &rarr;
+                    </button>
+                    
+                    <button class="flex-1 min-w-[120px] bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center gap-1 transition">
+                        @if(auth()->user()->role !== 'Admin' || auth()->user()->role !== 'sekretaris') <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> @endif
+                        IZIN &rarr;
+                    </button>
 
-            <div class="flex flex-col gap-4">
-                <h3 class="text-sm"><span class="font-semibold text-xl md:text-2xl lg:text-3xl">15/120</span> Panitia
-                    telah hadir</h3>
-
-                <div class="flex items-center justify-evenly gap-1">
-                    <a href="{{route('kegiatan.QR')  }}" class="py-2 px-4 text-primary-50 bg-primary-700 rounded-md text-xs md:text-sm lg:text-base flex items-center gap-2">
-                        <span class="icon-[material-symbols--qr-code]"></span>
-                        QR ABSEN <span class="icon-[mdi--arrow-right]"></span></a>
-                    <a href=""
-                        class="py-2 px-4 text-primary-50 bg-primary-700 rounded-md text-xs md:text-sm lg:text-base flex items-center gap-2">
-                        <span class="icon-[akar-icons--file]"></span>
-                        IZIN <span class="icon-[mdi--arrow-right]"></span></a>
-
+                    @if(auth()->user()->role === 'Admin' || auth()->user()->role === 'sekretaris')
+                        <button class="flex-1 min-w-[120px] bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center transition">SCAN &rarr;</button>
+                        <button class="flex-1 min-w-[120px] bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center transition">LIHAT &rarr;</button>
+                    @endif
                 </div>
             </div>
-        </div>
 
-        {{-- Notulensi --}}
-        <div class="bg-primary-100 text-primary-900 p-4 rounded-md flex flex-col gap-4">
-            <h2 class="font-semibold text-lg md:text-xl lg:text-2xl">Notulensi</h2>
-
-            <div class="flex flex-col gap-2">
-                <div class="flex items-center justify-between">
-                    <h4>RABES 1</h4>
-                    <div class="flex items-center justify-evenly gap-2">
-                        <button
-                            class="px-2 py-1 text-primary-50 bg-primary-700 rounded-md text-sm md:text-base lg:text-lg">Lihat</button>
+            <!-- TIMELINE -->
+            <div class="bg-[#f2f7fb] md:bg-white md:shadow-sm rounded-2xl p-5 md:p-6 relative border md:border-gray-100 h-full">
+                <h2 class="text-[#105e75] font-bold text-lg md:text-xl mb-3">Timeline</h2>
+                
+                @if(auth()->user()->role === 'Admin' || auth()->user()->role === 'sekretaris')
+                <button class="absolute top-5 right-5 text-[#105e75] hover:scale-110 transition">
+                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                </button>
+                @endif
+                
+                <div class="text-[#105e75] font-medium text-sm md:text-base md:bg-blue-50/50 md:p-4 rounded-xl">
+                    <p class="font-bold mb-1 text-base md:text-lg">RABES 1</p>
+                    <p>Selasa, 20 Juli 2026</p>
+                    <p>pukul 08.00</p>
+                    <div class="flex justify-between items-end mt-4">
+                        <p class="font-semibold">Ruang PGSD 4</p>
+                        <a href="#" class="text-[#105e75] md:bg-blue-100 hover:bg-blue-200 md:px-3 md:py-1 rounded-md font-bold text-lg leading-none transition">&gt;&gt;</a>
                     </div>
                 </div>
             </div>
-        </div>
 
-        {{-- Timeline --}}
-        <div class="bg-primary-100 text-primary-900 p-4 rounded-md flex flex-col gap-4">
-            <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-lg md:text-xl lg:text-2xl ">Timeline</h2>
+            <!-- NOTULENSI -->
+            <div class="bg-[#f2f7fb] md:bg-white md:shadow-sm rounded-2xl p-5 md:p-6 border md:border-gray-100 md:col-span-2 lg:col-span-3">
+                <h2 class="text-[#105e75] font-bold text-lg md:text-xl mb-4">Notulensi</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                    @foreach(['RABES 1', 'RABES 2', 'RABES 3'] as $rabes)
+                    <div class="flex justify-between items-center md:bg-gray-50 md:p-4 rounded-xl md:border md:border-gray-100 mb-3 md:mb-0">
+                        <span class="text-[#105e75] font-bold text-sm md:text-base">{{ $rabes }}</span>
+                        
+                        <div class="flex space-x-2 items-center">
+                            <button class="bg-[#105e75] hover:bg-[#0b4354] text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition">Lihat</button>
+                            
+                            @if(auth()->user()->role === 'Admin' || auth()->user()->role === 'sekretaris')
+                                <button class="bg-[#105e75] hover:bg-[#0b4354] text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition">Upload</button>
+                                <button class="text-[#105e75] hover:text-red-600 md:hover:bg-red-50 p-1.5 rounded-md transition">
+                                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
             </div>
 
-            <div class="flex flex-col gap-4 relative">
-                <div class="text-zinc-900">
-                    <h4 class="text-primary-900 font-medium">RABES 1</h4>
-                    <ul>
-                        <li>Selasa, 20 Juli 2026</li>
-                        <li>pukul 08.00</li>
-                        <li>Ruang PGSD 4</li>
-                    </ul>
-                </div>
-                <div class="text-zinc-900">
-                    <h4 class="text-primary-900 font-medium">RABES 2</h4>
-                    <ul>
-                        <li>Selasa, 29 Juli 2026</li>
-                        <li>pukul 08.00</li>
-                        <li>Ruang PGSD 4</li>
-                    </ul>
-                </div>
-
-                <a href="#" class="icon-[ep--d-arrow-right] inline absolute right-0 bottom-1"></a>
-            </div>
         </div>
-
     </div>
-
 </x-app-layout>
