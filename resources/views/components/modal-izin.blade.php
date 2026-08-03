@@ -1,7 +1,7 @@
 <div x-cloak x-show="openIzinModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
     <form action="" method="post" @click.outside="openIzinModal = false"
-        class="bg-white p-4 border border-primary-500 rounded-md w-full text-primary-900 grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-md lg:max-w-xl lg:gap-8 lg:p-8">
-        <div class="flex items-center justify-between lg:col-span-2">
+        class="bg-white p-4 border border-primary-500 rounded-md w-full text-primary-900 grid grid-cols-1 gap-4 max-w-md lg:max-w-xl lg:gap-8 lg:p-8">
+        <div class="flex items-center justify-between">
             <h1 class="text-xl font-bold lg:text-2xl">Izin</h1>
             <span @click="openIzinModal = false" class="icon-[material-symbols--close] font-bold text-xl lg:text-2xl"></span>
         </div>
@@ -54,7 +54,7 @@
             <input type="file" name="surat" id="surat" class="hidden">
         </div>
 
-        <div class="flex justify-end lg:col-span-2">
+        <div class="flex justify-end">
             <button type="submit"
                 class="bg-primary-700 py-2 px-4 rounded-md text-primary-50 font-medium hover:bg-primary-800 transition">
                 Kirim
