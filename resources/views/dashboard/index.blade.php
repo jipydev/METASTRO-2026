@@ -35,12 +35,13 @@
                     </div>
                 </div>
 
+
                 <div class="flex flex-wrap lg:flex-nowrap gap-2 md:gap-3">
-                    <button
+                    <a href="{{ url('/qr') }}"
                         class="cursor-pointer flex-1 min-w-30 bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center gap-1 transition">
                         <span class="icon-[material-symbols--qr-code] size-4 md:size-5"></span>
                         QR ABSEN
-                    </button>
+                    </a>
 
                     <button @click="openIzinModal = !openIzinModal"
                         class="cursor-pointer flex-1 min-w-30 bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center gap-1 transition">
@@ -52,14 +53,15 @@
                         IZIN
                     </button>
 
-                    <button
+                    <a href="{{ url('/scan') }}"
                         class="cursor-pointer flex-1 min-w-30 bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center transition gap-1">
                         <span class="icon-[boxicons--scan-filled] size-4 md:size-5"></span>
-                        SCAN</button>
-                    <button
+                        SCAN</a>
+
+                    <a href="{{ url('/lihat') }}"
                         class="cursor-pointer flex-1 min-w-30 bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center transition gap-1">
                         <span class="icon-[mdi--eye]"></span>
-                        LIHAT</button>
+                        LIHAT</a>
 
                 </div>
             </div>
@@ -139,7 +141,7 @@
         <x-modal-izin />
 
         
-<div x-show="openAddNotulensi" style="display: none;" class="fixed inset-0 z-[999] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+<div x-show="openAddNotulensi" style="display: none;" class="fixed inset-0 z-999 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
         
         
