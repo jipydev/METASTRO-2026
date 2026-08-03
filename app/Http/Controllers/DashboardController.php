@@ -13,6 +13,12 @@ class DashboardController extends Controller
             'title' => "Dashboard"
         ];
 
-        return view('dashboard.index', $data);
+        $rabes = [
+            'title' => "Rabes 1"
+        ];
+
+        return view('dashboard.index', compact('data', 'rabes'));
     }
+
+
 }

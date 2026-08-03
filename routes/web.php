@@ -3,11 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\PresensiController;
-use App\Http\Controllers\SekretarisController;
-use App\Http\Controllers\KoordinatorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\RangerController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,15 +18,6 @@ Route::get('/', function () {
 */
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    // koor 
-    Route::get('/dashboard/koordinator', [KoordinatorController::class, 'index'])->name('dashboard.koordinator');
-
-    // sekretaris
-    Route::get('/dashboard/sekretaris', [SekretarisController::class, 'index'])->name('dashboard.sekretaris');
-
-    // ranger
-    Route::get('/dashboard/ranger', [RangerController::class, 'index'])->name('dashboard.ranger');
 });
 
 
