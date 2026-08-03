@@ -19,12 +19,12 @@
                     telah hadir</h3>
 
                 <div class="flex items-center justify-evenly gap-1">
-                    <button class="p-2 text-primary-50 bg-primary-700 rounded-md text-xs md:text-sm lg:text-base">QR
-                        ABSEN <span class="icon-[mdi--arrow-right]"></span></button>
-                    <button class="p-2 text-primary-50 bg-primary-700 rounded-md text-xs md:text-sm lg:text-base">IZIN
-                        <span class="icon-[mdi--arrow-right]"></span></button>
-                    <button class="p-2 text-primary-50 bg-primary-700 rounded-md text-xs md:text-sm lg:text-base">LIHAT
-                        <span class="icon-[mdi--arrow-right]"></span></button>
+                    <a href="{{route("kegiatan.QR")  }}" class="p-2 text-primary-50 bg-primary-700 rounded-md text-xs md:text-sm lg:text-base">QR ABSEN <span
+                            class="icon-[mdi--arrow-right]"></span></a>
+                    <button class="p-2 text-primary-50 bg-primary-700 rounded-md text-xs md:text-sm lg:text-base">IZIN <span
+                            class="icon-[mdi--arrow-right]"></span></button>
+                    <a href="{{route("kegiatan.lihat")  }}" class="p-2 text-primary-50 bg-primary-700 rounded-md text-xs md:text-sm lg:text-base">LIHAT <span
+                            class="icon-[mdi--arrow-right]"></span></a>
                 </div>
             </div>
         </div>
