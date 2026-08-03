@@ -8,7 +8,9 @@
                 class="bg-[#f2f7fb] md:bg-white md:shadow-sm rounded-2xl p-5 md:p-6 relative md:col-span-2 lg:col-span-3 border md:border-gray-100">
                 <h2 class="text-[#105e75] font-bold text-lg md:text-xl mb-2">Pengumuman<span class="text-red-500">*</span>
                 </h2>
-                <p class="text-[#105e75] font-medium text-sm md:text-base">RABES 2: 2 Agustus 2026 pukul 08.00</p>
+                <p class="text-[#105e75] font-medium text-sm md:text-base">
+                    {{ $pengumuman ? $pengumuman->isi : 'Belum ada pengumuman.' }}
+                </p>
 
                 <button @click="openEditPengumuman = true"
                     class="absolute top-5 right-5 text-[#105e75] hover:scale-110 transition-transform">
@@ -26,7 +28,9 @@
                 <div>
                     <h2 class="text-[#105e75] font-bold text-lg md:text-xl mb-1">Presensi Rapat Besar</h2>
                     <div class="flex items-baseline space-x-2 mb-6">
-                        <span class="text-4xl md:text-5xl font-bold text-[#105e75]">5/120</span>
+                        <span class="text-4xl md:text-5xl font-bold text-[#105e75]">
+                            {{ $rapatTerbaru ? $rapatTerbaru->hadir : 0 }}/{{ $rapatTerbaru ? $rapatTerbaru->total : 0 }}
+                        </span>
                         <span class="text-sm md:text-base font-medium text-gray-500">Panitia telah hadir</span>
                     </div>
                 </div>
@@ -75,11 +79,11 @@
                 </button>
 
                 <div class="text-[#105e75] font-medium text-sm md:text-base md:bg-blue-50/50 md:p-4 rounded-xl">
-                    <p class="font-bold mb-1 text-base md:text-lg">RABES 1</p>
-                    <p>Selasa, 20 Juli 2026</p>
-                    <p>pukul 08.00</p>
+                    <p class="font-bold mb-1 text-base md:text-lg">{{ $rapatTerbaru->judul ?? 'Tidak ada jadwal' }}</p>
+                    <p>{{ $rapatTerbaru->tanggal ?? '-' }}</p>
+                    <p>pukul {{ $rapatTerbaru->jam ?? '-' }}</p>
                     <div class="flex justify-between items-end mt-4">
-                        <p class="font-semibold">Ruang PGSD 4</p>
+                        <p class="font-semibold">{{ $rapatTerbaru->tempat ?? '-' }}</p>
                         <a href="#"
                             class="text-[#105e75] md:bg-blue-100 hover:bg-blue-200 md:px-3 md:py-1 rounded-md font-bold text-lg leading-none transition"></a>
                     </div>
@@ -102,10 +106,11 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                    @foreach($notulensi_list as $rabes)
                     <div
                         class="flex justify-between items-center md:bg-gray-50 md:p-4 rounded-xl md:border md:border-gray-100 mb-3 md:mb-0">
                         <span
-                            class="text-[#105e75] font-bold text-sm md:text-base">{{ $rabes['title'] ?? 'Rapat Besar 1' }}</span>
+                            class="text-[#105e75] font-bold text-sm md:text-base">{{ $rabes->judul }}</span>
                             
                         <div class="flex space-x-2 items-center">
                             <button
@@ -123,6 +128,7 @@
                             </button>
                         </div>
                     </div>
+                    @endforeach
                 </div>
             </div>
 
