@@ -3,7 +3,6 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             
-            <!-- BAGIAN KIRI: Logo -->
             <div class="flex items-center shrink-0">
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-2 sm:gap-3">
                     <img src="{{ asset('images/logo.webp') }}" alt="Logo" class="h-7 w-7 sm:h-8 sm:w-8 object-contain" />
@@ -13,25 +12,20 @@
                 </a>
             </div>
 
-            <!-- BAGIAN KANAN: Menu & Notifikasi -->
             <div class="flex items-center gap-2 sm:gap-4">
                 
-                <!-- 1. Notifikasi (Akan selalu muncul di Desktop & Mobile) -->
                 <div x-data="{ showNotif: false }" class="relative flex items-center">
                     <button @click="showNotif = !showNotif" @click.outside="showNotif = false" class="relative p-2 rounded-full text-black hover:text-gray-700 hover:bg-gray-100 focus:outline-none transition-colors">
                         <span class="sr-only">Lihat notifikasi</span>
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
                         </svg>
-                        <!-- Titik Merah Notif -->
                         <span class="absolute top-1.5 right-1.5 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white"></span>
                     </button>
 
-                    <!-- Memanggil Komponen Blade Notifikasi yang sudah kamu buat -->
                     <x-notification-card />
                 </div>
 
-                <!-- 2. Dropdown Profile (Hanya muncul di Desktop) -->
                 <div class="hidden sm:flex sm:items-center">
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
@@ -60,7 +54,6 @@
                     </x-dropdown>
                 </div>
 
-                <!-- 3. Hamburger Button (Hanya muncul di Mobile) -->
                 <div class="flex items-center sm:hidden">
                     <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-black hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                         <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -74,7 +67,6 @@
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu (Dropdown bawaan Breeze saat Hamburger di-klik) -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-white">
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
