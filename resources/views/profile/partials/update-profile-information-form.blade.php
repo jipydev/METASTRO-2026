@@ -5,7 +5,7 @@
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __("Ubah informasi profil dan alamat email akun Anda.") }}
+            {{ __('Ubah informasi profil dan alamat email akun Anda.') }}
         </p>
     </header>
 
@@ -69,6 +69,26 @@
                     </div>
                 @endif
             </div>
+        </div>
+
+        <div>
+            <x-input-label for="divisi" :value="__('Divisi')" />
+            <div class="relative">
+                <span class="icon-[tabler--hierarchy] absolute left-2 top-2 text-2xl text-primary-700"></span>
+                <x-text-input id="divisi" name="divisi" type="text" class="mt-1 block w-full" :value="old('divisi', $user->divisi)"
+                    required autofocus autocomplete="divisi" />
+            </div>
+            <x-input-error class="mt-2" :messages="$errors->get('divisi')" />
+        </div>
+
+        <div>
+            <x-input-label for="jabatan" :value="__('Jabatan')" />
+            <div class="relative">
+                <span class="icon-[mingcute--suitcase-line] absolute left-2 top-2 text-2xl text-primary-700"></span>
+                <x-text-input id="jabatan" name="jabatan" type="text" class="mt-1 block w-full" :value="old('jabatan', $user->jabatan)"
+                    required autofocus autocomplete="jabatan" />
+            </div>
+            <x-input-error class="mt-2" :messages="$errors->get('jabatan')" />
         </div>
 
         <div class="flex items-center gap-4">
