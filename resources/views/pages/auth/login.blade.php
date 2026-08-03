@@ -1,6 +1,6 @@
 <x-layouts::auth :title="__('Log in')">
     <div class="flex flex-col gap-6">
-        <x-auth-header :title="__('Log in to your account')" :description="__('Enter your email and password below to log in')" />
+        <x-auth-header :title="__('Log in to your account')" :description="__('Enter your nim and password below to log in')" />
 
         <!-- Session Status -->
         <x-auth-session-status class="text-center" :status="session('status')" />
@@ -10,7 +10,7 @@
         <form method="POST" action="{{ route('login.store') }}" class="flex flex-col gap-6">
             @csrf
 
-            <!-- Email Address -->
+            <!-- Email Address
             <flux:input
                 name="email"
                 :label="__('Email address')"
@@ -20,6 +20,18 @@
                 autofocus
                 autocomplete="email"
                 placeholder="email@example.com"
+            /> -->
+
+            <!-- NIM -->
+            <flux:input
+                name="nim"
+                :label="__('NIM')"
+                :value="old('nim')"
+                type="nim"
+                required
+                autofocus
+                autocomplete="nim"
+                placeholder="masukan NIM anda"
             />
 
             <!-- Password -->
@@ -31,13 +43,12 @@
                     required
                     autocomplete="current-password"
                     :placeholder="__('Password')"
-                    viewable
-                />
+                    viewable />
 
                 @if (Route::has('password.request'))
-                    <flux:link class="absolute top-0 text-sm end-0" :href="route('password.request')" wire:navigate>
-                        {{ __('Forgot your password?') }}
-                    </flux:link>
+                <flux:link class="absolute top-0 text-sm end-0" :href="route('password.request')" wire:navigate>
+                    {{ __('Forgot your password?') }}
+                </flux:link>
                 @endif
             </div>
 
