@@ -34,8 +34,9 @@ class ProfileUpdateTest extends TestCase
         $user->refresh();
 
         $this->assertEquals('Test User', $user->name);
-        $this->assertEquals('test@example.com', $user->email);
-        $this->assertNull($user->email_verified_at);
+        // $this->assertEquals('test@example.com', $user->email);
+        $this->assertEquals('4444444', $user->nim);
+        // $this->assertNull($user->email_verified_at);
     }
 
     public function test_email_verification_status_is_unchanged_when_email_address_is_unchanged(): void
@@ -46,7 +47,8 @@ class ProfileUpdateTest extends TestCase
 
         $response = Livewire::test('pages::settings.profile')
             ->set('name', 'Test User')
-            ->set('email', $user->email)
+            // ->set('email', $user->email)
+            ->set('nim', $user->nim)
             ->call('updateProfileInformation');
 
         $response->assertHasNoErrors();

@@ -20,7 +20,7 @@
             />
 
             <!-- Email Address -->
-            <flux:input
+            <!-- <flux:input
                 name="email"
                 :label="__('Email address')"
                 :value="old('email')"
@@ -28,6 +28,17 @@
                 required
                 autocomplete="email"
                 placeholder="email@example.com"
+            /> -->
+
+            <!-- NIM -->
+            <flux:input
+                name="nim"
+                :label="__('NIM')"
+                :value="old('nim')"
+                type="number"
+                required
+                autocomplete="nim"
+                placeholder="4444444"
             />
 
             <!-- Password -->

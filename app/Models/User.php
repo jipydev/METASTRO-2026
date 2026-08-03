@@ -19,7 +19,8 @@ use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable([
     'name',
-    'email',
+    // 'email',
+    'nim',
     'password',
     'nomor_hp',
     'foto',
@@ -49,7 +50,7 @@ class User extends Authenticatable implements PasskeyUser
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
+            // 'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
