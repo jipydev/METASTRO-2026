@@ -4,14 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class SekretarisController extends Controller
+class RangerController extends Controller
 {
-    public function index()
-    {
+    public function index() {
         $data = [
             'title' => 'Dashboard'
         ];
 
-        return view('sekretaris.dashboard.index', $data);
+        return view('ranger.dashboard.index', $data);
     }
 }
