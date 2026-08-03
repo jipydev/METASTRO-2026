@@ -1,6 +1,6 @@
 <x-app-layout>
     <!-- TAMBAHKAN x-data DI SINI UNTUK MENGONTROL MODAL -->
-    <div x-data="{ openEditPengumuman: false, openEditTimeline: false, openIzinModal: false }" class="min-h-screen bg-white md:bg-gray-50 pb-10">
+    <div x-data="{ openEditPengumuman: false, openEditTimeline: false, openIzinModal: false, openAddNotulensi: false }" class="min-h-screen bg-white md:bg-gray-50 pb-10">
         <div class="p-4 md:p-8 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mt-2">
 
             <!-- PENGUMUMAN -->
@@ -18,7 +18,6 @@
                         </path>
                     </svg>
                 </button>
-
             </div>
 
             <!-- PRESENSI -->
@@ -48,7 +47,6 @@
                         </svg>
                         IZIN
                     </button>
-
 
                     <button
                         class="cursor-pointer flex-1 min-w-30 bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center transition gap-1">
@@ -88,24 +86,30 @@
                 </div>
             </div>
 
+            <!-- NOTULENSI -->
             <div
                 class="bg-[#f2f7fb] md:bg-white md:shadow-sm rounded-2xl p-5 md:p-6 border md:border-gray-100 md:col-span-2 lg:col-span-3">
-                <h2 class="text-[#105e75] font-bold text-lg md:text-xl mb-4">Notulensi</h2>
+                
+                <!-- HEADER NOTULENSI DENGAN TOMBOL PLUS -->
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-[#105e75] font-bold text-lg md:text-xl">Notulensi</h2>
+                    <button @click="openAddNotulensi = true" 
+                            class="text-white bg-[#105e75] hover:bg-[#0b4354] rounded-full p-1.5 transition shadow-sm flex items-center justify-center">
+                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                    </button>
+                </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                        
-
                     <div
                         class="flex justify-between items-center md:bg-gray-50 md:p-4 rounded-xl md:border md:border-gray-100 mb-3 md:mb-0">
                         <span
                             class="text-[#105e75] font-bold text-sm md:text-base">{{ $rabes['title'] ?? 'Rapat Besar 1' }}</span>
                             
-
                         <div class="flex space-x-2 items-center">
                             <button
                                 class="bg-[#105e75] hover:bg-[#0b4354] text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition">Lihat</button>
-
-
                             <button
                                 class="bg-[#105e75] hover:bg-[#0b4354] text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition">Upload</button>
                             <button
@@ -117,10 +121,8 @@
                                     </path>
                                 </svg>
                             </button>
-
                         </div>
                     </div>
-
                 </div>
             </div>
 
@@ -130,5 +132,56 @@
         <x-modal-edit-timeline />
         <x-modal-izin />
 
+        
+<div x-show="openAddNotulensi" style="display: none;" class="fixed inset-0 z-[999] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+        
+        
+        <div x-show="openAddNotulensi"
+             x-transition.opacity
+             class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" 
+             aria-hidden="true" 
+             @click="openAddNotulensi = false"></div>
+
+        <!-- Modal panel -->
+        <div x-show="openAddNotulensi" 
+             x-transition:enter="ease-out duration-300" 
+             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+             x-transition:leave="ease-in duration-200" 
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+             class="relative inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-2xl shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+            
+            <div>
+                <div class="mt-3 text-center sm:mt-5">
+                    <h3 class="text-lg font-bold leading-6 text-[#105e75]" id="modal-title">Tambah Notulensi</h3>
+                    <div class="mt-6 text-left">
+                        <!-- Input Judul -->
+                        <div class="mb-5">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Judul</label>
+                            <input type="text" placeholder="Ketik disini" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#105e75] focus:ring-[#105e75] sm:text-sm p-2 border outline-none">
+                        </div>
+                        <!-- Input File PDF -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Upload File PDF</label>
+                            <input type="file" accept="application/pdf" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#f2f7fb] file:text-[#105e75] hover:file:bg-blue-100 cursor-pointer">
+                            <p class="mt-1.5 text-xs text-gray-500 font-medium">Format: PDF (Maks 5MB)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 sm:flex sm:flex-row-reverse">
+                <button type="button" class="inline-flex justify-center w-full px-4 py-2 text-base font-bold text-white bg-[#105e75] border border-transparent rounded-md shadow-sm hover:bg-[#0b4354] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#105e75] sm:ml-3 sm:w-auto sm:text-sm transition">
+                    Tambah
+                </button>
+                <button @click="openAddNotulensi = false" type="button" class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-bold text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#105e75] sm:mt-0 sm:w-auto sm:text-sm transition">
+                    Batal
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
     </div>
 </x-app-layout>
