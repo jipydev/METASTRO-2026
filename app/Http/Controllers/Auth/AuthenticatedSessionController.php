@@ -24,7 +24,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-          dd('Masuk Controller');
+        //   dd('Masuk Controller');
         $request->authenticate();
 
         $request->session()->regenerate();
