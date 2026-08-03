@@ -93,17 +93,14 @@
                 <h2 class="text-[#105e75] font-bold text-lg md:text-xl mb-4">Notulensi</h2>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-<<<<<<< HEAD
-                    <div class="flex justify-between items-center md:bg-gray-50 md:p-4 rounded-xl md:border md:border-gray-100 mb-3 md:mb-0">
-                        <span class="text-[#105e75] font-bold text-sm md:text-base">{{ $rabes['title'] }}</span>
                         
-=======
+
                     <div
                         class="flex justify-between items-center md:bg-gray-50 md:p-4 rounded-xl md:border md:border-gray-100 mb-3 md:mb-0">
                         <span
                             class="text-[#105e75] font-bold text-sm md:text-base">{{ $rabes['title'] ?? 'Rapat Besar 1' }}</span>
+                            
 
->>>>>>> d0c2b5edca525371c85e1f95468e2567b874d38b
                         <div class="flex space-x-2 items-center">
                             <button
                                 class="bg-[#105e75] hover:bg-[#0b4354] text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition">Lihat</button>
