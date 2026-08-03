@@ -3,8 +3,11 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\PresensiController;
+use App\Http\Controllers\SekretarisController;
+use App\Http\Controllers\KoordinatorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RangerController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,16 +19,25 @@ Route::get('/', function () {
 | Dashboard
 |--------------------------------------------------------------------------
 */
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // koor 
+    Route::get('/dashboard/koordinator', [KoordinatorController::class, 'index'])->name('dashboard.koordinator');
+
+    // sekretaris
+    Route::get('/dashboard/sekretaris', [SekretarisController::class, 'index'])->name('dashboard.sekretaris');
+
+    // ranger
+    Route::get('/dashboard/ranger', [RangerController::class, 'index'])->name('dashboard.ranger');
+});
 
 
 /*
 |--------------------------------------------------------------------------
 | Scan
 |--------------------------------------------------------------------------
-*/    
+*/
 Route::middleware([
     'auth',
     'verified',
@@ -58,12 +70,12 @@ Route::middleware('auth')->group(function () {
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Ranger|Sekretaris' 
+    'role:Admin|Ranger|Sekretaris'
 ])->group(function () {
 
-Route::get('/lihat', [PresensiController::class,'lihat'])
+    Route::get('/lihat', [PresensiController::class, 'lihat'])
         ->name('kegiatan.lihat');
-Route::get('/lihat/list', [PresensiController::class,'listPanitia'])
+    Route::get('/lihat/list', [PresensiController::class, 'listPanitia'])
         ->name('kegiatan.listPanitia');
 });
 
@@ -78,7 +90,7 @@ Route::middleware([
     'role:Admin|Panitia|Ranger|Sekretaris|Pengawas'
 ])->group(function () {
 
-Route::get('/qr', [PresensiController::class,'index'])
+    Route::get('/qr', [PresensiController::class, 'index'])
         ->name('kegiatan.QR');
 });
 
@@ -94,9 +106,8 @@ Route::middleware([
     'role:Admin'
 ])->group(function () {
 
-    Route::get('/admin/role-request', [AdminController::class,'roleRequest'])
+    Route::get('/admin/role-request', [AdminController::class, 'roleRequest'])
         ->name('admin.role-request');
-
 });
 
 

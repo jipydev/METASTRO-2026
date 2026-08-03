@@ -19,7 +19,11 @@
         "lightningcss-linux-x64-gnu": "^1.29.1"
     },
     "devDependencies": {
+        "@iconify-json/akar-icons": "^1.2.7",
+        "@iconify-json/ci": "^1.2.2",
+        "@iconify-json/ep": "^1.2.4",
         "@iconify-json/material-symbols": "^1.2.87",
+        "@iconify-json/mdi": "^1.2.3",
         "@iconify-json/tabler": "^1.2.38",
         "@iconify/tailwind4": "^1.2.3",
         "@tailwindcss/forms": "^0.5.2",

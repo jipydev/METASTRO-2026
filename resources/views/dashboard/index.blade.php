@@ -1,6 +1,5 @@
 
 <x-app-layout>
-    <!-- Latar belakang: Putih di HP, abu-abu sangat terang di PC agar card lebih menonjol -->
     <div class="min-h-screen bg-white md:bg-gray-50 pb-10">
         <div class="p-4 md:p-8 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mt-2">
 
