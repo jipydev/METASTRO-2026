@@ -5,7 +5,7 @@
         // 1. Definisikan Data Dummy (diupdate dengan variabel hari, scanned_by, dan contoh Izin)
         $allPanitia = [
             [
-                'nama' => 'Budi Santoso',
+                'nama' => 'HELPME',
                 'divisi' => 'Acara',
                 'jam_tap' => '07:45',
                 'hari' => 'Senin',
@@ -14,7 +14,7 @@
                 'scanned_by' => 'Azmil Ramadhan'
             ],
             [
-                'nama' => 'Siti Aminah',
+                'nama' => 'AISYAH',
                 'divisi' => 'Humas',
                 'jam_tap' => '08:15',
                 'hari' => 'Senin',
@@ -23,8 +23,8 @@
                 'scanned_by' => 'Admin'
             ],
             [
-                'nama' => 'Andi Wijaya',
-                'divisi' => 'Perlengkapan',
+                'nama' => 'RYANN',
+                'divisi' => 'Logistik',
                 'jam_tap' => '-',
                 'hari' => 'Senin',
                 'tanggal' => '20 Juli 2026',
@@ -32,7 +32,7 @@
                 'jenis_izin' => 'Sakit'
             ],
             [
-                'nama' => 'Dewi Lestari',
+                'nama' => 'JAHDANN',
                 'divisi' => 'Konsumsi',
                 'jam_tap' => '-',
                 'hari' => 'Senin',
@@ -40,7 +40,7 @@
                 'status' => 'Alpha'
             ],
             [
-                'nama' => 'Rizky Pratama',
+                'nama' => 'AZMILL H',
                 'divisi' => 'Acara',
                 'jam_tap' => '07:50',
                 'hari' => 'Senin',
