@@ -19,10 +19,10 @@
 
     </p>
 
-    <button
-        class="mt-4 w-full bg-cyan-800 text-white rounded-lg py-2 transition-transform duration-200 hover:scale-105">
-        LIHAT PRESENSI →
+    <a href="{{ $item['url'] ?? '#' }}"
+        class="mt-4 flex justify-center items-center w-full bg-cyan-800 hover:bg-cyan-900 text-white font-bold rounded-lg py-2.5 transition-transform duration-200 hover:scale-105">
+        LIHAT PRESENSI &rarr;
 
-    </button>
+    </a>
 
 </div>
