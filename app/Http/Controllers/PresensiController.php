@@ -61,6 +61,7 @@ class PresensiController extends Controller
     public function qr(QrCodeService $qrService)
     {
         $user = Auth::user();
+        $user->load('divisi');
 
         // Generate QR if not exists yet
         $qrUrl = $qrService->getQrUrl($user);
