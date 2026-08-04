@@ -10,9 +10,10 @@ class DashboardController extends Controller
     public function index()
     {
         $pengumumanList = Pengumuman::with('pembuat')
-            ->orderByDesc('tanggal_publish')
-            ->orderByDesc('created_at')
-            ->get();
+            ->latest('tanggal_publish')
+            ->paginate(5);
+
+
 
         return view('dashboard.index', [
             'title' => 'Dashboard',

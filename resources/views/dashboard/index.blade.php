@@ -1,21 +1,74 @@
+@if(session('success'))
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil',
+        text: @json(session('success')),
+        confirmButtonColor: '#105e75',
+        timer: 2200,
+        showConfirmButton: false
+    });
+
+});
+</script>
+@endif
+@if(session('error'))
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal',
+        text: @json(session('error')),
+        confirmButtonColor: '#dc2626'
+    });
+
+});
+</script>
+@endif
 <x-app-layout>
     <!-- TAMBAHKAN x-data DI SINI UNTUK MENGONTROL MODAL -->
     <div x-data="{
+        /* =========================
+               PENGUMUMAN
+           ========================= */
+    
+        openTambahPengumuman: false,
     
         openEditPengumuman: false,
     
+        openDeletePengumuman: false,
+    
         selectedPengumuman: {
+            id: null,
             judul: '',
             isi: '',
-            status: 'Publish',
+            status: 'Draft',
             tanggal_publish: '',
             lampiran: null
         },
+        /* =========================
+            TIMELINE
+        ========================= */
     
         openEditTimeline: false,
+    
+        /* =========================
+            IZIN
+        ========================= */
+    
         openIzinModal: false,
+    
+        /* =========================
+            NOTULENSI
+        ========================= */
+    
         openAddNotulensi: false,
+    
         openViewNotulensi: false,
+    
         notulensiTitle: ''
     
     }" class="min-h-screen bg-white md:bg-gray-50 pb-10">
@@ -23,42 +76,52 @@
 
 
             <!-- =========================
-    PENGUMUMAN
+     PENGUMUMAN
 ========================= -->
 
             <div
                 class="bg-[#f2f7fb] md:bg-white md:shadow-sm rounded-2xl
-    p-6 md:col-span-2 lg:col-span-3 border md:border-gray-100">
+            p-6 md:col-span-2 lg:col-span-3 border md:border-gray-100">
 
-                <!-- Header -->
                 <div class="flex items-center justify-between mb-6">
 
                     <div>
+
                         <h2 class="text-2xl font-bold text-[#105e75]">
+
                             Pengumuman
+
                         </h2>
 
                         <p class="text-sm text-gray-500">
+
                             Informasi terbaru panitia.
+
                         </p>
+
                     </div>
 
                     @role('Admin|Sekretaris')
                         <button
                             @click="
-
-selectedPengumuman={
+selectedPengumuman = {
+    id:null,
     judul:'',
     isi:'',
-    status:'Publish',
+    status:'Draft',
     tanggal_publish:'',
     lampiran:null
 };
 
-openEditPengumuman=true;
-
+openTambahPengumuman=true;
 "
-                            class="bg-[#105e75] text-white px-5 py-2 rounded-xl">
+                            class="bg-[#105e75]
+                       hover:bg-[#0d4d61]
+                       text-white
+                       px-5
+                       py-2
+                       rounded-xl
+                       transition">
 
                             + Tambah
 
@@ -68,83 +131,73 @@ openEditPengumuman=true;
                 </div>
 
                 @forelse($pengumumanList as $item)
-                    <div class="bg-white border rounded-2xl p-6 mb-5 shadow-sm">
+                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-5">
 
-                        <!-- Header Card -->
                         <div class="flex justify-between items-start">
 
                             <div>
 
                                 <h3 class="text-xl font-bold text-[#105e75]">
+
                                     {{ $item->judul }}
+
                                 </h3>
 
-                                <p class="text-sm text-gray-400 mt-1">
+                                <div class="mt-1 text-sm text-gray-500">
 
                                     Publish
+
                                     {{ optional($item->tanggal_publish)->translatedFormat('d F Y H:i') }}
 
                                     •
 
                                     {{ $item->pembuat?->name }}
 
-                                </p>
+                                </div>
 
                             </div>
 
                             @role('Admin|Sekretaris')
-                               ` <div class="flex gap-2">
+                                <div class="flex gap-2">
 
-                                    <!-- EDIT -->
-
-                                 <button
-    type="button"
-    data-item='@json($item)'
-    @click="
+                                    <button type="button" data-item='@json($item)'
+                                        @click="
         selectedPengumuman = JSON.parse($el.dataset.item);
         openEditPengumuman = true;
     "
-    class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg">
+                                        class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg">
 
-    Edit
+                                        Edit
 
-</button>
+                                    </button>
 
-                                    <!-- HAPUS -->
+                                    <button type="button" data-item='@json([
+                                        'id' => $item->id,
+                                        'judul' => $item->judul,
+                                    ])'
+                                        @click="
+        selectedPengumuman = JSON.parse($el.dataset.item);
+        openDeletePengumuman = true;
+    "
+                                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
 
-                                    <form action="{{ route('pengumuman.destroy', $item->id) }}" method="POST"
-                                        onsubmit="return confirm('Hapus pengumuman ini?')">
-
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <button type="submit"
-                                            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
-
-                                            Hapus
-
-                                        </button>
-
-                                    </form>
+                                        Hapus
+                                    </button>
 
                                 </div>
                             @endrole
 
                         </div>
 
-                        <!-- Isi -->
-
                         <div class="mt-5">
 
-                            <p class="text-gray-700 whitespace-pre-line leading-7">
+                            <p class="whitespace-pre-line leading-7 text-gray-700">
 
                                 {{ $item->isi }}
 
                             </p>
 
                         </div>
-
-                        <!-- Lampiran -->
 
                         @if ($item->lampiran)
                             <div class="mt-5">
@@ -159,29 +212,35 @@ openEditPengumuman=true;
                             </div>
                         @endif
 
-                        <!-- Footer -->
+                        <div class="mt-6 pt-4 border-t flex justify-between items-center flex-wrap gap-3">
 
-                        <div class="mt-6 border-t pt-4 flex flex-wrap justify-between text-sm text-gray-500">
+                            <div class="text-sm text-gray-500">
 
-                            <span>
-
-                                Status :
-
-                                <span class="font-semibold">
-
-                                    {{ $item->status }}
-
-                                </span>
-
-                            </span>
-
-                            <span>
-
-                                Dibuat :
+                                Dibuat
 
                                 {{ $item->created_at->translatedFormat('d F Y') }}
 
-                            </span>
+                            </div>
+
+                            <div>
+
+                                @if ($item->status == 'Publish')
+                                    <span
+                                        class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+
+                                        Publish
+
+                                    </span>
+                                @else
+                                    <span
+                                        class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold">
+
+                                        Draft
+
+                                    </span>
+                                @endif
+
+                            </div>
 
                         </div>
 
@@ -205,12 +264,18 @@ openEditPengumuman=true;
 
                         <p class="text-gray-400 mt-2">
 
-                            Klik tombol <strong>Tambah</strong> untuk membuat pengumuman pertama.
+                            Belum terdapat pengumuman.
 
                         </p>
 
                     </div>
                 @endforelse
+
+                <div class="mt-8">
+
+                    {{ $pengumumanList->links() }}
+
+                </div>
 
             </div>
 
@@ -312,56 +377,65 @@ openEditPengumuman=true;
                 <!-- HEADER NOTULENSI DENGAN TOMBOL PLUS -->
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-[#105e75] font-bold text-lg md:text-xl">Notulensi</h2>
-                    <button @click="openAddNotulensi = true" 
-                            class="text-white bg-[#105e75] hover:bg-[#0b4354] rounded-full p-1.5 transition shadow-sm flex items-center justify-center">
+                    <button @click="openAddNotulensi = true"
+                        class="text-white bg-[#105e75] hover:bg-[#0b4354] rounded-full p-1.5 transition shadow-sm flex items-center justify-center">
                         <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
+                            </path>
                         </svg>
                     </button>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                    @foreach($notulensi_list as $rabes)
-                    <div
-                        class="flex justify-between items-center md:bg-gray-50 md:p-4 rounded-xl md:border md:border-gray-100 mb-3 md:mb-0">
-                        <span
-                            class="text-[#105e75] font-bold text-sm md:text-base">{{ $rabes->judul }}</span>
-                            
-                        <div class="flex space-x-2 items-center">
-                            <button
-                                <button @click="openViewNotulensi = true; notulensiTitle = 'Notulensi {{ $rabes->judul }}'" class="bg-[#105e75] hover:bg-[#0b4354] text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition">Lihat</button>
-                            <button
-                                class="text-[#105e75] hover:text-red-600 md:hover:bg-red-50 p-1.5 rounded-md transition">
-                                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                    </path>
-                                </svg>
-                            </button>
+                    @foreach ($notulensi_list as $rabes)
+                        <div
+                            class="flex justify-between items-center md:bg-gray-50 md:p-4 rounded-xl md:border md:border-gray-100 mb-3 md:mb-0">
+                            <span class="text-[#105e75] font-bold text-sm md:text-base">{{ $rabes->judul }}</span>
+
+                            <div class="flex space-x-2 items-center">
+                                <button <button
+                                    @click="openViewNotulensi = true; notulensiTitle = 'Notulensi {{ $rabes->judul }}'"
+                                    class="bg-[#105e75] hover:bg-[#0b4354] text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition">Lihat</button>
+                                <button
+                                    class="text-[#105e75] hover:text-red-600 md:hover:bg-red-50 p-1.5 rounded-md transition">
+                                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
-                    </div>
                     @endforeach
                 </div>
             </div>
 
         </div>
 
+        {{-- =========================
+     MODAL PENGUMUMAN
+========================= --}}
+
+        <x-modal-tambah-pengumuman />
+
         <x-modal-edit-pengumuman />
+
+        <x-modal-hapus-pengumuman />
+
         <x-modal-edit-timeline />
         <x-modal-izin />
         <x-modal-view-notulensi />
 
-        
-<div x-show="openAddNotulensi" style="display: none;" class="fixed inset-0 z-999 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-        
-        
-        <div x-show="openAddNotulensi"
-             x-transition.opacity
-             class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" 
-             aria-hidden="true" 
-             @click="openAddNotulensi = false"></div>
+
+        <div x-show="openAddNotulensi" style="display: none;" class="fixed inset-0 z-999 overflow-y-auto"
+            aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+
+
+                <div x-show="openAddNotulensi" x-transition.opacity
+                    class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" aria-hidden="true"
+                    @click="openAddNotulensi = false"></div>
 
                 <!-- Modal panel -->
                 <div x-show="openAddNotulensi" x-transition:enter="ease-out duration-300"

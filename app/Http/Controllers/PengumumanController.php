@@ -10,24 +10,16 @@ use Illuminate\Support\Facades\Storage;
 class PengumumanController extends Controller
 {
     /**
-     * Mengambil satu pengumuman (dipakai Alpine.js)
-     */
-    public function show(Pengumuman $pengumuman)
-    {
-        return response()->json($pengumuman->load('pembuat'));
-    }
-
-    /**
-     * Menyimpan pengumuman baru
+     * Simpan Pengumuman
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'judul'             => 'required|string|max:255',
-            'isi'               => 'required|string',
-            'lampiran'          => 'nullable|file|max:5120',
-            'tanggal_publish'   => 'required|date',
-            'status'            => 'required|in:Draft,Publish',
+            'judul' => 'required|string|max:255',
+            'isi' => 'required|string',
+            'tanggal_publish' => 'required|date',
+            'status' => 'required|in:Draft,Publish',
+            'lampiran' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
         ]);
 
         if ($request->hasFile('lampiran')) {
@@ -43,19 +35,20 @@ class PengumumanController extends Controller
         return redirect()
             ->route('dashboard')
             ->with('success', 'Pengumuman berhasil ditambahkan.');
+            
     }
 
     /**
-     * Update pengumuman
+     * Update Pengumuman
      */
     public function update(Request $request, Pengumuman $pengumuman)
     {
         $validated = $request->validate([
-            'judul'             => 'required|string|max:255',
-            'isi'               => 'required|string',
-            'lampiran'          => 'nullable|file|max:5120',
-            'tanggal_publish'   => 'required|date',
-            'status'            => 'required|in:Draft,Publish',
+            'judul' => 'required|string|max:255',
+            'isi' => 'required|string',
+            'tanggal_publish' => 'required|date',
+            'status' => 'required|in:Draft,Publish',
+            'lampiran' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
         ]);
 
         if ($request->hasFile('lampiran')) {
@@ -80,7 +73,7 @@ class PengumumanController extends Controller
     }
 
     /**
-     * Hapus pengumuman
+     * Hapus Pengumuman
      */
     public function destroy(Pengumuman $pengumuman)
     {
@@ -96,5 +89,13 @@ class PengumumanController extends Controller
         return redirect()
             ->route('dashboard')
             ->with('success', 'Pengumuman berhasil dihapus.');
+    }
+
+    /**
+     * Detail Pengumuman (opsional)
+     */
+    public function show(Pengumuman $pengumuman)
+    {
+        return response()->json($pengumuman);
     }
 }

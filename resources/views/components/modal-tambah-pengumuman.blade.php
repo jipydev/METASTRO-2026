@@ -1,34 +1,33 @@
 <div
-    x-show="openEditPengumuman"
+    x-show="openTambahPengumuman"
     x-cloak
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
 
     <div
-        x-show="openEditPengumuman"
+        x-show="openTambahPengumuman"
         x-transition
-        @click.outside="openEditPengumuman=false"
+        @click.outside="openTambahPengumuman = false"
         class="bg-white rounded-3xl shadow-xl w-full max-w-2xl">
 
         <form
-            x-bind:action="'{{ url('pengumuman') }}/' + selectedPengumuman.id"
+            action="{{ route('pengumuman.store') }}"
             method="POST"
             enctype="multipart/form-data">
 
             @csrf
-            @method('PUT')
 
-            {{-- HEADER --}}
+            {{-- Header --}}
             <div class="flex justify-between items-center border-b px-6 py-5">
 
                 <h2 class="text-2xl font-bold text-[#105e75]">
 
-                    Edit Pengumuman
+                    Tambah Pengumuman
 
                 </h2>
 
                 <button
                     type="button"
-                    @click="openEditPengumuman=false"
+                    @click="openTambahPengumuman=false"
                     class="text-3xl text-gray-500 hover:text-red-500">
 
                     &times;
@@ -37,7 +36,7 @@
 
             </div>
 
-            {{-- BODY --}}
+            {{-- Body --}}
             <div class="p-6 space-y-6">
 
                 {{-- Judul --}}
@@ -52,9 +51,15 @@
                     <input
                         type="text"
                         name="judul"
-                        x-model="selectedPengumuman.judul"
+                        value="{{ old('judul') }}"
                         class="w-full rounded-xl border-gray-300 focus:border-[#105e75] focus:ring-[#105e75]"
                         required>
+
+                    @error('judul')
+                        <p class="text-red-500 text-sm mt-1">
+                            {{ $message }}
+                        </p>
+                    @enderror
 
                 </div>
 
@@ -70,9 +75,14 @@
                     <textarea
                         name="isi"
                         rows="6"
-                        x-model="selectedPengumuman.isi"
                         class="w-full rounded-xl border-gray-300 focus:border-[#105e75] focus:ring-[#105e75]"
-                        required></textarea>
+                        required>{{ old('isi') }}</textarea>
+
+                    @error('isi')
+                        <p class="text-red-500 text-sm mt-1">
+                            {{ $message }}
+                        </p>
+                    @enderror
 
                 </div>
 
@@ -81,7 +91,7 @@
 
                     <label class="block font-semibold mb-2">
 
-                        Ganti Lampiran
+                        Lampiran
 
                     </label>
 
@@ -90,22 +100,17 @@
                         name="lampiran"
                         class="w-full rounded-xl border-gray-300">
 
-                    <template x-if="selectedPengumuman.lampiran">
+                    <p class="text-xs text-gray-400 mt-2">
 
-                        <div class="mt-3">
+                        Maksimal 5 MB
 
-                            <a
-                                :href="'/storage/' + selectedPengumuman.lampiran"
-                                target="_blank"
-                                class="text-blue-600 hover:underline">
+                    </p>
 
-                                📎 Lihat Lampiran Saat Ini
-
-                            </a>
-
-                        </div>
-
-                    </template>
+                    @error('lampiran')
+                        <p class="text-red-500 text-sm mt-1">
+                            {{ $message }}
+                        </p>
+                    @enderror
 
                 </div>
 
@@ -121,9 +126,15 @@
                     <input
                         type="datetime-local"
                         name="tanggal_publish"
-                        x-model="selectedPengumuman.tanggal_publish"
+                        value="{{ old('tanggal_publish') }}"
                         class="w-full rounded-xl border-gray-300 focus:border-[#105e75] focus:ring-[#105e75]"
                         required>
+
+                    @error('tanggal_publish')
+                        <p class="text-red-500 text-sm mt-1">
+                            {{ $message }}
+                        </p>
+                    @enderror
 
                 </div>
 
@@ -138,7 +149,6 @@
 
                     <select
                         name="status"
-                        x-model="selectedPengumuman.status"
                         class="w-full rounded-xl border-gray-300 focus:border-[#105e75] focus:ring-[#105e75]">
 
                         <option value="Draft">
@@ -147,7 +157,7 @@
 
                         </option>
 
-                        <option value="Publish">
+                        <option value="Publish" selected>
 
                             Publish
 
@@ -155,16 +165,22 @@
 
                     </select>
 
+                    @error('status')
+                        <p class="text-red-500 text-sm mt-1">
+                            {{ $message }}
+                        </p>
+                    @enderror
+
                 </div>
 
             </div>
 
-            {{-- FOOTER --}}
+            {{-- Footer --}}
             <div class="border-t px-6 py-5 flex justify-end gap-3">
 
                 <button
                     type="button"
-                    @click="openEditPengumuman=false"
+                    @click="openTambahPengumuman=false"
                     class="px-5 py-2 rounded-xl border border-gray-300 hover:bg-gray-100">
 
                     Batal
@@ -173,9 +189,9 @@
 
                 <button
                     type="submit"
-                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-xl">
+                    class="bg-[#105e75] hover:bg-[#0d4d61] text-white px-6 py-2 rounded-xl">
 
-                    Update Pengumuman
+                    Simpan
 
                 </button>
 
