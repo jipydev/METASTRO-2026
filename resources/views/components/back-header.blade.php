@@ -1,12 +1,8 @@
-<div class="mb-6">
+<div class="mb-6 flex flex-col items-start">
 
-    <h1 class="text-3xl font-bold text-cyan-800">
-        {{ $title }}
-    </h1>
-
+    <!-- Tombol Kembali (Di atas) -->
     <a href="{{ $href }}"
-        class="mt-2 inline-flex items-center gap-1 text-gray-600 hover:text-cyan-700 transition">
-
+        class="mb-2 inline-flex items-center gap-1 text-gray-600 hover:text-cyan-700 transition">
         <svg xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -21,7 +17,11 @@
         <span class="text-base font-medium">
             Kembali
         </span>
-
     </a>
+
+    <!-- Judul Title (Di bawah) -->
+    <h1 class="text-3xl font-bold text-cyan-800">
+        {{ $title }}
+    </h1>
 
 </div>
