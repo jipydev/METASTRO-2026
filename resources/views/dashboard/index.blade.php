@@ -118,8 +118,6 @@
                             <button
                                 <button @click="openViewNotulensi = true; notulensiTitle = 'Notulensi {{ $rabes->judul }}'" class="bg-[#105e75] hover:bg-[#0b4354] text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition">Lihat</button>
                             <button
-                                class="bg-[#105e75] hover:bg-[#0b4354] text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition">Upload</button>
-                            <button
                                 class="text-[#105e75] hover:text-red-600 md:hover:bg-red-50 p-1.5 rounded-md transition">
                                 <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
