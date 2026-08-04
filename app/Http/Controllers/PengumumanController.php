@@ -2,64 +2,99 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\pengumuman;
+use App\Models\Pengumuman;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PengumumanController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Mengambil satu pengumuman (dipakai Alpine.js)
      */
-    public function index()
+    public function show(Pengumuman $pengumuman)
     {
-        //
+        return response()->json($pengumuman->load('pembuat'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Menyimpan pengumuman baru
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'judul'             => 'required|string|max:255',
+            'isi'               => 'required|string',
+            'lampiran'          => 'nullable|file|max:5120',
+            'tanggal_publish'   => 'required|date',
+            'status'            => 'required|in:Draft,Publish',
+        ]);
+
+        if ($request->hasFile('lampiran')) {
+            $validated['lampiran'] = $request
+                ->file('lampiran')
+                ->store('pengumuman', 'public');
+        }
+
+        $validated['pembuat_id'] = Auth::id();
+
+        Pengumuman::create($validated);
+
+        return redirect()
+            ->route('dashboard')
+            ->with('success', 'Pengumuman berhasil ditambahkan.');
     }
 
     /**
-     * Display the specified resource.
+     * Update pengumuman
      */
-    public function show(pengumuman $pengumuman)
+    public function update(Request $request, Pengumuman $pengumuman)
     {
-        //
+        $validated = $request->validate([
+            'judul'             => 'required|string|max:255',
+            'isi'               => 'required|string',
+            'lampiran'          => 'nullable|file|max:5120',
+            'tanggal_publish'   => 'required|date',
+            'status'            => 'required|in:Draft,Publish',
+        ]);
+
+        if ($request->hasFile('lampiran')) {
+
+            if (
+                $pengumuman->lampiran &&
+                Storage::disk('public')->exists($pengumuman->lampiran)
+            ) {
+                Storage::disk('public')->delete($pengumuman->lampiran);
+            }
+
+            $validated['lampiran'] = $request
+                ->file('lampiran')
+                ->store('pengumuman', 'public');
+        }
+
+        $pengumuman->update($validated);
+
+        return redirect()
+            ->route('dashboard')
+            ->with('success', 'Pengumuman berhasil diperbarui.');
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Hapus pengumuman
      */
-    public function edit(pengumuman $pengumuman)
+    public function destroy(Pengumuman $pengumuman)
     {
-        //
-    }
+        if (
+            $pengumuman->lampiran &&
+            Storage::disk('public')->exists($pengumuman->lampiran)
+        ) {
+            Storage::disk('public')->delete($pengumuman->lampiran);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, pengumuman $pengumuman)
-    {
-        //
-    }
+        $pengumuman->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(pengumuman $pengumuman)
-    {
-        //
+        return redirect()
+            ->route('dashboard')
+            ->with('success', 'Pengumuman berhasil dihapus.');
     }
 }

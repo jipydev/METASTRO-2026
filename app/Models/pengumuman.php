@@ -4,24 +4,61 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Pengumuman extends Model
 {
     use HasFactory;
 
-    protected $table='pengumuman';
+    protected $table = 'pengumuman';
 
-    protected $fillable=[
+    protected $fillable = [
         'judul',
         'isi',
         'lampiran',
         'tanggal_publish',
         'status',
-        'pembuat_id'
+        'pembuat_id',
     ];
 
-    public function pembuat()
+    protected $casts = [
+        'tanggal_publish' => 'datetime',
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relasi
+    |--------------------------------------------------------------------------
+    */
+
+    public function pembuat(): BelongsTo
     {
-        return $this->belongsTo(User::class,'pembuat_id');
+        return $this->belongsTo(User::class, 'pembuat_id');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scope
+    |--------------------------------------------------------------------------
+    */
+
+    public function scopePublish($query)
+    {
+        return $query->where('status', 'Publish');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Accessor
+    |--------------------------------------------------------------------------
+    */
+
+    public function getLampiranUrlAttribute()
+    {
+        if (!$this->lampiran) {
+            return null;
+        }
+
+        return asset('storage/' . $this->lampiran);
     }
 }

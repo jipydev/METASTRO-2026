@@ -2,24 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Pengumuman; // Panggil Model Pengumuman
-use App\Models\Rapat;      // Panggil Model Rapat
+use App\Models\Pengumuman;
+use App\Models\Rapat;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // 1. Data standar halaman
-        $data = [
-            'title' => "Dashboard",
-            'pengumuman' => Pengumuman::where('status', 'Publish')->latest()->first(),
-            'rapatTerbaru' => Rapat::latest()->first(),
-            'notulensi_list' => Rapat::all(),
-        ];
+        $pengumumanList = Pengumuman::with('pembuat')
+            ->orderByDesc('tanggal_publish')
+            ->orderByDesc('created_at')
+            ->get();
 
-        // Kirim semua variabel ke view dashboard.index
-        return view('dashboard.index', $data);
+        return view('dashboard.index', [
+            'title' => 'Dashboard',
+
+            // Semua pengumuman
+            'pengumumanList' => $pengumumanList,
+
+            // Pengumuman terbaru
+            'pengumumanTerbaru' => $pengumumanList->first(),
+
+            'rapatTerbaru' => Rapat::latest()->first(),
+
+            'notulensi_list' => Rapat::latest()->get(),
+        ]);
     }
 }

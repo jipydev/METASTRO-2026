@@ -6,10 +6,12 @@ use App\Http\Controllers\ListPanitiaController;
 use App\Http\Controllers\PresensiController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PengumumanController;
 
 Route::get('/', function () {
     return view('dashboard.landingPage');
 });
+
 
 
 /*
@@ -17,8 +19,38 @@ Route::get('/', function () {
 | Dashboard
 |--------------------------------------------------------------------------
 */
+
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Pengumuman
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware([
+    'auth',
+    'verified',
+    'role:Admin|Sekretaris'
+])->prefix('pengumuman')
+  ->name('pengumuman.')
+  ->group(function () {
+
+    Route::get('/{pengumuman}', [PengumumanController::class,'show'])
+        ->name('show');
+
+    Route::post('/', [PengumumanController::class,'store'])
+        ->name('store');
+
+    Route::put('/{pengumuman}', [PengumumanController::class,'update'])
+        ->name('update');
+
+    Route::delete('/{pengumuman}', [PengumumanController::class,'destroy'])
+        ->name('destroy');
 });
 
 
