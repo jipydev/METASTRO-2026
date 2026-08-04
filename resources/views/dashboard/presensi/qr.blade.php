@@ -8,7 +8,7 @@
 
                 @include('components.back-header', [
                 'href' => route('dashboard'),
-                'title' => 'Lihat Presensi'
+                'title' => $title
             ])
 
                 @include('components.profile-card',[

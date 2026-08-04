@@ -17,6 +17,7 @@ class PermissionSeeder extends Seeder
             'ubah pengumuman',
             'scan presensi',
             'lihat presensi',
+            'lihat timeline',
             'tambah timeline',
             'ubah timeline',
             'hapus timeline',

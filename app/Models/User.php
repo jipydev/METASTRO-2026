@@ -47,7 +47,6 @@ class User extends Authenticatable implements PasskeyUser
         PasskeyAuthenticatable,
         TwoFactorAuthenticatable;
 
-
     protected function casts(): array
     {
         return [
@@ -61,6 +60,16 @@ class User extends Authenticatable implements PasskeyUser
     | Relasi
     |--------------------------------------------------------------------------
     */
+
+    public function presensi()
+    {
+        return $this->hasMany(Presensi::class);
+    }
+
+    public function scannedPresensis()
+    {
+        return $this->hasMany(Presensi::class, 'scanned_by_user_nim', 'nim');
+    }
 
     public function divisi()
     {

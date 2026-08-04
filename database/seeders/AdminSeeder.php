@@ -11,7 +11,7 @@ class AdminSeeder extends Seeder
     {
         $admin = User::firstOrCreate(
             [
-                'nim' => '12345678',
+                'nim' => '1234567',
                 'name' => 'Administrator',
                 'password' => bcrypt('kastatertinggi'),
                 'status_aktif' => true,

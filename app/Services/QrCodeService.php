@@ -47,7 +47,7 @@ class QrCodeService
         $qrData = json_encode([
             'user_id' => $user->id,
             'token' => $user->qr_token,
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $renderer = new ImageRenderer(
             new RendererStyle(300, 2),
@@ -57,9 +57,11 @@ class QrCodeService
         $writer = new Writer($renderer);
         $svgContent = $writer->writeString($qrData);
 
-        // Save to storage
+        $disk = Storage::disk('public');
+        $disk->makeDirectory('qrcodes');
+
         $filename = "qrcodes/user_{$user->id}.svg";
-        Storage::disk('public')->put($filename, $svgContent);
+        $disk->put($filename, $svgContent);
 
         return $filename;
     }
@@ -82,8 +84,9 @@ class QrCodeService
     public function getQrUrl(User $user): ?string
     {
         $filename = "qrcodes/user_{$user->id}.svg";
+        $disk = Storage::disk('public');
 
-        if (Storage::disk('public')->exists($filename)) {
+        if ($disk->exists($filename)) {
             return Storage::url($filename);
         }
 

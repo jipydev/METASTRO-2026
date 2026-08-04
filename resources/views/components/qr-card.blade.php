@@ -2,7 +2,7 @@
 
     @if(isset($qrUrl) && $qrUrl)
         <img
-            src="{{ $qrUrl }}"
+            src="{{ url($qrUrl) }}"
             alt="QR Code Absensi"
             class="w-56 h-56 object-contain">
         <p class="text-xs text-gray-400 mt-3 text-center">Tunjukkan QR ini saat absensi</p>

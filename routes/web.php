@@ -9,6 +9,7 @@ use App\Http\Controllers\PresensiController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PengumumanController;
+use App\Http\Controllers\TimelineController;
 
 Route::get('/', function () {
     return view('dashboard.landingPage');
@@ -39,21 +40,21 @@ Route::middleware([
     'verified',
     'role:Admin|Sekretaris'
 ])->prefix('pengumuman')
-  ->name('pengumuman.')
-  ->group(function () {
+    ->name('pengumuman.')
+    ->group(function () {
 
-    Route::get('/{pengumuman}', [PengumumanController::class,'show'])
-        ->name('show');
+        Route::get('/{pengumuman}', [PengumumanController::class, 'show'])
+            ->name('show');
 
-    Route::post('/', [PengumumanController::class,'store'])
-        ->name('store');
+        Route::post('/', [PengumumanController::class, 'store'])
+            ->name('store');
 
-    Route::put('/{pengumuman}', [PengumumanController::class,'update'])
-        ->name('update');
+        Route::put('/{pengumuman}', [PengumumanController::class, 'update'])
+            ->name('update');
 
-    Route::delete('/{pengumuman}', [PengumumanController::class,'destroy'])
-        ->name('destroy');
-});
+        Route::delete('/{pengumuman}', [PengumumanController::class, 'destroy'])
+            ->name('destroy');
+    });
 
 
 /*
@@ -86,28 +87,19 @@ Route::middleware('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Lihat List Panitia
+| Lihat List Presensi
 |--------------------------------------------------------------------------
 */
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Ranger|Sekretaris'
+    'permission:lihat presensi'
 ])->group(function () {
+    Route::get('/dashboard/Presensi', [PresensiController::class, 'index'])
+        ->name('dashboard.presensi.index');
 
-    Route::get('/lihat', [PresensiController::class, 'lihat'])
-        ->name('kegiatan.lihat');
-});
-
-
-//list panitia
-Route::middleware([
-    'auth',
-    'verified',
-    'role:Admin|Ranger|Sekretaris'
-])->group(function () {
-    Route::get('/lihat/list', [ListPanitiaController::class, 'index'])
-        ->name('kegiatan.ListPanitia');
+    Route::get('/dashboard/presensi/{timeline_slug}', [PresensiController::class, 'show'])
+        ->name('dashboard.presensi.show');
 });
 
 
@@ -120,11 +112,9 @@ Route::middleware([
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Panitia|Ranger|Sekretaris|Pengawas'
 ])->group(function () {
-
-    Route::get('/qr', [PresensiController::class, 'index'])
-        ->name('kegiatan.QR');
+    Route::get('/presensi/qr', [PresensiController::class, 'qr'])
+        ->name('dashboard.presensi.qr');
 });
 
 /*

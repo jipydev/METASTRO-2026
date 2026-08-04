@@ -231,7 +231,7 @@ openEditPengumuman=true;
 
                 <div class="flex flex-wrap lg:flex-nowrap gap-2 md:gap-3">
                     {{-- qr --}}
-                    <a href="{{ url('/qr') }}"
+                    <a href="{{ route('dashboard.presensi.qr') }}"
                         class="cursor-pointer flex-1 min-w-30 bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center gap-1 transition">
                         <span class="icon-[material-symbols--qr-code] size-4 md:size-5"></span>
                         QR ABSEN
@@ -258,7 +258,7 @@ openEditPengumuman=true;
 
                     {{-- lihat presensi --}}
                     @can('lihat presensi')
-                        <a href="{{ url('/lihat') }}"
+                        <a href="{{ route('dashboard.presensi.index') }}"
                             class="cursor-pointer flex-1 min-w-30 bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center transition gap-1">
                             <span class="icon-[mdi--eye]"></span>
                             LIHAT</a>
