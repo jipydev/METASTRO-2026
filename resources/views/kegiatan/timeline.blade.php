@@ -1,0 +1,250 @@
+<x-app-layout>
+    <div x-data="{
+        openEditTimeline: false,
+        selectedTimeline: {
+            id: null,
+            judul: '',
+            tanggal: '',
+            jam: '',
+            tempat: ''
+        }
+    }" class="min-h-screen bg-gray-100">
+
+        {{-- ===== MOBILE LAYOUT (< md) ===== --}}
+        <div class="md:hidden py-6 px-4">
+            <div class="bg-white rounded-[28px] p-6 min-h-[calc(100vh-6rem)] shadow-sm">
+
+                {{-- Header --}}
+                <div class="flex justify-between items-start mb-5">
+                    <div>
+                        <h1 class="text-[22px] font-bold text-[#105e75] leading-tight">
+                            Timeline
+                        </h1>
+                        <a href="{{ route('dashboard') }}"
+                           class="mt-1.5 inline-flex items-center gap-0.5 text-gray-500 hover:text-[#105e75] transition font-medium text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                            </svg>
+                            <span>kembali</span>
+                        </a>
+                    </div>
+
+                    @role('Admin|Sekretaris')
+                        <button @click="
+                            selectedTimeline = { id: null, judul: '', tanggal: '', jam: '', tempat: '' };
+                            openEditTimeline = true;
+                        " class="bg-[#105e75] hover:bg-[#0b4d61] text-white font-semibold text-xs px-4 py-2 rounded-xl transition shadow-sm flex items-center gap-1 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            <span>Tambah</span>
+                        </button>
+                    @endrole
+                </div>
+
+                @if(session('success'))
+                    <div class="mb-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-xs font-medium">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                {{-- Timeline Cards --}}
+                <div class="space-y-3">
+                    @forelse($timelines as $item)
+                        @php
+                            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY');
+                            $formattedTime = \Carbon\Carbon::parse($item->jam)->format('H.i');
+                            $timeInput = \Carbon\Carbon::parse($item->jam)->format('H:i');
+                            $dateInput = \Carbon\Carbon::parse($item->tanggal)->format('Y-m-d');
+                            $itemData = [
+                                'id' => $item->id,
+                                'judul' => $item->judul,
+                                'tanggal' => $dateInput,
+                                'jam' => $timeInput,
+                                'tempat' => $item->tempat
+                            ];
+                        @endphp
+
+                        <div class="bg-[#edf6fc] rounded-2xl p-4 relative">
+                            <h3 class="text-[#105e75] font-bold text-[15px] mb-0.5">
+                                {{ $item->judul }}
+                            </h3>
+                            <p class="text-gray-700 text-[13px]">{{ $formattedDate }}</p>
+                            <p class="text-gray-700 text-[13px]">pukul {{ $formattedTime }}</p>
+                            <p class="text-gray-700 text-[13px]">{{ $item->tempat }}</p>
+
+                            @role('Admin|Sekretaris')
+                                <div class="flex gap-2 mt-3">
+                                    <button
+                                        data-item='@json($itemData)'
+                                        @click.stop="
+                                            selectedTimeline = JSON.parse($el.dataset.item);
+                                            openEditTimeline = true;
+                                        "
+                                        class="flex-1 bg-[#105e75] hover:bg-[#0b4d61] text-white text-xs font-semibold py-2 rounded-lg transition flex items-center justify-center gap-1 cursor-pointer">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                        </svg>
+                                        Edit
+                                    </button>
+                                    <form action="{{ route('timeline.destroy', $item->id) }}" method="POST"
+                                          onsubmit="return confirm('Hapus timeline {{ $item->judul }}?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="bg-red-500 hover:bg-red-600 text-white text-xs font-semibold py-2 px-4 rounded-lg transition flex items-center gap-1 cursor-pointer">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            @endrole
+                        </div>
+                    @empty
+                        <div class="text-center py-16">
+                            <div class="text-5xl mb-3">📅</div>
+                            <p class="font-semibold text-sm text-gray-500">Belum ada timeline.</p>
+                            @role('Admin|Sekretaris')
+                                <p class="text-xs text-gray-400 mt-1">Klik tombol <strong>+ Tambah</strong> untuk menambahkan.</p>
+                            @endrole
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
+        {{-- ===== DESKTOP LAYOUT (md+) ===== --}}
+        <div class="hidden md:block py-10 px-6 lg:px-8">
+            <div class="max-w-5xl mx-auto">
+
+                {{-- Header --}}
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-3xl lg:text-4xl font-bold text-[#105e75]">
+                            Timeline
+                        </h1>
+                        <a href="{{ route('dashboard') }}"
+                           class="mt-2 inline-flex items-center gap-1 text-gray-500 hover:text-[#105e75] transition font-medium text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                            </svg>
+                            <span>kembali</span>
+                        </a>
+                    </div>
+
+                    @role('Admin|Sekretaris')
+                        <button @click="
+                            selectedTimeline = { id: null, judul: '', tanggal: '', jam: '', tempat: '' };
+                            openEditTimeline = true;
+                        " class="bg-[#105e75] hover:bg-[#0b4d61] text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition shadow-sm flex items-center gap-2 cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            <span>Tambah Timeline</span>
+                        </button>
+                    @endrole
+                </div>
+
+                @if(session('success'))
+                    <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-sm font-medium">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                {{-- Grid Cards --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    @forelse($timelines as $item)
+                        @php
+                            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY');
+                            $formattedTime = \Carbon\Carbon::parse($item->jam)->format('H.i');
+                            $timeInput = \Carbon\Carbon::parse($item->jam)->format('H:i');
+                            $dateInput = \Carbon\Carbon::parse($item->tanggal)->format('Y-m-d');
+                            $itemData = [
+                                'id' => $item->id,
+                                'judul' => $item->judul,
+                                'tanggal' => $dateInput,
+                                'jam' => $timeInput,
+                                'tempat' => $item->tempat
+                            ];
+                        @endphp
+
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-6 relative group">
+                            {{-- Accent bar --}}
+                            <div class="absolute top-0 left-0 w-1.5 h-full bg-[#105e75] rounded-l-2xl"></div>
+
+                            <div class="pl-3">
+                                <h3 class="text-[#105e75] font-bold text-lg mb-2">
+                                    {{ $item->judul }}
+                                </h3>
+
+                                <div class="space-y-1 text-gray-600 text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-[#105e75] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span>{{ $formattedDate }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-[#105e75] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span>Pukul {{ $formattedTime }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-[#105e75] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                        <span>{{ $item->tempat }}</span>
+                                    </div>
+                                </div>
+
+                                @role('Admin|Sekretaris')
+                                    <div class="flex gap-2 mt-4 pt-3 border-t border-gray-100">
+                                        <button
+                                            data-item='@json($itemData)'
+                                            @click.stop="
+                                                selectedTimeline = JSON.parse($el.dataset.item);
+                                                openEditTimeline = true;
+                                            "
+                                            class="flex-1 bg-[#105e75] hover:bg-[#0b4d61] text-white text-xs font-semibold py-2 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                            </svg>
+                                            Edit
+                                        </button>
+                                        <form action="{{ route('timeline.destroy', $item->id) }}" method="POST"
+                                              onsubmit="return confirm('Hapus timeline {{ $item->judul }}?')"
+                                              class="flex-1">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                    class="w-full bg-red-500 hover:bg-red-600 text-white text-xs font-semibold py-2 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endrole
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-span-full text-center py-20">
+                            <div class="text-6xl mb-4">📅</div>
+                            <h3 class="text-xl font-bold text-gray-400">Belum ada timeline</h3>
+                            @role('Admin|Sekretaris')
+                                <p class="text-gray-400 mt-2 text-sm">Klik tombol <strong>+ Tambah Timeline</strong> untuk memulai.</p>
+                            @endrole
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
+        <x-modal-edit-timeline />
+    </div>
+</x-app-layout>

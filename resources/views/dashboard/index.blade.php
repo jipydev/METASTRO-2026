@@ -13,6 +13,13 @@
         },
     
         openEditTimeline: false,
+        selectedTimeline: {
+            id: null,
+            judul: '',
+            tanggal: '',
+            jam: '',
+            tempat: ''
+        },
         openIzinModal: false,
         openAddNotulensi: false,
         openViewNotulensi: false,
@@ -272,15 +279,25 @@ openEditPengumuman=true;
                 class="bg-[#f2f7fb] md:bg-white md:shadow-sm rounded-2xl p-5 md:p-6 relative border md:border-gray-100 h-full">
                 <h2 class="text-[#105e75] font-bold text-lg md:text-xl mb-3">Timeline</h2>
 
-                {{-- tambah timeline --}}
+                {{-- tambah/edit timeline --}}
                 @can('tambah timeline')
-                    <button @click="openEditTimeline = true"
-                        class="absolute top-5 right-5 text-[#105e75] hover:scale-110 transition">
-                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
-                            </path>
-                        </svg>
+                    @php
+                        $rapatData = $rapatTerbaru ? [
+                            'id' => $rapatTerbaru->id,
+                            'judul' => $rapatTerbaru->judul,
+                            'tanggal' => \Carbon\Carbon::parse($rapatTerbaru->tanggal)->format('Y-m-d'),
+                            'jam' => \Carbon\Carbon::parse($rapatTerbaru->jam)->format('H:i'),
+                            'tempat' => $rapatTerbaru->tempat
+                        ] : null;
+                    @endphp
+                    <button 
+                        @if($rapatData)
+                            data-item='@json($rapatData)'
+                            @click="selectedTimeline = JSON.parse($el.dataset.item); openEditTimeline = true;"
+                        @else
+                            @click="selectedTimeline = { id: null, judul: '', tanggal: '', jam: '', tempat: '' }; openEditTimeline = true;"
+                        @endif
+                        class="absolute top-5 right-5 text-[#105e75] hover:scale-110 transition cursor-pointer">
                     </button>
                 @endcan
 
@@ -289,15 +306,15 @@ openEditPengumuman=true;
                     <div>
                         <p class="font-bold mb-1 text-base md:text-lg">{{ $rapatTerbaru->judul ?? 'Tidak ada jadwal' }}
                         </p>
-                        <p>{{ $rapatTerbaru->tanggal ?? '-' }}</p>
-                        <p>pukul {{ $rapatTerbaru->jam ?? '-' }}</p>
+                        <p>{{ $rapatTerbaru ? \Carbon\Carbon::parse($rapatTerbaru->tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') : '-' }}</p>
+                        <p>pukul {{ $rapatTerbaru ? \Carbon\Carbon::parse($rapatTerbaru->jam)->format('H.i') : '-' }}</p>
                         <div class="flex justify-between items-end mt-4">
                             <p class="font-semibold">{{ $rapatTerbaru->tempat ?? '-' }}</p>
                         </div>
                     </div>
 
                     {{-- lihat timeline --}}
-                    <a href="#"
+                    <a href="{{ route('timeline.index') }}"
                         class="text-primary-400 rounded-md font-bold text-sm leading-none transition flex justify-between items-center mt-4">
                         Lihat selengkapnya
                         <span class="icon-[ep--d-arrow-right]"></span>

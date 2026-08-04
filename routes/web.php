@@ -9,6 +9,7 @@ use App\Http\Controllers\PresensiController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PengumumanController;
+use App\Http\Controllers\TimelineController;
 
 Route::get('/', function () {
     return view('dashboard.landingPage');
@@ -54,6 +55,38 @@ Route::middleware([
     Route::delete('/{pengumuman}', [PengumumanController::class,'destroy'])
         ->name('destroy');
 });
+
+
+/*
+|--------------------------------------------------------------------------
+| Timeline
+|--------------------------------------------------------------------------
+*/
+// View: Semua role yang terautentikasi
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/timeline', [TimelineController::class, 'index'])
+        ->name('timeline.index');
+});
+
+// CRUD: Hanya Admin & Sekretaris
+Route::middleware([
+    'auth',
+    'verified',
+    'role:Admin|Sekretaris'
+])->prefix('timeline')
+  ->name('timeline.')
+  ->group(function () {
+
+    Route::post('/', [TimelineController::class, 'store'])
+        ->name('store');
+
+    Route::put('/{timeline}', [TimelineController::class, 'update'])
+        ->name('update');
+
+    Route::delete('/{timeline}', [TimelineController::class, 'destroy'])
+        ->name('destroy');
+});
+
 
 
 /*

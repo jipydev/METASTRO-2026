@@ -23,7 +23,13 @@ class DashboardController extends Controller
             // Pengumuman terbaru
             'pengumumanTerbaru' => $pengumumanList->first(),
 
-            'rapatTerbaru' => Rapat::latest()->first(),
+            'rapatTerbaru' => Rapat::where('tanggal', '>=', now()->toDateString())
+                                ->orderBy('tanggal', 'asc')
+                                ->orderBy('jam', 'asc')
+                                ->first() 
+                            ?? Rapat::orderBy('tanggal', 'desc')
+                                ->orderBy('jam', 'desc')
+                                ->first(),
 
             'notulensi_list' => Rapat::latest()->get(),
         ]);
