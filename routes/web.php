@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\ListPanitiaController;
 use App\Http\Controllers\PresensiController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
@@ -62,9 +63,20 @@ Route::middleware([
 
     Route::get('/lihat', [PresensiController::class, 'lihat'])
         ->name('kegiatan.lihat');
-    Route::get('/lihat/list', [PresensiController::class, 'listPanitia'])
-        ->name('kegiatan.listPanitia');
 });
+
+
+//list panitia
+Route::middleware([
+    'auth',
+    'verified',
+    'role:Admin|Ranger|Sekretaris'
+])->group(function () {
+    Route::get('/lihat/list', [ListPanitiaController::class, 'index'])
+        ->name('kegiatan.ListPanitia');
+});
+
+
 
 /*
 |--------------------------------------------------------------------------
