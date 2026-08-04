@@ -20,6 +20,11 @@ return new class extends Migration
                 ->on('jabatan')
                 ->nullOnDelete();
 
+            $table->foreign('role_id')
+                ->references('id')
+                ->on('roles')
+                ->nullOnDelete();
+
         });
     }
 
@@ -29,7 +34,7 @@ return new class extends Migration
 
             $table->dropForeign(['divisi_id']);
             $table->dropForeign(['jabatan_id']);
-
+            $table->dropForeign(['role_id']);
         });
     }
 };

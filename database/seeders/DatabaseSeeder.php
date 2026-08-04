@@ -12,9 +12,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            PermissionSeeder::class,
             RoleSeeder::class,
+            JabatanSeeder::class,
+            DivisiSeeder::class,
             AdminSeeder::class,
-            // Tambahkan dua baris ini:
+            UserSeeder::class,
             PengumumanSeeder::class,
             RapatSeeder::class,
         ]);

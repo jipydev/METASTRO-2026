@@ -38,6 +38,7 @@ return new class extends Migration
 
            $table->unsignedBigInteger('divisi_id')->nullable();
            $table->unsignedBigInteger('jabatan_id')->nullable();
+           $table->unsignedBigInteger('role_id')->nullable();
 
             $table->timestamp('email_verified_at')->nullable();
 

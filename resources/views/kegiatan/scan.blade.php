@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Scan QR Panitia</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
@@ -130,9 +131,8 @@
                         });
 
                         if (code) {
-                            this.isScanning = false
-                            let idPanitia = code.data;
-                            this.fetchDataFromBackend(idPanitia);
+                            this.isScanning = false;
+                            this.processQrData(code.data);
                         }
                     }
 
@@ -155,29 +155,70 @@
 
                     if (code) {
                         this.isScanning = false;
-                        let idPanitia = code.data;
-                        this.fetchDataFromBackend(idPanitia);
+                        this.processQrData(code.data);
                     } else {
                         this.showToast("QR Code tidak terbaca. Pastikan fokus dan coba lagi.", "error");
                     }
                 },
 
-                async fetchDataFromBackend(id) {
+                /**
+                 * Parse QR data and lookup user from backend.
+                 */
+                processQrData(rawData) {
+                    let qrPayload;
+                    try {
+                        qrPayload = JSON.parse(rawData);
+                    } catch (e) {
+                        this.showToast("QR Code tidak valid. Format tidak dikenali.", "error");
+                        this.resumeScanning();
+                        return;
+                    }
+
+                    if (!qrPayload.token) {
+                        this.showToast("QR Code tidak valid. Token tidak ditemukan.", "error");
+                        this.resumeScanning();
+                        return;
+                    }
+
+                    this.fetchDataFromBackend(qrPayload.token);
+                },
+
+                async fetchDataFromBackend(token) {
                     this.isLoading = true;
 
-                    //------------------------ buat ngetest aja, nanti diganti pake fetch ke backend ------------------------
-                    await new Promise(resolve => setTimeout(resolve, 800)); 
-                    
-                    this.scanData = {
-                        id: id,
-                        nama: "Azmil Monitor",
-                        divisi: "Divisi Monitor Panitia",
-                        photo: "https://ui-avatars.com/api/?size=256&background=0D8ABC&color=fff&name=Azmil+Monitor"
-                    };
-                    // ---------------------------------------------
-                    
-                    this.isLoading = false;
-                    this.showPopup = true;
+                    try {
+                        const response = await fetch("{{ route('scan.lookup') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({ token: token })
+                        });
+
+                        const result = await response.json();
+
+                        if (!response.ok || !result.success) {
+                            this.showToast(result.message || "Data tidak ditemukan.", "error");
+                            this.resumeScanning();
+                            return;
+                        }
+
+                        this.scanData = {
+                            id: result.data.id,
+                            nama: result.data.nama,
+                            divisi: result.data.divisi,
+                            photo: result.data.photo
+                        };
+
+                        this.showPopup = true;
+                    } catch (error) {
+                        this.showToast("Gagal menghubungi server. Periksa koneksi.", "error");
+                        this.resumeScanning();
+                    } finally {
+                        this.isLoading = false;
+                    }
                 },
 
                 denyScan() {
@@ -189,20 +230,39 @@
                 async acceptScan() {
                     this.isSaving = true;
 
-                    //------------------------ buat ngetest aja, nanti diganti pake fetch ke backend ------------------------
-                    await new Promise(resolve => setTimeout(resolve, 800));
-                    // ----------------------------------------------
+                    try {
+                        const response = await fetch("{{ route('scan.attendance') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({ user_id: this.scanData.id })
+                        });
 
-                    this.isSaving = false;
-                    
-                    this.showToast("Berhasil! Data absen disimpan.", "success");
-                    this.closePopup();
+                        const result = await response.json();
+
+                        if (!response.ok || !result.success) {
+                            this.showToast(result.message || "Gagal menyimpan absensi.", "error");
+                        } else {
+                            this.showToast("Berhasil! Data absen disimpan.", "success");
+                        }
+                    } catch (error) {
+                        this.showToast("Gagal menghubungi server. Periksa koneksi.", "error");
+                    } finally {
+                        this.isSaving = false;
+                        this.closePopup();
+                    }
                 },
 
                 closePopup() {
                     this.showPopup = false;
                     this.scanData = { id: '', nama: '', divisi: '', photo: '' };
-                    
+                    this.resumeScanning();
+                },
+
+                resumeScanning() {
                     setTimeout(() => {
                         this.isScanning = true;
                         requestAnimationFrame(() => this.tick());
