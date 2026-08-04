@@ -1,6 +1,6 @@
 <x-app-layout>
     <!-- TAMBAHKAN x-data DI SINI UNTUK MENGONTROL MODAL -->
-    <div x-data="{ openEditPengumuman: false, openEditTimeline: false, openIzinModal: false, openAddNotulensi: false }" class="min-h-screen bg-white md:bg-gray-50 pb-10">
+    <div x-data="{ openEditPengumuman: false, openEditTimeline: false, openIzinModal: false, openAddNotulensi: false, openViewNotulensi: false, notulensiTitle: '' }" class="min-h-screen bg-white md:bg-gray-50 pb-10">
         <div class="p-4 md:p-8 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mt-2">
 
             <!-- PENGUMUMAN -->
@@ -116,7 +116,7 @@
                             
                         <div class="flex space-x-2 items-center">
                             <button
-                                class="bg-[#105e75] hover:bg-[#0b4354] text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition">Lihat</button>
+                                <button @click="openViewNotulensi = true; notulensiTitle = 'Notulensi {{ $rabes->judul }}'" class="bg-[#105e75] hover:bg-[#0b4354] text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition">Lihat</button>
                             <button
                                 class="bg-[#105e75] hover:bg-[#0b4354] text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition">Upload</button>
                             <button
@@ -139,6 +139,7 @@
         <x-modal-edit-pengumuman />
         <x-modal-edit-timeline />
         <x-modal-izin />
+        <x-modal-view-notulensi />
 
         
 <div x-show="openAddNotulensi" style="display: none;" class="fixed inset-0 z-999 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
