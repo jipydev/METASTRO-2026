@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\QrCodeController;
+use App\Http\Controllers\Api\ScanController;
 use App\Http\Controllers\ListPanitiaController;
 use App\Http\Controllers\PresensiController;
 use Illuminate\Support\Facades\Route;
@@ -108,6 +110,31 @@ Route::middleware([
         ->name('admin.dashboard');
     Route::get('/admin/role-request', [AdminController::class, 'roleRequest'])
         ->name('admin.role-request');
+
+    // QR Code Management
+    Route::get('/admin/users', [QrCodeController::class, 'index'])
+        ->name('admin.users');
+    Route::post('/admin/users/{user}/regenerate-qr', [QrCodeController::class, 'regenerate'])
+        ->name('admin.users.regenerate-qr');
+    Route::post('/admin/users/regenerate-all-qr', [QrCodeController::class, 'regenerateAll'])
+        ->name('admin.users.regenerate-all-qr');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| API Scan (web routes with CSRF protection)
+|--------------------------------------------------------------------------
+*/
+Route::middleware([
+    'auth',
+    'verified',
+    'role:Admin|Sekretaris'
+])->group(function () {
+    Route::post('/scan/lookup', [ScanController::class, 'lookup'])
+        ->name('scan.lookup');
+    Route::post('/scan/attendance', [ScanController::class, 'recordAttendance'])
+        ->name('scan.attendance');
 });
 
 

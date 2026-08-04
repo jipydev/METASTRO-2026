@@ -29,6 +29,7 @@ use Spatie\Permission\Traits\HasRoles;
     'alamat',
     'divisi_id',
     'jabatan_id',
+    'qr_token',
 ])]
 
 #[Hidden([

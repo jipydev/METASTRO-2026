@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\QrCodeService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -31,7 +32,6 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            dd($request->all()),
             'name' => ['required', 'string', 'max:255'],
             // 'email' => [
             //     'required',
@@ -63,6 +63,10 @@ class RegisteredUserController extends Controller
 
         // Semua user baru otomatis menjadi Panitia
         $user->assignRole('Panitia');
+
+        // Auto-generate QR code untuk absensi
+        $qrService = app(QrCodeService::class);
+        $qrService->generateForUser($user);
 
         event(new Registered($user));
 
