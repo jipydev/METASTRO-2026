@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('nama_divisi')->unique();
             $table->text('deskripsi')->nullable();
 
-            $table->foreignId('ketua_divisi_id')
+            $table->foreignId('koordinator_divisi_nim')
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
