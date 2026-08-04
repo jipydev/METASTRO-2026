@@ -7,7 +7,7 @@ $presensi = [
         'jam' => '08.00',
         'ruangan' => 'PGSD 4',
         // Tambahkan URL dinamis, bisa menggunakan url() atau route()
-        'url' => url('/lihat/list/1') 
+        'url' => url('/lihat/list') 
     ],
     [
         'id' => 2,

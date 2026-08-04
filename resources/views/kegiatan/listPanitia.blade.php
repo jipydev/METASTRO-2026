@@ -61,9 +61,12 @@
     @endphp
 
     <div class="max-w-5xl mx-auto min-h-screen bg-gray-50 md:bg-white p-4 md:p-6 font-sans mt-4 md:rounded-xl md:shadow-sm">
+         @include('components.back-header', [
+                'href' => url('lihat'),
+                'title' => 'Daftar Kehadiran Panitia'
+            ])
         
         <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <h1 class="text-xl font-bold text-gray-800">Daftar Kehadiran Panitia</h1>
             
             <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
                 <span class="text-sm font-semibold text-gray-500 mr-2 hidden md:flex items-center gap-1">
