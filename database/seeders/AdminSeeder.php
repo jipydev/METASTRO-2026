@@ -11,10 +11,7 @@ class AdminSeeder extends Seeder
     {
         $admin = User::firstOrCreate(
             [
-                // 'email' => 'adminmetastro@gmail.com',
                 'nim' => '12345678',
-            ],
-            [
                 'name' => 'Administrator',
                 'password' => bcrypt('kastatertinggi'),
                 'status_aktif' => true,
