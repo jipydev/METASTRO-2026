@@ -8,10 +8,10 @@ class AdminController extends Controller
 {
     public function index()
     {
-        return view('admin.dashboard_admin');
+        return view('dashboard.index');
     }
     public function roleRequest()
     {
-        return view('admin.role_request');
+        return view('dashboard.admin.role_request');
     }
 }

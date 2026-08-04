@@ -13,19 +13,13 @@ class DashboardController extends Controller
     {
         // 1. Data standar halaman
         $data = [
-            'title' => "Dashboard"
+            'title' => "Dashboard",
+            'pengumuman' => Pengumuman::where('status', 'Publish')->latest()->first(),
+            'rapatTerbaru' => Rapat::latest()->first(),
+            'notulensi_list' => Rapat::all(),
         ];
 
-        // 2. Ambil pengumuman yang statusnya 'Publish' paling terbaru
-        $pengumuman = Pengumuman::where('status', 'Publish')->latest()->first();
-
-        // 3. Ambil rapat terbaru untuk data Presensi & Timeline
-        $rapatTerbaru = Rapat::latest()->first(); 
-        
-        // 4. Ambil semua data rapat untuk card Notulensi
-        $notulensi_list = Rapat::all(); 
-
         // Kirim semua variabel ke view dashboard.index
-        return view('dashboard.index', compact('data', 'pengumuman', 'rapatTerbaru', 'notulensi_list'));
+        return view('dashboard.index', $data);
     }
 }
