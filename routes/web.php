@@ -88,6 +88,30 @@ Route::middleware([
 });
 
 
+/*
+|--------------------------------------------------------------------------
+| Notulensi
+|--------------------------------------------------------------------------
+*/
+Route::middleware([
+    'auth',
+    'verified',
+    'role:Admin|Sekretaris'
+])->prefix('notulensi')
+  ->name('notulensi.')
+  ->group(function () {
+
+    Route::post('/', [\App\Http\Controllers\NotulensiController::class, 'store'])
+        ->name('store');
+
+    Route::delete('/{notulensi}', [\App\Http\Controllers\NotulensiController::class, 'destroy'])
+        ->name('destroy');
+});
+
+// View PDF — semua user terautentikasi bisa mengakses
+Route::middleware(['auth', 'verified'])
+    ->get('/notulensi/{notulensi}/view', [\App\Http\Controllers\NotulensiController::class, 'viewPdf'])
+    ->name('notulensi.view');
 
 /*
 |--------------------------------------------------------------------------

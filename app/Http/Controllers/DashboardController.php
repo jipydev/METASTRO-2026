@@ -31,7 +31,7 @@ class DashboardController extends Controller
                                 ->orderBy('jam', 'desc')
                                 ->first(),
 
-            'notulensi_list' => Rapat::latest()->get(),
+            'notulensi_list' => \App\Models\Notulensi::latest()->get(),
         ]);
     }
 }
