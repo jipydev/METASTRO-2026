@@ -28,7 +28,7 @@
                 'jam_tap' => '-',
                 'hari' => 'Senin',
                 'tanggal' => '20 Juli 2026',
-                'status' => 'Izin',
+                'status' => 'Tidak Hadir',
                 'jenis_izin' => 'Sakit'
             ],
             [
@@ -76,7 +76,7 @@
                     Semua
                 </a>
 
-                @php $filterTabs = ['Hadir', 'Telat', 'Izin', 'Tidak Hadir', 'Alpha']; @endphp
+                @php $filterTabs = ['Hadir', 'Telat', 'Tidak Hadir', 'Alpha']; @endphp
                 @foreach($filterTabs as $tab)
                     <a href="{{ request()->fullUrlWithQuery(['status' => $tab]) }}" 
                        class="px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-colors {{ $statusFilter === $tab ? 'bg-[#0c5970] text-white shadow-md' : 'bg-white md:bg-gray-100 text-gray-600 hover:bg-gray-200' }}">

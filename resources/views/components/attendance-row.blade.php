@@ -40,8 +40,8 @@
             $statusStyle = match($item['status']) {
                 'Hadir' => ['bg' => 'bg-[#e2fae8]', 'text' => 'text-[#0e702c]', 'dot' => 'text-[#0ea53b]'],
                 'Telat' => ['bg' => 'bg-orange-100', 'text' => 'text-orange-700', 'dot' => 'text-orange-500'],
-                'Izin' => ['bg' => 'bg-blue-100', 'text' => 'text-blue-700', 'dot' => 'text-blue-500'],
-                'Tidak Hadir', 'Alpha' => ['bg' => 'bg-red-100', 'text' => 'text-red-700', 'dot' => 'text-red-500'],
+                'Tidak Hadir' => ['bg' => 'bg-blue-100', 'text' => 'text-blue-700', 'dot' => 'text-blue-500'],
+                'Alpha' => ['bg' => 'bg-red-100', 'text' => 'text-red-700', 'dot' => 'text-red-500'],
                 default => ['bg' => 'bg-gray-100', 'text' => 'text-gray-700', 'dot' => 'text-gray-500'],
             };
         @endphp
@@ -70,7 +70,7 @@
                 </button>
                 
                 <h3 class="text-lg font-bold text-gray-900 mb-4 border-b pb-2">
-                    {{ $item['status'] === 'Izin' ? 'Detail Izin' : 'Bukti Kehadiran' }}
+                    {{ $item['status'] === 'Tidak Hadir' ? 'Detail Tidak Hadir' : 'Bukti Kehadiran' }}
                 </h3>
                 
                 <div class="space-y-3 text-sm text-gray-600">
@@ -79,7 +79,7 @@
                         <span class="text-gray-900">{{ $item['hari'] ?? 'Senin' }}, {{ $item['tanggal'] }}</span>
                     </div>
 
-                    @if($item['status'] === 'Izin')
+                    @if($item['status'] === 'Tidak Hadir')
                         <div class="flex justify-between">
                             <span class="font-medium text-gray-500">Jenis Izin</span>
                             <span class="text-gray-900 font-semibold">{{ $item['jenis_izin'] ?? '-' }}</span>
@@ -113,7 +113,7 @@
     <!-- ========================================== -->
     <!-- 2. TELEPORT MODAL PDF & GAMBAR (TERPISAH)  -->
     <!-- ========================================== -->
-    @if($item['status'] === 'Izin')
+    @if($item['status'] === 'Tidak Hadir')
         <!-- Teleport untuk PDF -->
         <template x-teleport="body">
             <x-modal-pdf show="openPdf" url="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" />
