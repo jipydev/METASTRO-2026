@@ -332,6 +332,7 @@
 
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-primary-600 dark:text-primary-400 font-bold text-lg md:text-xl">Notulensi</h2>
+                    @role('Admin|Sekretaris')
                     <button @click="openAddNotulensi = true"
                         class="text-white bg-primary-500 hover:bg-primary-600 rounded-full p-1.5 transition shadow-sm flex items-center justify-center cursor-pointer">
                         <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -339,6 +340,7 @@
                             </path>
                         </svg>
                     </button>
+                    @endrole
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
@@ -352,6 +354,7 @@
                                 <button
                                     @click="openViewNotulensi = true; notulensiTitle = 'Notulensi {{ $rabes->judul }}'"
                                     class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition cursor-pointer">Lihat</button>
+                                @role('Admin|Sekretaris')
                                 <form action="{{ route('notulensi.destroy', $rabes->id) }}" method="POST"
                                     onsubmit="return confirm('Hapus notulensi {{ $rabes->judul }}?')"
                                     class="inline-block">
@@ -367,6 +370,7 @@
                                         </svg>
                                     </button>
                                 </form>
+                                @endrole
                             </div>
                         </div>
                     @endforeach
