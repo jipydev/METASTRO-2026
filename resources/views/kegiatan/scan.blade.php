@@ -10,7 +10,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </head>
-<body class="bg-black overflow-hidden select-none">
+<body class="bg-black overflow-hidden select-none font-poppins">
     
     <div x-data="scannerApp()" x-init="initScanner()" class="relative w-screen h-screen flex justify-center items-center">
 
@@ -22,7 +22,7 @@
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-6"
              class="fixed top-6 left-1/2 transform -translate-x-1/2 z-100 w-11/12 max-w-sm px-5 py-4 rounded-xl shadow-2xl flex items-center justify-center gap-3 text-center"
-             :class="toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-[#065E75] text-[#EFF8FF]'"
+             :class="toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-primary-500 text-white'"
              style="display: none;">
              <span x-text="toast.message" class="text-sm font-bold tracking-wide"></span>
         </div>
@@ -30,17 +30,17 @@
         <video x-ref="video" class="absolute inset-0 w-full h-full object-cover" autoplay playsinline></video>
 
         <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-            <div class="w-64 h-64 border-2 border-white/50 border-dashed rounded-xl relative flex justify-center items-center">
-                <span class="text-white/50 text-sm font-semibold tracking-widest uppercase">Arahkan QR</span>
+            <div class="w-64 h-64 border-2 border-primary-500 border-dashed rounded-2xl relative flex justify-center items-center shadow-[0_0_15px_rgba(254,90,29,0.3)]">
+                <span class="text-white/70 text-sm font-semibold tracking-widest uppercase">Arahkan QR</span>
             </div>
         </div>
 
-        <a href="{{ route('dashboard') }}" class="absolute top-8 left-6 z-20 px-4 py-2 bg-[#eff8ff] backdrop-blur-md text-[#065E75] font-bold rounded-lg border border-white/20">
+        <a href="{{ route('dashboard') }}" class="absolute top-8 left-6 z-20 px-4 py-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-primary-600 dark:text-primary-400 font-bold rounded-xl border border-white/20 shadow-md">
             &larr; Kembali
         </a>
 
         <button @click="takeSnapshot()" :disabled="isLoading" 
-                class="absolute bottom-12 z-20 px-10 py-4 bg-[#eff8ff] backdrop-blur-md text-[#065E75] font-extrabold text-lg rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] active:scale-95 transition-all flex items-center gap-3 disabled:opacity-70 disabled:scale-100">
+                class="absolute bottom-12 z-20 px-10 py-4 bg-primary-500 hover:bg-primary-600 backdrop-blur-md text-white font-extrabold text-lg rounded-full shadow-[0_0_25px_rgba(254,90,29,0.5)] active:scale-95 transition-all flex items-center gap-3 disabled:opacity-70 disabled:scale-100 cursor-pointer">
             <span x-show="!isLoading">📸 TAKE</span>
             <span x-show="isLoading" class="animate-pulse">⏳ MENCARI DATA...</span>
         </button>
@@ -51,22 +51,22 @@
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 translate-y-8"
                  x-transition:enter-end="opacity-100 translate-y-0"
-                 class="bg-[#eff8ff] rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center relative">
+                 class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center relative border border-gray-100 dark:border-slate-700">
                 
-                <div class="mx-auto w-32 h-32 mb-5 rounded-full p-1 bg-[#065E75]">
-                    <img :src="scanData.photo" class="w-full h-full rounded-full object-cover border-4 border-[#eff8ff]" alt="Profile" />
+                <div class="mx-auto w-28 h-28 mb-5 rounded-full p-1 bg-primary-500 shadow-md">
+                    <img :src="scanData.photo" class="w-full h-full rounded-full object-cover border-2 border-white dark:border-slate-800" alt="Profile" />
                 </div>
                 
-                <p class="text-xs font-bold text-gray-400 tracking-widest uppercase mb-1">ID: <span x-text="scanData.id"></span></p>
-                <h3 class="text-2xl font-bold text-black mb-1" x-text="scanData.nama"></h3>
-                <p class="text-md font-semibold text-[#065E75] mb-8" x-text="scanData.divisi"></p>
+                <p class="text-xs font-bold text-slate-400 dark:text-slate-500 tracking-widest uppercase mb-1">ID: <span x-text="scanData.id"></span></p>
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-1" x-text="scanData.nama"></h3>
+                <p class="text-md font-semibold text-primary-500 dark:text-primary-400 mb-8" x-text="scanData.divisi"></p>
                 
                 <div class="flex gap-3 mt-4">
-                    <button @click="denyScan()" :disabled="isSaving" class="flex-1 px-4 py-3 bg-red-100 text-red-600 font-bold rounded-xl hover:bg-red-200 transition-colors disabled:opacity-50">
+                    <button @click="denyScan()" :disabled="isSaving" class="flex-1 px-4 py-3 bg-red-100 text-red-600 font-bold rounded-xl hover:bg-red-200 transition-colors disabled:opacity-50 cursor-pointer">
                         ❌ TOLAK
                     </button>
                     
-                    <button @click="acceptScan()" :disabled="isSaving" class="flex-1 px-4 py-3 bg-[#065E75] text-[#eff8ff] font-bold rounded-xl hover:bg-[#065E75]/80 transition-colors disabled:opacity-50 flex justify-center items-center">
+                    <button @click="acceptScan()" :disabled="isSaving" class="flex-1 px-4 py-3 bg-primary-500 text-white font-bold rounded-xl hover:bg-primary-600 transition-colors disabled:opacity-50 flex justify-center items-center shadow-md cursor-pointer">
                         <span x-show="!isSaving">✅ TERIMA</span>
                         <span x-show="isSaving" class="animate-pulse">⌛MENYIMPAN...</span>
                     </button>
@@ -161,9 +161,6 @@
                     }
                 },
 
-                /**
-                 * Parse QR data and lookup user from backend.
-                 */
                 processQrData(rawData) {
                     let qrPayload;
                     try {

@@ -6,7 +6,6 @@ $presensi = [
         'tanggal' => 'Selasa, 20 Juli 2026',
         'jam' => '08.00',
         'ruangan' => 'PGSD 4',
-        // Tambahkan URL dinamis, bisa menggunakan url() atau route()
         'url' => url('/lihat/list') 
     ],
     [
@@ -15,15 +14,15 @@ $presensi = [
         'tanggal' => 'Kamis, 6 Agustus 2026',
         'jam' => '08.00',
         'ruangan' => 'PGSD 4',
-        'url' => url('/lihat/list/2') 
+        'url' => url('/lihat/list') 
     ],
 ];
 @endphp
 
 <x-app-layout>
-    <div class="py-8">
-        <div class="max-w-md mx-auto">
-            <div class="bg-white rounded-[28px] p-7 min-h-[680px]">
+    <div class="py-8 font-poppins min-h-screen bg-gray-100 dark:bg-slate-900 transition-colors duration-200">
+        <div class="max-w-md mx-auto px-4">
+            <div class="bg-white dark:bg-slate-800 rounded-[28px] p-6 sm:p-7 shadow-sm border border-gray-100 dark:border-slate-700">
 
             @include('components.back-header', [
                 'href' => route('dashboard'),

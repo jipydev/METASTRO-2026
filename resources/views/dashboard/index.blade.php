@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
         icon: 'success',
         title: 'Berhasil',
         text: @json(session('success')),
-        confirmButtonColor: '#105e75',
+        confirmButtonColor: '#fe5a1d',
         timer: 2200,
         showConfirmButton: false
     });
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
         openViewNotulensi: false,
         notulensiTitle: ''
     
-    }" class="min-h-screen bg-white md:bg-gray-50 pb-10">
+    }" class="min-h-screen bg-white md:bg-gray-50 dark:bg-slate-900 pb-10 transition-colors duration-200">
         <div class="p-4 md:p-8 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mt-2">
 
 
@@ -81,20 +81,19 @@ document.addEventListener('DOMContentLoaded', function () {
 ========================= -->
 
             <div
-                class="bg-[#f2f7fb] md:bg-white md:shadow-sm rounded-2xl
-            p-6 md:col-span-2 lg:col-span-3 border md:border-gray-100">
+                class="bg-primary-50/50 dark:bg-slate-800/90 md:bg-white md:dark:bg-slate-800 md:shadow-sm rounded-2xl p-6 md:col-span-2 lg:col-span-3 border border-primary-100/50 md:border-gray-100 dark:border-slate-700/80">
 
                 <div class="flex items-center justify-between mb-6">
 
                     <div>
 
-                        <h2 class="text-2xl font-bold text-[#105e75]">
+                        <h2 class="text-2xl font-bold text-primary-600 dark:text-primary-400">
 
                             Pengumuman
 
                         </h2>
 
-                        <p class="text-sm text-gray-500">
+                        <p class="text-sm text-gray-500 dark:text-slate-400">
 
                             Informasi terbaru panitia.
 
@@ -116,13 +115,15 @@ selectedPengumuman = {
 
 openTambahPengumuman=true;
 "
-                            class="bg-[#105e75]
-                       hover:bg-[#0d4d61]
+                            class="bg-primary-500
+                       hover:bg-primary-600
                        text-white
                        px-5
                        py-2
                        rounded-xl
-                       transition">
+                       font-semibold
+                       shadow-sm
+                       transition cursor-pointer">
 
                             + Tambah
 
@@ -132,19 +133,19 @@ openTambahPengumuman=true;
                 </div>
 
                 @forelse($pengumumanList as $item)
-                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-5">
+                    <div class="bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-200 dark:border-slate-700/80 shadow-sm p-6 mb-5">
 
                         <div class="flex justify-between items-start">
 
                             <div>
 
-                                <h3 class="text-xl font-bold text-[#105e75]">
+                                <h3 class="text-xl font-bold text-primary-600 dark:text-primary-400">
 
                                     {{ $item->judul }}
 
                                 </h3>
 
-                                <div class="mt-1 text-sm text-gray-500">
+                                <div class="mt-1 text-sm text-gray-500 dark:text-slate-400">
 
                                     Publish
 
@@ -166,7 +167,7 @@ openTambahPengumuman=true;
         selectedPengumuman = JSON.parse($el.dataset.item);
         openEditPengumuman = true;
     "
-                                        class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg">
+                                        class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg font-semibold transition cursor-pointer">
 
                                         Edit
 
@@ -180,7 +181,7 @@ openTambahPengumuman=true;
         selectedPengumuman = JSON.parse($el.dataset.item);
         openDeletePengumuman = true;
     "
-                                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition cursor-pointer">
 
                                         Hapus
                                     </button>
@@ -192,7 +193,7 @@ openTambahPengumuman=true;
 
                         <div class="mt-5">
 
-                            <p class="whitespace-pre-line leading-7 text-gray-700">
+                            <p class="whitespace-pre-line leading-7 text-gray-700 dark:text-slate-300">
 
                                 {{ $item->isi }}
 
@@ -204,7 +205,7 @@ openTambahPengumuman=true;
                             <div class="mt-5">
 
                                 <a href="{{ asset('storage/' . $item->lampiran) }}" target="_blank"
-                                    class="inline-flex items-center gap-2 text-blue-600 hover:underline">
+                                    class="inline-flex items-center gap-2 text-primary-500 hover:text-primary-600 font-semibold hover:underline">
 
                                     📎 Lampiran
 
@@ -213,9 +214,9 @@ openTambahPengumuman=true;
                             </div>
                         @endif
 
-                        <div class="mt-6 pt-4 border-t flex justify-between items-center flex-wrap gap-3">
+                        <div class="mt-6 pt-4 border-t border-gray-100 dark:border-slate-700 flex justify-between items-center flex-wrap gap-3">
 
-                            <div class="text-sm text-gray-500">
+                            <div class="text-sm text-gray-500 dark:text-slate-400">
 
                                 Dibuat
 
@@ -227,14 +228,14 @@ openTambahPengumuman=true;
 
                                 @if ($item->status == 'Publish')
                                     <span
-                                        class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                        class="bg-green-100 dark:bg-green-950/60 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-semibold">
 
                                         Publish
 
                                     </span>
                                 @else
                                     <span
-                                        class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                        class="bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 px-3 py-1 rounded-full text-xs font-semibold">
 
                                         Draft
 
@@ -257,13 +258,13 @@ openTambahPengumuman=true;
 
                         </div>
 
-                        <h3 class="mt-4 text-xl font-bold text-gray-500">
+                        <h3 class="mt-4 text-xl font-bold text-gray-500 dark:text-slate-400">
 
                             Belum ada pengumuman
 
                         </h3>
 
-                        <p class="text-gray-400 mt-2">
+                        <p class="text-gray-400 dark:text-slate-500 mt-2">
 
                             Belum terdapat pengumuman.
 
@@ -283,14 +284,14 @@ openTambahPengumuman=true;
 
             <!-- PRESENSI -->
             <div
-                class="bg-[#f2f7fb] md:bg-white md:shadow-sm rounded-2xl p-5 md:p-6 border md:border-gray-100 lg:col-span-2 flex flex-col justify-between">
+                class="bg-primary-50/50 dark:bg-slate-800/90 md:bg-white md:dark:bg-slate-800 md:shadow-sm rounded-2xl p-5 md:p-6 border border-primary-100/50 md:border-gray-100 dark:border-slate-700/80 lg:col-span-2 flex flex-col justify-between">
                 <div>
-                    <h2 class="text-[#105e75] font-bold text-lg md:text-xl mb-1">Presensi Rapat Besar</h2>
+                    <h2 class="text-primary-600 dark:text-primary-400 font-bold text-lg md:text-xl mb-1">Presensi Rapat Besar</h2>
                     <div class="flex items-baseline space-x-2 mb-6">
-                        <span class="text-4xl md:text-5xl font-bold text-[#105e75]">
+                        <span class="text-4xl md:text-5xl font-bold text-primary-600 dark:text-primary-400">
                             {{ $rapatTerbaru ? $rapatTerbaru->hadir : 0 }}/{{ $rapatTerbaru ? $rapatTerbaru->total : 0 }}
                         </span>
-                        <span class="text-sm md:text-base font-medium text-gray-500">Panitia telah hadir</span>
+                        <span class="text-sm md:text-base font-medium text-gray-500 dark:text-slate-400">Panitia telah hadir</span>
                     </div>
                 </div>
 
@@ -298,14 +299,14 @@ openTambahPengumuman=true;
                 <div class="flex flex-wrap lg:flex-nowrap gap-2 md:gap-3">
                     {{-- qr --}}
                     <a href="{{ url('/qr') }}"
-                        class="cursor-pointer flex-1 min-w-30 bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center gap-1 transition">
+                        class="cursor-pointer flex-1 min-w-30 bg-primary-500 hover:bg-primary-600 text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center gap-1 transition shadow-sm">
                         <span class="icon-[material-symbols--qr-code] size-4 md:size-5"></span>
                         QR ABSEN
                     </a>
 
                     {{-- izin --}}
                     <button @click="openIzinModal = !openIzinModal"
-                        class="cursor-pointer flex-1 min-w-30 bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center gap-1 transition">
+                        class="cursor-pointer flex-1 min-w-30 bg-primary-500 hover:bg-primary-600 text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center gap-1 transition shadow-sm">
                         <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
@@ -317,7 +318,7 @@ openTambahPengumuman=true;
                     {{-- scan presensi --}}
                     @can('scan presensi')
                         <a href="{{ url('/scan') }}"
-                            class="cursor-pointer flex-1 min-w-30 bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center transition gap-1">
+                            class="cursor-pointer flex-1 min-w-30 bg-primary-500 hover:bg-primary-600 text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center transition gap-1 shadow-sm">
                             <span class="icon-[boxicons--scan-filled] size-4 md:size-5"></span>
                             SCAN</a>
                     @endcan
@@ -325,7 +326,7 @@ openTambahPengumuman=true;
                     {{-- lihat presensi --}}
                     @can('lihat presensi')
                         <a href="{{ url('/lihat') }}"
-                            class="cursor-pointer flex-1 min-w-30 bg-[#105e75] hover:bg-[#0b4354] text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center transition gap-1">
+                            class="cursor-pointer flex-1 min-w-30 bg-primary-500 hover:bg-primary-600 text-white text-xs md:text-sm font-bold py-3 rounded-lg flex justify-center items-center transition gap-1 shadow-sm">
                             <span class="icon-[mdi--eye]"></span>
                             LIHAT</a>
                     @endcan
@@ -335,8 +336,8 @@ openTambahPengumuman=true;
 
             <!-- TIMELINE -->
             <div
-                class="bg-[#f2f7fb] md:bg-white md:shadow-sm rounded-2xl p-5 md:p-6 relative border md:border-gray-100 h-full">
-                <h2 class="text-[#105e75] font-bold text-lg md:text-xl mb-3">Timeline</h2>
+                class="bg-primary-50/50 dark:bg-slate-800/90 md:bg-white md:dark:bg-slate-800 md:shadow-sm rounded-2xl p-5 md:p-6 relative border border-primary-100/50 md:border-gray-100 dark:border-slate-700/80 h-full">
+                <h2 class="text-primary-600 dark:text-primary-400 font-bold text-lg md:text-xl mb-3">Timeline</h2>
 
                 {{-- tambah/edit timeline --}}
                 @can('tambah timeline')
@@ -356,25 +357,25 @@ openTambahPengumuman=true;
                         @else
                             @click="selectedTimeline = { id: null, judul: '', tanggal: '', jam: '', tempat: '' }; openEditTimeline = true;"
                         @endif
-                        class="absolute top-5 right-5 text-[#105e75] hover:scale-110 transition cursor-pointer">
+                        class="absolute top-5 right-5 text-primary-500 hover:scale-110 transition cursor-pointer">
                     </button>
                 @endcan
 
                 {{-- list timeline --}}
-                <div class="text-[#105e75] font-medium text-sm md:text-base md:bg-blue-50/50 md:p-4 rounded-xl">
+                <div class="text-primary-600 dark:text-primary-400 font-medium text-sm md:text-base md:bg-primary-50/50 dark:md:bg-slate-700/50 md:p-4 rounded-xl">
                     <div>
-                        <p class="font-bold mb-1 text-base md:text-lg">{{ $rapatTerbaru->judul ?? 'Tidak ada jadwal' }}
+                        <p class="font-bold mb-1 text-base md:text-lg text-primary-600 dark:text-primary-400">{{ $rapatTerbaru->judul ?? 'Tidak ada jadwal' }}
                         </p>
-                        <p>{{ $rapatTerbaru ? \Carbon\Carbon::parse($rapatTerbaru->tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') : '-' }}</p>
-                        <p>pukul {{ $rapatTerbaru ? \Carbon\Carbon::parse($rapatTerbaru->jam)->format('H.i') : '-' }}</p>
+                        <p class="text-slate-700 dark:text-slate-300">{{ $rapatTerbaru ? \Carbon\Carbon::parse($rapatTerbaru->tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') : '-' }}</p>
+                        <p class="text-slate-700 dark:text-slate-300">pukul {{ $rapatTerbaru ? \Carbon\Carbon::parse($rapatTerbaru->jam)->format('H.i') : '-' }}</p>
                         <div class="flex justify-between items-end mt-4">
-                            <p class="font-semibold">{{ $rapatTerbaru->tempat ?? '-' }}</p>
+                            <p class="font-semibold text-slate-800 dark:text-slate-200">{{ $rapatTerbaru->tempat ?? '-' }}</p>
                         </div>
                     </div>
 
                     {{-- lihat timeline --}}
                     <a href="{{ route('timeline.index') }}"
-                        class="text-primary-400 rounded-md font-bold text-sm leading-none transition flex justify-between items-center mt-4">
+                        class="text-primary-500 dark:text-primary-400 hover:text-primary-600 rounded-md font-bold text-sm leading-none transition flex justify-between items-center mt-4">
                         Lihat selengkapnya
                         <span class="icon-[ep--d-arrow-right]"></span>
                     </a>
@@ -383,13 +384,13 @@ openTambahPengumuman=true;
 
             <!-- NOTULENSI -->
             <div
-                class="bg-[#f2f7fb] md:bg-white md:shadow-sm rounded-2xl p-5 md:p-6 border md:border-gray-100 md:col-span-2 lg:col-span-3">
+                class="bg-primary-50/50 dark:bg-slate-800/90 md:bg-white md:dark:bg-slate-800 md:shadow-sm rounded-2xl p-5 md:p-6 border border-primary-100/50 md:border-gray-100 dark:border-slate-700/80 md:col-span-2 lg:col-span-3">
 
                 <!-- HEADER NOTULENSI DENGAN TOMBOL PLUS -->
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-[#105e75] font-bold text-lg md:text-xl">Notulensi</h2>
+                    <h2 class="text-primary-600 dark:text-primary-400 font-bold text-lg md:text-xl">Notulensi</h2>
                     <button @click="openAddNotulensi = true"
-                        class="text-white bg-[#105e75] hover:bg-[#0b4354] rounded-full p-1.5 transition shadow-sm flex items-center justify-center">
+                        class="text-white bg-primary-500 hover:bg-primary-600 rounded-full p-1.5 transition shadow-sm flex items-center justify-center cursor-pointer">
                         <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
                             </path>
@@ -400,22 +401,27 @@ openTambahPengumuman=true;
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                     @foreach($notulensi_list as $rabes)
                     <div
-                        class="flex justify-between items-center md:bg-gray-50 md:p-4 rounded-xl md:border md:border-gray-100 mb-3 md:mb-0">
+                        class="flex justify-between items-center md:bg-gray-50 dark:md:bg-slate-700/60 md:p-4 rounded-xl md:border md:border-gray-100 dark:md:border-slate-700 mb-3 md:mb-0">
                         <span
-                            class="text-[#105e75] font-bold text-sm md:text-base">{{ $rabes->judul }}</span>
+                            class="text-primary-600 dark:text-primary-400 font-bold text-sm md:text-base">{{ $rabes->judul }}</span>
                             
                         <div class="flex space-x-2 items-center">
-                            <button
-                                <button @click="openViewNotulensi = true; notulensiTitle = 'Notulensi {{ $rabes->judul }}'" class="bg-[#105e75] hover:bg-[#0b4354] text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition">Lihat</button>
-                            <button
-                                class="text-[#105e75] hover:text-red-600 md:hover:bg-red-50 p-1.5 rounded-md transition">
-                                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                    </path>
-                                </svg>
-                            </button>
+                            <button @click="openViewNotulensi = true; notulensiTitle = 'Notulensi {{ $rabes->judul }}'" class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition cursor-pointer">Lihat</button>
+                            <form action="{{ route('notulensi.destroy', $rabes->id) }}" method="POST"
+                                  onsubmit="return confirm('Hapus notulensi {{ $rabes->judul }}?')"
+                                  class="inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    class="text-primary-500 hover:text-red-600 dark:hover:text-red-400 md:hover:bg-red-50 dark:md:hover:bg-red-950/40 p-1.5 rounded-md transition cursor-pointer">
+                                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </form>
                         </div>
                     </div>
                     @endforeach
@@ -439,7 +445,7 @@ openTambahPengumuman=true;
         <x-modal-view-notulensi />
 
 
-        <div x-show="openAddNotulensi" style="display: none;" class="fixed inset-0 z-999 overflow-y-auto"
+        <div x-show="openAddNotulensi" style="display: none;" class="fixed inset-0 z-[999] overflow-y-auto"
             aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
 
@@ -456,27 +462,26 @@ openTambahPengumuman=true;
                     x-transition:leave="ease-in duration-200"
                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    class="relative inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-2xl shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                    class="relative inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white dark:bg-slate-800 rounded-2xl shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 border border-gray-100 dark:border-slate-700">
                     @csrf
 
                     <div>
                         <div class="mt-3 text-center sm:mt-5">
-                            <h3 class="text-lg font-bold leading-6 text-[#105e75]" id="modal-title">Tambah Notulensi
+                            <h3 class="text-lg font-bold leading-6 text-primary-600 dark:text-primary-400" id="modal-title">Tambah Notulensi
                             </h3>
                             <div class="mt-6 text-left">
                                 <!-- Input Judul -->
                                 <div class="mb-5">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Judul</label>
+                                    <label class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-1">Judul</label>
                                     <input type="text" name="judul" placeholder="Ketik disini" required
-                                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#105e75] focus:ring-[#105e75] sm:text-sm p-2 border outline-none">
+                                        class="block w-full rounded-md border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm p-2 border outline-none">
                                 </div>
                                 <!-- Input File PDF -->
                                 <div class="mb-4">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Upload File
-                                        PDF</label>
+                                    <label class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-1">Upload File PDF</label>
                                     <input type="file" name="lampiran" accept="application/pdf" required
-                                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#f2f7fb] file:text-[#105e75] hover:file:bg-blue-100 cursor-pointer">
-                                    <p class="mt-1.5 text-xs text-gray-500 font-medium">Format: PDF (Maks 5MB)</p>
+                                        class="block w-full text-sm text-gray-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-600 hover:file:bg-primary-100 dark:file:bg-slate-700 dark:file:text-primary-400 cursor-pointer">
+                                    <p class="mt-1.5 text-xs text-gray-500 dark:text-slate-400 font-medium">Format: PDF (Maks 5MB)</p>
                                 </div>
                             </div>
                         </div>
@@ -484,11 +489,11 @@ openTambahPengumuman=true;
 
                     <div class="mt-6 sm:flex sm:flex-row-reverse">
                         <button type="submit"
-                            class="inline-flex justify-center w-full px-4 py-2 text-base font-bold text-white bg-[#105e75] border border-transparent rounded-md shadow-sm hover:bg-[#0b4354] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#105e75] sm:ml-3 sm:w-auto sm:text-sm transition cursor-pointer">
+                            class="inline-flex justify-center w-full px-4 py-2 text-base font-bold text-white bg-primary-500 border border-transparent rounded-md shadow-sm hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm transition cursor-pointer">
                             Tambah
                         </button>
                         <button @click="openAddNotulensi = false" type="button"
-                            class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-bold text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#105e75] sm:mt-0 sm:w-auto sm:text-sm transition cursor-pointer">
+                            class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-bold text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:w-auto sm:text-sm transition cursor-pointer">
                             Batal
                         </button>
                     </div>

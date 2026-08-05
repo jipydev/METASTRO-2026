@@ -8,20 +8,20 @@
             jam: '',
             tempat: ''
         }
-    }" class="min-h-screen bg-gray-100">
+    }" class="min-h-screen bg-gray-100 dark:bg-slate-900 transition-colors duration-200">
 
         {{-- ===== MOBILE LAYOUT (< md) ===== --}}
         <div class="md:hidden py-6 px-4">
-            <div class="bg-white rounded-[28px] p-6 min-h-[calc(100vh-6rem)] shadow-sm">
+            <div class="bg-white dark:bg-slate-800 rounded-[28px] p-6 min-h-[calc(100vh-6rem)] shadow-sm border border-gray-100 dark:border-slate-700">
 
                 {{-- Header --}}
                 <div class="flex justify-between items-start mb-5">
                     <div>
-                        <h1 class="text-[22px] font-bold text-[#105e75] leading-tight">
+                        <h1 class="text-[22px] font-bold text-primary-600 dark:text-primary-400 leading-tight">
                             Timeline
                         </h1>
                         <a href="{{ route('dashboard') }}"
-                           class="mt-1.5 inline-flex items-center gap-0.5 text-gray-500 hover:text-[#105e75] transition font-medium text-sm">
+                           class="mt-1.5 inline-flex items-center gap-0.5 text-gray-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition font-medium text-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                             </svg>
@@ -33,7 +33,7 @@
                         <button @click="
                             selectedTimeline = { id: null, judul: '', tanggal: '', jam: '', tempat: '' };
                             openEditTimeline = true;
-                        " class="bg-[#105e75] hover:bg-[#0b4d61] text-white font-semibold text-xs px-4 py-2 rounded-xl transition shadow-sm flex items-center gap-1 cursor-pointer">
+                        " class="bg-primary-500 hover:bg-primary-600 text-white font-semibold text-xs px-4 py-2 rounded-xl transition shadow-sm flex items-center gap-1 cursor-pointer">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
                             </svg>
@@ -43,7 +43,7 @@
                 </div>
 
                 @if(session('success'))
-                    <div class="mb-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-xs font-medium">
+                    <div class="mb-4 p-3 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 rounded-xl text-xs font-medium">
                         {{ session('success') }}
                     </div>
                 @endif
@@ -65,13 +65,13 @@
                             ];
                         @endphp
 
-                        <div class="bg-[#edf6fc] rounded-2xl p-4 relative">
-                            <h3 class="text-[#105e75] font-bold text-[15px] mb-0.5">
+                        <div class="bg-primary-50/50 dark:bg-slate-700/60 rounded-2xl p-4 relative border border-primary-100/50 dark:border-slate-600">
+                            <h3 class="text-primary-600 dark:text-primary-400 font-bold text-[15px] mb-0.5">
                                 {{ $item->judul }}
                             </h3>
-                            <p class="text-gray-700 text-[13px]">{{ $formattedDate }}</p>
-                            <p class="text-gray-700 text-[13px]">pukul {{ $formattedTime }}</p>
-                            <p class="text-gray-700 text-[13px]">{{ $item->tempat }}</p>
+                            <p class="text-gray-700 dark:text-slate-300 text-[13px]">{{ $formattedDate }}</p>
+                            <p class="text-gray-700 dark:text-slate-300 text-[13px]">pukul {{ $formattedTime }}</p>
+                            <p class="text-gray-700 dark:text-slate-300 text-[13px]">{{ $item->tempat }}</p>
 
                             @role('Admin|Sekretaris')
                                 <div class="flex gap-2 mt-3">
@@ -81,7 +81,7 @@
                                             selectedTimeline = JSON.parse($el.dataset.item);
                                             openEditTimeline = true;
                                         "
-                                        class="flex-1 bg-[#105e75] hover:bg-[#0b4d61] text-white text-xs font-semibold py-2 rounded-lg transition flex items-center justify-center gap-1 cursor-pointer">
+                                        class="flex-1 bg-primary-500 hover:bg-primary-600 text-white text-xs font-semibold py-2 rounded-lg transition flex items-center justify-center gap-1 cursor-pointer">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                                         </svg>
@@ -105,9 +105,9 @@
                     @empty
                         <div class="text-center py-16">
                             <div class="text-5xl mb-3">📅</div>
-                            <p class="font-semibold text-sm text-gray-500">Belum ada timeline.</p>
+                            <p class="font-semibold text-sm text-gray-500 dark:text-slate-400">Belum ada timeline.</p>
                             @role('Admin|Sekretaris')
-                                <p class="text-xs text-gray-400 mt-1">Klik tombol <strong>+ Tambah</strong> untuk menambahkan.</p>
+                                <p class="text-xs text-gray-400 dark:text-slate-500 mt-1">Klik tombol <strong>+ Tambah</strong> untuk menambahkan.</p>
                             @endrole
                         </div>
                     @endforelse
@@ -122,11 +122,11 @@
                 {{-- Header --}}
                 <div class="flex justify-between items-center mb-8">
                     <div>
-                        <h1 class="text-3xl lg:text-4xl font-bold text-[#105e75]">
+                        <h1 class="text-3xl lg:text-4xl font-bold text-primary-600 dark:text-primary-400">
                             Timeline
                         </h1>
                         <a href="{{ route('dashboard') }}"
-                           class="mt-2 inline-flex items-center gap-1 text-gray-500 hover:text-[#105e75] transition font-medium text-sm">
+                           class="mt-2 inline-flex items-center gap-1 text-gray-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition font-medium text-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                             </svg>
@@ -138,7 +138,7 @@
                         <button @click="
                             selectedTimeline = { id: null, judul: '', tanggal: '', jam: '', tempat: '' };
                             openEditTimeline = true;
-                        " class="bg-[#105e75] hover:bg-[#0b4d61] text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition shadow-sm flex items-center gap-2 cursor-pointer">
+                        " class="bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition shadow-sm flex items-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
                             </svg>
@@ -148,7 +148,7 @@
                 </div>
 
                 @if(session('success'))
-                    <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-sm font-medium">
+                    <div class="mb-6 p-4 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 rounded-xl text-sm font-medium">
                         {{ session('success') }}
                     </div>
                 @endif
@@ -170,30 +170,30 @@
                             ];
                         @endphp
 
-                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-6 relative group">
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-all p-6 relative group overflow-hidden">
                             {{-- Accent bar --}}
-                            <div class="absolute top-0 left-0 w-1.5 h-full bg-[#105e75] rounded-l-2xl"></div>
+                            <div class="absolute top-0 left-0 w-1.5 h-full bg-primary-500"></div>
 
                             <div class="pl-3">
-                                <h3 class="text-[#105e75] font-bold text-lg mb-2">
+                                <h3 class="text-primary-600 dark:text-primary-400 font-bold text-lg mb-2">
                                     {{ $item->judul }}
                                 </h3>
 
-                                <div class="space-y-1 text-gray-600 text-sm">
+                                <div class="space-y-1 text-gray-600 dark:text-slate-300 text-sm">
                                     <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-[#105e75] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 text-primary-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
                                         <span>{{ $formattedDate }}</span>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-[#105e75] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 text-primary-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
                                         <span>Pukul {{ $formattedTime }}</span>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-[#105e75] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 text-primary-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                         </svg>
@@ -202,14 +202,14 @@
                                 </div>
 
                                 @role('Admin|Sekretaris')
-                                    <div class="flex gap-2 mt-4 pt-3 border-t border-gray-100">
+                                    <div class="flex gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-slate-700">
                                         <button
                                             data-item='@json($itemData)'
                                             @click.stop="
                                                 selectedTimeline = JSON.parse($el.dataset.item);
                                                 openEditTimeline = true;
                                             "
-                                            class="flex-1 bg-[#105e75] hover:bg-[#0b4d61] text-white text-xs font-semibold py-2 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                            class="flex-1 bg-primary-500 hover:bg-primary-600 text-white text-xs font-semibold py-2 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                                             </svg>
@@ -235,9 +235,9 @@
                     @empty
                         <div class="col-span-full text-center py-20">
                             <div class="text-6xl mb-4">📅</div>
-                            <h3 class="text-xl font-bold text-gray-400">Belum ada timeline</h3>
+                            <h3 class="text-xl font-bold text-gray-400 dark:text-slate-500">Belum ada timeline</h3>
                             @role('Admin|Sekretaris')
-                                <p class="text-gray-400 mt-2 text-sm">Klik tombol <strong>+ Tambah Timeline</strong> untuk memulai.</p>
+                                <p class="text-gray-400 dark:text-slate-500 mt-2 text-sm">Klik tombol <strong>+ Tambah Timeline</strong> untuk memulai.</p>
                             @endrole
                         </div>
                     @endforelse
