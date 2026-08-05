@@ -1,6 +1,6 @@
-@if(session('success'))
-<script>
-document.addEventListener('DOMContentLoaded', function () {
+@if (session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
     Swal.fire({
         icon: 'success',
@@ -11,22 +11,22 @@ document.addEventListener('DOMContentLoaded', function () {
         showConfirmButton: false
     });
 
-});
-</script>
+        });
+    </script>
 @endif
-@if(session('error'))
-<script>
-document.addEventListener('DOMContentLoaded', function () {
+@if (session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-    Swal.fire({
-        icon: 'error',
-        title: 'Gagal',
-        text: @json(session('error')),
-        confirmButtonColor: '#dc2626'
-    });
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: @json(session('error')),
+                confirmButtonColor: '#dc2626'
+            });
 
-});
-</script>
+        });
+    </script>
 @endif
 <x-app-layout>
     <!-- TAMBAHKAN x-data DI SINI UNTUK MENGONTROL MODAL -->
@@ -135,7 +135,8 @@ openTambahPengumuman=true;
                 @forelse($pengumumanList as $item)
                     <div class="bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-200 dark:border-slate-700/80 shadow-sm p-6 mb-5">
 
-                        <div class="flex justify-between items-start">
+                        {{-- Accent bar ala Timeline --}}
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-[#105e75]"></div>
 
                             <div>
 
@@ -155,14 +156,86 @@ openTambahPengumuman=true;
 
                                     {{ $item->pembuat?->name }}
 
+                                    {{-- Info Waktu dan Pembuat dengan Icon --}}
+                                    <div class="mt-1.5 flex flex-wrap items-center gap-2 text-sm text-gray-500">
+                                        <div class="flex items-center gap-1">
+                                            <svg class="w-4 h-4 text-[#105e75]" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            <span>{{ optional($item->tanggal_publish)->translatedFormat('d F Y H:i') }}</span>
+                                        </div>
+                                        <span class="text-gray-300">•</span>
+                                        <div class="flex items-center gap-1">
+                                            <svg class="w-4 h-4 text-[#105e75]" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                                </path>
+                                            </svg>
+                                            <span>{{ $item->pembuat?->name }}</span>
+                                        </div>
+                                    </div>
                                 </div>
 
+                                {{-- Status Badge --}}
+                                <div class="shrink-0 ml-3">
+                                    @if ($item->status == 'Publish')
+                                        <span
+                                            class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                            Publish
+                                        </span>
+                                    @else
+                                        <span
+                                            class="bg-yellow-50 border border-yellow-200 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                            Draft
+                                        </span>
+                                    @endif
+                                </div>
                             </div>
 
-                            @role('Admin|Sekretaris')
-                                <div class="flex gap-2">
+                            {{-- Isi Pengumuman --}}
+                            <div class="mt-3">
+                                <p class="whitespace-pre-line text-sm md:text-base leading-relaxed text-gray-700">
+                                    {{ $item->isi }}
+                                </p>
+                            </div>
 
-                                    <button type="button" data-item='@json($item)'
+                            {{-- Lampiran bergaya tombol yang lebih rapi --}}
+                            @if ($item->lampiran)
+                                <div class="mt-4">
+                                    <a href="{{ asset('storage/' . $item->lampiran) }}" target="_blank"
+                                        class="inline-flex items-center gap-1.5 text-sm font-semibold text-[#105e75] bg-[#edf6fc] px-4 py-2 rounded-lg hover:bg-blue-100 transition">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13">
+                                            </path>
+                                        </svg>
+                                        Lihat Lampiran
+                                    </a>
+                                </div>
+                            @endif
+
+                            {{-- Action Buttons --}}
+                            @role('Admin|Sekretaris')
+                                <div class="flex gap-2 mt-5 pt-4 border-t border-gray-100">
+                                    {{-- PHP agar Blade tidak bingung --}}
+                                    @php
+                                        $pengumumanData = [
+                                            'id' => $item->id,
+                                            'judul' => $item->judul,
+                                            'isi' => $item->isi,
+                                            'status' => $item->status,
+                                            'lampiran' => $item->lampiran,
+                                            'tanggal_publish' => $item->tanggal_publish
+                                                ? \Carbon\Carbon::parse($item->tanggal_publish)->format('Y-m-d\TH:i')
+                                                : '',
+                                        ];
+                                    @endphp
+
+                                    {{-- Tombol Edit --}}
+                                    <button type="button" data-item="{{ json_encode($pengumumanData) }}"
                                         @click="
         selectedPengumuman = JSON.parse($el.dataset.item);
         openEditPengumuman = true;
@@ -170,7 +243,6 @@ openTambahPengumuman=true;
                                         class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg font-semibold transition cursor-pointer">
 
                                         Edit
-
                                     </button>
 
                                     <button type="button" data-item='@json([
@@ -185,10 +257,8 @@ openTambahPengumuman=true;
 
                                         Hapus
                                     </button>
-
                                 </div>
                             @endrole
-
                         </div>
 
                         <div class="mt-5">
@@ -247,7 +317,6 @@ openTambahPengumuman=true;
                         </div>
 
                     </div>
-
                 @empty
 
                     <div class="text-center py-16">
@@ -342,17 +411,18 @@ openTambahPengumuman=true;
                 {{-- tambah/edit timeline --}}
                 @can('tambah timeline')
                     @php
-                        $rapatData = $rapatTerbaru ? [
-                            'id' => $rapatTerbaru->id,
-                            'judul' => $rapatTerbaru->judul,
-                            'tanggal' => \Carbon\Carbon::parse($rapatTerbaru->tanggal)->format('Y-m-d'),
-                            'jam' => \Carbon\Carbon::parse($rapatTerbaru->jam)->format('H:i'),
-                            'tempat' => $rapatTerbaru->tempat
-                        ] : null;
+                        $rapatData = $rapatTerbaru
+                            ? [
+                                'id' => $rapatTerbaru->id,
+                                'judul' => $rapatTerbaru->judul,
+                                'tanggal' => \Carbon\Carbon::parse($rapatTerbaru->tanggal)->format('Y-m-d'),
+                                'jam' => \Carbon\Carbon::parse($rapatTerbaru->jam)->format('H:i'),
+                                'tempat' => $rapatTerbaru->tempat,
+                            ]
+                            : null;
                     @endphp
-                    <button 
-                        @if($rapatData)
-                            data-item='@json($rapatData)'
+                    <button
+                        @if ($rapatData) data-item='@json($rapatData)'
                             @click="selectedTimeline = JSON.parse($el.dataset.item); openEditTimeline = true;"
                         @else
                             @click="selectedTimeline = { id: null, judul: '', tanggal: '', jam: '', tempat: '' }; openEditTimeline = true;"
@@ -423,7 +493,6 @@ openTambahPengumuman=true;
                                 </button>
                             </form>
                         </div>
-                    </div>
                     @endforeach
                 </div>
             </div>
@@ -455,8 +524,8 @@ openTambahPengumuman=true;
                     @click="openAddNotulensi = false"></div>
 
                 <!-- Modal panel -->
-                <form action="{{ route('notulensi.store') }}" method="POST" enctype="multipart/form-data" 
-                      x-show="openAddNotulensi" x-transition:enter="ease-out duration-300"
+                <form action="{{ route('notulensi.store') }}" method="POST" enctype="multipart/form-data"
+                    x-show="openAddNotulensi" x-transition:enter="ease-out duration-300"
                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
                     x-transition:leave="ease-in duration-200"

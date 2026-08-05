@@ -6,6 +6,7 @@ use App\Models\Pengumuman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class PengumumanController extends Controller
 {
@@ -22,6 +23,9 @@ class PengumumanController extends Controller
             'lampiran' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
         ]);
 
+        // UBAH FORMAT TANGGAL SEBELUM MASUK DATABASE
+        $validated['tanggal_publish'] = Carbon::parse($request->tanggal_publish)->format('Y-m-d H:i:s');
+
         if ($request->hasFile('lampiran')) {
             $validated['lampiran'] = $request
                 ->file('lampiran')
@@ -35,7 +39,6 @@ class PengumumanController extends Controller
         return redirect()
             ->route('dashboard')
             ->with('success', 'Pengumuman berhasil ditambahkan.');
-            
     }
 
     /**
@@ -50,6 +53,9 @@ class PengumumanController extends Controller
             'status' => 'required|in:Draft,Publish',
             'lampiran' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
         ]);
+
+        // UBAH FORMAT TANGGAL SEBELUM MASUK DATABASE
+        $validated['tanggal_publish'] = Carbon::parse($request->tanggal_publish)->format('Y-m-d H:i:s');
 
         if ($request->hasFile('lampiran')) {
 
@@ -71,7 +77,6 @@ class PengumumanController extends Controller
             ->route('dashboard')
             ->with('success', 'Pengumuman berhasil diperbarui.');
     }
-
     /**
      * Hapus Pengumuman
      */

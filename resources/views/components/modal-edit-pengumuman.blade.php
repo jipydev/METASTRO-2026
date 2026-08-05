@@ -1,26 +1,34 @@
 <div
     x-show="openEditPengumuman"
     x-cloak
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    class="fixed inset-0 z-[999] flex items-center justify-center p-4 sm:p-0">
+
+    <div 
+        x-show="openEditPengumuman" 
+        x-transition.opacity 
+        class="fixed inset-0 bg-black/40 backdrop-blur-sm" 
+        @click="openEditPengumuman = false">
+    </div>
 
     <div
         x-show="openEditPengumuman"
         x-transition
         @click.outside="openEditPengumuman=false"
-        class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl w-full max-w-2xl border border-gray-100 dark:border-slate-700 font-poppins">
+        class="bg-white rounded-3xl shadow-xl w-full max-w-2xl">
 
         <form
             x-bind:action="'{{ url('pengumuman') }}/' + selectedPengumuman.id"
             method="POST"
-            enctype="multipart/form-data">
+            enctype="multipart/form-data"
+            class="flex flex-col h-full">
 
             @csrf
             @method('PUT')
 
             {{-- HEADER --}}
-            <div class="flex justify-between items-center border-b border-gray-100 dark:border-slate-700 px-6 py-5">
+            <div class="flex justify-between items-center border-b px-6 py-5">
 
-                <h2 class="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                <h2 class="text-2xl font-bold text-[#105e75]">
 
                     Edit Pengumuman
 
@@ -29,21 +37,20 @@
                 <button
                     type="button"
                     @click="openEditPengumuman=false"
-                    class="text-3xl text-gray-400 dark:text-slate-400 hover:text-red-500 transition cursor-pointer">
+                    class="text-3xl text-gray-500 hover:text-red-500">
 
                     &times;
 
                 </button>
-
             </div>
 
             {{-- BODY --}}
-            <div class="p-6 space-y-6 text-slate-800 dark:text-slate-200">
+            <div class="p-6 space-y-6">
 
                 {{-- Judul --}}
                 <div>
 
-                    <label class="block font-semibold mb-2 text-sm text-gray-700 dark:text-slate-300">
+                    <label class="block font-semibold mb-2">
 
                         Judul
 
@@ -53,15 +60,14 @@
                         type="text"
                         name="judul"
                         x-model="selectedPengumuman.judul"
-                        class="w-full rounded-xl border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:border-primary-500 focus:ring-primary-500"
+                        class="w-full rounded-xl border-gray-300 focus:border-[#105e75] focus:ring-[#105e75]"
                         required>
-
                 </div>
 
                 {{-- Isi --}}
                 <div>
 
-                    <label class="block font-semibold mb-2 text-sm text-gray-700 dark:text-slate-300">
+                    <label class="block font-semibold mb-2">
 
                         Isi Pengumuman
 
@@ -69,17 +75,42 @@
 
                     <textarea
                         name="isi"
-                        rows="6"
+                        rows="4"
                         x-model="selectedPengumuman.isi"
-                        class="w-full rounded-xl border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:border-primary-500 focus:ring-primary-500"
+                        class="w-full rounded-xl border-gray-300 focus:border-[#105e75] focus:ring-[#105e75]"
                         required></textarea>
+                </div>
 
+                {{-- Grid untuk Tanggal & Status agar hemat tempat --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {{-- Publish --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Tanggal Publish</label>
+                        <input
+                            type="datetime-local"
+                            name="tanggal_publish"
+                            x-model="selectedPengumuman.tanggal_publish"
+                            class="w-full text-sm rounded-xl border-gray-300 focus:border-[#105e75] focus:ring-[#105e75] transition"
+                            required>
+                    </div>
+
+                    {{-- Status --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Status</label>
+                        <select
+                            name="status"
+                            x-model="selectedPengumuman.status"
+                            class="w-full text-sm rounded-xl border-gray-300 focus:border-[#105e75] focus:ring-[#105e75] transition">
+                            <option value="Draft">Draft</option>
+                            <option value="Publish">Publish</option>
+                        </select>
+                    </div>
                 </div>
 
                 {{-- Lampiran --}}
                 <div>
 
-                    <label class="block font-semibold mb-2 text-sm text-gray-700 dark:text-slate-300">
+                    <label class="block font-semibold mb-2">
 
                         Ganti Lampiran
 
@@ -88,7 +119,7 @@
                     <input
                         type="file"
                         name="lampiran"
-                        class="w-full rounded-xl border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-600 hover:file:bg-primary-100 dark:file:bg-slate-600 dark:file:text-primary-400">
+                        class="w-full rounded-xl border-gray-300">
 
                     <template x-if="selectedPengumuman.lampiran">
 
@@ -97,14 +128,12 @@
                             <a
                                 :href="'/storage/' + selectedPengumuman.lampiran"
                                 target="_blank"
-                                class="text-primary-500 dark:text-primary-400 hover:underline text-sm font-semibold">
+                                class="text-blue-600 hover:underline">
 
                                 📎 Lihat Lampiran Saat Ini
 
                             </a>
-
                         </div>
-
                     </template>
 
                 </div>
@@ -112,7 +141,7 @@
                 {{-- Publish --}}
                 <div>
 
-                    <label class="block font-semibold mb-2 text-sm text-gray-700 dark:text-slate-300">
+                    <label class="block font-semibold mb-2">
 
                         Tanggal Publish
 
@@ -122,7 +151,7 @@
                         type="datetime-local"
                         name="tanggal_publish"
                         x-model="selectedPengumuman.tanggal_publish"
-                        class="w-full rounded-xl border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:border-primary-500 focus:ring-primary-500"
+                        class="w-full rounded-xl border-gray-300 focus:border-[#105e75] focus:ring-[#105e75]"
                         required>
 
                 </div>
@@ -130,7 +159,7 @@
                 {{-- Status --}}
                 <div>
 
-                    <label class="block font-semibold mb-2 text-sm text-gray-700 dark:text-slate-300">
+                    <label class="block font-semibold mb-2">
 
                         Status
 
@@ -139,7 +168,7 @@
                     <select
                         name="status"
                         x-model="selectedPengumuman.status"
-                        class="w-full rounded-xl border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:border-primary-500 focus:ring-primary-500">
+                        class="w-full rounded-xl border-gray-300 focus:border-[#105e75] focus:ring-[#105e75]">
 
                         <option value="Draft">
 
@@ -160,29 +189,24 @@
             </div>
 
             {{-- FOOTER --}}
-            <div class="border-t border-gray-100 dark:border-slate-700 px-6 py-5 flex justify-end gap-3">
+            <div class="border-t px-6 py-5 flex justify-end gap-3">
 
                 <button
                     type="button"
                     @click="openEditPengumuman=false"
-                    class="px-5 py-2 rounded-xl border border-gray-300 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-300 font-semibold cursor-pointer">
+                    class="px-5 py-2 rounded-xl border border-gray-300 hover:bg-gray-100">
 
                     Batal
-
                 </button>
-
                 <button
                     type="submit"
-                    class="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2 rounded-xl font-bold shadow-sm cursor-pointer">
+                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-xl">
 
                     Update Pengumuman
 
                 </button>
-
             </div>
 
         </form>
-
     </div>
-
 </div>

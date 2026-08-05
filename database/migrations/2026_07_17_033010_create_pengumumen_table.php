@@ -18,7 +18,7 @@ return new class extends Migration
 
             $table->string('lampiran')->nullable();
 
-            $table->date('tanggal_publish');
+            $table->dateTime('tanggal_publish');
 
             $table->enum('status',[
                 'Draft',
