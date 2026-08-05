@@ -13,12 +13,12 @@ class Pengumuman extends Model
     protected $table = 'pengumuman';
 
     protected $fillable = [
-        'judul',
-        'isi',
-        'lampiran',
-        'tanggal_publish',
-        'status',
-        'pembuat_id',
+        'judul', 
+        'isi', 
+        'status', 
+        'lampiran', 
+        'pembuat_id', 
+        'tanggal_publish' 
     ];
 
     protected $casts = [
