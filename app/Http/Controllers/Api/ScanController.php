@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\QrCodeService;
-use App\Models\absensi;
+use App\Models\ListPanitia;
+use App\Models\Rapat;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -37,7 +39,7 @@ class ScanController extends Controller
                 'divisi' => $user->divisi?->nama_divisi ?? 'Belum ada divisi',
                 'photo' => $user->foto
                     ? asset('storage/' . $user->foto)
-                    : 'https://ui-avatars.com/api/?size=256&background=065E75&color=fff&name=' . urlencode($user->name),
+                    : 'https://ui-avatars.com/api/?size=256&background=fe5a1d&color=fff&name=' . urlencode($user->name),
             ],
         ]);
     }
@@ -49,65 +51,60 @@ class ScanController extends Controller
     {
         $request->validate([
             'user_id' => ['required', 'integer', 'exists:users,id'],
-            'jadwal_id' => ['nullable', 'integer', 'exists:jadwal,id'],
         ]);
 
         try {
-            // If jadwal_id is provided, check if already recorded for this schedule
-            if ($request->jadwal_id) {
-                $existing = absensi::where('user_id', $request->user_id)
-                    ->where('jadwal_id', $request->jadwal_id)
-                    ->first();
+            // 1. Cari Rapat Besar yang terjadwal HARI INI
+            $rapatHariIni = Rapat::whereDate('tanggal', Carbon::today())->first();
 
-                if ($existing) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'User sudah absen untuk jadwal ini.',
-                    ], 409);
-                }
-
-                absensi::create([
-                    'jadwal_id' => $request->jadwal_id,
-                    'user_id' => $request->user_id,
-                    'status' => 'Hadir',
-                    'waktu_absen' => now(),
-                ]);
-            } else {
-                // Cari jadwal yang sedang berlangsung hari ini
-                $jadwalHariIni = \App\Models\Jadwal::where('tanggal', now()->toDateString())
-                    ->where('status', 'Berlangsung')
-                    ->first();
-
-                if (!$jadwalHariIni) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Tidak ada jadwal yang sedang berlangsung saat ini.',
-                    ], 404);
-                }
-
-                $existing = absensi::where('user_id', $request->user_id)
-                    ->where('jadwal_id', $jadwalHariIni->id)
-                    ->first();
-
-                if ($existing) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'User sudah absen untuk jadwal ini.',
-                    ], 409);
-                }
-
-                absensi::create([
-                    'jadwal_id' => $jadwalHariIni->id,
-                    'user_id' => $request->user_id,
-                    'status' => 'Hadir',
-                    'waktu_absen' => now(),
-                ]);
+            if (!$rapatHariIni) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada jadwal Rapat Besar hari ini.',
+                ], 404);
             }
+
+            // 2. Cek apakah user sudah absen untuk rapat ini
+            $existing = ListPanitia::where('user_id', $request->user_id)
+                ->where('rapat_id', $rapatHariIni->id)
+                ->first();
+
+            if ($existing) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User ini sudah melakukan presensi untuk ' . $rapatHariIni->judul,
+                ], 409);
+            }
+
+            // 3. Tentukan status (Hadir vs Telat)
+            // Logika Telat: absen setelah 15 menit sebelum rapat dimulai
+            // Contoh: rapat jam 13:00. Batas Hadir: <= 12:45. Telat: > 12:45.
+            $jamRapat = Carbon::parse($rapatHariIni->jam);
+            $batasWaktuHadir = $jamRapat->copy()->subMinutes(15);
+            $waktuSekarang = Carbon::now();
+
+            $status = 'Hadir';
+            if ($waktuSekarang->greaterThan($batasWaktuHadir)) {
+                $status = 'Telat';
+            }
+
+            // 4. Simpan ke list_panitias
+            ListPanitia::create([
+                'user_id' => $request->user_id,
+                'rapat_id' => $rapatHariIni->id,
+                'scanned_by' => auth()->id(),
+                'jam_tap' => $waktuSekarang->format('H:i:s'),
+                'status' => $status,
+            ]);
+
+            // 5. Update jumlah hadir di tabel Rapat
+            $rapatHariIni->increment('hadir');
 
             return response()->json([
                 'success' => true,
-                'message' => 'Absensi berhasil dicatat.',
+                'message' => 'Absensi ' . $status . ' berhasil dicatat untuk ' . $rapatHariIni->judul,
             ]);
+
         } catch (\Exception $e) {
             Log::error('Record attendance error: ' . $e->getMessage());
 

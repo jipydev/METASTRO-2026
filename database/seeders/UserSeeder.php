@@ -28,9 +28,8 @@ class UserSeeder extends Seeder
             $nim = '0000' . ($i + 1);
 
             $user = User::firstOrCreate(
-                // ['email' => $email],
+                ['nim' => $nim],
                 [
-                    'nim' => $nim,
                     'name' => $roleName . ' User',
                     'password' => Hash::make('metastro2026'),
                     'divisi_id' => 1,
@@ -41,6 +40,8 @@ class UserSeeder extends Seeder
                     'email_verified_at' => now(),
                 ]
             );
+
+
 
             // Assign Spatie role if available
             try {
