@@ -57,6 +57,11 @@ Route::middleware([
         ->name('destroy');
 });
 
+// View Lampiran Pengumuman — semua user terautentikasi bisa mengakses
+Route::middleware(['auth', 'verified'])
+    ->get('/pengumuman/{pengumuman}/lampiran', [\App\Http\Controllers\PengumumanController::class, 'viewLampiran'])
+    ->name('pengumuman.lampiran');
+
 
 /*
 |--------------------------------------------------------------------------

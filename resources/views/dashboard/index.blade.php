@@ -53,6 +53,11 @@
             tanggal_publish: '',
             lampiran: null
         },
+        openViewPengumuman: false,
+        pengumumanTitle: '',
+        pengumumanViewUrl: '',
+        pengumumanDownloadUrl: '',
+        pengumumanIsImage: false,
         /* =========================
             TIMELINE
         ========================= */
@@ -72,7 +77,19 @@
         ========================= */
         openAddNotulensi: false,
         openViewNotulensi: false,
-        notulensiTitle: ''
+        notulensiTitle: '',
+        notulensiViewUrl: '',
+        notulensiDownloadUrl: '',
+        init() {
+            this.$watch('openViewNotulensi', value => {
+                if (value) document.body.style.overflow = 'hidden';
+                else if (!this.openViewPengumuman) document.body.style.overflow = '';
+            });
+            this.$watch('openViewPengumuman', value => {
+                if (value) document.body.style.overflow = 'hidden';
+                else if (!this.openViewNotulensi) document.body.style.overflow = '';
+            });
+        }
     }"
         class="min-h-screen bg-gray-100 dark:bg-slate-900 pb-10 transition-colors duration-200 font-poppins">
 
@@ -176,15 +193,16 @@
                             {{-- Lampiran --}}
                             @if ($item->lampiran)
                                 <div class="mt-4">
-                                    <a href="{{ asset('storage/' . $item->lampiran) }}" target="_blank"
-                                        class="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-slate-700/60 px-4 py-2 rounded-xl hover:bg-primary-100 dark:hover:bg-slate-700 transition">
+                                    <button type="button"
+                                        @click="openViewPengumuman = true; pengumumanTitle = 'Lampiran {{ $item->judul }}'; pengumumanViewUrl = '{{ route('pengumuman.lampiran', $item->id) }}'; pengumumanDownloadUrl = '{{ route('pengumuman.lampiran', $item->id) }}'; pengumumanIsImage = {{ in_array(strtolower(pathinfo($item->lampiran, PATHINFO_EXTENSION)), ['jpg','jpeg','png']) ? 'true' : 'false' }};"
+                                        class="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-slate-700/60 px-4 py-2 rounded-xl hover:bg-primary-100 dark:hover:bg-slate-700 transition cursor-pointer">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13">
                                             </path>
                                         </svg>
                                         Lihat Lampiran
-                                    </a>
+                                    </button>
                                 </div>
                             @endif
 
@@ -384,7 +402,7 @@
                             <div class="flex space-x-2 items-center">
                                 @unlessrole('Panitia|Peserta')
                                 <button
-                                    @click="openViewNotulensi = true; notulensiTitle = 'Notulensi {{ $rabes->judul }}'"
+                                    @click="openViewNotulensi = true; notulensiTitle = 'Notulensi {{ $rabes->judul }}'; notulensiViewUrl = '{{ route('notulensi.view', $rabes->id) }}'; notulensiDownloadUrl = '{{ route('notulensi.view', $rabes->id) }}'"
                                     class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition cursor-pointer">Lihat</button>
                                 @endunlessrole
                                 @role('Admin|Sekretaris')
@@ -421,6 +439,7 @@
         <x-modal-edit-timeline />
         <x-modal-izin />
         <x-modal-view-notulensi />
+        <x-modal-view-pengumuman />
 
         <!-- Modal Tambah Notulensi -->
         <div x-show="openAddNotulensi" style="display: none;" class="fixed inset-0 z-[999] overflow-y-auto"

@@ -103,4 +103,27 @@ class PengumumanController extends Controller
     {
         return response()->json($pengumuman);
     }
+
+    /**
+     * Lihat lampiran pengumuman inline
+     */
+    public function viewLampiran(Pengumuman $pengumuman)
+    {
+        if (!$pengumuman->lampiran) {
+            abort(404, 'Lampiran tidak ditemukan.');
+        }
+
+        $path = storage_path('app/public/' . $pengumuman->lampiran);
+
+        if (!file_exists($path)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        $mimeType = mime_content_type($path);
+
+        return response()->file($path, [
+            'Content-Type'        => $mimeType,
+            'Content-Disposition' => 'inline; filename="' . basename($path) . '"',
+        ]);
+    }
 }
