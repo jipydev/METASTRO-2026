@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
         // Try to use roles seeded by RoleSeeder; fall back to a default list
         $roles = Role::pluck('name')->toArray();
         if (empty($roles)) {
-            $roles = ['Admin', 'Panitia', 'Peserta', 'Ranger', 'Sekretaris', 'Pengawas'];
+            $roles = ['Admin', 'Panitia', 'Peserta', 'Koordinator Divisi', 'Ranger', 'Sekretaris', 'Pengawas'];
         }
 
         foreach ($roles as $i => $roleName) {

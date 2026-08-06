@@ -61,7 +61,12 @@
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-800 hover:text-slate-600 dark:hover:text-white focus:outline-none transition ease-in-out duration-150">
-                                <div class="font-poppins">{{ Auth::user()->name }}</div>
+                                <div class="flex items-center gap-2">
+                                    <div class="font-poppins">{{ Auth::user()->name }}</div>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-50 text-primary-600 dark:bg-slate-700 dark:text-primary-400 border border-primary-100 dark:border-slate-600 hidden md:inline-block">
+                                        {{ Auth::user()->divisi?->nama_divisi ?? 'Panitia' }}
+                                    </span>
+                                </div>
                                 <div class="ms-1">
                                     <svg class="fill-current h-4 w-4 text-slate-600 dark:text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -103,7 +108,12 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-white dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700">
         <div class="pt-4 pb-1">
             <div class="px-4">
-                <div class="font-medium font-poppins text-base text-slate-900 dark:text-white">{{ Auth::user()->name }}</div>
+                <div class="flex items-center gap-2 mb-0.5">
+                    <div class="font-medium font-poppins text-base text-slate-900 dark:text-white">{{ Auth::user()->name }}</div>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-50 text-primary-600 dark:bg-slate-700 dark:text-primary-400 border border-primary-100 dark:border-slate-600">
+                        {{ Auth::user()->divisi?->nama_divisi ?? 'Panitia' }}
+                    </span>
+                </div>
                 <div class="font-medium text-sm text-slate-500 dark:text-slate-400">{{ Auth::user()->email }}</div>
             </div>
 
