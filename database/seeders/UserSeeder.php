@@ -52,5 +52,54 @@ class UserSeeder extends Seeder
                 // If Spatie isn't configured yet, ignore role assignment
             }
         }
+
+        // Tambahkan dummy untuk setiap divisi
+        $divisiOrder = [
+            'Stakeholder',
+            'Pathfinder',
+            'Archivist',
+            'Fundkeeper',
+            'Guardian',
+            'Gearmaster',
+            'Informer',
+            'Documenter',
+            'Chef',
+            'Guider',
+            'Rescuer',
+            'Scribe',
+            'Chiper',
+            'Ranger',
+            'Pengawas'
+        ];
+
+        $nimCounter = 1000;
+        foreach ($divisiOrder as $divisiName) {
+            $divisi = \App\Models\Divisi::firstOrCreate(
+                ['nama_divisi' => $divisiName],
+                ['deskripsi' => 'Deskripsi ' . $divisiName, 'koordinator_divisi_nim' => null]
+            );
+
+            for ($j = 1; $j <= 2; $j++) {
+                $nimCounter++;
+                $dummyUser = User::firstOrCreate(
+                    ['nim' => (string)$nimCounter],
+                    [
+                        'name' => $divisiName . ' Dummy ' . $j,
+                        'password' => Hash::make('metastro2026'),
+                        'divisi_id' => $divisi->id,
+                        'jabatan_id' => 1,
+                        'role_id' => 2, // Asumsi role Panitia
+                        'status_aktif' => true,
+                        'email_verified_at' => now(),
+                    ]
+                );
+
+                try {
+                    if (! $dummyUser->hasRole('Panitia')) {
+                        $dummyUser->assignRole('Panitia');
+                    }
+                } catch (\Throwable $e) {}
+            }
+        }
     }
 }

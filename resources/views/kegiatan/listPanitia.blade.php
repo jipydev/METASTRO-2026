@@ -41,7 +41,7 @@
                         Semua
                     </a>
 
-                    @php $filterTabs = ['Hadir', 'Telat', 'Tidak Hadir', 'Alpha', 'Izin']; @endphp
+                    @php $filterTabs = ['Hadir', 'Telat', 'Tidak Hadir', 'Alpha']; @endphp
                     @foreach($filterTabs as $tab)
                         <a href="{{ request()->fullUrlWithQuery(['status' => $tab]) }}" 
                            class="px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all {{ $statusFilter === $tab ? 'bg-primary-500 text-white shadow-md' : 'bg-white md:bg-gray-100 dark:bg-slate-700 dark:md:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-600' }}">

@@ -100,13 +100,41 @@ class ListPanitiaController extends Controller
         // Terapkan Filter Status jika ada
         if ($statusFilter) {
             $panitiaData = array_filter($panitiaData, function($item) use ($statusFilter) {
+                if ($statusFilter === 'Tidak Hadir') {
+                    return in_array($item['status'], ['Tidak Hadir', 'Izin', 'Sakit']);
+                }
                 return $item['status'] === $statusFilter;
             });
         }
         
-        // Sorting: Hadir duluan, Telat, lalu Alpha/Tidak Hadir. Atau biarkan sesuai nama.
-        usort($panitiaData, function($a, $b) {
-            return strcmp($a['nama'], $b['nama']);
+        // Sorting: Urut berdasarkan divisi sesuai request, lalu nama
+        $divisiOrder = [
+            'Stakeholder' => 1,
+            'Pathfinder' => 2,
+            'Archivist' => 3,
+            'Fundkeeper' => 4,
+            'Guardian' => 5,
+            'Gearmaster' => 6,
+            'Informer' => 7,
+            'Documenter' => 8,
+            'Chef' => 9,
+            'Guider' => 10,
+            'Rescuer' => 11,
+            'Scribe' => 12,
+            'Chiper' => 13,
+            'Ranger' => 14,
+            'Pengawas' => 15,
+        ];
+
+        usort($panitiaData, function($a, $b) use ($divisiOrder) {
+            $divA = $divisiOrder[$a['divisi']] ?? 99;
+            $divB = $divisiOrder[$b['divisi']] ?? 99;
+
+            if ($divA === $divB) {
+                return strcmp($a['nama'], $b['nama']);
+            }
+
+            return $divA <=> $divB;
         });
 
         return view('kegiatan.listPanitia', [

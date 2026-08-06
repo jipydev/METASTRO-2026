@@ -65,6 +65,11 @@ class DivisiSeeder extends Seeder
                 'koordinator_divisi_nim' => null
             ],
             [
+                'nama_divisi' => 'Rescuer',
+                'deskripsi' => 'Divisi Rescuer bertugas menangani kondisi darurat medis dan keselamatan.',
+                'koordinator_divisi_nim' => null
+            ],
+            [
                 'nama_divisi' => 'Scribe',
                 'deskripsi' => 'Divisi Scribe atau Kestari ertugas mengurus administrasi, surat-menyurat, dan pengarsipan data.',
                 'koordinator_divisi_nim' => null
