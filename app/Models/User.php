@@ -62,6 +62,11 @@ class User extends Authenticatable implements PasskeyUser
     |--------------------------------------------------------------------------
     */
 
+    public function roleName(): string
+    {
+        return $this->role ?? 'Belum ada role';
+    }
+
     public function divisi()
     {
         return $this->belongsTo(Divisi::class);

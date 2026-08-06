@@ -21,7 +21,13 @@
 
         <p class="text-slate-500 dark:text-slate-400 text-sm">
 
-            {{ $user->divisi?->nama_divisi ?? 'Belum ada divisi' }}
+            @php
+                $jabatanName = $user->jabatan?->nama_jabatan;
+                $divisiName  = $user->divisi?->nama_divisi;
+                $hideDivisi  = in_array($jabatanName, ['Ketua Pelaksana', 'Wakil Ketua Pelaksana']);
+            @endphp
+
+            {{ $jabatanName }}@unless($hideDivisi){{ $divisiName ? ' ' . $divisiName : '' }}@endunless
 
         </p>
 
