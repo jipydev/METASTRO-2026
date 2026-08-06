@@ -13,9 +13,21 @@ class RoleSeeder extends Seeder
             ['name' => 'Admin', 'permissions' => ['lihat presensi' , 'scan presensi', 'upload notulensi', 'hapus notulensi', 'tambah timeline', 'ubah timeline', 'hapus timeline', 'ubah pengumuman']],
             ['name' => 'Panitia'],
             ['name' => 'Peserta'],
+            ['name' => 'Koordinator Divisi', 'permissions' => ['lihat presensi']],
+            ['name' => 'Wakil Koordinator Divisi', 'permissions' => ['lihat presensi']],
             ['name' => 'Ranger', 'permissions' => ['lihat presensi']],
-            ['name' => 'Sekretaris', 'permissions' => [ 'lihat presensi','scan presensi', 'upload notulensi', 'hapus notulensi', 'tambah timeline', 'ubah timeline', 'hapus timeline', 'ubah pengumuman']],
+            ['name' => 'Archivist', 'permissions' => [ 'lihat presensi','scan presensi', 'upload notulensi', 'hapus notulensi', 'tambah timeline', 'ubah timeline', 'hapus timeline', 'ubah pengumuman']],
             ['name' => 'Pengawas'],
+            ['name' => 'Divisi Fundkeeper'],
+            ['name' => 'Divisi Scribe'],
+            ['name' => 'Divisi Pathfinder'],
+            ['name' => 'Divisi Gearmaster'],
+            ['name' => 'Divisi Informer'],
+            ['name' => 'Divisi Guardian'],
+            ['name' => 'Divisi Documenter'],
+            ['name' => 'Divisi Rescuer'],
+            ['name' => 'Divisi Chef'],
+            ['name' => 'Divisi Guider'],
         ];
 
         foreach ($roles as $role) {

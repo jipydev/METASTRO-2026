@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\TimelineController;
+use App\Http\Controllers\IzinController;
 
 Route::get('/', function () {
     return view('dashboard.landingPage');
@@ -227,6 +228,27 @@ Route::middleware([
 });
 
 
+
+/*
+|--------------------------------------------------------------------------
+| Pengajuan Izin
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/izin', [IzinController::class, 'store'])->name('izin.store');
+});
+
+// Koordinator Divisi
+Route::middleware(['auth', 'verified', 'role:Koordinator Divisi'])->prefix('izin')->name('izin.')->group(function () {
+    Route::get('/koordinator', [IzinController::class, 'koordinatorIndex'])->name('koordinator');
+    Route::post('/koordinator/{absensi}/validasi', [IzinController::class, 'koordinatorValidasi'])->name('koordinator.validasi');
+});
+
+// Ranger
+Route::middleware(['auth', 'verified', 'role:Ranger|Admin'])->prefix('izin')->name('izin.')->group(function () {
+    Route::get('/ranger', [IzinController::class, 'rangerIndex'])->name('ranger');
+    Route::post('/ranger/{absensi}/validasi', [IzinController::class, 'rangerValidasi'])->name('ranger.validasi');
+});
 
 
 require __DIR__ . '/auth.php';
