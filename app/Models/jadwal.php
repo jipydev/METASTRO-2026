@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Jadwal extends Model
 {
@@ -20,12 +20,12 @@ class Jadwal extends Model
         'lokasi',
         'deskripsi',
         'status',
-        'dibuat_oleh'
+        'dibuat_oleh',
     ];
 
     public function pembuat()
     {
-        return $this->belongsTo(User::class,'dibuat_oleh');
+        return $this->belongsTo(User::class, 'dibuat_oleh');
     }
 
     public function absensi()

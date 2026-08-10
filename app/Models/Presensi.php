@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Database\Factories\PresensiFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Presensi extends Model
 {
-    /** @use HasFactory<\Database\Factories\PresensiFactory> */
+    /** @use HasFactory<PresensiFactory> */
     use HasFactory;
 }

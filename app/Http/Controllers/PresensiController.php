@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Services\QrCodeService;
+use Illuminate\Support\Facades\Auth;
 
 class PresensiController extends Controller
 {
@@ -15,7 +14,7 @@ class PresensiController extends Controller
 
         // Generate QR if not exists yet
         $qrUrl = $qrService->getQrUrl($user);
-        if (!$qrUrl) {
+        if (! $qrUrl) {
             $qrService->generateForUser($user);
             $qrUrl = $qrService->getQrUrl($user);
         }

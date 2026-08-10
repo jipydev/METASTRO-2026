@@ -20,11 +20,11 @@ return new class extends Migration
                 ->constrained('users')
                 ->cascadeOnDelete();
 
-            $table->enum('status',[
+            $table->enum('status', [
                 'Hadir',
                 'Izin',
                 'Sakit',
-                'Alpha'
+                'Alpha',
             ]);
 
             $table->text('keterangan')->nullable();
@@ -33,14 +33,14 @@ return new class extends Migration
 
             $table->timestamp('waktu_absen')->nullable();
 
-            $table->decimal('persentase_kehadiran',5,2)
+            $table->decimal('persentase_kehadiran', 5, 2)
                 ->default(0);
 
             $table->timestamps();
 
             $table->unique([
                 'jadwal_id',
-                'user_id'
+                'user_id',
             ]);
 
         });

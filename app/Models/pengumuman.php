@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Pengumuman extends Model
@@ -13,12 +13,12 @@ class Pengumuman extends Model
     protected $table = 'pengumuman';
 
     protected $fillable = [
-        'judul', 
-        'isi', 
-        'status', 
-        'lampiran', 
-        'pembuat_id', 
-        'tanggal_publish' 
+        'judul',
+        'isi',
+        'status',
+        'lampiran',
+        'pembuat_id',
+        'tanggal_publish',
     ];
 
     protected $casts = [
@@ -55,10 +55,10 @@ class Pengumuman extends Model
 
     public function getLampiranUrlAttribute()
     {
-        if (!$this->lampiran) {
+        if (! $this->lampiran) {
             return null;
         }
 
-        return asset('storage/' . $this->lampiran);
+        return asset('storage/'.$this->lampiran);
     }
 }

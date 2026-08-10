@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Penilaian extends Model
 {
@@ -22,11 +22,11 @@ class Penilaian extends Model
         'tanggung_jawab',
         'inisiatif',
         'nilai_akhir',
-        'catatan'
+        'catatan',
     ];
 
     protected $casts = [
-        'nilai_akhir' => 'decimal:2'
+        'nilai_akhir' => 'decimal:2',
     ];
 
     public function user()

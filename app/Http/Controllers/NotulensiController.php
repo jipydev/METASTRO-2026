@@ -90,19 +90,19 @@ class NotulensiController extends Controller
      */
     public function viewPdf(notulensi $notulensi)
     {
-        if (!$notulensi->lampiran) {
+        if (! $notulensi->lampiran) {
             abort(404, 'Lampiran tidak ditemukan.');
         }
 
-        $path = storage_path('app/public/' . $notulensi->lampiran);
+        $path = storage_path('app/public/'.$notulensi->lampiran);
 
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             abort(404, 'File tidak ditemukan.');
         }
 
         return response()->file($path, [
-            'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . basename($path) . '"',
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.basename($path).'"',
         ]);
     }
 }

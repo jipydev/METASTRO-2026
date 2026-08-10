@@ -3,12 +3,12 @@
 namespace App\Services;
 
 use App\Models\User;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class QrCodeService
 {
@@ -51,7 +51,7 @@ class QrCodeService
 
         $renderer = new ImageRenderer(
             new RendererStyle(300, 2),
-            new SvgImageBackEnd()
+            new SvgImageBackEnd
         );
 
         $writer = new Writer($renderer);

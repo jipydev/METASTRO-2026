@@ -20,9 +20,9 @@ return new class extends Migration
 
             $table->dateTime('tanggal_publish');
 
-            $table->enum('status',[
+            $table->enum('status', [
                 'Draft',
-                'Publish'
+                'Publish',
             ])->default('Draft');
 
             $table->foreignId('pembuat_id')

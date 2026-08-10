@@ -2,27 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Absensi extends Model
 {
     use HasFactory;
 
-    protected $table='absensi';
+    protected $table = 'absensi';
 
-    protected $fillable=[
+    protected $fillable = [
         'jadwal_id',
         'user_id',
         'status',
         'keterangan',
         'bukti',
         'waktu_absen',
-        'persentase_kehadiran'
+        'persentase_kehadiran',
     ];
 
-    protected $casts=[
-        'waktu_absen'=>'datetime'
+    protected $casts = [
+        'waktu_absen' => 'datetime',
     ];
 
     public function jadwal()

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::create('jadwal', function (Blueprint $table) {
+        Schema::create('jadwal', function (Blueprint $table) {
 
             $table->id();
 
@@ -20,7 +20,7 @@ return new class extends Migration
                 'Rapat',
                 'Briefing',
                 'Pelatihan',
-                'Lainnya'
+                'Lainnya',
             ]);
 
             $table->date('tanggal');
@@ -34,7 +34,7 @@ return new class extends Migration
                 'Terjadwal',
                 'Berlangsung',
                 'Selesai',
-                'Dibatalkan'
+                'Dibatalkan',
             ])->default('Terjadwal');
 
             $table->foreignId('dibuat_oleh')

@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\ListPanitia;
 use App\Models\Rapat;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class ListPanitiaController extends Controller
 {
-    public function index(Request $request) 
+    public function index(Request $request)
     {
         $statusFilter = $request->query('status');
         $rapatId = $request->query('rapat_id');
@@ -23,7 +23,7 @@ class ListPanitiaController extends Controller
                 'panitia' => [],
                 'rapats' => $rapats,
                 'selectedRapat' => null,
-                'statusFilter' => $statusFilter
+                'statusFilter' => $statusFilter,
             ]);
         }
 
@@ -34,23 +34,23 @@ class ListPanitiaController extends Controller
             $selectedRapat = Rapat::whereDate('tanggal', Carbon::today())->first() ?? $rapats->first();
         }
 
-        if (!$selectedRapat) {
+        if (! $selectedRapat) {
             $selectedRapat = $rapats->first();
         }
 
         // Ambil data absen yang sudah tersimpan untuk rapat ini
         $absenRecords = ListPanitia::with(['user.divisi', 'scanner'])
-                            ->where('rapat_id', $selectedRapat->id)
-                            ->get();
-        
+            ->where('rapat_id', $selectedRapat->id)
+            ->get();
+
         $absenUserIds = $absenRecords->pluck('user_id')->toArray();
 
         // -------------------------------------------------------------
         // LOGIKA ALPHA OTOMATIS
-        // "alpha akan otomatis diberikan kepada panitia yang tidak absen 
+        // "alpha akan otomatis diberikan kepada panitia yang tidak absen
         // terakhir pada 15 menit setelah rapat dimulai"
         // -------------------------------------------------------------
-        $waktuRapat = Carbon::parse($selectedRapat->tanggal . ' ' . $selectedRapat->jam);
+        $waktuRapat = Carbon::parse($selectedRapat->tanggal.' '.$selectedRapat->jam);
         $batasWaktuAlpha = $waktuRapat->copy()->addMinutes(15);
         $sekarang = Carbon::now();
 
@@ -69,7 +69,7 @@ class ListPanitiaController extends Controller
                     'jam_tap' => Carbon::parse($record->jam_tap)->format('H:i'),
                     'tanggal' => Carbon::parse($selectedRapat->tanggal)->translatedFormat('d F Y'),
                     'status' => $record->status,
-                    'scanned_by' => $record->scanner?->name ?? 'Sistem'
+                    'scanned_by' => $record->scanner?->name ?? 'Sistem',
                 ];
             } else {
                 // Belum scan
@@ -81,7 +81,7 @@ class ListPanitiaController extends Controller
                         'jam_tap' => '-',
                         'tanggal' => Carbon::parse($selectedRapat->tanggal)->translatedFormat('d F Y'),
                         'status' => 'Alpha',
-                        'scanned_by' => '-'
+                        'scanned_by' => '-',
                     ];
                 } else {
                     // Masih bisa absen, kita tampilkan sebagai Belum Hadir / Tidak Hadir
@@ -91,7 +91,7 @@ class ListPanitiaController extends Controller
                         'jam_tap' => '-',
                         'tanggal' => Carbon::parse($selectedRapat->tanggal)->translatedFormat('d F Y'),
                         'status' => 'Tidak Hadir', // Menunggu waktu
-                        'scanned_by' => '-'
+                        'scanned_by' => '-',
                     ];
                 }
             }
@@ -99,13 +99,13 @@ class ListPanitiaController extends Controller
 
         // Terapkan Filter Status jika ada
         if ($statusFilter) {
-            $panitiaData = array_filter($panitiaData, function($item) use ($statusFilter) {
+            $panitiaData = array_filter($panitiaData, function ($item) use ($statusFilter) {
                 return $item['status'] === $statusFilter;
             });
         }
-        
+
         // Sorting: Hadir duluan, Telat, lalu Alpha/Tidak Hadir. Atau biarkan sesuai nama.
-        usort($panitiaData, function($a, $b) {
+        usort($panitiaData, function ($a, $b) {
             return strcmp($a['nama'], $b['nama']);
         });
 
@@ -113,7 +113,7 @@ class ListPanitiaController extends Controller
             'panitia' => $panitiaData,
             'rapats' => $rapats,
             'selectedRapat' => $selectedRapat,
-            'statusFilter' => $statusFilter
+            'statusFilter' => $statusFilter,
         ]);
     }
 }

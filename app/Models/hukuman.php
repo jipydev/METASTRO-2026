@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Hukuman extends Model
 {
@@ -19,11 +19,11 @@ class Hukuman extends Model
         'konsekuensi',
         'tanggal_hukuman',
         'status',
-        'catatan'
+        'catatan',
     ];
 
     protected $casts = [
-        'tanggal_hukuman' => 'date'
+        'tanggal_hukuman' => 'date',
     ];
 
     public function user()

@@ -10,6 +10,7 @@ class AdminController extends Controller
     {
         return view('dashboard.index');
     }
+
     public function roleRequest()
     {
         return view('dashboard.admin.role_request');

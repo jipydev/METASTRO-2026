@@ -89,6 +89,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('nim')) . '|' . $this->ip());
+        return Str::transliterate(Str::lower($this->string('nim')).'|'.$this->ip());
     }
 }

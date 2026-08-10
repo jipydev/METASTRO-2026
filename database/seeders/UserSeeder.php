@@ -3,11 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
@@ -25,12 +24,12 @@ class UserSeeder extends Seeder
         foreach ($roles as $i => $roleName) {
             $slug = Str::slug($roleName, '_');
             // $email = $slug . '@metastro.id';
-            $nim = '0000' . ($i + 1);
+            $nim = '0000'.($i + 1);
 
             $user = User::firstOrCreate(
                 ['nim' => $nim],
                 [
-                    'name' => $roleName . ' User',
+                    'name' => $roleName.' User',
                     'password' => Hash::make('metastro2026'),
                     'divisi_id' => 1,
                     'jabatan_id' => 1,
@@ -40,8 +39,6 @@ class UserSeeder extends Seeder
                     'email_verified_at' => now(),
                 ]
             );
-
-
 
             // Assign Spatie role if available
             try {

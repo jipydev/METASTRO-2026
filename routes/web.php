@@ -1,21 +1,20 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\QrCodeController;
 use App\Http\Controllers\Api\ScanController;
-use App\Http\Controllers\ListPanitiaController;
-use App\Http\Controllers\PresensiController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ListPanitiaController;
+use App\Http\Controllers\NotulensiController;
 use App\Http\Controllers\PengumumanController;
+use App\Http\Controllers\PresensiController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TimelineController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('dashboard.landingPage');
 });
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +27,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('dashboard');
 });
 
-
 /*
 |--------------------------------------------------------------------------
 | Pengumuman
@@ -38,24 +36,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Sekretaris'
+    'role:Admin|Sekretaris',
 ])->prefix('pengumuman')
-  ->name('pengumuman.')
-  ->group(function () {
+    ->name('pengumuman.')
+    ->group(function () {
 
-    Route::get('/{pengumuman}', [PengumumanController::class,'show'])
-        ->name('show');
+        Route::get('/{pengumuman}', [PengumumanController::class, 'show'])
+            ->name('show');
 
-    Route::post('/', [PengumumanController::class,'store'])
-        ->name('store');
+        Route::post('/', [PengumumanController::class, 'store'])
+            ->name('store');
 
-    Route::put('/{pengumuman}', [PengumumanController::class,'update'])
-        ->name('update');
+        Route::put('/{pengumuman}', [PengumumanController::class, 'update'])
+            ->name('update');
 
-    Route::delete('/{pengumuman}', [PengumumanController::class,'destroy'])
-        ->name('destroy');
-});
-
+        Route::delete('/{pengumuman}', [PengumumanController::class, 'destroy'])
+            ->name('destroy');
+    });
 
 /*
 |--------------------------------------------------------------------------
@@ -72,21 +69,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Sekretaris'
+    'role:Admin|Sekretaris',
 ])->prefix('timeline')
-  ->name('timeline.')
-  ->group(function () {
+    ->name('timeline.')
+    ->group(function () {
 
-    Route::post('/', [TimelineController::class, 'store'])
-        ->name('store');
+        Route::post('/', [TimelineController::class, 'store'])
+            ->name('store');
 
-    Route::put('/{timeline}', [TimelineController::class, 'update'])
-        ->name('update');
+        Route::put('/{timeline}', [TimelineController::class, 'update'])
+            ->name('update');
 
-    Route::delete('/{timeline}', [TimelineController::class, 'destroy'])
-        ->name('destroy');
-});
-
+        Route::delete('/{timeline}', [TimelineController::class, 'destroy'])
+            ->name('destroy');
+    });
 
 /*
 |--------------------------------------------------------------------------
@@ -96,21 +92,21 @@ Route::middleware([
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Sekretaris'
+    'role:Admin|Sekretaris',
 ])->prefix('notulensi')
-  ->name('notulensi.')
-  ->group(function () {
+    ->name('notulensi.')
+    ->group(function () {
 
-    Route::post('/', [\App\Http\Controllers\NotulensiController::class, 'store'])
-        ->name('store');
+        Route::post('/', [NotulensiController::class, 'store'])
+            ->name('store');
 
-    Route::delete('/{notulensi}', [\App\Http\Controllers\NotulensiController::class, 'destroy'])
-        ->name('destroy');
-});
+        Route::delete('/{notulensi}', [NotulensiController::class, 'destroy'])
+            ->name('destroy');
+    });
 
 // View PDF — semua user terautentikasi bisa mengakses
 Route::middleware(['auth', 'verified'])
-    ->get('/notulensi/{notulensi}/view', [\App\Http\Controllers\NotulensiController::class, 'viewPdf'])
+    ->get('/notulensi/{notulensi}/view', [NotulensiController::class, 'viewPdf'])
     ->name('notulensi.view');
 
 /*
@@ -121,13 +117,12 @@ Route::middleware(['auth', 'verified'])
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Sekretaris'
+    'role:Admin|Sekretaris',
 ])->group(function () {
     Route::get('/scan', function () {
         return view('kegiatan.scan');
     })->name('scan');
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -140,7 +135,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
 /*
 |--------------------------------------------------------------------------
 | Lihat List Panitia
@@ -149,25 +143,22 @@ Route::middleware('auth')->group(function () {
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Ranger|Sekretaris'
+    'role:Admin|Ranger|Sekretaris',
 ])->group(function () {
 
     Route::get('/lihat', [PresensiController::class, 'lihat'])
         ->name('kegiatan.lihat');
 });
 
-
-//list panitia
+// list panitia
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Ranger|Sekretaris'
+    'role:Admin|Ranger|Sekretaris',
 ])->group(function () {
     Route::get('/lihat/list', [ListPanitiaController::class, 'index'])
         ->name('kegiatan.ListPanitia');
 });
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -177,7 +168,7 @@ Route::middleware([
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Panitia|Ranger|Sekretaris|Pengawas'
+    'role:Admin|Panitia|Ranger|Sekretaris|Pengawas',
 ])->group(function () {
 
     Route::get('/qr', [PresensiController::class, 'index'])
@@ -193,7 +184,7 @@ Route::middleware([
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin'
+    'role:Admin',
 ])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])
         ->name('admin.dashboard');
@@ -209,7 +200,6 @@ Route::middleware([
         ->name('admin.users.regenerate-all-qr');
 });
 
-
 /*
 |--------------------------------------------------------------------------
 | API Scan (web routes with CSRF protection)
@@ -218,7 +208,7 @@ Route::middleware([
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Sekretaris'
+    'role:Admin|Sekretaris',
 ])->group(function () {
     Route::post('/scan/lookup', [ScanController::class, 'lookup'])
         ->name('scan.lookup');
@@ -226,7 +216,4 @@ Route::middleware([
         ->name('scan.attendance');
 });
 
-
-
-
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +15,7 @@ return new class extends Migration
         });
 
         // Generate token for existing users
-        $users = \App\Models\User::whereNull('qr_token')->get();
+        $users = User::whereNull('qr_token')->get();
         foreach ($users as $user) {
             $user->update(['qr_token' => Str::uuid()->toString()]);
         }

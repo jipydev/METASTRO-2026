@@ -25,10 +25,10 @@ class TimelineController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'judul'   => 'required|string|max:255',
+            'judul' => 'required|string|max:255',
             'tanggal' => 'required|date',
-            'jam'     => 'required',
-            'tempat'  => 'required|string|max:255',
+            'jam' => 'required',
+            'tempat' => 'required|string|max:255',
         ]);
 
         Rapat::create($validated);
@@ -42,10 +42,10 @@ class TimelineController extends Controller
     public function update(Request $request, Rapat $timeline)
     {
         $validated = $request->validate([
-            'judul'   => 'required|string|max:255',
+            'judul' => 'required|string|max:255',
             'tanggal' => 'required|date',
-            'jam'     => 'required',
-            'tempat'  => 'required|string|max:255',
+            'jam' => 'required',
+            'tempat' => 'required|string|max:255',
         ]);
 
         $timeline->update($validated);
