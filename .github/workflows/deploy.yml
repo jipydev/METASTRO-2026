@@ -1,30 +1,60 @@
-name: Deploy Website to Hosting
+name: 🚀 Deploy METASTRO-2026
 
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
-  web-deploy:
-    name: Deploy
+  build-and-deploy:
+    name: Build & Deploy
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
+      - name: 📦 Checkout Code
         uses: actions/checkout@v4
-      
-      - name: Setup PHP (Opsional, jika butuh build/composer)
+
+      - name: 🐘 Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2' 
-          
-      - name: Install Dependencies
-        run: composer install --no-dev --optimize-autoloader
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, json, bcmath, curl
 
-      - name: Sync files via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - name: 📥 Install Composer Dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: 📥 Install Node Dependencies
+        run: npm ci
+
+      - name: 🔨 Build Frontend Assets
+        run: npm run build
+
+      - name: 🚀 Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            .env
+            .env.example
+            .env.production
+            .editorconfig
+            .prettierrc
+            phpunit.xml
+            phpstan.neon
+            pint.json
+            tests/**
+            .github/**
+            *.md
+            package.json
+            package-lock.json
+            pnpm-lock.yaml
+            vite.config.js
+            postcss.config.js
+            tailwind.config.js
+            metastro_2026
