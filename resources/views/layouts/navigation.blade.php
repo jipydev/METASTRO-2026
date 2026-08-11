@@ -50,7 +50,7 @@
                         </a>
                     @endif
 
-                    @if(auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Sekretaris') || auth()->user()->hasRole('Stakeholder') || auth()->user()->isKoordinator())
+                    @if(auth()->user()->hasAnyRole(['Admin', 'Ranger', 'Sekretaris', 'Stakeholder', 'Koordinator']))
                         <a href="{{ route('kegiatan.ListPanitia') }}" class="hover:text-primary-500 {{ request()->routeIs('kegiatan.ListPanitia') ? 'text-primary-500 font-bold' : '' }}">
                             List Panitia
                         </a>
@@ -159,7 +159,7 @@
                 </x-responsive-nav-link>
             @endif
 
-            @if(auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Sekretaris') || auth()->user()->hasRole('Stakeholder') || auth()->user()->isKoordinator())
+            @if(auth()->user()->hasAnyRole(['Admin', 'Ranger', 'Sekretaris', 'Stakeholder', 'Koordinator']))
                 <x-responsive-nav-link :href="route('kegiatan.ListPanitia')" :active="request()->routeIs('kegiatan.ListPanitia')">
                     {{ __('List Panitia') }}
                 </x-responsive-nav-link>
