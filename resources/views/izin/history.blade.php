@@ -56,10 +56,10 @@
                             @foreach($pengajuanList as $p)
                                 <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition">
                                     <td class="py-3.5 px-4 font-medium text-slate-900 dark:text-white">
-                                        {{ $p->created_at->format('d M Y H:i') }}
+                                        {{ $p->created_at?->format('d M Y H:i') ?? '-' }}
                                     </td>
                                     <td class="py-3.5 px-4 font-semibold">
-                                        {{ \Carbon\Carbon::parse($p->tanggal_izin)->format('d M Y') }}
+                                        {{ $p->tanggal_izin ? \Carbon\Carbon::parse($p->tanggal_izin)->format('d M Y') : '-' }}
                                     </td>
                                     <td class="py-3.5 px-4">
                                         <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $p->jenis_izin === 'Sakit' ? 'bg-amber-500/10 text-amber-600 border border-amber-500/20' : 'bg-blue-500/10 text-blue-600 border border-blue-500/20' }}">

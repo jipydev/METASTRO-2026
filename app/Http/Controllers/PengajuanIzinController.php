@@ -108,15 +108,17 @@ class PengajuanIzinController extends Controller
 
         $query = PengajuanIzin::with(['user.divisi', 'user.jabatan', 'reviewerKoordinator', 'reviewerRanger']);
 
-        if ($user->isKoordinator()) {
-            // Koordinator melihat pengajuan staff di divisinya yang status_koordinator == Pending
+        if ($user->hasRole('Admin')) {
+            // Admin melihat semua pengajuan izin
+        } elseif ($user->hasRole('Ranger')) {
+            // Ranger melihat pengajuan yang sudah disetujui Koordinator
+            $query->where('status_koordinator', 'Approved');
+        } elseif ($user->isKoordinator()) {
+            // Koordinator melihat pengajuan staff di divisinya
             $query->whereHas('user', function ($q) use ($user) {
                 $q->where('divisi_id', $user->divisi_id)
                   ->where('id', '!=', $user->id);
             });
-        } elseif ($user->hasRole('Ranger') || $user->hasRole('Admin')) {
-            // Ranger melihat pengajuan yang sudah disetujui Koordinator dan status_ranger == Pending
-            $query->where('status_koordinator', 'Approved');
         } else {
             abort(403, 'Anda tidak memiliki akses untuk mereview izin.');
         }

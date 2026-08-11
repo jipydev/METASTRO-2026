@@ -50,12 +50,12 @@
                             @foreach($pengajuanList as $p)
                                 <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition">
                                     <td class="py-3.5 px-4">
-                                        <div class="font-bold text-slate-900 dark:text-white">{{ $p->user->name ?? '-' }}</div>
-                                        <div class="text-xs text-slate-400">NIM: {{ $p->user->nim ?? '-' }}</div>
+                                        <div class="font-bold text-slate-900 dark:text-white">{{ $p->user?->name ?? '-' }}</div>
+                                        <div class="text-xs text-slate-400">NIM: {{ $p->user?->nim ?? '-' }}</div>
                                     </td>
                                     <td class="py-3.5 px-4">
-                                        <div class="font-medium text-slate-800 dark:text-slate-200">{{ $p->user->divisi->nama_divisi ?? '-' }}</div>
-                                        <div class="text-xs text-slate-400">{{ $p->user->jabatan->nama_jabatan ?? '-' }}</div>
+                                        <div class="font-medium text-slate-800 dark:text-slate-200">{{ $p->user?->divisi?->nama_divisi ?? '-' }}</div>
+                                        <div class="text-xs text-slate-400">{{ $p->user?->jabatan?->nama_jabatan ?? '-' }}</div>
                                     </td>
                                     <td class="py-3.5 px-4 font-semibold">
                                         {{ \Carbon\Carbon::parse($p->tanggal_izin)->format('d M Y') }}
