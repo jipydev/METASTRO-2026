@@ -5,7 +5,16 @@
         </h2>
     </x-slot>
 
-    <div class="py-8 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 font-poppins">
+    <div x-data="{
+        isSubmitting: false,
+        checkSize(event, maxMb = 2) {
+            const file = event.target.files[0];
+            if (file && file.size > maxMb * 1024 * 1024) {
+                alert('Ukuran file ' + file.name + ' terlalu besar (' + (file.size / (1024 * 1024)).toFixed(1) + ' MB). Maksimal ukuran file adalah ' + maxMb + ' MB agar proses pengiriman cepat.');
+                event.target.value = '';
+            }
+        }
+    }" class="py-8 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 font-poppins">
         @if(session('error'))
             <div class="mb-4 p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-600 dark:text-rose-400 flex items-center gap-3">
                 <span class="icon-[akar-icons--circle-x] text-xl"></span>
@@ -24,7 +33,7 @@
                 </div>
             </div>
 
-            <form action="{{ route('izin.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
+            <form action="{{ route('izin.store') }}" method="POST" enctype="multipart/form-data" @submit="isSubmitting = true" class="space-y-5">
                 @csrf
 
                 <!-- Tanggal Izin -->
@@ -53,15 +62,15 @@
 
                 <!-- Upload Surat Izin PDF -->
                 <div>
-                    <x-input-label for="surat_izin" :value="__('Upload Surat Izin (PDF, Maks 5MB)')" />
-                    <input type="file" id="surat_izin" name="surat_izin" accept="application/pdf" class="block mt-1 w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary-500/10 file:text-primary-600 hover:file:bg-primary-500/20 cursor-pointer" />
+                    <x-input-label for="surat_izin" :value="__('Upload Surat Izin (PDF, Maks 2MB)')" />
+                    <input type="file" id="surat_izin" name="surat_izin" accept="application/pdf" @change="checkSize($event, 2)" class="block mt-1 w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary-500/10 file:text-primary-600 hover:file:bg-primary-500/20 cursor-pointer" />
                     <x-input-error :messages="$errors->get('surat_izin')" class="mt-2" />
                 </div>
 
                 <!-- Upload Bukti Dokumentasi Gambar -->
                 <div>
-                    <x-input-label for="bukti" :value="__('Upload Bukti Dokumentasi (JPG/PNG, Maks 5MB)')" />
-                    <input type="file" id="bukti" name="bukti" accept="image/*" class="block mt-1 w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary-500/10 file:text-primary-600 hover:file:bg-primary-500/20 cursor-pointer" />
+                    <x-input-label for="bukti" :value="__('Upload Bukti Dokumentasi (JPG/PNG, Maks 2MB)')" />
+                    <input type="file" id="bukti" name="bukti" accept="image/*" @change="checkSize($event, 2)" class="block mt-1 w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary-500/10 file:text-primary-600 hover:file:bg-primary-500/20 cursor-pointer" />
                     <x-input-error :messages="$errors->get('bukti')" class="mt-2" />
                 </div>
 
@@ -69,9 +78,19 @@
                     <a href="{{ route('izin.history') }}" class="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-sm font-semibold hover:bg-gray-100 dark:hover:bg-slate-700 transition">
                         Batal
                     </a>
-                    <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-bold py-2.5 px-6 rounded-xl transition text-sm shadow-md flex items-center gap-2">
-                        <span class="icon-[akar-icons--send]"></span>
-                        Kirim Pengajuan
+                    <button type="submit" :disabled="isSubmitting" class="bg-primary-500 hover:bg-primary-600 disabled:opacity-50 text-white font-bold py-2.5 px-6 rounded-xl transition text-sm shadow-md flex items-center gap-2 cursor-pointer">
+                        <template x-if="!isSubmitting">
+                            <span class="flex items-center gap-2">
+                                <span class="icon-[akar-icons--send]"></span>
+                                Kirim Pengajuan
+                            </span>
+                        </template>
+                        <template x-if="isSubmitting">
+                            <span class="flex items-center gap-2">
+                                <span class="animate-spin icon-[akar-icons--loading]"></span>
+                                Mengirim...
+                            </span>
+                        </template>
                     </button>
                 </div>
             </form>

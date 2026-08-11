@@ -39,12 +39,15 @@ class AdminController extends Controller
             'jabatan_id' => 'nullable|exists:jabatan,id',
         ]);
 
+        $divisiId = $request->filled('divisi_id') ? $request->input('divisi_id') : null;
+        $jabatanId = $request->filled('jabatan_id') ? $request->input('jabatan_id') : null;
+
         $user = User::create([
             'name' => $validated['name'],
             'nim' => $validated['nim'],
             'password' => Hash::make($validated['password']),
-            'divisi_id' => $validated['divisi_id'],
-            'jabatan_id' => $validated['jabatan_id'],
+            'divisi_id' => $divisiId,
+            'jabatan_id' => $jabatanId,
             'status_aktif' => true,
             'is_initial_setup_completed' => false,
         ]);
@@ -59,7 +62,11 @@ class AdminController extends Controller
             }
         }
 
-        $qrService->generateForUser($user);
+        try {
+            $qrService->generateForUser($user);
+        } catch (\Throwable $e) {
+            // Ignore QR creation error if filesystem/extension fails
+        }
 
         return redirect()->route('admin.manage-users.index')
             ->with('success', "Pengguna baru {$user->name} (NIM: {$user->nim}) berhasil ditambahkan!");

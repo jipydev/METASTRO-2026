@@ -25,8 +25,8 @@ class PengajuanIzinController extends Controller
             'tanggal_izin' => 'required|date',
             'jenis_izin' => 'required|in:Sakit,Izin',
             'alasan' => 'required|string|max:1000',
-            'surat_izin' => 'nullable|file|mimes:pdf|max:5120',
-            'bukti' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
+            'surat_izin' => 'nullable|file|mimes:pdf|max:2048',
+            'bukti' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $user = auth()->user();
