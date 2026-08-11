@@ -114,6 +114,10 @@ class AdminController extends Controller
 
     public function updateUserRole(Request $request, User $user)
     {
+        if ($user->id === auth()->id()) {
+            return redirect()->back()->with('error', 'Anda tidak dapat mengubah role atau status akun Anda sendiri.');
+        }
+
         $validated = $request->validate([
             'role' => 'required|string|exists:roles,name',
             'divisi_id' => 'nullable|exists:divisi,id',

@@ -253,11 +253,17 @@
                                             </button>
 
                                             {{-- Edit Role Button --}}
-                                            <button type="button"
-                                                    @click="openEdit({{ json_encode($userJson) }})"
-                                                    class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg font-semibold text-xs transition cursor-pointer shadow-sm">
-                                                Edit Role
-                                            </button>
+                                            @if($user->id !== auth()->id())
+                                                <button type="button"
+                                                        @click="openEdit({{ json_encode($userJson) }})"
+                                                        class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg font-semibold text-xs transition cursor-pointer shadow-sm">
+                                                    Edit Role
+                                                </button>
+                                            @else
+                                                <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 italic px-2 py-1 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
+                                                    Akun Anda
+                                                </span>
+                                            @endif
 
                                             {{-- Delete Button --}}
                                             @if($user->id !== auth()->id())

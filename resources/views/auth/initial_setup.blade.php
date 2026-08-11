@@ -47,7 +47,7 @@
                     </div>
                     <input type="file" id="foto" name="foto" accept="image/*" required class="hidden" @change="previewPhoto($event)">
                     <span class="text-xs font-semibold text-primary-500 mt-2 cursor-pointer" onclick="document.getElementById('foto').click()">
-                        + Unggah Foto Profil (Wajib)
+                        + Unggah Foto Profil (Wajib, Maks. 5MB)
                     </span>
                     <x-input-error :messages="$errors->get('foto')" class="mt-1" />
                 </div>

@@ -25,38 +25,69 @@
                 </a>
 
                 <!-- Navigation Links (Desktop) -->
-                <div class="hidden sm:flex items-center gap-4 text-sm font-medium text-slate-600 dark:text-slate-300">
+                <div class="hidden sm:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
+                    {{-- Dashboard --}}
                     <a href="{{ route('dashboard') }}" class="hover:text-primary-500 {{ request()->routeIs('dashboard') ? 'text-primary-500 font-bold' : '' }}">
                         Dashboard
                     </a>
                     
-                    <a href="{{ route('izin.create') }}" class="hover:text-primary-500 {{ request()->routeIs('izin.create') ? 'text-primary-500 font-bold' : '' }}">
-                        Ajukan Izin
-                    </a>
+                    {{-- Dropdown Perizinan --}}
+                    <x-dropdown align="left" width="48">
+                        <x-slot name="trigger">
+                            <button class="inline-flex items-center gap-1 hover:text-primary-500 transition cursor-pointer {{ request()->routeIs('izin.*') ? 'text-primary-500 font-bold' : '' }}">
+                                <span>Perizinan</span>
+                                <svg class="fill-current h-4 w-4 text-slate-400" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </x-slot>
 
-                    <a href="{{ route('izin.history') }}" class="hover:text-primary-500 {{ request()->routeIs('izin.history') ? 'text-primary-500 font-bold' : '' }}">
-                        Riwayat Izin
-                    </a>
+                        <x-slot name="content">
+                            <x-dropdown-link :href="route('izin.create')">
+                                {{ __('Ajukan Izin Baru') }}
+                            </x-dropdown-link>
+                            <x-dropdown-link :href="route('izin.history')">
+                                {{ __('Riwayat Izin Saya') }}
+                            </x-dropdown-link>
+                            @if(auth()->user()->isKoordinator() || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Admin'))
+                                <x-dropdown-link :href="route('izin.review')">
+                                    {{ __('Review Pengajuan Izin') }}
+                                </x-dropdown-link>
+                            @endif
+                        </x-slot>
+                    </x-dropdown>
 
-                    @if(auth()->user()->isKoordinator() || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Admin'))
-                        <a href="{{ route('izin.review') }}" class="hover:text-primary-500 {{ request()->routeIs('izin.review') ? 'text-primary-500 font-bold' : '' }}">
-                            Review Izin
-                        </a>
-                    @endif
-
-                    @if(auth()->user()->hasRole('Admin'))
-                        <a href="{{ route('admin.manage-users.index') }}" class="hover:text-primary-500 {{ request()->routeIs('admin.manage-users.*') ? 'text-primary-500 font-bold' : '' }}">
-                            Kelola User
-                        </a>
-                        <a href="{{ route('admin.role-request') }}" class="hover:text-primary-500 {{ request()->routeIs('admin.role-request') ? 'text-primary-500 font-bold' : '' }}">
-                            Persetujuan Role
-                        </a>
-                    @endif
-
+                    {{-- List Panitia --}}
                     @if(auth()->user()->hasAnyRole(['Admin', 'Ranger', 'Sekretaris', 'Stakeholder', 'Koordinator']))
                         <a href="{{ route('kegiatan.ListPanitia') }}" class="hover:text-primary-500 {{ request()->routeIs('kegiatan.ListPanitia') ? 'text-primary-500 font-bold' : '' }}">
                             List Panitia
                         </a>
+                    @endif
+
+                    {{-- Dropdown Admin Panel --}}
+                    @if(auth()->user()->hasRole('Admin'))
+                        <x-dropdown align="left" width="48">
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center gap-1 hover:text-primary-500 transition cursor-pointer {{ request()->routeIs('admin.*') ? 'text-primary-500 font-bold' : '' }}">
+                                    <span class="px-2.5 py-1 bg-primary-500/10 text-primary-500 dark:bg-primary-500/20 dark:text-primary-400 rounded-lg font-bold text-xs">Admin Panel</span>
+                                    <svg class="fill-current h-4 w-4 text-slate-400" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </x-slot>
+
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('admin.manage-users.index')">
+                                    {{ __('Kelola User & Role') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('admin.role-request')">
+                                    {{ __('Persetujuan Role') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('admin.users')">
+                                    {{ __('Kelola QR Code') }}
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
                     @endif
                 </div>
             </div>
@@ -142,6 +173,8 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
+            {{-- Sub-header Perizinan --}}
+            <div class="pt-2 pb-1 px-4 text-xs font-bold uppercase tracking-wider text-slate-400">Perizinan</div>
             <x-responsive-nav-link :href="route('izin.create')" :active="request()->routeIs('izin.create')">
                 {{ __('Ajukan Izin') }}
             </x-responsive-nav-link>
@@ -156,18 +189,23 @@
                 </x-responsive-nav-link>
             @endif
 
+            @if(auth()->user()->hasAnyRole(['Admin', 'Ranger', 'Sekretaris', 'Stakeholder', 'Koordinator']))
+                <div class="pt-2 pb-1 px-4 text-xs font-bold uppercase tracking-wider text-slate-400">Panitia</div>
+                <x-responsive-nav-link :href="route('kegiatan.ListPanitia')" :active="request()->routeIs('kegiatan.ListPanitia')">
+                    {{ __('List Panitia') }}
+                </x-responsive-nav-link>
+            @endif
+
             @if(auth()->user()->hasRole('Admin'))
+                <div class="pt-2 pb-1 px-4 text-xs font-bold uppercase tracking-wider text-primary-500">Admin Panel</div>
                 <x-responsive-nav-link :href="route('admin.manage-users.index')" :active="request()->routeIs('admin.manage-users.*')">
-                    {{ __('Kelola User') }}
+                    {{ __('Kelola User & Role') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.role-request')" :active="request()->routeIs('admin.role-request')">
                     {{ __('Persetujuan Role') }}
                 </x-responsive-nav-link>
-            @endif
-
-            @if(auth()->user()->hasAnyRole(['Admin', 'Ranger', 'Sekretaris', 'Stakeholder', 'Koordinator']))
-                <x-responsive-nav-link :href="route('kegiatan.ListPanitia')" :active="request()->routeIs('kegiatan.ListPanitia')">
-                    {{ __('List Panitia') }}
+                <x-responsive-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users')">
+                    {{ __('Kelola QR Code') }}
                 </x-responsive-nav-link>
             @endif
         </div>

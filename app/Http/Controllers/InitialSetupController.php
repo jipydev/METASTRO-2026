@@ -27,7 +27,7 @@ class InitialSetupController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'foto' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'foto' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
             'password' => ['required', 'confirmed', Password::min(8)],
         ]);
 
