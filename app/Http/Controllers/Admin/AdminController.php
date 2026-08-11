@@ -8,7 +8,7 @@ class AdminController extends Controller
 {
     public function index()
     {
-        return view('dashboard.index');
+        return redirect()->route('dashboard');
     }
 
     public function roleRequest()
