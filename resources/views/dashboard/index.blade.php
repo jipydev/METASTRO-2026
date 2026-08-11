@@ -304,7 +304,7 @@
                     class="text-primary-600 dark:text-primary-400 font-medium text-sm md:text-base md:bg-primary-50/50 dark:md:bg-slate-700/50 md:p-4 rounded-xl">
                     <div>
                         <p class="font-bold mb-1 text-base md:text-lg text-primary-600 dark:text-primary-400">
-                            {{ $rapatTerbaru->judul ?? 'Tidak ada jadwal' }}</p>
+                            {{ $rapatTerbaru?->judul ?? 'Tidak ada jadwal' }}</p>
                         <p class="text-slate-700 dark:text-slate-300">
                             {{ $rapatTerbaru ? \Carbon\Carbon::parse($rapatTerbaru->tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') : '-' }}
                         </p>
@@ -312,7 +312,7 @@
                             {{ $rapatTerbaru ? \Carbon\Carbon::parse($rapatTerbaru->jam)->format('H.i') : '-' }}</p>
                         <div class="flex justify-between items-end mt-4">
                             <p class="font-semibold text-slate-800 dark:text-slate-200">
-                                {{ $rapatTerbaru->tempat ?? '-' }}</p>
+                                {{ $rapatTerbaru?->tempat ?? '-' }}</p>
                         </div>
                     </div>
 
