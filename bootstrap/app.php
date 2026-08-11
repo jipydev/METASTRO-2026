@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
+            'initial.setup' => \App\Http\Middleware\EnsureInitialSetupCompleted::class,
         ]);
     })
 

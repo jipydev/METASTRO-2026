@@ -11,6 +11,7 @@ use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TimelineController;
+use App\Http\Controllers\InitialSetupController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,11 +20,24 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Dashboard
+| First Time Initial Setup (Onboarding)
 |--------------------------------------------------------------------------
 */
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/initial-setup', [InitialSetupController::class, 'index'])
+        ->name('initial-setup.index');
+    Route::post('/initial-setup', [InitialSetupController::class, 'store'])
+        ->name('initial-setup.store');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'verified', 'initial.setup'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 });
@@ -215,6 +229,10 @@ Route::middleware([
     // Manage Users
     Route::get('/admin/manage-users', [AdminController::class, 'manageUsers'])
         ->name('admin.manage-users.index');
+    Route::get('/admin/manage-users/create', [AdminController::class, 'createUserForm'])
+        ->name('admin.manage-users.create');
+    Route::post('/admin/manage-users', [AdminController::class, 'storeUser'])
+        ->name('admin.manage-users.store');
     Route::put('/admin/manage-users/{user}', [AdminController::class, 'updateUserRole'])
         ->name('admin.manage-users.update');
     Route::delete('/admin/manage-users/{user}', [AdminController::class, 'destroyUser'])

@@ -7,7 +7,9 @@ use App\Models\Divisi;
 use App\Models\Jabatan;
 use App\Models\RoleRequest;
 use App\Models\User;
+use App\Services\QrCodeService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
@@ -15,6 +17,52 @@ class AdminController extends Controller
     public function index()
     {
         return redirect()->route('dashboard');
+    }
+
+    public function createUserForm()
+    {
+        $allRoles = Role::orderBy('name')->get();
+        $allDivisis = Divisi::orderBy('nama_divisi')->get();
+        $allJabatans = Jabatan::orderBy('nama_jabatan')->get();
+
+        return view('admin.create_user', compact('allRoles', 'allDivisis', 'allJabatans'));
+    }
+
+    public function storeUser(Request $request, QrCodeService $qrService)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'nim' => 'required|string|max:20|unique:users,nim',
+            'password' => 'required|string|min:8',
+            'role' => 'required|string|exists:roles,name',
+            'divisi_id' => 'nullable|exists:divisi,id',
+            'jabatan_id' => 'nullable|exists:jabatan,id',
+        ]);
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'nim' => $validated['nim'],
+            'password' => Hash::make($validated['password']),
+            'divisi_id' => $validated['divisi_id'],
+            'jabatan_id' => $validated['jabatan_id'],
+            'status_aktif' => true,
+            'is_initial_setup_completed' => false,
+        ]);
+
+        $user->assignRole($validated['role']);
+
+        if ($user->jabatan && $user->jabatan->nama_jabatan === 'Koordinator' && $user->divisi_id) {
+            $divisi = Divisi::find($user->divisi_id);
+            if ($divisi) {
+                $divisi->koordinator_divisi_nim = $user->nim;
+                $divisi->save();
+            }
+        }
+
+        $qrService->generateForUser($user);
+
+        return redirect()->route('admin.manage-users.index')
+            ->with('success', "Pengguna baru {$user->name} (NIM: {$user->nim}) berhasil ditambahkan!");
     }
 
     public function manageUsers(Request $request)

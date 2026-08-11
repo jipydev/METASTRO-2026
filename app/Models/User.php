@@ -18,7 +18,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable([
     'name',
-    // 'email',
+    'email',
     'nim',
     'password',
     'nomor_hp',
@@ -29,6 +29,8 @@ use Spatie\Permission\Traits\HasRoles;
     'divisi_id',
     'jabatan_id',
     'qr_token',
+    'status_aktif',
+    'is_initial_setup_completed',
 ])]
 
 #[Hidden([
@@ -49,8 +51,9 @@ class User extends Authenticatable implements PasskeyUser
     protected function casts(): array
     {
         return [
-            // 'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_initial_setup_completed' => 'boolean',
+            'status_aktif' => 'boolean',
         ];
     }
 
