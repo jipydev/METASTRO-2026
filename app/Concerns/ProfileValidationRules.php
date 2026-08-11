@@ -18,6 +18,8 @@ trait ProfileValidationRules
         return [
             'name' => $this->nameRules(),
             'nim' => $this->nimRules($userId),
+            'divisi_id' => ['required', 'exists:divisi,id'],
+            'jabatan_id' => ['required', 'exists:jabatan,id'],
         ];
     }
 

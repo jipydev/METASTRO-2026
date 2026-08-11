@@ -41,6 +41,20 @@
                 placeholder="4444444"
             />
 
+            <!-- Divisi -->
+            <flux:select name="divisi_id" :label="__('Divisi')" :placeholder="__('Pilih Divisi')" required>
+                @foreach(\App\Models\Divisi::orderBy('nama_divisi')->get() as $divisi)
+                    <flux:select.option value="{{ $divisi->id }}">{{ $divisi->nama_divisi }}</flux:select.option>
+                @endforeach
+            </flux:select>
+
+            <!-- Jabatan -->
+            <flux:select name="jabatan_id" :label="__('Jabatan')" :placeholder="__('Pilih Jabatan')" required>
+                @foreach(\App\Models\Jabatan::orderBy('nama_jabatan')->get() as $jabatan)
+                    <flux:select.option value="{{ $jabatan->id }}">{{ $jabatan->nama_jabatan }}</flux:select.option>
+                @endforeach
+            </flux:select>
+
             <!-- Password -->
             <flux:input
                 name="password"
