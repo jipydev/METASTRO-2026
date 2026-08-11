@@ -228,7 +228,7 @@
                         Besar</h2>
                     <div class="flex items-baseline space-x-2 mb-6">
                         <span class="text-4xl md:text-5xl font-bold text-primary-600 dark:text-primary-400">
-                            {{ $rapatTerbaru ? $rapatTerbaru->hadir : 0 }}/{{ $rapatTerbaru ? $rapatTerbaru->total : 0 }}
+                            {{ $hadirCount }}/{{ $totalUserCount }}
                         </span>
                         <span class="text-sm md:text-base font-medium text-gray-500 dark:text-slate-400">Panitia telah
                             hadir</span>

@@ -4,14 +4,94 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Divisi;
+use App\Models\Jabatan;
 use App\Models\RoleRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
 {
     public function index()
     {
         return redirect()->route('dashboard');
+    }
+
+    public function manageUsers(Request $request)
+    {
+        $search = $request->query('search');
+        $roleFilter = $request->query('role');
+        $divisiFilter = $request->query('divisi_id');
+        $jabatanFilter = $request->query('jabatan_id');
+
+        $query = User::with(['divisi', 'jabatan', 'roles']);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('nim', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($roleFilter) {
+            $query->role($roleFilter);
+        }
+
+        if ($divisiFilter) {
+            $query->where('divisi_id', $divisiFilter);
+        }
+
+        if ($jabatanFilter) {
+            $query->where('jabatan_id', $jabatanFilter);
+        }
+
+        $users = $query->latest()->paginate(15)->appends($request->all());
+
+        $allRoles = Role::orderBy('name')->get();
+        $allDivisis = Divisi::orderBy('nama_divisi')->get();
+        $allJabatans = Jabatan::orderBy('nama_jabatan')->get();
+
+        return view('admin.manage_users', compact(
+            'users',
+            'allRoles',
+            'allDivisis',
+            'allJabatans',
+            'search',
+            'roleFilter',
+            'divisiFilter',
+            'jabatanFilter'
+        ));
+    }
+
+    public function updateUserRole(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'role' => 'required|string|exists:roles,name',
+            'divisi_id' => 'nullable|exists:divisi,id',
+            'jabatan_id' => 'nullable|exists:jabatan,id',
+            'status_aktif' => 'required|boolean',
+        ]);
+
+        // Sync Spatie Role
+        $user->syncRoles([$validated['role']]);
+
+        // Update User attributes
+        $user->divisi_id = $validated['divisi_id'];
+        $user->jabatan_id = $validated['jabatan_id'];
+        $user->status_aktif = (bool) $validated['status_aktif'];
+        $user->save();
+
+        // If Jabatan is Koordinator, update koordinator_divisi_nim
+        if ($user->jabatan && $user->jabatan->nama_jabatan === 'Koordinator' && $user->divisi_id) {
+            $divisi = Divisi::find($user->divisi_id);
+            if ($divisi) {
+                $divisi->koordinator_divisi_nim = $user->nim;
+                $divisi->save();
+            }
+        }
+
+        return redirect()->back()->with('success', "Data dan role pengguna {$user->name} berhasil diperbarui!");
     }
 
     public function roleRequest()

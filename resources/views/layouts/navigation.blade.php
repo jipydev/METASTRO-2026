@@ -45,6 +45,9 @@
                     @endif
 
                     @if(auth()->user()->hasRole('Admin'))
+                        <a href="{{ route('admin.manage-users.index') }}" class="hover:text-primary-500 {{ request()->routeIs('admin.manage-users.*') ? 'text-primary-500 font-bold' : '' }}">
+                            Kelola User
+                        </a>
                         <a href="{{ route('admin.role-request') }}" class="hover:text-primary-500 {{ request()->routeIs('admin.role-request') ? 'text-primary-500 font-bold' : '' }}">
                             Persetujuan Role
                         </a>
@@ -154,6 +157,9 @@
             @endif
 
             @if(auth()->user()->hasRole('Admin'))
+                <x-responsive-nav-link :href="route('admin.manage-users.index')" :active="request()->routeIs('admin.manage-users.*')">
+                    {{ __('Kelola User') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.role-request')" :active="request()->routeIs('admin.role-request')">
                     {{ __('Persetujuan Role') }}
                 </x-responsive-nav-link>

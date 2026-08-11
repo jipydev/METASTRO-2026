@@ -212,6 +212,12 @@ Route::middleware([
     Route::post('/admin/role-request/{roleRequest}/reject', [AdminController::class, 'rejectRoleRequest'])
         ->name('admin.role-request.reject');
 
+    // Manage Users
+    Route::get('/admin/manage-users', [AdminController::class, 'manageUsers'])
+        ->name('admin.manage-users.index');
+    Route::put('/admin/manage-users/{user}', [AdminController::class, 'updateUserRole'])
+        ->name('admin.manage-users.update');
+
     // QR Code Management
     Route::get('/admin/users', [QrCodeController::class, 'index'])
         ->name('admin.users');
