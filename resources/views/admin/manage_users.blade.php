@@ -325,21 +325,10 @@
                             <span class="font-semibold text-slate-800 dark:text-slate-200" x-text="selectedUser.jabatan_nama"></span>
                         </div>
                         <div class="bg-gray-50 dark:bg-slate-700/50 p-3 rounded-xl col-span-2">
-                            <span class="text-xs text-gray-400 dark:text-slate-400 font-bold uppercase block mb-1">Email / Kontak</span>
-                            <span class="font-semibold text-slate-800 dark:text-slate-200" x-text="selectedUser.email + ' / ' + selectedUser.nomor_hp"></span>
+                            <span class="text-xs text-gray-400 dark:text-slate-400 font-bold uppercase block mb-1">Email</span>
+                            <span class="font-semibold text-slate-800 dark:text-slate-200" x-text="selectedUser.email"></span>
                         </div>
-                        <div class="bg-gray-50 dark:bg-slate-700/50 p-3 rounded-xl">
-                            <span class="text-xs text-gray-400 dark:text-slate-400 font-bold uppercase block mb-1">Jenis Kelamin</span>
-                            <span class="font-semibold text-slate-800 dark:text-slate-200" x-text="selectedUser.jenis_kelamin"></span>
-                        </div>
-                        <div class="bg-gray-50 dark:bg-slate-700/50 p-3 rounded-xl">
-                            <span class="text-xs text-gray-400 dark:text-slate-400 font-bold uppercase block mb-1">Tanggal Lahir</span>
-                            <span class="font-semibold text-slate-800 dark:text-slate-200" x-text="selectedUser.tanggal_lahir"></span>
-                        </div>
-                        <div class="bg-gray-50 dark:bg-slate-700/50 p-3 rounded-xl col-span-2">
-                            <span class="text-xs text-gray-400 dark:text-slate-400 font-bold uppercase block mb-1">Alamat</span>
-                            <span class="font-semibold text-slate-800 dark:text-slate-200" x-text="selectedUser.alamat"></span>
-                        </div>
+
                     </div>
 
                     <div class="mt-6 flex justify-end">
