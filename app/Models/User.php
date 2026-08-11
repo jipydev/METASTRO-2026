@@ -105,11 +105,31 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(Penilaian::class, 'penilai_id');
     }
 
+    public function pengajuanIzin()
+    {
+        return $this->hasMany(PengajuanIzin::class);
+    }
+
+    public function roleRequests()
+    {
+        return $this->hasMany(RoleRequest::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Helper
     |--------------------------------------------------------------------------
     */
+
+    public function isKoordinator(): bool
+    {
+        return strtolower($this->jabatan?->nama_jabatan ?? '') === 'koordinator' || $this->hasRole('Koordinator');
+    }
+
+    public function isStaff(): bool
+    {
+        return strtolower($this->jabatan?->nama_jabatan ?? '') === 'staff';
+    }
 
     public function initials(): string
     {

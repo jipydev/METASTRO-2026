@@ -16,13 +16,46 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             
-            <div class="flex items-center shrink-0">
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-2 sm:gap-3">
+            <div class="flex items-center gap-6">
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-2 sm:gap-3 shrink-0">
                     <img src="{{ asset('images/logo.webp') }}" alt="Logo" class="h-7 w-7 sm:h-8 sm:w-8 object-contain" />
                     <span class="font-oswald text-lg sm:text-xl font-semibold uppercase tracking-tight text-slate-900 dark:text-white truncate">
                         METASTRO 2026
                     </span>
                 </a>
+
+                <!-- Navigation Links (Desktop) -->
+                <div class="hidden sm:flex items-center gap-4 text-sm font-medium text-slate-600 dark:text-slate-300">
+                    <a href="{{ route('dashboard') }}" class="hover:text-primary-500 {{ request()->routeIs('dashboard') ? 'text-primary-500 font-bold' : '' }}">
+                        Dashboard
+                    </a>
+                    
+                    <a href="{{ route('izin.create') }}" class="hover:text-primary-500 {{ request()->routeIs('izin.create') ? 'text-primary-500 font-bold' : '' }}">
+                        Ajukan Izin
+                    </a>
+
+                    <a href="{{ route('izin.history') }}" class="hover:text-primary-500 {{ request()->routeIs('izin.history') ? 'text-primary-500 font-bold' : '' }}">
+                        Riwayat Izin
+                    </a>
+
+                    @if(auth()->user()->isKoordinator() || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Admin'))
+                        <a href="{{ route('izin.review') }}" class="hover:text-primary-500 {{ request()->routeIs('izin.review') ? 'text-primary-500 font-bold' : '' }}">
+                            Review Izin
+                        </a>
+                    @endif
+
+                    @if(auth()->user()->hasRole('Admin'))
+                        <a href="{{ route('admin.role-request') }}" class="hover:text-primary-500 {{ request()->routeIs('admin.role-request') ? 'text-primary-500 font-bold' : '' }}">
+                            Persetujuan Role
+                        </a>
+                    @endif
+
+                    @if(auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Sekretaris') || auth()->user()->hasRole('Stakeholder') || auth()->user()->isKoordinator())
+                        <a href="{{ route('kegiatan.ListPanitia') }}" class="hover:text-primary-500 {{ request()->routeIs('kegiatan.ListPanitia') ? 'text-primary-500 font-bold' : '' }}">
+                            List Panitia
+                        </a>
+                    @endif
+                </div>
             </div>
 
             <div class="flex items-center gap-2 sm:gap-4">
@@ -101,10 +134,42 @@
 
     <!-- Mobile Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-white dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700">
-        <div class="pt-4 pb-1">
+        <div class="pt-2 pb-3 space-y-1 px-4">
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('izin.create')" :active="request()->routeIs('izin.create')">
+                {{ __('Ajukan Izin') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('izin.history')" :active="request()->routeIs('izin.history')">
+                {{ __('Riwayat Izin') }}
+            </x-responsive-nav-link>
+
+            @if(auth()->user()->isKoordinator() || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Admin'))
+                <x-responsive-nav-link :href="route('izin.review')" :active="request()->routeIs('izin.review')">
+                    {{ __('Review Izin') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if(auth()->user()->hasRole('Admin'))
+                <x-responsive-nav-link :href="route('admin.role-request')" :active="request()->routeIs('admin.role-request')">
+                    {{ __('Persetujuan Role') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if(auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Sekretaris') || auth()->user()->hasRole('Stakeholder') || auth()->user()->isKoordinator())
+                <x-responsive-nav-link :href="route('kegiatan.ListPanitia')" :active="request()->routeIs('kegiatan.ListPanitia')">
+                    {{ __('List Panitia') }}
+                </x-responsive-nav-link>
+            @endif
+        </div>
+
+        <div class="pt-4 pb-1 border-t border-gray-200 dark:border-slate-700">
             <div class="px-4">
                 <div class="font-medium font-poppins text-base text-slate-900 dark:text-white">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-slate-500 dark:text-slate-400">{{ Auth::user()->email }}</div>
+                <div class="font-medium text-sm text-slate-500 dark:text-slate-400">{{ Auth::user()->email ?? Auth::user()->nim }}</div>
             </div>
 
             <div class="mt-3 space-y-1">

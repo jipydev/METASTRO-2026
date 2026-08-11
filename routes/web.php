@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ScanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ListPanitiaController;
 use App\Http\Controllers\NotulensiController;
+use App\Http\Controllers\PengajuanIzinController;
 use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\ProfileController;
@@ -25,6 +26,23 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Pengajuan Izin Workflow
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'verified'])->prefix('izin')->name('izin.')->group(function () {
+    Route::get('/create', [PengajuanIzinController::class, 'create'])->name('create');
+    Route::post('/', [PengajuanIzinController::class, 'store'])->name('store');
+    Route::get('/history', [PengajuanIzinController::class, 'history'])->name('history');
+
+    // Review izin (Koordinator, Ranger, Admin)
+    Route::get('/review', [PengajuanIzinController::class, 'reviewIndex'])->name('review');
+    Route::post('/{pengajuanIzin}/approve', [PengajuanIzinController::class, 'approve'])->name('approve');
+    Route::post('/{pengajuanIzin}/reject', [PengajuanIzinController::class, 'reject'])->name('reject');
 });
 
 /*
@@ -143,7 +161,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Ranger|Sekretaris',
+    'role:Admin|Ranger|Sekretaris|Stakeholder|Koordinator',
 ])->group(function () {
 
     Route::get('/lihat', [PresensiController::class, 'lihat'])
@@ -154,7 +172,7 @@ Route::middleware([
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Ranger|Sekretaris',
+    'role:Admin|Ranger|Sekretaris|Stakeholder|Koordinator',
 ])->group(function () {
     Route::get('/lihat/list', [ListPanitiaController::class, 'index'])
         ->name('kegiatan.ListPanitia');
@@ -168,7 +186,6 @@ Route::middleware([
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Panitia|Ranger|Sekretaris|Pengawas',
 ])->group(function () {
 
     Route::get('/qr', [PresensiController::class, 'index'])
@@ -190,6 +207,10 @@ Route::middleware([
         ->name('admin.dashboard');
     Route::get('/admin/role-request', [AdminController::class, 'roleRequest'])
         ->name('admin.role-request');
+    Route::post('/admin/role-request/{roleRequest}/approve', [AdminController::class, 'approveRoleRequest'])
+        ->name('admin.role-request.approve');
+    Route::post('/admin/role-request/{roleRequest}/reject', [AdminController::class, 'rejectRoleRequest'])
+        ->name('admin.role-request.reject');
 
     // QR Code Management
     Route::get('/admin/users', [QrCodeController::class, 'index'])

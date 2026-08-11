@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ListPanitia;
+use App\Models\PengajuanIzin;
 use App\Models\Rapat;
 use App\Models\User;
 use Carbon\Carbon;
@@ -43,55 +44,70 @@ class ListPanitiaController extends Controller
             ->where('rapat_id', $selectedRapat->id)
             ->get();
 
-        $absenUserIds = $absenRecords->pluck('user_id')->toArray();
+        // Ambil data pengajuan izin yang disetujui pada tanggal rapat ini (termasuk izin Koordinator & Staff)
+        $izinRecords = PengajuanIzin::whereDate('tanggal_izin', $selectedRapat->tanggal)
+            ->where('status', 'Approved')
+            ->get();
 
-        // -------------------------------------------------------------
-        // LOGIKA ALPHA OTOMATIS
-        // "alpha akan otomatis diberikan kepada panitia yang tidak absen
-        // terakhir pada 15 menit setelah rapat dimulai"
-        // -------------------------------------------------------------
         $waktuRapat = Carbon::parse($selectedRapat->tanggal.' '.$selectedRapat->jam);
         $batasWaktuAlpha = $waktuRapat->copy()->addMinutes(15);
         $sekarang = Carbon::now();
 
-        $semuaPanitia = User::role(['Panitia', 'Sekretaris'])->with('divisi')->get();
+        $semuaPanitia = User::with(['divisi', 'roles', 'jabatan'])->get();
 
         $panitiaData = [];
 
         foreach ($semuaPanitia as $panitia) {
             $record = $absenRecords->firstWhere('user_id', $panitia->id);
+            $izinRecord = $izinRecords->firstWhere('user_id', $panitia->id);
 
             if ($record) {
                 // Sudah scan
                 $panitiaData[] = [
                     'nama' => $panitia->name,
                     'divisi' => $panitia->divisi?->nama_divisi ?? '-',
+                    'jabatan' => $panitia->jabatan?->nama_jabatan ?? '-',
                     'jam_tap' => Carbon::parse($record->jam_tap)->format('H:i'),
                     'tanggal' => Carbon::parse($selectedRapat->tanggal)->translatedFormat('d F Y'),
                     'status' => $record->status,
                     'scanned_by' => $record->scanner?->name ?? 'Sistem',
+                    'alasan_izin' => null,
+                ];
+            } elseif ($izinRecord) {
+                // Ada pengajuan izin yang disetujui
+                $panitiaData[] = [
+                    'nama' => $panitia->name,
+                    'divisi' => $panitia->divisi?->nama_divisi ?? '-',
+                    'jabatan' => $panitia->jabatan?->nama_jabatan ?? '-',
+                    'jam_tap' => '-',
+                    'tanggal' => Carbon::parse($selectedRapat->tanggal)->translatedFormat('d F Y'),
+                    'status' => $izinRecord->jenis_izin, // 'Sakit' atau 'Izin'
+                    'scanned_by' => 'Approved (Izin)',
+                    'alasan_izin' => $izinRecord->alasan,
                 ];
             } else {
-                // Belum scan
-                // Cek apakah sudah melebihi 15 menit setelah rapat dimulai
+                // Belum scan dan tidak izin
                 if ($sekarang->greaterThan($batasWaktuAlpha)) {
                     $panitiaData[] = [
                         'nama' => $panitia->name,
                         'divisi' => $panitia->divisi?->nama_divisi ?? '-',
+                        'jabatan' => $panitia->jabatan?->nama_jabatan ?? '-',
                         'jam_tap' => '-',
                         'tanggal' => Carbon::parse($selectedRapat->tanggal)->translatedFormat('d F Y'),
                         'status' => 'Alpha',
                         'scanned_by' => '-',
+                        'alasan_izin' => null,
                     ];
                 } else {
-                    // Masih bisa absen, kita tampilkan sebagai Belum Hadir / Tidak Hadir
                     $panitiaData[] = [
                         'nama' => $panitia->name,
                         'divisi' => $panitia->divisi?->nama_divisi ?? '-',
+                        'jabatan' => $panitia->jabatan?->nama_jabatan ?? '-',
                         'jam_tap' => '-',
                         'tanggal' => Carbon::parse($selectedRapat->tanggal)->translatedFormat('d F Y'),
-                        'status' => 'Tidak Hadir', // Menunggu waktu
+                        'status' => 'Tidak Hadir',
                         'scanned_by' => '-',
+                        'alasan_izin' => null,
                     ];
                 }
             }
@@ -104,7 +120,6 @@ class ListPanitiaController extends Controller
             });
         }
 
-        // Sorting: Hadir duluan, Telat, lalu Alpha/Tidak Hadir. Atau biarkan sesuai nama.
         usort($panitiaData, function ($a, $b) {
             return strcmp($a['nama'], $b['nama']);
         });
