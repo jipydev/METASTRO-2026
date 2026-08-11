@@ -53,7 +53,7 @@ class ListPanitiaController extends Controller
         $batasWaktuAlpha = $waktuRapat->copy()->addMinutes(15);
         $sekarang = Carbon::now();
 
-        $semuaPanitia = User::with(['divisi', 'roles', 'jabatan'])->get();
+        $semuaPanitia = User::where('status_aktif', true)->with(['divisi', 'roles', 'jabatan'])->get();
 
         $panitiaData = [];
 

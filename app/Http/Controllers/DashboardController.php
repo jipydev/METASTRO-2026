@@ -24,7 +24,7 @@ class DashboardController extends Controller
                             ->orderBy('jam', 'desc')
                             ->first();
 
-        $totalUserCount = User::count();
+        $totalUserCount = User::where('status_aktif', true)->count();
         $hadirCount = 0;
 
         if ($rapatTerbaru) {

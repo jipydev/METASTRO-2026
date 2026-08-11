@@ -15,7 +15,8 @@ class QrCodeController extends Controller
      */
     public function index(): View
     {
-        $users = User::with('divisi', 'jabatan')
+        $users = User::where('status_aktif', true)
+            ->with('divisi', 'jabatan')
             ->orderBy('name')
             ->paginate(20);
 
@@ -39,7 +40,7 @@ class QrCodeController extends Controller
      */
     public function regenerateAll(QrCodeService $qrService): RedirectResponse
     {
-        $users = User::all();
+        $users = User::where('status_aktif', true)->get();
         $count = 0;
 
         foreach ($users as $user) {

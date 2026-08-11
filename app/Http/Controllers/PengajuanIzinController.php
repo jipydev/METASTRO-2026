@@ -106,7 +106,9 @@ class PengajuanIzinController extends Controller
     {
         $user = auth()->user();
 
-        $query = PengajuanIzin::with(['user.divisi', 'user.jabatan', 'reviewerKoordinator', 'reviewerRanger']);
+        $query = PengajuanIzin::whereHas('user', function ($q) {
+            $q->where('status_aktif', true);
+        })->with(['user.divisi', 'user.jabatan', 'reviewerKoordinator', 'reviewerRanger']);
 
         if ($user->hasRole('Admin')) {
             // Admin melihat semua pengajuan izin
