@@ -253,6 +253,19 @@
                                                     class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg font-semibold text-xs transition cursor-pointer shadow-sm">
                                                 Edit Role
                                             </button>
+
+                                            {{-- Delete Button --}}
+                                            @if($user->id !== auth()->id())
+                                                <form action="{{ route('admin.manage-users.destroy', $user) }}" method="POST" class="inline"
+                                                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun {{ $user->name }}? Data pengguna ini akan dihapus secara permanen.')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                            class="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1.5 rounded-lg font-semibold text-xs transition cursor-pointer shadow-sm">
+                                                        Hapus
+                                                    </button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>

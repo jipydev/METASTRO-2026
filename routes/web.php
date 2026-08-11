@@ -217,6 +217,8 @@ Route::middleware([
         ->name('admin.manage-users.index');
     Route::put('/admin/manage-users/{user}', [AdminController::class, 'updateUserRole'])
         ->name('admin.manage-users.update');
+    Route::delete('/admin/manage-users/{user}', [AdminController::class, 'destroyUser'])
+        ->name('admin.manage-users.destroy');
 
     // QR Code Management
     Route::get('/admin/users', [QrCodeController::class, 'index'])

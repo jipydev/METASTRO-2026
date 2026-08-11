@@ -94,6 +94,18 @@ class AdminController extends Controller
         return redirect()->back()->with('success', "Data dan role pengguna {$user->name} berhasil diperbarui!");
     }
 
+    public function destroyUser(User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
+        $userName = $user->name;
+        $user->delete();
+
+        return redirect()->back()->with('success', "Akun pengguna {$userName} berhasil dihapus!");
+    }
+
     public function roleRequest()
     {
         $roleRequests = RoleRequest::with(['user', 'requestedDivisi', 'requestedJabatan'])
