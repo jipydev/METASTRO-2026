@@ -7,12 +7,61 @@
 
     <div x-data="{
         isSubmitting: false,
-        checkSize(event, maxMb = 2) {
+        suratFileName: null,
+        suratFileSize: null,
+        buktiFileName: null,
+        buktiFileSize: null,
+        buktiPreview: null,
+
+        formatSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        },
+
+        handleSurat(event) {
             const file = event.target.files[0];
-            if (file && file.size > maxMb * 1024 * 1024) {
-                alert('Ukuran file ' + file.name + ' terlalu besar (' + (file.size / (1024 * 1024)).toFixed(1) + ' MB). Maksimal ukuran file adalah ' + maxMb + ' MB agar proses pengiriman cepat.');
+            if (!file) { this.suratFileName = null; this.suratFileSize = null; return; }
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Ukuran file ' + file.name + ' terlalu besar (' + (file.size / (1024 * 1024)).toFixed(1) + ' MB). Maksimal ukuran file adalah 5 MB.');
                 event.target.value = '';
+                this.suratFileName = null;
+                this.suratFileSize = null;
+                return;
             }
+            this.suratFileName = file.name;
+            this.suratFileSize = this.formatSize(file.size);
+        },
+
+        handleBukti(event) {
+            const file = event.target.files[0];
+            if (!file) { this.buktiFileName = null; this.buktiFileSize = null; this.buktiPreview = null; return; }
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Ukuran file ' + file.name + ' terlalu besar (' + (file.size / (1024 * 1024)).toFixed(1) + ' MB). Maksimal ukuran file adalah 5 MB.');
+                event.target.value = '';
+                this.buktiFileName = null;
+                this.buktiFileSize = null;
+                this.buktiPreview = null;
+                return;
+            }
+            this.buktiFileName = file.name;
+            this.buktiFileSize = this.formatSize(file.size);
+            const reader = new FileReader();
+            reader.onload = (e) => { this.buktiPreview = e.target.result; };
+            reader.readAsDataURL(file);
+        },
+
+        removeSurat() {
+            document.getElementById('surat_izin').value = '';
+            this.suratFileName = null;
+            this.suratFileSize = null;
+        },
+
+        removeBukti() {
+            document.getElementById('bukti').value = '';
+            this.buktiFileName = null;
+            this.buktiFileSize = null;
+            this.buktiPreview = null;
         }
     }" class="py-8 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 font-poppins">
         @if(session('error'))
@@ -69,16 +118,50 @@
 
                 <!-- Upload Surat Izin PDF -->
                 <div>
-                    <x-input-label for="surat_izin" :value="__('Upload Surat Izin (PDF, Maks 2MB)')" />
-                    <input type="file" id="surat_izin" name="surat_izin" accept="application/pdf" @change="checkSize($event, 2)" class="block mt-1 w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary-500/10 file:text-primary-600 hover:file:bg-primary-500/20 cursor-pointer" />
+                    <x-input-label for="surat_izin" :value="__('Upload Surat Izin (PDF, Maks 5MB)')" />
+                    <input type="file" id="surat_izin" name="surat_izin" accept="application/pdf" @change="handleSurat($event)" class="block mt-1 w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary-500/10 file:text-primary-600 hover:file:bg-primary-500/20 cursor-pointer" />
                     <x-input-error :messages="$errors->get('surat_izin')" class="mt-2" />
+
+                    <!-- Preview Surat Izin -->
+                    <div x-show="suratFileName" x-transition class="mt-3 flex items-center gap-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700/40 rounded-xl px-4 py-3">
+                        <div class="flex-shrink-0 w-10 h-10 bg-red-500/10 text-red-500 rounded-lg flex items-center justify-center">
+                            <span class="icon-[akar-icons--file] text-xl"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate" x-text="suratFileName"></p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                <span x-text="suratFileSize"></span> · <span class="text-emerald-600 dark:text-emerald-400 font-semibold">Siap dikirim</span>
+                            </p>
+                        </div>
+                        <button type="button" @click="removeSurat()" class="flex-shrink-0 text-slate-400 hover:text-rose-500 transition cursor-pointer" title="Hapus file">
+                            <span class="icon-[akar-icons--circle-x] text-xl"></span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Upload Bukti Dokumentasi Gambar -->
                 <div>
-                    <x-input-label for="bukti" :value="__('Upload Bukti Dokumentasi (JPG/PNG, Maks 2MB)')" />
-                    <input type="file" id="bukti" name="bukti" accept="image/*" @change="checkSize($event, 2)" class="block mt-1 w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary-500/10 file:text-primary-600 hover:file:bg-primary-500/20 cursor-pointer" />
+                    <x-input-label for="bukti" :value="__('Upload Bukti Dokumentasi (JPG/PNG, Maks 5MB)')" />
+                    <input type="file" id="bukti" name="bukti" accept="image/*" @change="handleBukti($event)" class="block mt-1 w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary-500/10 file:text-primary-600 hover:file:bg-primary-500/20 cursor-pointer" />
                     <x-input-error :messages="$errors->get('bukti')" class="mt-2" />
+
+                    <!-- Preview Bukti Dokumentasi -->
+                    <div x-show="buktiFileName" x-transition class="mt-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700/40 rounded-xl px-4 py-3">
+                        <div class="flex items-center gap-3">
+                            <template x-if="buktiPreview">
+                                <img :src="buktiPreview" alt="Preview" class="flex-shrink-0 w-14 h-14 object-cover rounded-lg border-2 border-white dark:border-slate-600 shadow-sm">
+                            </template>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate" x-text="buktiFileName"></p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">
+                                    <span x-text="buktiFileSize"></span> · <span class="text-emerald-600 dark:text-emerald-400 font-semibold">Siap dikirim</span>
+                                </p>
+                            </div>
+                            <button type="button" @click="removeBukti()" class="flex-shrink-0 text-slate-400 hover:text-rose-500 transition cursor-pointer" title="Hapus file">
+                                <span class="icon-[akar-icons--circle-x] text-xl"></span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-700">

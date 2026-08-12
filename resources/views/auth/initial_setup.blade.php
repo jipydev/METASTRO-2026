@@ -1,14 +1,82 @@
 <x-guest-layout>
+    <!-- Include Cropper.js -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
     <div x-data="{
         photoPreview: null,
+        cropper: null,
+        showCropModal: false,
+        cropImageSrc: null,
+        
         previewPhoto(event) {
             const file = event.target.files[0];
             if (file) {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('Ukuran file maksimal adalah 10MB. Silakan pilih foto dengan ukuran lebih kecil.');
+                    event.target.value = '';
+                    return;
+                }
+                
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    this.photoPreview = e.target.result;
+                    this.cropImageSrc = e.target.result;
+                    this.showCropModal = true;
+                    // Render Image then init cropper
+                    this.$nextTick(() => {
+                        if (this.cropper) {
+                            this.cropper.destroy();
+                        }
+                        const imageElement = document.getElementById('cropImage');
+                        this.cropper = new Cropper(imageElement, {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                            autoCropArea: 1,
+                        });
+                    });
                 };
                 reader.readAsDataURL(file);
+            }
+        },
+        
+        saveCrop() {
+            if (this.cropper) {
+                const canvas = this.cropper.getCroppedCanvas({
+                    maxWidth: 1024,
+                    maxHeight: 1024
+                });
+                
+                const maxSize = 1024 * 1024; // 1MB
+                let quality = 0.9;
+                
+                const compressAndSave = (q) => {
+                    canvas.toBlob((blob) => {
+                        if (blob.size > maxSize && q > 0.1) {
+                            compressAndSave(q - 0.1);
+                        } else {
+                            this.photoPreview = canvas.toDataURL('image/jpeg', q);
+                            
+                            const file = new File([blob], 'profile.jpg', { type: 'image/jpeg', lastModified: new Date().getTime() });
+                            const container = new DataTransfer();
+                            container.items.add(file);
+                            document.getElementById('foto').files = container.files;
+                            this.closeCropModal();
+                        }
+                    }, 'image/jpeg', q);
+                };
+                
+                compressAndSave(quality);
+            }
+        },
+        
+        closeCropModal() {
+            this.showCropModal = false;
+            if (this.cropper) {
+                this.cropper.destroy();
+                this.cropper = null;
+            }
+            if (!this.photoPreview) {
+                document.getElementById('foto').value = '';
             }
         }
     }" class="w-full max-w-md mx-auto font-poppins">
@@ -47,7 +115,7 @@
                     </div>
                     <input type="file" id="foto" name="foto" accept="image/*" required class="hidden" @change="previewPhoto($event)">
                     <span class="text-xs font-semibold text-primary-500 mt-2 cursor-pointer" onclick="document.getElementById('foto').click()">
-                        + Unggah Foto Profil (Wajib, Maks. 5MB)
+                        + Unggah Foto Profil (Wajib, Maks. 10MB)
                     </span>
                     <x-input-error :messages="$errors->get('foto')" class="mt-1" />
                 </div>
@@ -94,6 +162,26 @@
                 </div>
 
             </form>
+        </div>
+
+        <!-- Crop Modal -->
+        <div x-show="showCropModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <div @click.away="closeCropModal()" class="bg-white dark:bg-slate-800 rounded-3xl p-6 w-full max-w-lg shadow-2xl flex flex-col relative z-50 overflow-hidden">
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-4">Sesuaikan Foto</h3>
+                
+                <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-xl overflow-hidden" style="max-height: 400px; height: 400px;">
+                    <img id="cropImage" :src="cropImageSrc" class="max-w-full block" alt="Crop Area">
+                </div>
+                
+                <div class="flex justify-end gap-3 mt-6 relative z-50">
+                    <button type="button" @click="closeCropModal()" class="px-5 py-2.5 rounded-xl font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 transition cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="button" @click="saveCrop()" class="px-5 py-2.5 rounded-xl font-semibold text-white bg-primary-500 hover:bg-primary-600 shadow-lg shadow-primary-500/20 transition cursor-pointer">
+                        Terapkan
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </x-guest-layout>
