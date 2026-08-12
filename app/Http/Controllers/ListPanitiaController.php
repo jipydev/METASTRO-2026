@@ -87,6 +87,7 @@ class ListPanitiaController extends Controller
                     'status' => $izinRecord->jenis_izin, // 'Sakit' atau 'Izin'
                     'scanned_by' => 'Approved (Izin)',
                     'alasan_izin' => $izinRecord->alasan,
+                    'waktu_pengajuan' => $izinRecord->created_at ? Carbon::parse($izinRecord->created_at)->format('d/m H:i') : null,
                 ];
             } else {
                 // Belum scan dan tidak izin

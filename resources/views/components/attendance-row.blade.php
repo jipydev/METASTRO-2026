@@ -51,9 +51,14 @@
         </span>
     </td>
 
-    <!-- Kolom Scanned By (Aksi diganti Scanned By pada tabel, jadi kita tampilkan langsung disini atau biarkan) -->
+    <!-- Kolom Scanned By -->
     <td class="py-2 md:py-3 md:px-4 flex items-center justify-between md:table-cell text-slate-500 dark:text-slate-400 text-[15px]">
         <span class="md:hidden text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Scanned By</span>
-        {{ $item['scanned_by'] ?? '-' }}
+        <div>
+            <div>{{ $item['scanned_by'] ?? '-' }}</div>
+            @if(!empty($item['waktu_pengajuan']))
+                <div class="text-[11px] text-slate-400">Dikirim: {{ $item['waktu_pengajuan'] }}</div>
+            @endif
+        </div>
     </td>
 </tr>

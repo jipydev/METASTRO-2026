@@ -60,6 +60,7 @@
                             <tr>
                                 <th class="py-3 px-4 rounded-l-lg">Pemohon</th>
                                 <th class="py-3 px-4">Divisi & Jabatan</th>
+                                <th class="py-3 px-4">Waktu Dikirim</th>
                                 <th class="py-3 px-4">Rapat / Timeline</th>
                                 <th class="py-3 px-4">Jenis</th>
                                 <th class="py-3 px-4">Diagnostik Alur</th>
@@ -89,6 +90,17 @@
                                         @endif
                                         <div class="text-xs text-slate-400">{{ $p->user?->jabatan?->nama_jabatan ?? '-' }}</div>
                                     </td>
+                                    <td class="py-3.5 px-4 whitespace-nowrap">
+                                        <div class="font-medium text-slate-900 dark:text-white flex items-center gap-1.5">
+                                            <span class="icon-[akar-icons--clock] text-slate-400 text-xs"></span>
+                                            <span>{{ $p->created_at ? $p->created_at->format('d M Y, H:i') . ' WIB' : '-' }}</span>
+                                        </div>
+                                        @if($p->created_at)
+                                            <div class="text-[11px] text-slate-400 font-normal">
+                                                {{ \Carbon\Carbon::parse($p->created_at)->locale('id')->diffForHumans() }}
+                                            </div>
+                                        @endif
+                                    </td>
                                     <td class="py-3.5 px-4">
                                         <div class="font-semibold text-slate-900 dark:text-white">{{ $p->rapat?->judul ?? 'Rapat' }}</div>
                                         <div class="text-xs text-slate-400">{{ \Carbon\Carbon::parse($p->tanggal_izin)->format('d M Y') }}</div>
@@ -105,8 +117,14 @@
                                                 <span class="text-slate-400 font-mono">Koor:</span>
                                                 @if($p->status_koordinator === 'Approved')
                                                     <span class="text-emerald-600 dark:text-emerald-400 font-semibold">✓ Disetujui</span>
+                                                    @if($p->reviewed_at_koordinator)
+                                                        <span class="text-[10px] text-slate-400">({{ \Carbon\Carbon::parse($p->reviewed_at_koordinator)->format('d/m H:i') }})</span>
+                                                    @endif
                                                 @elseif($p->status_koordinator === 'Rejected')
                                                     <span class="text-rose-600 dark:text-rose-400 font-semibold">✗ Ditolak</span>
+                                                    @if($p->reviewed_at_koordinator)
+                                                        <span class="text-[10px] text-slate-400">({{ \Carbon\Carbon::parse($p->reviewed_at_koordinator)->format('d/m H:i') }})</span>
+                                                    @endif
                                                 @else
                                                     <span class="text-amber-600 dark:text-amber-400 font-semibold">⌛ Pending</span>
                                                 @endif
@@ -117,8 +135,14 @@
                                                 <span class="text-slate-400 font-mono">Ranger:</span>
                                                 @if($p->status_ranger === 'Approved')
                                                     <span class="text-emerald-600 dark:text-emerald-400 font-semibold">✓ Disetujui</span>
+                                                    @if($p->reviewed_at_ranger)
+                                                        <span class="text-[10px] text-slate-400">({{ \Carbon\Carbon::parse($p->reviewed_at_ranger)->format('d/m H:i') }})</span>
+                                                    @endif
                                                 @elseif($p->status_ranger === 'Rejected')
                                                     <span class="text-rose-600 dark:text-rose-400 font-semibold">✗ Ditolak</span>
+                                                    @if($p->reviewed_at_ranger)
+                                                        <span class="text-[10px] text-slate-400">({{ \Carbon\Carbon::parse($p->reviewed_at_ranger)->format('d/m H:i') }})</span>
+                                                    @endif
                                                 @else
                                                     <span class="text-amber-600 dark:text-amber-400 font-semibold">⌛ Pending</span>
                                                 @endif

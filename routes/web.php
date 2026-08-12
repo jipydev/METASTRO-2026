@@ -49,6 +49,7 @@ Route::middleware(['auth', 'verified', 'initial.setup'])->group(function () {
 */
 
 Route::middleware(['auth', 'verified'])->prefix('izin')->name('izin.')->group(function () {
+    Route::get('/', function () { return redirect()->route('izin.history'); });
     Route::get('/create', [PengajuanIzinController::class, 'create'])->name('create');
     Route::post('/', [PengajuanIzinController::class, 'store'])->name('store');
     Route::get('/history', [PengajuanIzinController::class, 'history'])->name('history');
