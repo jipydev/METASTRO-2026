@@ -261,6 +261,12 @@ Route::middleware([
         ->name('scan.lookup');
     Route::post('/scan/attendance', [ScanController::class, 'recordAttendance'])
         ->name('scan.attendance');
+
+    // Kontrol & Penjadwalan Absensi (Sekretaris & Admin)
+    Route::post('/absen/{rapat}/toggle', [PresensiController::class, 'toggleAbsen'])
+        ->name('absen.toggle');
+    Route::post('/absen/{rapat}/schedule', [PresensiController::class, 'updateJadwalAbsen'])
+        ->name('absen.schedule');
 });
 
 require __DIR__.'/auth.php';

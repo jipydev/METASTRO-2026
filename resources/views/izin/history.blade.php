@@ -44,7 +44,7 @@
                         <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200 uppercase text-xs">
                             <tr>
                                 <th class="py-3 px-4 rounded-l-lg">Tanggal Pengajuan</th>
-                                <th class="py-3 px-4">Tanggal Izin</th>
+                                <th class="py-3 px-4">Rapat / Timeline</th>
                                 <th class="py-3 px-4">Jenis</th>
                                 <th class="py-3 px-4">Alasan</th>
                                 <th class="py-3 px-4">Approval Koordinator</th>
@@ -59,7 +59,8 @@
                                         {{ $p->created_at?->format('d M Y H:i') ?? '-' }}
                                     </td>
                                     <td class="py-3.5 px-4 font-semibold">
-                                        {{ $p->tanggal_izin ? \Carbon\Carbon::parse($p->tanggal_izin)->format('d M Y') : '-' }}
+                                        <div class="text-slate-900 dark:text-white">{{ $p->rapat?->judul ?? 'Rapat' }}</div>
+                                        <div class="text-xs text-slate-400 font-normal">{{ $p->tanggal_izin ? \Carbon\Carbon::parse($p->tanggal_izin)->format('d M Y') : '-' }}</div>
                                     </td>
                                     <td class="py-3.5 px-4">
                                         <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $p->jenis_izin === 'Sakit' ? 'bg-amber-500/10 text-amber-600 border border-amber-500/20' : 'bg-blue-500/10 text-blue-600 border border-blue-500/20' }}">

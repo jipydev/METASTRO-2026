@@ -54,17 +54,50 @@ class ScanController extends Controller
         ]);
 
         try {
-            // 1. Cari Rapat Besar yang terjadwal HARI INI
+            // 1. Cari Rapat Besar yang terjadwal HARI INI atau yang statusnya Buka
             $rapatHariIni = Rapat::whereDate('tanggal', Carbon::today())->first();
+
+            if (! $rapatHariIni) {
+                $rapatHariIni = Rapat::where('status_absen', 'Buka')->first();
+            }
 
             if (! $rapatHariIni) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Tidak ada jadwal Rapat Besar hari ini.',
+                    'message' => 'Tidak ada jadwal Rapat hari ini atau absensi belum dibuka.',
                 ], 404);
             }
 
-            // 2. Cek apakah user sudah absen untuk rapat ini
+            // 2. Evaluasi status_absen dan jadwal waktu yang diatur Sekretaris
+            $waktuSekarang = Carbon::now();
+            $currentTimeStr = $waktuSekarang->format('H:i:s');
+
+            if ($rapatHariIni->status_absen === 'Tutup') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Absensi untuk '.$rapatHariIni->judul.' telah DITUTUP oleh Sekretaris.',
+                ], 403);
+            }
+
+            if ($rapatHariIni->waktu_buka && $rapatHariIni->status_absen !== 'Buka') {
+                if ($currentTimeStr < $rapatHariIni->waktu_buka) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Absensi belum dibuka. Absensi dijadwalkan buka pada pukul '.substr($rapatHariIni->waktu_buka, 0, 5).' WIB.',
+                    ], 403);
+                }
+            }
+
+            if ($rapatHariIni->waktu_tutup && $rapatHariIni->status_absen !== 'Buka') {
+                if ($currentTimeStr > $rapatHariIni->waktu_tutup) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Absensi telah ditutup pada pukul '.substr($rapatHariIni->waktu_tutup, 0, 5).' WIB.',
+                    ], 403);
+                }
+            }
+
+            // 3. Cek apakah user sudah absen untuk rapat ini
             $existing = ListPanitia::where('user_id', $request->user_id)
                 ->where('rapat_id', $rapatHariIni->id)
                 ->first();
@@ -76,16 +109,18 @@ class ScanController extends Controller
                 ], 409);
             }
 
-            // 3. Tentukan status (Hadir vs Telat)
-            // Logika Telat: absen setelah 15 menit sebelum rapat dimulai
-            // Contoh: rapat jam 13:00. Batas Hadir: <= 12:45. Telat: > 12:45.
-            $jamRapat = Carbon::parse($rapatHariIni->jam);
-            $batasWaktuHadir = $jamRapat->copy()->subMinutes(15);
-            $waktuSekarang = Carbon::now();
-
+            // 4. Tentukan status (Hadir vs Telat)
             $status = 'Hadir';
-            if ($waktuSekarang->greaterThan($batasWaktuHadir)) {
-                $status = 'Telat';
+            if ($rapatHariIni->waktu_telat) {
+                if ($currentTimeStr >= $rapatHariIni->waktu_telat) {
+                    $status = 'Telat';
+                }
+            } else {
+                $jamRapat = Carbon::parse($rapatHariIni->jam);
+                $batasWaktuHadir = $jamRapat->copy()->subMinutes(15);
+                if ($waktuSekarang->greaterThan($batasWaktuHadir)) {
+                    $status = 'Telat';
+                }
             }
 
             // 4. Simpan ke list_panitias

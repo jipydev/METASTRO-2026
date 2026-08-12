@@ -39,7 +39,7 @@
                             <tr>
                                 <th class="py-3 px-4 rounded-l-lg">Pemohon</th>
                                 <th class="py-3 px-4">Divisi & Jabatan</th>
-                                <th class="py-3 px-4">Tanggal Izin</th>
+                                <th class="py-3 px-4">Rapat / Timeline</th>
                                 <th class="py-3 px-4">Jenis</th>
                                 <th class="py-3 px-4">Alasan Detail</th>
                                 <th class="py-3 px-4">Lampiran</th>
@@ -57,8 +57,9 @@
                                         <div class="font-medium text-slate-800 dark:text-slate-200">{{ $p->user?->divisi?->nama_divisi ?? '-' }}</div>
                                         <div class="text-xs text-slate-400">{{ $p->user?->jabatan?->nama_jabatan ?? '-' }}</div>
                                     </td>
-                                    <td class="py-3.5 px-4 font-semibold">
-                                        {{ \Carbon\Carbon::parse($p->tanggal_izin)->format('d M Y') }}
+                                    <td class="py-3.5 px-4">
+                                        <div class="font-semibold text-slate-900 dark:text-white">{{ $p->rapat?->judul ?? 'Rapat' }}</div>
+                                        <div class="text-xs text-slate-400">{{ \Carbon\Carbon::parse($p->tanggal_izin)->format('d M Y') }}</div>
                                     </td>
                                     <td class="py-3.5 px-4">
                                         <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $p->jenis_izin === 'Sakit' ? 'bg-amber-500/10 text-amber-600 border border-amber-500/20' : 'bg-blue-500/10 text-blue-600 border border-blue-500/20' }}">
@@ -86,21 +87,45 @@
                                         </div>
                                     </td>
                                     <td class="py-3.5 px-4 text-center">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <form action="{{ route('izin.approve', $p->id) }}" method="POST">
-                                                @csrf
-                                                <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menyetujui pengajuan izin ini?')" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-sm">
-                                                    <span class="icon-[akar-icons--check]"></span> Accept
-                                                </button>
-                                            </form>
+                                        @php
+                                            $currentUser = auth()->user();
+                                            $hasAccepted = false;
+                                            $hasDenied = false;
 
-                                            <form action="{{ route('izin.reject', $p->id) }}" method="POST">
-                                                @csrf
-                                                <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menolak pengajuan izin ini?')" class="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-sm">
-                                                    <span class="icon-[akar-icons--cross]"></span> Denied
-                                                </button>
-                                            </form>
-                                        </div>
+                                            if ($currentUser->isKoordinator() && $p->user?->divisi_id == $currentUser->divisi_id && !$p->user?->hasRole('Ranger') && !$p->user?->hasRole('Stakeholder')) {
+                                                if ($p->status_koordinator === 'Approved') $hasAccepted = true;
+                                                elseif ($p->status_koordinator === 'Rejected') $hasDenied = true;
+                                            } else {
+                                                if ($p->status_ranger === 'Approved') $hasAccepted = true;
+                                                elseif ($p->status_ranger === 'Rejected') $hasDenied = true;
+                                            }
+                                        @endphp
+
+                                        @if($hasAccepted)
+                                            <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                                                <span class="icon-[akar-icons--check]"></span> Anda Telah Accept
+                                            </span>
+                                        @elseif($hasDenied)
+                                            <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30">
+                                                <span class="icon-[akar-icons--cross]"></span> Anda Telah Denied
+                                            </span>
+                                        @else
+                                            <div class="flex items-center justify-center gap-2">
+                                                <form action="{{ route('izin.approve', $p->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menyetujui pengajuan izin ini?')" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-sm cursor-pointer">
+                                                        <span class="icon-[akar-icons--check]"></span> Accept
+                                                    </button>
+                                                </form>
+
+                                                <form action="{{ route('izin.reject', $p->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menolak pengajuan izin ini?')" class="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-sm cursor-pointer">
+                                                        <span class="icon-[akar-icons--cross]"></span> Denied
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

@@ -91,11 +91,10 @@ class DivisiSeeder extends Seeder
         ];
 
         foreach ($divisis as $divisi) {
-            Divisi::firstOrCreate([
-                'nama_divisi' => $divisi['nama_divisi'],
-                'deskripsi' => $divisi['deskripsi'],
-                'koordinator_divisi_nim' => $divisi['koordinator_divisi_nim'],
-            ]);
+            Divisi::firstOrCreate(
+                ['nama_divisi' => $divisi['nama_divisi']],
+                ['deskripsi' => $divisi['deskripsi']]
+            );
         }
     }
 }

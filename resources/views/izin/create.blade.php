@@ -36,11 +36,18 @@
             <form action="{{ route('izin.store') }}" method="POST" enctype="multipart/form-data" @submit="isSubmitting = true" class="space-y-5">
                 @csrf
 
-                <!-- Tanggal Izin -->
+                <!-- Pilih Rapat / Timeline -->
                 <div>
-                    <x-input-label for="tanggal_izin" :value="__('Tanggal Izin')" />
-                    <x-text-input id="tanggal_izin" class="block mt-1 w-full" type="date" name="tanggal_izin" :value="old('tanggal_izin')" required />
-                    <x-input-error :messages="$errors->get('tanggal_izin')" class="mt-2" />
+                    <x-input-label for="rapat_id" :value="__('Pilih Rapat / Timeline Kegiatan')" class="font-semibold text-slate-700 dark:text-slate-300" />
+                    <select id="rapat_id" name="rapat_id" required class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-primary-500 dark:focus:border-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 rounded-xl shadow-sm py-2.5 px-3 text-sm">
+                        <option value="">-- Pilih Rapat / Timeline --</option>
+                        @foreach($rapats as $rapat)
+                            <option value="{{ $rapat->id }}" {{ old('rapat_id') == $rapat->id ? 'selected' : '' }}>
+                                {{ $rapat->judul }} — {{ \Carbon\Carbon::parse($rapat->tanggal)->locale('id')->isoFormat('D MMMM YYYY') }} ({{ \Carbon\Carbon::parse($rapat->jam)->format('H:i') }} WIB)
+                            </option>
+                        @endforeach
+                    </select>
+                    <x-input-error :messages="$errors->get('rapat_id')" class="mt-2" />
                 </div>
 
                 <!-- Jenis Izin -->

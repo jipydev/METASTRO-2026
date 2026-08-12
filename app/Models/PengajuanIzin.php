@@ -13,6 +13,7 @@ class PengajuanIzin extends Model
 
     protected $fillable = [
         'user_id',
+        'rapat_id',
         'tanggal_izin',
         'jenis_izin',
         'alasan',
@@ -38,6 +39,11 @@ class PengajuanIzin extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function rapat()
+    {
+        return $this->belongsTo(Rapat::class);
     }
 
     public function reviewerKoordinator()
