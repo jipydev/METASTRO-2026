@@ -147,42 +147,95 @@ class PengajuanIzinController extends Controller
     /**
      * Menampilkan daftar pengajuan izin yang perlu di-review.
      */
-    public function reviewIndex()
+    /**
+     * Menampilkan daftar pengajuan izin yang perlu di-review.
+     */
+    public function reviewIndex(Request $request)
     {
         $user = auth()->user();
+        $filter = $request->query('filter', 'pending');
 
-        $query = PengajuanIzin::whereHas('user', function ($q) {
-            $q->where('status_aktif', true);
-        })->with(['rapat', 'user.divisi', 'user.roles', 'user.jabatan', 'reviewerKoordinator', 'reviewerRanger']);
+        $query = PengajuanIzin::with(['rapat', 'user.divisi', 'user.roles', 'user.jabatan', 'reviewerKoordinator', 'reviewerRanger']);
+
+        // Hanya sertakan filter status_aktif jika BUKAN Admin (Admin melihat semua)
+        if (!$user->hasRole('Admin')) {
+            $query->whereHas('user', function ($q) {
+                $q->where('status_aktif', true);
+            });
+        }
 
         if ($user->hasRole('Admin')) {
             // Admin melihat semua pengajuan izin
+            if ($filter === 'pending') {
+                $query->where(function ($q) {
+                    $q->where('status', 'Pending')->orWhere('status', 'Diproses');
+                });
+            } elseif ($filter === 'limbo') {
+                // Terkendala/Limbo: user tanpa divisi, atau izin pending tanpa koordinator
+                $query->where(function ($q) {
+                    $q->whereHas('user', function ($u) {
+                        $u->whereNull('divisi_id');
+                    })->orWhere(function ($sub) {
+                        $sub->where('status_koordinator', 'Pending')
+                            ->where('status', 'Pending');
+                    });
+                });
+            } elseif ($filter === 'approved') {
+                $query->where('status', 'Approved');
+            } elseif ($filter === 'rejected') {
+                $query->where('status', 'Rejected');
+            }
         } elseif ($user->hasRole('Stakeholder')) {
             // Stakeholder dapat mereview izin dari pemohon berkategori Stakeholder
             $query->whereHas('user', function ($q) {
                 $q->role('Stakeholder');
             });
+
+            if ($filter === 'pending') {
+                $query->where('status_ranger', 'Pending');
+            } elseif ($filter === 'approved') {
+                $query->where('status_ranger', 'Approved');
+            } elseif ($filter === 'rejected') {
+                $query->where('status_ranger', 'Rejected');
+            }
         } elseif ($user->hasRole('Ranger')) {
-            // Ranger melihat izin staff (yg disetujui koordinator), izin Ranger, dan izin Stakeholder
+            // Ranger melihat izin staff (yg disetujui koordinator), izin Ranger, Stakeholder, atau izin dari user tanpa divisi (limbo)
             $query->where(function ($q) {
                 $q->where('status_koordinator', 'Approved')
                   ->orWhereHas('user', function ($u) {
-                      $u->role(['Ranger', 'Stakeholder']);
+                      $u->role(['Ranger', 'Stakeholder'])
+                        ->orWhereNull('divisi_id');
                   });
             });
+
+            if ($filter === 'pending') {
+                $query->where('status_ranger', 'Pending');
+            } elseif ($filter === 'approved') {
+                $query->where('status_ranger', 'Approved');
+            } elseif ($filter === 'rejected') {
+                $query->where('status_ranger', 'Rejected');
+            }
         } elseif ($user->isKoordinator()) {
             // Koordinator melihat pengajuan staff di divisinya
             $query->whereHas('user', function ($q) use ($user) {
                 $q->where('divisi_id', $user->divisi_id)
                   ->where('id', '!=', $user->id);
             });
+
+            if ($filter === 'pending') {
+                $query->where('status_koordinator', 'Pending');
+            } elseif ($filter === 'approved') {
+                $query->where('status_koordinator', 'Approved');
+            } elseif ($filter === 'rejected') {
+                $query->where('status_koordinator', 'Rejected');
+            }
         } else {
             abort(403, 'Anda tidak memiliki akses untuk mereview izin.');
         }
 
-        $pengajuanList = $query->latest()->paginate(15);
+        $pengajuanList = $query->latest()->paginate(15)->withQueryString();
 
-        return view('izin.review', compact('pengajuanList'));
+        return view('izin.review', compact('pengajuanList', 'filter'));
     }
 
     /**

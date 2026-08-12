@@ -21,16 +21,37 @@
             </div>
         @endif
 
+        {{-- Filter Tabs --}}
+        <div class="mb-6 flex flex-wrap gap-2 border-b border-slate-200 dark:border-slate-700 pb-3">
+            <a href="{{ route('izin.review', ['filter' => 'pending']) }}" class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 {{ $filter === 'pending' ? 'bg-primary-500 text-white shadow-md' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }}">
+                <span class="icon-[akar-icons--clock]"></span> Menunggu Review
+            </a>
+            @if(auth()->user()->hasRole('Admin'))
+                <a href="{{ route('izin.review', ['filter' => 'limbo']) }}" class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 {{ $filter === 'limbo' ? 'bg-amber-500 text-white shadow-md' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20' }}">
+                    <span class="icon-[akar-icons--warning] text-sm"></span> Terkendala / Limbo
+                </a>
+            @endif
+            <a href="{{ route('izin.review', ['filter' => 'approved']) }}" class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 {{ $filter === 'approved' ? 'bg-emerald-500 text-white shadow-md' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }}">
+                <span class="icon-[akar-icons--check]"></span> Disetujui
+            </a>
+            <a href="{{ route('izin.review', ['filter' => 'rejected']) }}" class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 {{ $filter === 'rejected' ? 'bg-rose-500 text-white shadow-md' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }}">
+                <span class="icon-[akar-icons--cross]"></span> Ditolak
+            </a>
+            <a href="{{ route('izin.review', ['filter' => 'all']) }}" class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 {{ $filter === 'all' ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 shadow-md' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }}">
+                <span class="icon-[akar-icons--grid]"></span> Semua Data
+            </a>
+        </div>
+
         <div class="bg-white dark:bg-slate-800 shadow-xl rounded-2xl p-6 border border-gray-100 dark:border-slate-700">
             <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                 <span class="icon-[mdi--clipboard-check-outline] text-primary-500 text-2xl"></span>
-                Daftar Pengajuan Izin Menunggu Review Anda
+                Daftar Pengajuan Izin Panitia
             </h3>
 
             @if($pengajuanList->isEmpty())
                 <div class="text-center py-12 text-slate-500 dark:text-slate-400">
                     <span class="icon-[mdi--check-all] text-5xl mb-2 block mx-auto opacity-50"></span>
-                    Tidak ada pengajuan izin yang memerlukan review saat ini.
+                    Tidak ada pengajuan izin yang sesuai dengan kriteria filter saat ini.
                 </div>
             @else
                 <div class="overflow-x-auto">
@@ -41,7 +62,7 @@
                                 <th class="py-3 px-4">Divisi & Jabatan</th>
                                 <th class="py-3 px-4">Rapat / Timeline</th>
                                 <th class="py-3 px-4">Jenis</th>
-                                <th class="py-3 px-4">Alasan Detail</th>
+                                <th class="py-3 px-4">Diagnostik Alur</th>
                                 <th class="py-3 px-4">Lampiran</th>
                                 <th class="py-3 px-4 text-center rounded-r-lg">Aksi Review</th>
                             </tr>
@@ -50,11 +71,22 @@
                             @foreach($pengajuanList as $p)
                                 <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition">
                                     <td class="py-3.5 px-4">
-                                        <div class="font-bold text-slate-900 dark:text-white">{{ $p->user?->name ?? '-' }}</div>
+                                        <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                                            <span>{{ $p->user?->name ?? 'User Terhapus' }}</span>
+                                            @if($p->user && !$p->user->status_aktif)
+                                                <span class="px-1.5 py-0.5 rounded text-[10px] bg-rose-500/10 text-rose-600 border border-rose-500/20 font-mono">Non-Aktif</span>
+                                            @endif
+                                        </div>
                                         <div class="text-xs text-slate-400">NIM: {{ $p->user?->nim ?? '-' }}</div>
                                     </td>
                                     <td class="py-3.5 px-4">
-                                        <div class="font-medium text-slate-800 dark:text-slate-200">{{ $p->user?->divisi?->nama_divisi ?? '-' }}</div>
+                                        @if($p->user?->divisi)
+                                            <div class="font-medium text-slate-800 dark:text-slate-200">{{ $p->user->divisi->nama_divisi }}</div>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                                                ⚠️ Tanpa Divisi
+                                            </span>
+                                        @endif
                                         <div class="text-xs text-slate-400">{{ $p->user?->jabatan?->nama_jabatan ?? '-' }}</div>
                                     </td>
                                     <td class="py-3.5 px-4">
@@ -66,8 +98,43 @@
                                             {{ $p->jenis_izin }}
                                         </span>
                                     </td>
-                                    <td class="py-3.5 px-4 max-w-xs truncate" title="{{ $p->alasan }}">
-                                        {{ $p->alasan }}
+                                    <td class="py-3.5 px-4">
+                                        <div class="flex flex-col gap-1 text-xs">
+                                            {{-- Status Koordinator --}}
+                                            <div class="flex items-center gap-1">
+                                                <span class="text-slate-400 font-mono">Koor:</span>
+                                                @if($p->status_koordinator === 'Approved')
+                                                    <span class="text-emerald-600 dark:text-emerald-400 font-semibold">✓ Disetujui</span>
+                                                @elseif($p->status_koordinator === 'Rejected')
+                                                    <span class="text-rose-600 dark:text-rose-400 font-semibold">✗ Ditolak</span>
+                                                @else
+                                                    <span class="text-amber-600 dark:text-amber-400 font-semibold">⌛ Pending</span>
+                                                @endif
+                                            </div>
+
+                                            {{-- Status Ranger --}}
+                                            <div class="flex items-center gap-1">
+                                                <span class="text-slate-400 font-mono">Ranger:</span>
+                                                @if($p->status_ranger === 'Approved')
+                                                    <span class="text-emerald-600 dark:text-emerald-400 font-semibold">✓ Disetujui</span>
+                                                @elseif($p->status_ranger === 'Rejected')
+                                                    <span class="text-rose-600 dark:text-rose-400 font-semibold">✗ Ditolak</span>
+                                                @else
+                                                    <span class="text-amber-600 dark:text-amber-400 font-semibold">⌛ Pending</span>
+                                                @endif
+                                            </div>
+
+                                            {{-- Limbo Warning --}}
+                                            @if(!$p->user?->divisi_id && $p->status === 'Pending')
+                                                <span class="text-[10px] text-rose-500 font-bold bg-rose-50 dark:bg-rose-950/40 p-1 rounded border border-rose-200 dark:border-rose-900">
+                                                    ⚠️ Tersangkut (Tanpa Divisi)
+                                                </span>
+                                            @elseif($p->status_koordinator === 'Pending' && $p->status === 'Pending')
+                                                <span class="text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+                                                    Belum direview Koordinator
+                                                </span>
+                                            @endif
+                                        </div>
                                     </td>
                                     <td class="py-3.5 px-4">
                                         <div class="flex flex-col gap-1 text-xs">

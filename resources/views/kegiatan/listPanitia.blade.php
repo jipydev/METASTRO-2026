@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="max-w-5xl mx-auto min-h-screen bg-gray-50 md:bg-white dark:bg-slate-900 md:dark:bg-slate-800 p-4 md:p-6 font-poppins my-4 md:rounded-2xl md:shadow-sm border md:border-gray-100 dark:md:border-slate-700 transition-colors duration-200">
          @include('components.back-header', [
-                'href' => url('lihat'),
+                'href' => route('dashboard'),
                 'title' => 'Daftar Kehadiran Panitia'
             ])
         

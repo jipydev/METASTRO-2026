@@ -178,7 +178,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Ranger|Sekretaris|Stakeholder|Koordinator',
+    'role:Admin|Ranger|Sekretaris|Stakeholder',
 ])->group(function () {
     Route::get('/lihat/list', [ListPanitiaController::class, 'index'])
         ->name('kegiatan.ListPanitia');
@@ -261,4 +261,4 @@ Route::middleware([
         ->name('absen.schedule');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
