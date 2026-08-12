@@ -256,3 +256,6 @@ Route::middleware([
     Route::post('/absen/{rapat}/schedule', [PresensiController::class, 'updateJadwalAbsen'])
         ->name('absen.schedule');
 });
+
+
+require __DIR__ . '/auth.php';
