@@ -172,15 +172,7 @@ Route::middleware('auth')->group(function () {
 | Lihat List Panitia
 |--------------------------------------------------------------------------
 */
-Route::middleware([
-    'auth',
-    'verified',
-    'role:Admin|Ranger|Sekretaris|Stakeholder|Koordinator',
-])->group(function () {
 
-    Route::get('/lihat', [PresensiController::class, 'lihat'])
-        ->name('kegiatan.lihat');
-});
 
 // list panitia
 Route::middleware([

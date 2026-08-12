@@ -27,11 +27,6 @@ class PresensiController extends Controller
         ]);
     }
 
-    public function lihat()
-    {
-        return view('kegiatan.lihat');
-    }
-
     public function listPanitia()
     {
         return view('kegiatan.listPanitia');
@@ -40,20 +35,23 @@ class PresensiController extends Controller
     /**
      * Mengubah status absensi (Buka / Tutup) secara manual oleh Sekretaris.
      */
-    public function toggleAbsen(Request $request, Rapat $rapat)
+    public function toggleAbsen(Request $request, $rapat)
     {
+        $rapatModel = $rapat instanceof Rapat ? $rapat : Rapat::findOrFail($rapat);
+
         $request->validate([
             'status_absen' => 'required|in:Buka,Tutup,Dijadwalkan',
         ]);
 
-        $rapat->update([
+        $rapatModel->update([
             'status_absen' => $request->status_absen,
         ]);
 
         $statusMessage = match($request->status_absen) {
-            'Buka' => 'Absensi untuk ' . $rapat->judul . ' telah DIBUKA.',
-            'Tutup' => 'Absensi untuk ' . $rapat->judul . ' telah DITUTUP.',
-            'Dijadwalkan' => 'Absensi untuk ' . $rapat->judul . ' diubah ke mode DIJADWALKAN.',
+            'Buka' => 'Absensi untuk ' . $rapatModel->judul . ' telah DIBUKA.',
+            'Tutup' => 'Absensi untuk ' . $rapatModel->judul . ' telah DITUTUP.',
+            'Dijadwalkan' => 'Absensi untuk ' . $rapatModel->judul . ' diubah ke mode DIJADWALKAN.',
+            default => 'Status absensi ' . $rapatModel->judul . ' berhasil diperbarui.',
         };
 
         return redirect()->back()->with('success', $statusMessage);
@@ -62,22 +60,24 @@ class PresensiController extends Controller
     /**
      * Memperbarui jadwal absensi (Waktu Buka, Telat, dan Tutup) oleh Sekretaris.
      */
-    public function updateJadwalAbsen(Request $request, Rapat $rapat)
+    public function updateJadwalAbsen(Request $request, $rapat)
     {
+        $rapatModel = $rapat instanceof Rapat ? $rapat : Rapat::findOrFail($rapat);
+
         $validated = $request->validate([
             'status_absen' => 'nullable|in:Buka,Tutup,Dijadwalkan',
-            'waktu_buka' => 'nullable|date_format:H:i',
-            'waktu_telat' => 'nullable|date_format:H:i',
-            'waktu_tutup' => 'nullable|date_format:H:i',
+            'waktu_buka' => 'nullable',
+            'waktu_telat' => 'nullable',
+            'waktu_tutup' => 'nullable',
         ]);
 
-        $rapat->update([
+        $rapatModel->update([
             'status_absen' => $validated['status_absen'] ?? 'Dijadwalkan',
             'waktu_buka' => $validated['waktu_buka'] ?? null,
             'waktu_telat' => $validated['waktu_telat'] ?? null,
             'waktu_tutup' => $validated['waktu_tutup'] ?? null,
         ]);
 
-        return redirect()->back()->with('success', 'Jadwal absensi ' . $rapat->judul . ' berhasil diperbarui!');
+        return redirect()->back()->with('success', 'Jadwal absensi ' . $rapatModel->judul . ' berhasil diperbarui!');
     }
 }

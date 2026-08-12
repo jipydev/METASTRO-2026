@@ -262,13 +262,7 @@
                             SCAN</a>
                     @endcan
 
-                    {{-- Lihat --}}
-                    @can('lihat presensi')
-                        <a href="{{ url('/lihat') }}"
-                            class="cursor-pointer flex-1 min-w-30 bg-primary-500 hover:bg-primary-600 text-white text-xs md:text-sm font-bold py-3 rounded-xl flex justify-center items-center transition gap-1 shadow-sm">
-                            <span class="icon-[mdi--eye]"></span>
-                            LIHAT</a>
-                    @endcan
+
                 </div>
             </div>
 
