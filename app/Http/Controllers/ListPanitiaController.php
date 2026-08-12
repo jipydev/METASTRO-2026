@@ -39,15 +39,17 @@ class ListPanitiaController extends Controller
             $selectedRapat = $rapats->first();
         }
 
-        // Ambil data absen yang sudah tersimpan untuk rapat ini
+        // Ambil data absen yang sudah tersimpan untuk rapat ini (keyed by user_id for O(1) lookup)
         $absenRecords = ListPanitia::with(['user.divisi', 'scanner'])
             ->where('rapat_id', $selectedRapat->id)
-            ->get();
+            ->get()
+            ->keyBy('user_id');
 
-        // Ambil data pengajuan izin yang disetujui pada tanggal rapat ini (termasuk izin Koordinator & Staff)
+        // Ambil data pengajuan izin yang disetujui pada tanggal rapat ini
         $izinRecords = PengajuanIzin::whereDate('tanggal_izin', $selectedRapat->tanggal)
             ->where('status', 'Approved')
-            ->get();
+            ->get()
+            ->keyBy('user_id');
 
         $waktuRapat = Carbon::parse($selectedRapat->tanggal.' '.$selectedRapat->jam);
         $batasWaktuAlpha = $waktuRapat->copy()->addMinutes(15);
@@ -61,8 +63,8 @@ class ListPanitiaController extends Controller
         $panitiaData = [];
 
         foreach ($semuaPanitia as $panitia) {
-            $record = $absenRecords->firstWhere('user_id', $panitia->id);
-            $izinRecord = $izinRecords->firstWhere('user_id', $panitia->id);
+            $record = $absenRecords->get($panitia->id);
+            $izinRecord = $izinRecords->get($panitia->id);
 
             if ($record) {
                 // Sudah scan
