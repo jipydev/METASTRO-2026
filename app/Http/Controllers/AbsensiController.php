@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\absensi;
+use App\Models\Absensi;
 use Illuminate\Http\Request;
 
 class AbsensiController extends Controller
@@ -34,7 +34,7 @@ class AbsensiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(absensi $absensi)
+    public function show(Absensi $absensi)
     {
         //
     }
@@ -42,7 +42,7 @@ class AbsensiController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(absensi $absensi)
+    public function edit(Absensi $absensi)
     {
         //
     }
@@ -50,7 +50,7 @@ class AbsensiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, absensi $absensi)
+    public function update(Request $request, Absensi $absensi)
     {
         //
     }
@@ -58,7 +58,7 @@ class AbsensiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(absensi $absensi)
+    public function destroy(Absensi $absensi)
     {
         //
     }

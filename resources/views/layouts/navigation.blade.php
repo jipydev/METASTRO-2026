@@ -55,7 +55,7 @@
                             <x-dropdown-link :href="route('izin.history')">
                                 {{ __('Riwayat Izin Saya') }}
                             </x-dropdown-link>
-                            @if(auth()->user()->isKoordinator() || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Admin'))
+                            @if(auth()->user()->isKoordinator() || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Stakeholder'))
                                 <x-dropdown-link :href="route('izin.review')">
                                     {{ __('Review Pengajuan Izin') }}
                                 </x-dropdown-link>
@@ -211,7 +211,7 @@
                 {{ __('Riwayat Izin') }}
             </x-responsive-nav-link>
 
-            @if(auth()->user()->isKoordinator() || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Admin'))
+            @if(auth()->user()->isKoordinator() || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Stakeholder'))
                 <x-responsive-nav-link :href="route('izin.review')" :active="request()->routeIs('izin.review')">
                     {{ __('Review Izin') }}
                 </x-responsive-nav-link>

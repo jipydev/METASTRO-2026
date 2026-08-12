@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\jabatan;
+use App\Models\Jabatan;
 use Illuminate\Http\Request;
 
 class JabatanController extends Controller
@@ -34,7 +34,7 @@ class JabatanController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(jabatan $jabatan)
+    public function show(Jabatan $jabatan)
     {
         //
     }
@@ -42,7 +42,7 @@ class JabatanController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(jabatan $jabatan)
+    public function edit(Jabatan $jabatan)
     {
         //
     }
@@ -50,7 +50,7 @@ class JabatanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, jabatan $jabatan)
+    public function update(Request $request, Jabatan $jabatan)
     {
         //
     }
@@ -58,7 +58,7 @@ class JabatanController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(jabatan $jabatan)
+    public function destroy(Jabatan $jabatan)
     {
         //
     }

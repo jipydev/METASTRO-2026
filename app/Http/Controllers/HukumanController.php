@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\hukuman;
+use App\Models\Hukuman;
 use Illuminate\Http\Request;
 
 class HukumanController extends Controller
@@ -34,7 +34,7 @@ class HukumanController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(hukuman $hukuman)
+    public function show(Hukuman $hukuman)
     {
         //
     }
@@ -42,7 +42,7 @@ class HukumanController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(hukuman $hukuman)
+    public function edit(Hukuman $hukuman)
     {
         //
     }
@@ -50,7 +50,7 @@ class HukumanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, hukuman $hukuman)
+    public function update(Request $request, Hukuman $hukuman)
     {
         //
     }
@@ -58,7 +58,7 @@ class HukumanController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(hukuman $hukuman)
+    public function destroy(Hukuman $hukuman)
     {
         //
     }

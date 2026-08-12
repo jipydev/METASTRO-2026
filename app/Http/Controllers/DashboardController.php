@@ -46,7 +46,7 @@ class DashboardController extends Controller
 
             'hadirCount' => $hadirCount,
 
-            'notulensi_list' => Notulensi::latest()->get(),
+            'notulensi_list' => Notulensi::latest()->limit(12)->get(),
         ]);
     }
 }

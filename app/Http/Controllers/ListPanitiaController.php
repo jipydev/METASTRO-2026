@@ -16,8 +16,8 @@ class ListPanitiaController extends Controller
         $statusFilter = $request->query('status');
         $rapatId = $request->query('rapat_id');
 
-        // Ambil semua rapat untuk filter dropdown
-        $rapats = Rapat::orderBy('tanggal', 'desc')->orderBy('jam', 'desc')->get();
+        // Ambil rapat untuk filter dropdown (maksimal 30 rapat terbaru)
+        $rapats = Rapat::orderBy('tanggal', 'desc')->orderBy('jam', 'desc')->limit(30)->get();
 
         if ($rapats->isEmpty()) {
             return view('kegiatan.listPanitia', [
@@ -53,7 +53,10 @@ class ListPanitiaController extends Controller
         $batasWaktuAlpha = $waktuRapat->copy()->addMinutes(15);
         $sekarang = Carbon::now();
 
-        $semuaPanitia = User::where('status_aktif', true)->with(['divisi', 'roles', 'jabatan'])->get();
+        $semuaPanitia = User::where('status_aktif', true)
+            ->select('id', 'name', 'nim', 'divisi_id', 'jabatan_id')
+            ->with(['divisi:id,nama_divisi', 'roles:id,name', 'jabatan:id,nama_jabatan'])
+            ->get();
 
         $panitiaData = [];
 

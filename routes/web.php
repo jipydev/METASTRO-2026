@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('dashboard.landingPage');
-});
+})->name('home');
 
 /*
 |--------------------------------------------------------------------------
@@ -59,11 +59,10 @@ Route::middleware(['auth', 'verified'])->prefix('izin')->name('izin.')->group(fu
     Route::post('/{pengajuanIzin}/reject', [PengajuanIzinController::class, 'reject'])->name('reject');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Pengumuman
-|--------------------------------------------------------------------------
-*/
+// View pengumuman detail - semua user terautentikasi bisa mengakses
+Route::middleware(['auth', 'verified'])
+    ->get('/pengumuman/{pengumuman}', [PengumumanController::class, 'show'])
+    ->name('pengumuman.show');
 
 Route::middleware([
     'auth',
@@ -72,9 +71,6 @@ Route::middleware([
 ])->prefix('pengumuman')
     ->name('pengumuman.')
     ->group(function () {
-
-        Route::get('/{pengumuman}', [PengumumanController::class, 'show'])
-            ->name('show');
 
         Route::post('/', [PengumumanController::class, 'store'])
             ->name('store');

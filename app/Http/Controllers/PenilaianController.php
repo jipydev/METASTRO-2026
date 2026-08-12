@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\penilaian;
+use App\Models\Penilaian;
 use Illuminate\Http\Request;
 
 class PenilaianController extends Controller
@@ -34,7 +34,7 @@ class PenilaianController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(penilaian $penilaian)
+    public function show(Penilaian $penilaian)
     {
         //
     }
@@ -42,7 +42,7 @@ class PenilaianController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(penilaian $penilaian)
+    public function edit(Penilaian $penilaian)
     {
         //
     }
@@ -50,7 +50,7 @@ class PenilaianController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, penilaian $penilaian)
+    public function update(Request $request, Penilaian $penilaian)
     {
         //
     }
@@ -58,7 +58,7 @@ class PenilaianController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(penilaian $penilaian)
+    public function destroy(Penilaian $penilaian)
     {
         //
     }

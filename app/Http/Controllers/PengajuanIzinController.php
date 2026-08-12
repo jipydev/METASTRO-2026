@@ -14,7 +14,7 @@ class PengajuanIzinController extends Controller
      */
     public function create()
     {
-        $rapats = Rapat::orderBy('tanggal', 'desc')->get();
+        $rapats = Rapat::orderBy('tanggal', 'desc')->limit(20)->get();
 
         return view('izin.create', compact('rapats'));
     }

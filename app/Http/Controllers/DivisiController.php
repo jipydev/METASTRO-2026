@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\divisi;
+use App\Models\Divisi;
 use Illuminate\Http\Request;
 
 class DivisiController extends Controller
@@ -34,7 +34,7 @@ class DivisiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(divisi $divisi)
+    public function show(Divisi $divisi)
     {
         //
     }
@@ -42,7 +42,7 @@ class DivisiController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(divisi $divisi)
+    public function edit(Divisi $divisi)
     {
         //
     }
@@ -50,7 +50,7 @@ class DivisiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, divisi $divisi)
+    public function update(Request $request, Divisi $divisi)
     {
         //
     }
@@ -58,7 +58,7 @@ class DivisiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(divisi $divisi)
+    public function destroy(Divisi $divisi)
     {
         //
     }

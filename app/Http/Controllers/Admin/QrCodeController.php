@@ -40,13 +40,14 @@ class QrCodeController extends Controller
      */
     public function regenerateAll(QrCodeService $qrService): RedirectResponse
     {
-        $users = User::where('status_aktif', true)->get();
         $count = 0;
 
-        foreach ($users as $user) {
-            $qrService->regenerateForUser($user);
-            $count++;
-        }
+        User::where('status_aktif', true)->chunkById(50, function ($users) use ($qrService, &$count) {
+            foreach ($users as $user) {
+                $qrService->regenerateForUser($user);
+                $count++;
+            }
+        });
 
         return redirect()
             ->route('admin.users')

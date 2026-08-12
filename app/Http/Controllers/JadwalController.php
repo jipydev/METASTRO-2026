@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\jadwal;
+use App\Models\Jadwal;
 use Illuminate\Http\Request;
 
 class JadwalController extends Controller
@@ -34,7 +34,7 @@ class JadwalController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(jadwal $jadwal)
+    public function show(Jadwal $jadwal)
     {
         //
     }
@@ -42,7 +42,7 @@ class JadwalController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(jadwal $jadwal)
+    public function edit(Jadwal $jadwal)
     {
         //
     }
@@ -50,7 +50,7 @@ class JadwalController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, jadwal $jadwal)
+    public function update(Request $request, Jadwal $jadwal)
     {
         //
     }
@@ -58,7 +58,7 @@ class JadwalController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(jadwal $jadwal)
+    public function destroy(Jadwal $jadwal)
     {
         //
     }
