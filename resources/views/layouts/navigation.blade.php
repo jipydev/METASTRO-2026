@@ -125,10 +125,9 @@
                 </button>
 
                 <!-- Notification Bell -->
-                <div x-data="{ showNotif: false }" class="relative flex items-center">
-                    <button @click="showNotif = !showNotif" @click.outside="showNotif = false"
-                        class="relative p-2 rounded-full text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700/60 focus:outline-none transition-colors">
-                        <span class="sr-only">Lihat notifikasi</span>
+                <div class="relative flex items-center">
+                    <button class="relative p-2 rounded-full text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700/60 focus:outline-none transition-colors cursor-default">
+                        <span class="sr-only">Notifikasi</span>
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
@@ -136,8 +135,6 @@
                         <span
                             class="absolute top-1.5 right-1.5 block h-2.5 w-2.5 rounded-full bg-primary-500 ring-2 ring-white dark:ring-slate-800"></span>
                     </button>
-
-                    <x-notification-card />
                 </div>
 
                 <!-- User Dropdown (Desktop) -->
