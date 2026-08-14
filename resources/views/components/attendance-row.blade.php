@@ -21,6 +21,12 @@
         {{ $item['divisi'] }}
     </td>
 
+    <!-- Kolom Jabatan -->
+    <td class="py-2 md:py-3 md:px-4 flex items-center justify-between md:table-cell text-slate-500 dark:text-slate-400 text-[15px]">
+        <span class="md:hidden text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Jabatan</span>
+        {{ $item['jabatan'] }}
+    </td>
+
     <!-- Kolom Jam Tap -->
     <td class="py-2 md:py-3 md:px-4 flex items-center justify-between md:table-cell text-gray-900 dark:text-slate-100 font-medium text-[15px]">
         <span class="md:hidden text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Jam Tap</span>

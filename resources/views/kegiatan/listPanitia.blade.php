@@ -6,26 +6,53 @@
             ])
         
         <div class="mb-6 space-y-4">
-            {{-- Filter Rapat --}}
-            <div class="flex items-center gap-2">
-                <span class="text-sm font-semibold text-gray-500 dark:text-slate-400">Pilih Jadwal:</span>
-                <form action="{{ request()->url() }}" method="GET" class="flex items-center" x-data x-ref="formRapat">
-                    @if($statusFilter)
-                        <input type="hidden" name="status" value="{{ $statusFilter }}">
-                    @endif
-                    <select name="rapat_id" 
-                            @change="$refs.formRapat.submit()"
-                            class="rounded-xl border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-medium py-1.5 focus:border-primary-500 focus:ring-primary-500 shadow-sm cursor-pointer">
-                        @if(count($rapats) == 0)
-                            <option value="">-- Belum Ada Jadwal Rapat --</option>
+            {{-- Filter Rapat & Jabatan --}}
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm font-semibold text-gray-500 dark:text-slate-400">Pilih Jadwal:</span>
+                    <form action="{{ request()->url() }}" method="GET" class="flex items-center" x-data x-ref="formRapat">
+                        @if($statusFilter)
+                            <input type="hidden" name="status" value="{{ $statusFilter }}">
                         @endif
-                        @foreach($rapats as $rapat)
-                            <option value="{{ $rapat->id }}" {{ ($selectedRapat && $selectedRapat->id == $rapat->id) ? 'selected' : '' }}>
-                                {{ $rapat->judul }} ({{ \Carbon\Carbon::parse($rapat->tanggal)->format('d M') }})
-                            </option>
-                        @endforeach
-                    </select>
-                </form>
+                        @if($jabatanFilter)
+                            <input type="hidden" name="jabatan_id" value="{{ $jabatanFilter }}">
+                        @endif
+                        <select name="rapat_id" 
+                                @change="$refs.formRapat.submit()"
+                                class="rounded-xl border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-medium py-1.5 focus:border-primary-500 focus:ring-primary-500 shadow-sm cursor-pointer">
+                            @if(count($rapats) == 0)
+                                <option value="">-- Belum Ada Jadwal Rapat --</option>
+                            @endif
+                            @foreach($rapats as $rapat)
+                                <option value="{{ $rapat->id }}" {{ ($selectedRapat && $selectedRapat->id == $rapat->id) ? 'selected' : '' }}>
+                                    {{ $rapat->judul }} ({{ \Carbon\Carbon::parse($rapat->tanggal)->format('d M') }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <span class="text-sm font-semibold text-gray-500 dark:text-slate-400">Jabatan:</span>
+                    <form action="{{ request()->url() }}" method="GET" class="flex items-center" x-data x-ref="formJabatan">
+                        @if($statusFilter)
+                            <input type="hidden" name="status" value="{{ $statusFilter }}">
+                        @endif
+                        @if($selectedRapat)
+                            <input type="hidden" name="rapat_id" value="{{ $selectedRapat->id }}">
+                        @endif
+                        <select name="jabatan_id" 
+                                @change="$refs.formJabatan.submit()"
+                                class="rounded-xl border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-medium py-1.5 focus:border-primary-500 focus:ring-primary-500 shadow-sm cursor-pointer">
+                            <option value="">Semua Jabatan</option>
+                            @foreach($jabatans as $jabatan)
+                                <option value="{{ $jabatan->id }}" {{ ($jabatanFilter == $jabatan->id) ? 'selected' : '' }}>
+                                    {{ $jabatan->nama_jabatan }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
             </div>
 
             {{-- Filter Status Pills --}}
@@ -58,6 +85,7 @@
                     <tr>
                         <th class="py-3.5 px-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-gray-200 dark:border-slate-700">Panitia</th>
                         <th class="py-3.5 px-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-gray-200 dark:border-slate-700">Divisi</th>
+                        <th class="py-3.5 px-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-gray-200 dark:border-slate-700">Jabatan</th>
                         <th class="py-3.5 px-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-gray-200 dark:border-slate-700">Jam Tap</th>
                         <th class="py-3.5 px-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-gray-200 dark:border-slate-700">Tanggal</th>
                         <th class="py-3.5 px-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-gray-200 dark:border-slate-700">Status</th>

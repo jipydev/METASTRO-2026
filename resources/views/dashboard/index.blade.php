@@ -24,6 +24,18 @@
         });
     </script>
 @endif
+@if ($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal',
+                html: `{!! implode('<br>', $errors->all()) !!}`,
+                confirmButtonColor: '#dc2626'
+            });
+        });
+    </script>
+@endif
 
 <x-app-layout>
     <div x-data="{
@@ -53,6 +65,8 @@
             tempat: ''
         },
         openIzinModal: false,
+        suratFileName: '',
+        buktiFileName: '',
         /* =========================
             NOTULENSI
         ========================= */
@@ -233,6 +247,23 @@
                         <span class="text-sm md:text-base font-medium text-gray-500 dark:text-slate-400">Panitia telah
                             hadir</span>
                     </div>
+
+                    @if(isset($kehadiranDivisi))
+                    <div class="mb-6 p-4 rounded-xl bg-white dark:bg-slate-700/50 border border-primary-100 dark:border-slate-600 shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Ringkasan {{ $kehadiranDivisi['nama_divisi'] }}</p>
+                            <p class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                Anggota Hadir: <span class="font-bold text-primary-600 dark:text-primary-400">{{ $kehadiranDivisi['hadir'] }}</span> dari {{ $kehadiranDivisi['total'] }}
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center">
+                            <!-- Fallback using svg since we don't know if icon-groups is available -->
+                            <svg class="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    @endif
                 </div>
 
                 <div class="flex flex-wrap lg:flex-nowrap gap-2 md:gap-3">
@@ -365,6 +396,7 @@
                                 class="text-primary-600 dark:text-primary-400 font-bold text-sm md:text-base">{{ $rabes->judul }}</span>
 
                             <div class="flex space-x-2 items-center">
+                                @unlessrole('Panitia|Peserta')
                                 <button
                                     @click="openViewNotulensi = true; notulensiTitle = 'Notulensi {{ $rabes->judul }}'"
                                     class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition cursor-pointer">Lihat</button>

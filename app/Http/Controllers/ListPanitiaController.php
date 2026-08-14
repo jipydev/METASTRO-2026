@@ -6,6 +6,7 @@ use App\Models\ListPanitia;
 use App\Models\PengajuanIzin;
 use App\Models\Rapat;
 use App\Models\User;
+use App\Models\Jabatan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -15,6 +16,9 @@ class ListPanitiaController extends Controller
     {
         $statusFilter = $request->query('status');
         $rapatId = $request->query('rapat_id');
+        $jabatanFilter = $request->query('jabatan_id');
+
+        $jabatans = Jabatan::all();
 
         // Ambil rapat untuk filter dropdown (maksimal 30 rapat terbaru)
         $rapats = Rapat::orderBy('tanggal', 'desc')->orderBy('jam', 'desc')->limit(30)->get();
@@ -23,6 +27,7 @@ class ListPanitiaController extends Controller
             return view('kegiatan.listPanitia', [
                 'panitia' => [],
                 'rapats' => $rapats,
+                'jabatans' => $jabatans,
                 'selectedRapat' => null,
                 'statusFilter' => $statusFilter,
             ]);
@@ -133,6 +138,7 @@ class ListPanitiaController extends Controller
         return view('kegiatan.listPanitia', [
             'panitia' => $panitiaData,
             'rapats' => $rapats,
+            'jabatans' => $jabatans,
             'selectedRapat' => $selectedRapat,
             'statusFilter' => $statusFilter,
         ]);
