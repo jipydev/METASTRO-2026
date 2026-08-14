@@ -24,10 +24,6 @@ class TimelineController extends Controller
      */
     public function store(Request $request)
     {
-        $user = auth()->user();
-        if (!$user->hasRole('Admin') && !($user->isArchivist() && !$user->isPengawas())) {
-            abort(403, 'Anda tidak memiliki akses.');
-        }
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'tanggal' => 'required|date',
@@ -45,10 +41,6 @@ class TimelineController extends Controller
      */
     public function update(Request $request, Rapat $timeline)
     {
-        $user = auth()->user();
-        if (!$user->hasRole('Admin') && !($user->isArchivist() && !$user->isPengawas())) {
-            abort(403, 'Anda tidak memiliki akses.');
-        }
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'tanggal' => 'required|date',
@@ -66,10 +58,6 @@ class TimelineController extends Controller
      */
     public function destroy(Rapat $timeline)
     {
-        $user = auth()->user();
-        if (!$user->hasRole('Admin') && !($user->isArchivist() && !$user->isPengawas())) {
-            abort(403, 'Anda tidak memiliki akses.');
-        }
         $timeline->delete();
 
         return redirect()->back()->with('success', 'Timeline berhasil dihapus.');

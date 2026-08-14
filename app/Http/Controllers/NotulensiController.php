@@ -28,10 +28,6 @@ class NotulensiController extends Controller
      */
     public function store(Request $request)
     {
-        $user = auth()->user();
-        if (!$user->hasRole('Admin') && !($user->isArchivist() && !$user->isPengawas())) {
-            abort(403, 'Anda tidak memiliki akses.');
-        }
         $request->validate([
             'judul' => 'required|string|max:255',
             'lampiran' => 'required|mimes:pdf|max:5120', // 5MB max
@@ -80,10 +76,6 @@ class NotulensiController extends Controller
      */
     public function destroy(Notulensi $notulensi)
     {
-        $user = auth()->user();
-        if (!$user->hasRole('Admin') && !($user->isArchivist() && !$user->isPengawas())) {
-            abort(403, 'Anda tidak memiliki akses.');
-        }
         if ($notulensi->lampiran && \Storage::disk('public')->exists($notulensi->lampiran)) {
             \Storage::disk('public')->delete($notulensi->lampiran);
         }

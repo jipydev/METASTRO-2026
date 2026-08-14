@@ -15,10 +15,6 @@ class PengumumanController extends Controller
      */
     public function store(Request $request)
     {
-        $user = Auth::user();
-        if (!$user->hasRole('Admin') && !($user->isArchivist() && !$user->isPengawas())) {
-            abort(403, 'Anda tidak memiliki akses.');
-        }
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'isi' => 'required|string',
@@ -50,10 +46,6 @@ class PengumumanController extends Controller
      */
     public function update(Request $request, Pengumuman $pengumuman)
     {
-        $user = Auth::user();
-        if (!$user->hasRole('Admin') && !($user->isArchivist() && !$user->isPengawas())) {
-            abort(403, 'Anda tidak memiliki akses.');
-        }
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'isi' => 'required|string',
@@ -91,10 +83,6 @@ class PengumumanController extends Controller
      */
     public function destroy(Pengumuman $pengumuman)
     {
-        $user = Auth::user();
-        if (!$user->hasRole('Admin') && !($user->isArchivist() && !$user->isPengawas())) {
-            abort(403, 'Anda tidak memiliki akses.');
-        }
         if (
             $pengumuman->lampiran &&
             Storage::disk('public')->exists($pengumuman->lampiran)

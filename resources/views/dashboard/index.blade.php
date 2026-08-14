@@ -81,13 +81,13 @@
                         </p>
                     </div>
 
-                    @if(auth()->user()->hasRole('Admin') || (auth()->user()->isArchivist() && !auth()->user()->isPengawas()))
+                    @role('Admin|Sekretaris')
                         <button
                             @click="selectedPengumuman = { id: null, judul: '', isi: '', status: 'Draft', tanggal_publish: '', lampiran: null }; openTambahPengumuman = true;"
                             class="bg-primary-500 hover:bg-primary-600 text-white px-5 py-2 rounded-xl font-semibold shadow-sm transition cursor-pointer flex items-center gap-1">
                             + Tambah
                         </button>
-                    @endif
+                    @endrole
                 </div>
 
                 <!-- List Pengumuman -->
@@ -96,7 +96,7 @@
                     {{-- Jika statusnya Draft DAN user yang login bukan Admin/Sekretaris, maka lewati (jangan tampilkan) --}}
                     @if (
                         $item->status == 'Draft' &&
-                            !(auth()->user()->hasRole('Admin') || (auth()->user()->isArchivist() && !auth()->user()->isPengawas())))
+                            !auth()->user()->hasAnyRole(['Admin', 'Sekretaris']))
                         @continue
                     @endif
 
@@ -175,7 +175,7 @@
                             @endif
 
                             {{-- Action Buttons (Admin/Sekretaris) --}}
-                            @if(auth()->user()->hasRole('Admin') || (auth()->user()->isArchivist() && !auth()->user()->isPengawas()))
+                            @role('Admin|Sekretaris')
                                 <div class="flex gap-2 mt-5 pt-4 border-t border-gray-100 dark:border-slate-700/80">
                                     @php
                                         $pengumumanData = [
@@ -265,7 +265,7 @@
                                 <x-dropdown-link :href="route('izin.history')">
                                     {{ __('Riwayat Izin Saya') }}
                                 </x-dropdown-link>
-                                @if(auth()->user()->hasRole('admin') || auth()->user()->isKetuaOrWakil() || auth()->user()->isRanger() || auth()->user()->isStakeholder() || auth()->user()->isKetuaPengawas())
+                                @if(auth()->user()->isKoordinator() || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Admin'))
                                     <x-dropdown-link :href="route('izin.review')">
                                         {{ __('Review Pengajuan Izin') }}
                                     </x-dropdown-link>
@@ -275,12 +275,12 @@
                     </div>
 
                     {{-- Scan --}}
-                    @if(auth()->user()->hasRole('admin') || auth()->user()->isArchivist())
+                    @can('scan presensi')
                         <a href="{{ url('/scan') }}"
                             class="cursor-pointer flex-1 min-w-30 bg-primary-500 hover:bg-primary-600 text-white text-xs md:text-sm font-bold py-3 rounded-xl flex justify-center items-center transition gap-1 shadow-sm">
                             <span class="icon-[boxicons--scan-filled] size-4 md:size-5"></span>
                             SCAN</a>
-                    @endif
+                    @endcan
 
 
                 </div>
@@ -293,7 +293,7 @@
                 class="bg-primary-50/50 dark:bg-slate-800/90 md:bg-white md:dark:bg-slate-800 md:shadow-sm rounded-2xl p-5 md:p-6 relative border border-primary-100/50 md:border-gray-100 dark:border-slate-700/80 h-full">
                 <h2 class="text-primary-600 dark:text-primary-400 font-bold text-lg md:text-xl mb-3">Timeline</h2>
 
-                @if(auth()->user()->hasRole('Admin') || (auth()->user()->isArchivist() && !auth()->user()->isPengawas()))
+                @can('tambah timeline')
                     @php
                         $rapatData = $rapatTerbaru
                             ? [
@@ -312,7 +312,7 @@
                             @click="selectedTimeline = { id: null, judul: '', tanggal: '', jam: '', tempat: '' }; openEditTimeline = true;" @endif
                         class="absolute top-5 right-5 text-primary-500 hover:scale-110 transition cursor-pointer">
                     </button>
-                @endif
+                @endcan
 
                 <div
                     class="text-primary-600 dark:text-primary-400 font-medium text-sm md:text-base md:bg-primary-50/50 dark:md:bg-slate-700/50 md:p-4 rounded-xl">
@@ -346,7 +346,7 @@
 
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-primary-600 dark:text-primary-400 font-bold text-lg md:text-xl">Notulensi</h2>
-                    @if(auth()->user()->hasRole('Admin') || (auth()->user()->isArchivist() && !auth()->user()->isPengawas()))
+                    @role('Admin|Sekretaris')
                     <button @click="openAddNotulensi = true"
                         class="text-white bg-primary-500 hover:bg-primary-600 rounded-full p-1.5 transition shadow-sm flex items-center justify-center cursor-pointer">
                         <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -368,7 +368,7 @@
                                 <button
                                     @click="openViewNotulensi = true; notulensiTitle = 'Notulensi {{ $rabes->judul }}'"
                                     class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition cursor-pointer">Lihat</button>
-                                @if(auth()->user()->hasRole('Admin') || (auth()->user()->isArchivist() && !auth()->user()->isPengawas()))
+                                @role('Admin|Sekretaris')
                                 <form action="{{ route('notulensi.destroy', $rabes->id) }}" method="POST"
                                     onsubmit="return confirm('Hapus notulensi {{ $rabes->judul }}?')"
                                     class="inline-block">

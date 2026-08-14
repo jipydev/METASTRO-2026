@@ -21,7 +21,7 @@ class AdminController extends Controller
 
     public function createUserForm()
     {
-        $allRoles = Role::whereIn('name', ['admin', 'panitia', 'peserta'])->orderBy('name')->get();
+        $allRoles = Role::orderBy('name')->get();
         $allDivisis = Divisi::orderBy('nama_divisi')->get();
         $allJabatans = Jabatan::orderBy('nama_jabatan')->get();
 
@@ -31,30 +31,28 @@ class AdminController extends Controller
     public function storeUser(Request $request, QrCodeService $qrService)
     {
         $validated = $request->validate([
-            'name'       => 'required|string|max:255',
-            'nim'        => 'required|string|max:20|unique:users,nim',
-            'password'   => 'required|string|min:8',
-            'divisi_id'  => 'nullable|exists:divisi,id',
+            'name' => 'required|string|max:255',
+            'nim' => 'required|string|max:20|unique:users,nim',
+            'password' => 'required|string|min:8',
+            'role' => 'required|string|exists:roles,name',
+            'divisi_id' => 'nullable|exists:divisi,id',
             'jabatan_id' => 'nullable|exists:jabatan,id',
         ]);
 
-        $divisiId  = $request->filled('divisi_id')  ? $request->input('divisi_id')  : null;
+        $divisiId = $request->filled('divisi_id') ? $request->input('divisi_id') : null;
         $jabatanId = $request->filled('jabatan_id') ? $request->input('jabatan_id') : null;
 
-        // Auto-determine role based on division
-        $role = $this->resolveRoleFromDivisi($divisiId);
-
         $user = User::create([
-            'name'                      => $validated['name'],
-            'nim'                       => $validated['nim'],
-            'password'                  => Hash::make($validated['password']),
-            'divisi_id'                 => $divisiId,
-            'jabatan_id'                => $jabatanId,
-            'status_aktif'              => true,
+            'name' => $validated['name'],
+            'nim' => $validated['nim'],
+            'password' => Hash::make($validated['password']),
+            'divisi_id' => $divisiId,
+            'jabatan_id' => $jabatanId,
+            'status_aktif' => true,
             'is_initial_setup_completed' => false,
         ]);
 
-        $user->syncRoles([$role]);
+        $user->assignRole($validated['role']);
 
         if ($user->jabatan && $user->jabatan->nama_jabatan === 'Koordinator' && $user->divisi_id) {
             $divisi = Divisi::find($user->divisi_id);
@@ -67,7 +65,7 @@ class AdminController extends Controller
         try {
             $qrService->generateForUser($user);
         } catch (\Throwable $e) {
-            // Ignore QR creation error
+            // Ignore QR creation error if filesystem/extension fails
         }
 
         return redirect()->route('admin.manage-users.index')
@@ -76,8 +74,8 @@ class AdminController extends Controller
 
     public function manageUsers(Request $request)
     {
-        $search       = $request->query('search');
-        $roleFilter   = $request->query('role');
+        $search = $request->query('search');
+        $roleFilter = $request->query('role');
         $divisiFilter = $request->query('divisi_id');
         $jabatanFilter = $request->query('jabatan_id');
 
@@ -105,9 +103,8 @@ class AdminController extends Controller
 
         $users = $query->latest()->paginate(15)->appends($request->all());
 
-        // Only expose the 3 core roles
-        $allRoles    = Role::whereIn('name', ['admin', 'panitia', 'peserta'])->orderBy('name')->get();
-        $allDivisis  = Divisi::orderBy('nama_divisi')->get();
+        $allRoles = Role::orderBy('name')->get();
+        $allDivisis = Divisi::orderBy('nama_divisi')->get();
         $allJabatans = Jabatan::orderBy('nama_jabatan')->get();
 
         return view('admin.manage_users', compact(
@@ -129,18 +126,18 @@ class AdminController extends Controller
         }
 
         $validated = $request->validate([
-            'divisi_id'   => 'nullable|exists:divisi,id',
-            'jabatan_id'  => 'nullable|exists:jabatan,id',
+            'role' => 'required|string|exists:roles,name',
+            'divisi_id' => 'nullable|exists:divisi,id',
+            'jabatan_id' => 'nullable|exists:jabatan,id',
             'status_aktif' => 'required|boolean',
         ]);
 
-        // Auto-determine role based on division
-        $role = $this->resolveRoleFromDivisi($validated['divisi_id']);
-        $user->syncRoles([$role]);
+        // Sync Spatie Role
+        $user->syncRoles([$validated['role']]);
 
         // Update User attributes
-        $user->divisi_id   = $validated['divisi_id'];
-        $user->jabatan_id  = $validated['jabatan_id'];
+        $user->divisi_id = $validated['divisi_id'];
+        $user->jabatan_id = $validated['jabatan_id'];
         $user->status_aktif = (bool) $validated['status_aktif'];
         $user->save();
 
@@ -166,22 +163,6 @@ class AdminController extends Controller
         $user->delete();
 
         return redirect()->back()->with('success', "Akun pengguna {$userName} berhasil dihapus!");
-    }
-
-    /**
-     * Determine the correct role based on divisi_id.
-     * CHIPER division → admin, any other division → panitia, no division → peserta.
-     */
-    private function resolveRoleFromDivisi(?int $divisiId): string
-    {
-        if (is_null($divisiId)) {
-            return 'peserta';
-        }
-        $divisi = Divisi::find($divisiId);
-        if ($divisi && strtolower($divisi->nama_divisi) === 'chiper') {
-            return 'admin';
-        }
-        return 'panitia';
     }
 
     public function roleRequest()

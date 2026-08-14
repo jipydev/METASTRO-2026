@@ -13,19 +13,6 @@ class ListPanitiaController extends Controller
 {
     public function index(Request $request)
     {
-        $user = auth()->user();
-
-        $canViewSemua = $user->hasRole('Admin') || 
-                        ($user->isRanger() && !$user->isPengawas()) || 
-                        ($user->isStakeholder() && !$user->isKetuaPengawas()) || 
-                        ($user->isArchivist() && !$user->isPengawas());
-                        
-        $canViewPengawas = $user->isKetuaPengawas() || ($user->isArchivist() && $user->isPengawas());
-
-        if (!$canViewSemua && !$canViewPengawas) {
-            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
-        }
-
         $statusFilter = $request->query('status');
         $rapatId = $request->query('rapat_id');
 
@@ -68,17 +55,10 @@ class ListPanitiaController extends Controller
         $batasWaktuAlpha = $waktuRapat->copy()->addMinutes(15);
         $sekarang = Carbon::now();
 
-        $query = User::where('status_aktif', true)
+        $semuaPanitia = User::where('status_aktif', true)
             ->select('id', 'name', 'nim', 'divisi_id', 'jabatan_id')
-            ->with(['divisi:id,nama_divisi', 'roles:id,name', 'jabatan:id,nama_jabatan']);
-
-        if (!$canViewSemua && $canViewPengawas) {
-            $query->whereHas('jabatan', function($q) {
-                $q->whereIn('nama_jabatan', ['Pengawas', 'Ketua Pengawas']);
-            });
-        }
-
-        $semuaPanitia = $query->get();
+            ->with(['divisi:id,nama_divisi', 'roles:id,name', 'jabatan:id,nama_jabatan'])
+            ->get();
 
         $panitiaData = [];
 

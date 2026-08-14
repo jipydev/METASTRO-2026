@@ -38,7 +38,7 @@
                         </a>
                     </div>
 
-                    @if(auth()->user()->hasRole('Admin') || (auth()->user()->isArchivist() && !auth()->user()->isPengawas()))
+                    @role('Admin|Sekretaris')
                         <button @click="
                             selectedTimeline = { id: null, judul: '', tanggal: '', jam: '', tempat: '' };
                             openEditTimeline = true;
@@ -48,7 +48,7 @@
                             </svg>
                             <span>Tambah</span>
                         </button>
-                    @endif
+                    @endrole
                 </div>
 
                 @if(session('success'))
@@ -97,7 +97,7 @@
                                 </span>
                             </div>
 
-                            @if(auth()->user()->hasRole('Admin') || (auth()->user()->isArchivist() && !auth()->user()->isPengawas()))
+                            @role('Admin|Sekretaris')
                                 <!-- Sekretaris Control Buttons -->
                                 <div class="pt-2 border-t border-primary-100/50 dark:border-slate-600 space-y-2">
                                     <div class="flex gap-2">
@@ -148,15 +148,15 @@
                                         </form>
                                     </div>
                                 </div>
-                            @endif
+                            @endrole
                         </div>
                     @empty
                         <div class="text-center py-16">
                             <div class="text-5xl mb-3">📅</div>
                             <p class="font-semibold text-sm text-gray-500 dark:text-slate-400">Belum ada timeline.</p>
-                            @if(auth()->user()->hasRole('Admin') || (auth()->user()->isArchivist() && !auth()->user()->isPengawas()))
+                            @role('Admin|Sekretaris')
                                 <p class="text-xs text-gray-400 dark:text-slate-500 mt-1">Klik tombol <strong>+ Tambah</strong> untuk menambahkan.</p>
-                            @endif
+                            @endrole
                         </div>
                     @endforelse
                 </div>

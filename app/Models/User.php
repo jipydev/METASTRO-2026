@@ -124,56 +124,14 @@ class User extends Authenticatable implements PasskeyUser
     |--------------------------------------------------------------------------
     */
 
-    public function isKetuaOrWakil(): bool
+    public function isKoordinator(): bool
     {
-        $jabatan = strtolower($this->jabatan?->nama_jabatan ?? '');
-        return in_array($jabatan, ['ketua', 'wakil']);
+        return strtolower($this->jabatan?->nama_jabatan ?? '') === 'koordinator' || $this->hasRole('Koordinator');
     }
 
-    public function isAnggota(): bool
+    public function isStaff(): bool
     {
-        return strtolower($this->jabatan?->nama_jabatan ?? '') === 'anggota';
-    }
-
-    public function isRanger(): bool
-    {
-        return strtolower($this->divisi?->nama_divisi ?? '') === 'ranger';
-    }
-
-    public function isStakeholder(): bool
-    {
-        return strtolower($this->divisi?->nama_divisi ?? '') === 'stakeholder';
-    }
-
-    public function isArchivist(): bool
-    {
-        return strtolower($this->divisi?->nama_divisi ?? '') === 'archivist';
-    }
-
-    public function isPengawas(): bool
-    {
-        return strtolower($this->jabatan?->nama_jabatan ?? '') === 'pengawas';
-    }
-
-    public function isAdmin(): bool
-    {
-        return $this->hasRole('admin');
-    }
-
-    public function isPanitia(): bool
-    {
-        return $this->hasRole('panitia');
-    }
-
-    public function isPeserta(): bool
-    {
-        return $this->hasRole('peserta');
-    }
-
-
-    public function isKetuaPengawas(): bool
-    {
-        return strtolower($this->jabatan?->nama_jabatan ?? '') === 'ketua pengawas';
+        return strtolower($this->jabatan?->nama_jabatan ?? '') === 'staff';
     }
 
     public function initials(): string

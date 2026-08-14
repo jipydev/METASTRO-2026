@@ -82,7 +82,12 @@ class DivisiSeeder extends Seeder
                 'nama_divisi' => 'Rescuer',
                 'deskripsi' => 'Divisi Rescuer atau Kesehatan bertugas memberikan pertolongan pertama dan penanganan kesehatan.',
                 'koordinator_divisi_nim' => null,
-            ]
+            ],
+            [
+                'nama_divisi' => 'Pengawas',
+                'deskripsi' => 'Divisi Pengawas bertugas mengawasi pelaksanaan kegiatan agar sesuai dengan standar dan aturan.',
+                'koordinator_divisi_nim' => null,
+            ],
         ];
 
         foreach ($divisis as $divisi) {

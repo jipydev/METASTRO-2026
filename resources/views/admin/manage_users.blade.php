@@ -397,15 +397,14 @@
                     </div>
 
                     <div class="mt-4 space-y-4">
-                        {{-- Role (otomatis dari divisi) --}}
+                        {{-- Select Role Spatie --}}
                         <div>
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Role Utama</label>
-                            <div class="w-full bg-slate-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl py-2.5 px-3 text-sm text-slate-500 dark:text-slate-400 select-none">
-                                Role otomatis ditentukan berdasarkan Divisi:
-                                <span class="font-semibold text-primary-500">CHIPER → admin</span> •
-                                <span class="font-semibold">Divisi lain → panitia</span> •
-                                <span class="font-semibold">Tanpa divisi → peserta</span>
-                            </div>
+                            <select name="role" x-model="selectedUser.role" required class="w-full bg-slate-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-primary-500">
+                                @foreach($allRoles as $role)
+                                    <option value="{{ $role->name }}">{{ $role->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
                         {{-- Select Divisi --}}
