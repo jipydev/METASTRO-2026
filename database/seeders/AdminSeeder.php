@@ -9,16 +9,17 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        $admin = User::firstOrCreate(
+        $admin = User::updateOrCreate(
             ['nim' => '12345678'],
             [
                 'name' => 'Administrator',
+                'email' => 'admin@metastro.com',
                 'password' => bcrypt('kastatertinggi'),
                 'status_aktif' => true,
                 'email_verified_at' => now(),
             ]
         );
 
-        $admin->assignRole('Admin');
+        $admin->syncRoles(['admin']);
     }
 }

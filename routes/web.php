@@ -68,7 +68,6 @@ Route::middleware(['auth', 'verified'])
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Sekretaris',
 ])->prefix('pengumuman')
     ->name('pengumuman.')
     ->group(function () {
@@ -98,7 +97,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Sekretaris',
 ])->prefix('timeline')
     ->name('timeline.')
     ->group(function () {
@@ -121,7 +119,6 @@ Route::middleware([
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Sekretaris',
 ])->prefix('notulensi')
     ->name('notulensi.')
     ->group(function () {
@@ -146,9 +143,12 @@ Route::middleware(['auth', 'verified'])
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Sekretaris',
 ])->group(function () {
     Route::get('/scan', function () {
+        $user = auth()->user();
+        if (!$user->hasRole('Admin') && !$user->isArchivist()) {
+            abort(403, 'Anda tidak memiliki akses.');
+        }
         return view('kegiatan.scan');
     })->name('scan');
 });
@@ -175,7 +175,6 @@ Route::middleware('auth')->group(function () {
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Ranger|Sekretaris|Stakeholder',
 ])->group(function () {
     Route::get('/lihat/list', [ListPanitiaController::class, 'index'])
         ->name('kegiatan.ListPanitia');
@@ -204,7 +203,7 @@ Route::middleware([
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin',
+    'role:admin',
 ])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])
         ->name('admin.dashboard');
@@ -244,7 +243,6 @@ Route::middleware([
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Sekretaris',
 ])->group(function () {
     Route::post('/scan/lookup', [ScanController::class, 'lookup'])
         ->name('scan.lookup');

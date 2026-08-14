@@ -15,7 +15,6 @@ class PengajuanIzinController extends Controller
     public function create()
     {
         $rapats = Rapat::orderBy('tanggal', 'desc')->limit(20)->get();
-
         return view('izin.create', compact('rapats'));
     }
 
@@ -46,9 +45,9 @@ class PengajuanIzinController extends Controller
             $buktiPath = $request->file('bukti')->store('bukti_izin', 'public');
         }
 
-        // Cek jika pengaju adalah Role Ranger
-        if ($user->hasRole('Ranger')) {
-            $pengajuan = PengajuanIzin::create([
+        // Pengawas: Izin masuk ke Ketua Pengawas
+        if ($user->isPengawas()) {
+            PengajuanIzin::create([
                 'user_id' => $user->id,
                 'rapat_id' => $rapat->id,
                 'tanggal_izin' => $rapat->tanggal,
@@ -57,18 +56,16 @@ class PengajuanIzinController extends Controller
                 'surat_izin' => $suratPath,
                 'bukti' => $buktiPath,
                 'status_koordinator' => 'Approved',
-                'catatan_koordinator' => 'Bypass Koordinator (Role Ranger)',
-                'status_ranger' => 'Pending',
+                'catatan_koordinator' => 'Bypass Koordinator (Pengawas)',
+                'status_ranger' => 'Pending', // Akan direview oleh Ketua Pengawas
                 'status' => 'Pending',
             ]);
-
-            return redirect()->route('izin.history')
-                ->with('success', 'Pengajuan izin Anda berhasil dikirim! Izin diteruskan ke sesama Ranger untuk ditinjau.');
+            return redirect()->route('izin.history')->with('success', 'Pengajuan izin Anda berhasil dikirim! Izin akan ditinjau oleh Ketua Pengawas.');
         }
 
-        // Cek jika pengaju adalah Role Stakeholder
-        if ($user->hasRole('Stakeholder')) {
-            $pengajuan = PengajuanIzin::create([
+        // Ranger (kecuali Pengawas)
+        if ($user->isRanger() && !$user->isPengawas()) {
+            PengajuanIzin::create([
                 'user_id' => $user->id,
                 'rapat_id' => $rapat->id,
                 'tanggal_izin' => $rapat->tanggal,
@@ -77,18 +74,34 @@ class PengajuanIzinController extends Controller
                 'surat_izin' => $suratPath,
                 'bukti' => $buktiPath,
                 'status_koordinator' => 'Approved',
-                'catatan_koordinator' => 'Bypass Koordinator (Role Stakeholder)',
+                'catatan_koordinator' => 'Bypass Koordinator (Ranger)',
                 'status_ranger' => 'Pending',
                 'status' => 'Pending',
             ]);
-
-            return redirect()->route('izin.history')
-                ->with('success', 'Pengajuan izin Anda berhasil dikirim! Izin dapat ditinjau oleh role Stakeholder lainnya dan Ranger.');
+            return redirect()->route('izin.history')->with('success', 'Pengajuan izin Anda berhasil dikirim! Izin diteruskan ke sesama Ranger untuk ditinjau.');
         }
 
-        // Cek apakah pengaju adalah Koordinator
-        if ($user->isKoordinator()) {
-            $pengajuan = PengajuanIzin::create([
+        // Stakeholder
+        if ($user->isStakeholder()) {
+            PengajuanIzin::create([
+                'user_id' => $user->id,
+                'rapat_id' => $rapat->id,
+                'tanggal_izin' => $rapat->tanggal,
+                'jenis_izin' => $validated['jenis_izin'],
+                'alasan' => $validated['alasan'],
+                'surat_izin' => $suratPath,
+                'bukti' => $buktiPath,
+                'status_koordinator' => 'Approved',
+                'catatan_koordinator' => 'Bypass Koordinator (Stakeholder)',
+                'status_ranger' => 'Pending', // Direview oleh Ranger
+                'status' => 'Pending',
+            ]);
+            return redirect()->route('izin.history')->with('success', 'Pengajuan izin Anda berhasil dikirim! Izin akan ditinjau oleh Ranger.');
+        }
+
+        // Ketua / Wakil
+        if ($user->isKetuaOrWakil()) {
+            PengajuanIzin::create([
                 'user_id' => $user->id,
                 'rapat_id' => $rapat->id,
                 'tanggal_izin' => $rapat->tanggal,
@@ -99,20 +112,15 @@ class PengajuanIzinController extends Controller
                 'status_koordinator' => 'Approved',
                 'reviewed_by_koordinator' => $user->id,
                 'reviewed_at_koordinator' => now(),
-                'catatan_koordinator' => 'Pengajuan dari Koordinator (Otomatis disetujui)',
-                'status_ranger' => 'Approved',
-                'reviewed_by_ranger' => null,
-                'reviewed_at_ranger' => now(),
-                'catatan_ranger' => 'Informasi pengajuan Koordinator diteruskan ke Stakeholder & Ranger',
-                'status' => 'Approved',
+                'catatan_koordinator' => 'Pengajuan dari Ketua/Wakil (Otomatis disetujui tingkat divisi)',
+                'status_ranger' => 'Pending', // Direview oleh Stakeholder
+                'status' => 'Pending',
             ]);
-
-            return redirect()->route('izin.history')
-                ->with('success', 'Pengajuan izin berhasil dibuat! Status langsung disetujui dan diteruskan ke Stakeholder & Ranger.');
+            return redirect()->route('izin.history')->with('success', 'Pengajuan izin berhasil dibuat! Izin diteruskan ke Stakeholder untuk ditinjau.');
         }
 
-        // Pengajuan Staff umum: memerlukan approval Koordinator lalu Ranger
-        $pengajuan = PengajuanIzin::create([
+        // Anggota umum
+        PengajuanIzin::create([
             'user_id' => $user->id,
             'rapat_id' => $rapat->id,
             'tanggal_izin' => $rapat->tanggal,
@@ -125,8 +133,7 @@ class PengajuanIzinController extends Controller
             'status' => 'Pending',
         ]);
 
-        return redirect()->route('izin.history')
-            ->with('success', 'Pengajuan izin Anda berhasil dikirim! Menunggu peninjauan dari Koordinator divisi.');
+        return redirect()->route('izin.history')->with('success', 'Pengajuan izin Anda berhasil dikirim! Menunggu peninjauan dari Ketua/Wakil divisi.');
     }
 
     /**
@@ -135,7 +142,6 @@ class PengajuanIzinController extends Controller
     public function history()
     {
         $user = auth()->user();
-
         $pengajuanList = PengajuanIzin::where('user_id', $user->id)
             ->with(['rapat', 'reviewerKoordinator', 'reviewerRanger'])
             ->latest()
@@ -147,9 +153,6 @@ class PengajuanIzinController extends Controller
     /**
      * Menampilkan daftar pengajuan izin yang perlu di-review.
      */
-    /**
-     * Menampilkan daftar pengajuan izin yang perlu di-review.
-     */
     public function reviewIndex(Request $request)
     {
         $user = auth()->user();
@@ -157,7 +160,6 @@ class PengajuanIzinController extends Controller
 
         $query = PengajuanIzin::with(['rapat', 'user.divisi', 'user.roles', 'user.jabatan', 'reviewerKoordinator', 'reviewerRanger']);
 
-        // Hanya sertakan filter status_aktif jika BUKAN Admin (Admin melihat semua)
         if (!$user->hasRole('Admin')) {
             $query->whereHas('user', function ($q) {
                 $q->where('status_aktif', true);
@@ -165,76 +167,82 @@ class PengajuanIzinController extends Controller
         }
 
         if ($user->hasRole('Admin')) {
-            // Admin melihat semua pengajuan izin
             if ($filter === 'pending') {
-                $query->where(function ($q) {
-                    $q->where('status', 'Pending')->orWhere('status', 'Diproses');
-                });
+                $query->whereIn('status', ['Pending', 'Diproses']);
             } elseif ($filter === 'limbo') {
-                // Terkendala/Limbo: user tanpa divisi, atau izin pending tanpa koordinator
                 $query->where(function ($q) {
                     $q->whereHas('user', function ($u) {
                         $u->whereNull('divisi_id');
                     })->orWhere(function ($sub) {
-                        $sub->where('status_koordinator', 'Pending')
-                            ->where('status', 'Pending');
+                        $sub->where('status_koordinator', 'Pending')->where('status', 'Pending');
                     });
                 });
-            } elseif ($filter === 'approved') {
-                $query->where('status', 'Approved');
-            } elseif ($filter === 'rejected') {
-                $query->where('status', 'Rejected');
+            } elseif (in_array($filter, ['approved', 'rejected'])) {
+                $query->where('status', ucfirst($filter));
             }
-        } elseif ($user->hasRole('Stakeholder')) {
-            // Stakeholder dapat mereview izin dari pemohon berkategori Stakeholder
+        } elseif ($user->isKetuaPengawas()) {
+            // Ketua Pengawas melihat izin para Pengawas
             $query->whereHas('user', function ($q) {
-                $q->role('Stakeholder');
+                $q->whereHas('jabatan', function($j) {
+                    $j->where('nama_jabatan', 'Pengawas');
+                });
             });
-
             if ($filter === 'pending') {
                 $query->where('status_ranger', 'Pending');
-            } elseif ($filter === 'approved') {
-                $query->where('status_ranger', 'Approved');
-            } elseif ($filter === 'rejected') {
-                $query->where('status_ranger', 'Rejected');
+            } elseif (in_array($filter, ['approved', 'rejected'])) {
+                $query->where('status_ranger', ucfirst($filter));
             }
-        } elseif ($user->hasRole('Ranger')) {
-            // Ranger melihat izin staff (yg disetujui koordinator), izin Ranger, Stakeholder, atau izin dari user tanpa divisi (limbo)
+        } elseif ($user->isStakeholder() && !$user->isKetuaPengawas()) {
+            // Stakeholder melihat izin Ketua/Wakil
+            $query->whereHas('user', function ($q) {
+                $q->whereHas('jabatan', function($j) {
+                    $j->whereIn('nama_jabatan', ['Ketua', 'Wakil']);
+                });
+            });
+            if ($filter === 'pending') {
+                $query->where('status_ranger', 'Pending');
+            } elseif (in_array($filter, ['approved', 'rejected'])) {
+                $query->where('status_ranger', ucfirst($filter));
+            }
+        } elseif ($user->isRanger() && !$user->isPengawas()) {
+            // Ranger melihat izin umum, stakeholder, ranger lain, dsb.
+            // Tidak melihat izin Pengawas (masuk ke Ketua Pengawas) dan tidak melihat izin Ketua/Wakil (masuk ke Stakeholder)
             $query->where(function ($q) {
                 $q->where('status_koordinator', 'Approved')
                   ->orWhereHas('user', function ($u) {
-                      $u->role(['Ranger', 'Stakeholder'])
-                        ->orWhereNull('divisi_id');
+                      $u->whereHas('divisi', function($d) {
+                          $d->whereIn('nama_divisi', ['Ranger', 'Stakeholder']);
+                      })->orWhereNull('divisi_id');
                   });
+            })->whereHas('user', function ($q) {
+                $q->whereDoesntHave('jabatan', function($j) {
+                    $j->whereIn('nama_jabatan', ['Pengawas', 'Ketua', 'Wakil']);
+                });
             });
-
             if ($filter === 'pending') {
                 $query->where('status_ranger', 'Pending');
-            } elseif ($filter === 'approved') {
-                $query->where('status_ranger', 'Approved');
-            } elseif ($filter === 'rejected') {
-                $query->where('status_ranger', 'Rejected');
+            } elseif (in_array($filter, ['approved', 'rejected'])) {
+                $query->where('status_ranger', ucfirst($filter));
             }
-        } elseif ($user->isKoordinator()) {
-            // Koordinator melihat pengajuan staff di divisinya
+        } elseif ($user->isKetuaOrWakil()) {
+            // Ketua / Wakil melihat pengajuan dari anggota divisinya
             $query->whereHas('user', function ($q) use ($user) {
                 $q->where('divisi_id', $user->divisi_id)
-                  ->where('id', '!=', $user->id);
+                  ->where('id', '!=', $user->id)
+                  ->whereHas('jabatan', function($j) {
+                      $j->where('nama_jabatan', 'Anggota');
+                  });
             });
-
             if ($filter === 'pending') {
                 $query->where('status_koordinator', 'Pending');
-            } elseif ($filter === 'approved') {
-                $query->where('status_koordinator', 'Approved');
-            } elseif ($filter === 'rejected') {
-                $query->where('status_koordinator', 'Rejected');
+            } elseif (in_array($filter, ['approved', 'rejected'])) {
+                $query->where('status_koordinator', ucfirst($filter));
             }
         } else {
             abort(403, 'Anda tidak memiliki akses untuk mereview izin.');
         }
 
         $pengajuanList = $query->latest()->paginate(15)->withQueryString();
-
         return view('izin.review', compact('pengajuanList', 'filter'));
     }
 
@@ -246,8 +254,20 @@ class PengajuanIzinController extends Controller
         $user = auth()->user();
         $applicant = $pengajuanIzin->user;
 
-        // Approval untuk Stakeholder (mereview izin Stakeholder)
-        if ($user->hasRole('Stakeholder') && $applicant && $applicant->hasRole('Stakeholder')) {
+        // Ketua Pengawas meng-approve Pengawas
+        if ($user->isKetuaPengawas() && $applicant && $applicant->isPengawas()) {
+            $pengajuanIzin->update([
+                'status_ranger' => 'Approved',
+                'reviewed_by_ranger' => $user->id,
+                'reviewed_at_ranger' => now(),
+                'catatan_ranger' => $request->input('catatan', 'Disetujui oleh Ketua Pengawas'),
+                'status' => 'Approved',
+            ]);
+            return redirect()->back()->with('success', 'Pengajuan izin Pengawas berhasil disetujui.');
+        }
+
+        // Stakeholder meng-approve Ketua/Wakil
+        if ($user->isStakeholder() && !$user->isKetuaPengawas() && $applicant && $applicant->isKetuaOrWakil()) {
             $pengajuanIzin->update([
                 'status_ranger' => 'Approved',
                 'reviewed_by_ranger' => $user->id,
@@ -255,16 +275,14 @@ class PengajuanIzinController extends Controller
                 'catatan_ranger' => $request->input('catatan', 'Disetujui oleh Stakeholder'),
                 'status' => 'Approved',
             ]);
-
-            return redirect()->back()->with('success', 'Pengajuan izin Stakeholder berhasil disetujui.');
+            return redirect()->back()->with('success', 'Pengajuan izin Ketua/Wakil berhasil disetujui.');
         }
 
-        // Approval Koordinator
-        if ($user->isKoordinator() && $applicant && $applicant->divisi_id == $user->divisi_id && !$applicant->hasRole('Ranger') && !$applicant->hasRole('Stakeholder')) {
+        // Ketua / Wakil meng-approve Anggota divisinya
+        if ($user->isKetuaOrWakil() && $applicant && $applicant->divisi_id == $user->divisi_id && $applicant->isAnggota()) {
             if ($pengajuanIzin->status_koordinator !== 'Pending') {
-                return redirect()->back()->with('error', 'Pengajuan ini sudah ditinjau oleh Koordinator.');
+                return redirect()->back()->with('error', 'Pengajuan ini sudah ditinjau oleh Ketua/Wakil.');
             }
-
             $pengajuanIzin->update([
                 'status_koordinator' => 'Approved',
                 'reviewed_by_koordinator' => $user->id,
@@ -272,16 +290,14 @@ class PengajuanIzinController extends Controller
                 'catatan_koordinator' => $request->input('catatan'),
                 'status' => 'Diproses', // Menunggu persetujuan Ranger
             ]);
-
-            return redirect()->back()->with('success', 'Pengajuan izin disetujui oleh Koordinator dan diteruskan ke Ranger.');
+            return redirect()->back()->with('success', 'Pengajuan izin disetujui oleh Ketua/Wakil dan diteruskan ke Ranger.');
         }
 
-        // Approval Ranger atau Admin
-        if ($user->hasRole('Ranger') || $user->hasRole('Admin')) {
+        // Ranger atau Admin meng-approve
+        if (($user->isRanger() && !$user->isPengawas()) || $user->hasRole('Admin')) {
             if ($pengajuanIzin->status_ranger !== 'Pending') {
                 return redirect()->back()->with('error', 'Pengajuan ini sudah ditinjau.');
             }
-
             $pengajuanIzin->update([
                 'status_ranger' => 'Approved',
                 'reviewed_by_ranger' => $user->id,
@@ -289,7 +305,6 @@ class PengajuanIzinController extends Controller
                 'catatan_ranger' => $request->input('catatan'),
                 'status' => 'Approved',
             ]);
-
             return redirect()->back()->with('success', 'Pengajuan izin berhasil disetujui.');
         }
 
@@ -304,12 +319,22 @@ class PengajuanIzinController extends Controller
         $user = auth()->user();
         $applicant = $pengajuanIzin->user;
 
-        $request->validate([
-            'catatan' => 'nullable|string|max:500',
-        ]);
+        $request->validate(['catatan' => 'nullable|string|max:500']);
 
-        // Rejection untuk Stakeholder
-        if ($user->hasRole('Stakeholder') && $applicant && $applicant->hasRole('Stakeholder')) {
+        // Ketua Pengawas menolak Pengawas
+        if ($user->isKetuaPengawas() && $applicant && $applicant->isPengawas()) {
+            $pengajuanIzin->update([
+                'status_ranger' => 'Rejected',
+                'reviewed_by_ranger' => $user->id,
+                'reviewed_at_ranger' => now(),
+                'catatan_ranger' => $request->input('catatan', 'Ditolak oleh Ketua Pengawas'),
+                'status' => 'Rejected',
+            ]);
+            return redirect()->back()->with('success', 'Pengajuan izin Pengawas telah ditolak.');
+        }
+
+        // Stakeholder menolak Ketua/Wakil
+        if ($user->isStakeholder() && !$user->isKetuaPengawas() && $applicant && $applicant->isKetuaOrWakil()) {
             $pengajuanIzin->update([
                 'status_ranger' => 'Rejected',
                 'reviewed_by_ranger' => $user->id,
@@ -317,12 +342,11 @@ class PengajuanIzinController extends Controller
                 'catatan_ranger' => $request->input('catatan', 'Ditolak oleh Stakeholder'),
                 'status' => 'Rejected',
             ]);
-
-            return redirect()->back()->with('success', 'Pengajuan izin Stakeholder telah ditolak.');
+            return redirect()->back()->with('success', 'Pengajuan izin Ketua/Wakil telah ditolak.');
         }
 
-        // Rejection Koordinator
-        if ($user->isKoordinator() && $applicant && $applicant->divisi_id == $user->divisi_id && !$applicant->hasRole('Ranger') && !$applicant->hasRole('Stakeholder')) {
+        // Ketua / Wakil menolak Anggota divisinya
+        if ($user->isKetuaOrWakil() && $applicant && $applicant->divisi_id == $user->divisi_id && $applicant->isAnggota()) {
             $pengajuanIzin->update([
                 'status_koordinator' => 'Rejected',
                 'reviewed_by_koordinator' => $user->id,
@@ -330,12 +354,11 @@ class PengajuanIzinController extends Controller
                 'catatan_koordinator' => $request->input('catatan'),
                 'status' => 'Rejected',
             ]);
-
-            return redirect()->back()->with('success', 'Pengajuan izin telah ditolak oleh Koordinator.');
+            return redirect()->back()->with('success', 'Pengajuan izin telah ditolak oleh Ketua/Wakil.');
         }
 
-        // Rejection Ranger atau Admin
-        if ($user->hasRole('Ranger') || $user->hasRole('Admin')) {
+        // Ranger atau Admin menolak
+        if (($user->isRanger() && !$user->isPengawas()) || $user->hasRole('Admin')) {
             $pengajuanIzin->update([
                 'status_ranger' => 'Rejected',
                 'reviewed_by_ranger' => $user->id,
@@ -343,7 +366,6 @@ class PengajuanIzinController extends Controller
                 'catatan_ranger' => $request->input('catatan'),
                 'status' => 'Rejected',
             ]);
-
             return redirect()->back()->with('success', 'Pengajuan izin telah ditolak.');
         }
 

@@ -37,6 +37,11 @@ class PresensiController extends Controller
      */
     public function toggleAbsen(Request $request, $rapat)
     {
+        $user = Auth::user();
+        if (!$user->hasRole('Admin') && !($user->isArchivist() && !$user->isPengawas())) {
+            abort(403, 'Anda tidak memiliki akses.');
+        }
+
         $rapatModel = $rapat instanceof Rapat ? $rapat : Rapat::findOrFail($rapat);
 
         $request->validate([
@@ -62,6 +67,11 @@ class PresensiController extends Controller
      */
     public function updateJadwalAbsen(Request $request, $rapat)
     {
+        $user = Auth::user();
+        if (!$user->hasRole('Admin') && !($user->isArchivist() && !$user->isPengawas())) {
+            abort(403, 'Anda tidak memiliki akses.');
+        }
+
         $rapatModel = $rapat instanceof Rapat ? $rapat : Rapat::findOrFail($rapat);
 
         $validated = $request->validate([

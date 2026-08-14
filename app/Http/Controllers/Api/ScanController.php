@@ -18,6 +18,10 @@ class ScanController extends Controller
      */
     public function lookup(Request $request, QrCodeService $qrService): JsonResponse
     {
+        $user = auth()->user();
+        if (!$user->hasRole('Admin') && !$user->isArchivist()) {
+            return response()->json(['success' => false, 'message' => 'Anda tidak memiliki akses.'], 403);
+        }
         $request->validate([
             'token' => ['required', 'string'],
         ]);
@@ -49,6 +53,10 @@ class ScanController extends Controller
      */
     public function recordAttendance(Request $request): JsonResponse
     {
+        $user = auth()->user();
+        if (!$user->hasRole('Admin') && !$user->isArchivist()) {
+            return response()->json(['success' => false, 'message' => 'Anda tidak memiliki akses.'], 403);
+        }
         $request->validate([
             'user_id' => ['required', 'integer', 'exists:users,id'],
         ]);

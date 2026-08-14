@@ -183,9 +183,9 @@
                                             $hasAccepted = false;
                                             $hasDenied = false;
 
-                                            if ($currentUser->isKoordinator() && $p->user?->divisi_id == $currentUser->divisi_id && !$p->user?->hasRole('Ranger') && !$p->user?->hasRole('Stakeholder')) {
-                                                if ($p->status_koordinator === 'Approved') $hasAccepted = true;
-                                                elseif ($p->status_koordinator === 'Rejected') $hasDenied = true;
+                                            if ($currentUser->isKetuaOrWakil() && $p->user?->divisi_id == $currentUser->divisi_id && $p->user?->isAnggota()) {
+                                                 if ($p->status_koordinator === 'Approved') $hasAccepted = true;
+                                                 elseif ($p->status_koordinator === 'Rejected') $hasDenied = true;
                                             } else {
                                                 if ($p->status_ranger === 'Approved') $hasAccepted = true;
                                                 elseif ($p->status_ranger === 'Rejected') $hasDenied = true;

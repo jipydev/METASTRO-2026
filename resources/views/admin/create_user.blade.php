@@ -47,19 +47,9 @@
                         <x-input-error :messages="$errors->get('password')" class="mt-1" />
                     </div>
 
-                    {{-- Grid 3 kolom untuk Role, Divisi, Jabatan --}}
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {{-- Role Utama --}}
-                        <div>
-                            <label for="role" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wider">Role Utama *</label>
-                            <select id="role" name="role" required class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-200 dark:border-slate-600 rounded-xl py-3 px-3 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-primary-500">
-                                <option value="" disabled selected>-- Pilih Role --</option>
-                                @foreach($allRoles as $r)
-                                    <option value="{{ $r->name }}" {{ old('role') == $r->name ? 'selected' : '' }}>{{ $r->name }}</option>
-                                @endforeach
-                            </select>
-                            <x-input-error :messages="$errors->get('role')" class="mt-1" />
-                        </div>
+                    {{-- Grid 2 kolom untuk Divisi dan Jabatan (Role otomatis dari Divisi) --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {{-- Info: Role otomatis --}}
 
                         {{-- Divisi --}}
                         <div>
