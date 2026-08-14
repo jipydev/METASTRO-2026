@@ -186,6 +186,11 @@
                                         'status_aktif' => (int) $user->status_aktif,
                                         'qr_token' => $user->qr_token
                                     ];
+
+                                    $isInvalid = false;
+                                    if (!in_array($userRole, $validRoles) && $userRole !== 'Belum ada role') $isInvalid = true;
+                                    if ($user->divisi && !in_array($user->divisi->nama_divisi, $validDivisis)) $isInvalid = true;
+                                    if ($user->jabatan && !in_array($user->jabatan->nama_jabatan, $validJabatans)) $isInvalid = true;
                                 @endphp
                                 <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
                                     {{-- User Info --}}
@@ -212,6 +217,9 @@
                                                 'peserta' => 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800',
                                                 default => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
                                             };
+                                            if (!in_array($userRole, $validRoles) && $userRole !== 'Belum ada role') {
+                                                $roleColor = 'bg-rose-100 text-rose-600 border-rose-300 line-through';
+                                            }
                                         @endphp
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border {{ $roleColor }}">
                                             {{ $userRole }}
@@ -220,8 +228,17 @@
 
                                     {{-- Divisi & Jabatan --}}
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-semibold text-gray-800 dark:text-slate-200">{{ $user->divisi?->nama_divisi ?? '-' }}</div>
-                                        <div class="text-xs text-gray-500 dark:text-slate-400">{{ $user->jabatan?->nama_jabatan ?? '-' }}</div>
+                                        <div class="text-sm font-semibold {{ $user->divisi && !in_array($user->divisi->nama_divisi, $validDivisis) ? 'text-rose-500 line-through' : 'text-gray-800 dark:text-slate-200' }}">
+                                            {{ $user->divisi?->nama_divisi ?? '-' }}
+                                        </div>
+                                        <div class="text-xs {{ $user->jabatan && !in_array($user->jabatan->nama_jabatan, $validJabatans) ? 'text-rose-500 line-through' : 'text-gray-500 dark:text-slate-400' }}">
+                                            {{ $user->jabatan?->nama_jabatan ?? '-' }}
+                                        </div>
+                                        @if($isInvalid)
+                                            <div class="mt-2 text-[10px] font-bold text-rose-600 bg-rose-100 border border-rose-200 px-2 py-0.5 rounded w-max">
+                                                ⚠️ Update dengan Edit Role
+                                            </div>
+                                        @endif
                                     </td>
 
                                     {{-- Status --}}

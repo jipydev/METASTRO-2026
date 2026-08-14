@@ -19,11 +19,29 @@ class AdminController extends Controller
         return redirect()->route('dashboard');
     }
 
+    private $validRoles = ['Admin', 'Panitia', 'Peserta'];
+    private $validJabatans = ['Ketua', 'Wakil', 'Ketua Pengawas', 'Pengawas', 'Anggota'];
+    private $validDivisis = ['Stakeholder', 'Pathfinder', 'Archivist', 'Fundkeeper', 'Guardian', 'Gearmaster', 'Informer', 'Documenter', 'Chef', 'Guider', 'Scribe', 'Chiper', 'Ranger', 'Rescuer', 'Pengawas'];
+
+    private function syncValidData()
+    {
+        foreach ($this->validRoles as $role) {
+            Role::firstOrCreate(['name' => $role, 'guard_name' => 'web']);
+        }
+        foreach ($this->validJabatans as $jabatan) {
+            Jabatan::firstOrCreate(['nama_jabatan' => $jabatan]);
+        }
+        foreach ($this->validDivisis as $divisi) {
+            Divisi::firstOrCreate(['nama_divisi' => $divisi]);
+        }
+    }
+
     public function createUserForm()
     {
-        $allRoles = Role::orderBy('name')->get();
-        $allDivisis = Divisi::orderBy('nama_divisi')->get();
-        $allJabatans = Jabatan::orderBy('nama_jabatan')->get();
+        $this->syncValidData();
+        $allRoles = Role::whereIn('name', $this->validRoles)->orderBy('name')->get();
+        $allDivisis = Divisi::whereIn('nama_divisi', $this->validDivisis)->orderBy('nama_divisi')->get();
+        $allJabatans = Jabatan::whereIn('nama_jabatan', $this->validJabatans)->orderBy('nama_jabatan')->get();
 
         return view('admin.create_user', compact('allRoles', 'allDivisis', 'allJabatans'));
     }
@@ -74,6 +92,7 @@ class AdminController extends Controller
 
     public function manageUsers(Request $request)
     {
+        $this->syncValidData();
         $search = $request->query('search');
         $roleFilter = $request->query('role');
         $divisiFilter = $request->query('divisi_id');
@@ -103,9 +122,13 @@ class AdminController extends Controller
 
         $users = $query->latest()->paginate(15)->appends($request->all());
 
-        $allRoles = Role::orderBy('name')->get();
-        $allDivisis = Divisi::orderBy('nama_divisi')->get();
-        $allJabatans = Jabatan::orderBy('nama_jabatan')->get();
+        $allRoles = Role::whereIn('name', $this->validRoles)->orderBy('name')->get();
+        $allDivisis = Divisi::whereIn('nama_divisi', $this->validDivisis)->orderBy('nama_divisi')->get();
+        $allJabatans = Jabatan::whereIn('nama_jabatan', $this->validJabatans)->orderBy('nama_jabatan')->get();
+
+        $validRoles = $this->validRoles;
+        $validDivisis = $this->validDivisis;
+        $validJabatans = $this->validJabatans;
 
         return view('admin.manage_users', compact(
             'users',
@@ -115,7 +138,10 @@ class AdminController extends Controller
             'search',
             'roleFilter',
             'divisiFilter',
-            'jabatanFilter'
+            'jabatanFilter',
+            'validRoles',
+            'validDivisis',
+            'validJabatans'
         ));
     }
 
