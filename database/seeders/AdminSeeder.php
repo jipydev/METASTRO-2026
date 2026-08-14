@@ -20,6 +20,6 @@ class AdminSeeder extends Seeder
             ]
         );
 
-        $admin->syncRoles(['admin']);
+        $admin->syncRoles(['Admin']);
     }
 }

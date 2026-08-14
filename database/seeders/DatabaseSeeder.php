@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
             JabatanSeeder::class,
             DivisiSeeder::class,
             AdminSeeder::class,
-            UserSeeder::class,
+            DummyUserSeeder::class,
             PengumumanSeeder::class,
             RapatSeeder::class,
         ]);
