@@ -60,10 +60,15 @@ class ListPanitiaController extends Controller
         $batasWaktuAlpha = $waktuRapat->copy()->addMinutes(15);
         $sekarang = Carbon::now();
 
-        $semuaPanitia = User::where('status_aktif', true)
+        $query = User::where('status_aktif', true)
             ->select('id', 'name', 'nim', 'divisi_id', 'jabatan_id')
-            ->with(['divisi:id,nama_divisi', 'roles:id,name', 'jabatan:id,nama_jabatan'])
-            ->get();
+            ->with(['divisi:id,nama_divisi', 'roles:id,name', 'jabatan:id,nama_jabatan']);
+
+        if ($jabatanFilter) {
+            $query->where('jabatan_id', $jabatanFilter);
+        }
+
+        $semuaPanitia = $query->get();
 
         $panitiaData = [];
 
@@ -141,6 +146,7 @@ class ListPanitiaController extends Controller
             'jabatans' => $jabatans,
             'selectedRapat' => $selectedRapat,
             'statusFilter' => $statusFilter,
+            'jabatanFilter' => $jabatanFilter,
         ]);
     }
 }

@@ -24,7 +24,7 @@ class Divisi extends Model
 
     public function koordinator()
     {
-        return $this->belongsTo(User::class, 'koordinator_divisi_nim', 'nim');
+        return $this->belongsTo(User::class, 'koordinator_divisi_nim', 'id');
     }
 
     public function penilaian()

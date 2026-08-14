@@ -86,8 +86,8 @@ class PengajuanIzinController extends Controller
                 ->with('success', 'Pengajuan izin Anda berhasil dikirim! Izin dapat ditinjau oleh role Stakeholder lainnya dan Ranger.');
         }
 
-        // Cek apakah pengaju adalah Koordinator
-        if ($user->isKoordinator()) {
+        // Cek apakah pengaju adalah Ketua atau Wakil
+        if ($user->isKetuaOrWakil()) {
             $pengajuan = PengajuanIzin::create([
                 'user_id' => $user->id,
                 'rapat_id' => $rapat->id,

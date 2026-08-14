@@ -183,7 +183,7 @@
                                             $hasAccepted = false;
                                             $hasDenied = false;
 
-                                            if ($currentUser->isKoordinator() && $p->user?->divisi_id == $currentUser->divisi_id && !$p->user?->hasRole('Ranger') && !$p->user?->hasRole('Stakeholder')) {
+                                            if ($currentUser->isKetuaOrWakil() && $p->user?->divisi_id == $currentUser->divisi_id && !$p->user?->hasRole('Ranger') && !$p->user?->hasRole('Stakeholder')) {
                                                 if ($p->status_koordinator === 'Approved') $hasAccepted = true;
                                                 elseif ($p->status_koordinator === 'Rejected') $hasDenied = true;
                                             } else {

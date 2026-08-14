@@ -54,10 +54,10 @@ class AdminController extends Controller
 
         $user->assignRole($validated['role']);
 
-        if ($user->jabatan && $user->jabatan->nama_jabatan === 'Koordinator' && $user->divisi_id) {
+        if ($user->jabatan && $user->jabatan->nama_jabatan === 'Ketua' && $user->divisi_id) {
             $divisi = Divisi::find($user->divisi_id);
             if ($divisi) {
-                $divisi->koordinator_divisi_nim = $user->nim;
+                $divisi->koordinator_divisi_nim = $user->id;
                 $divisi->save();
             }
         }
@@ -146,11 +146,11 @@ class AdminController extends Controller
         $user->status_aktif = (bool) $validated['status_aktif'];
         $user->save();
 
-        // If Jabatan is Koordinator, update koordinator_divisi_nim
-        if ($user->jabatan && $user->jabatan->nama_jabatan === 'Koordinator' && $user->divisi_id) {
+        // If Jabatan is Ketua, update koordinator_divisi_nim
+        if ($user->jabatan && $user->jabatan->nama_jabatan === 'Ketua' && $user->divisi_id) {
             $divisi = Divisi::find($user->divisi_id);
             if ($divisi) {
-                $divisi->koordinator_divisi_nim = $user->nim;
+                $divisi->koordinator_divisi_nim = $user->id;
                 $divisi->save();
             }
         }
@@ -211,11 +211,11 @@ class AdminController extends Controller
         }
         $user->save();
 
-        // Jika Jabatan Koordinator, update koordinator_divisi_nim pada divisi
-        if ($user->jabatan && ($user->jabatan->nama_jabatan === 'Koordinator' || $roleRequest->requested_role === 'Koordinator')) {
+        // Jika Jabatan Ketua, update koordinator_divisi_nim pada divisi
+        if ($user->jabatan && ($user->jabatan->nama_jabatan === 'Ketua' || $roleRequest->requested_role === 'Ketua')) {
             $divisi = Divisi::find($roleRequest->requested_divisi_id);
             if ($divisi) {
-                $divisi->koordinator_divisi_nim = $user->nim;
+                $divisi->koordinator_divisi_nim = $user->id;
                 $divisi->save();
             }
         }

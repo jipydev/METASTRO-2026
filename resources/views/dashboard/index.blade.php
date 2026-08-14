@@ -400,6 +400,7 @@
                                 <button
                                     @click="openViewNotulensi = true; notulensiTitle = 'Notulensi {{ $rabes->judul }}'"
                                     class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition cursor-pointer">Lihat</button>
+                                @endunlessrole
                                 @can('archivist-access')
                                 <form action="{{ route('notulensi.destroy', $rabes->id) }}" method="POST"
                                     onsubmit="return confirm('Hapus notulensi {{ $rabes->judul }}?')"
@@ -416,7 +417,7 @@
                                         </svg>
                                     </button>
                                 </form>
-                                @endrole
+                                @endcan
                             </div>
                         </div>
                     @endforeach
