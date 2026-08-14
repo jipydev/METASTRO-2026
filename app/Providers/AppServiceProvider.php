@@ -44,6 +44,10 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Support\Facades\Gate::define('review-izin', function (\App\Models\User $user) {
             return $user->isKetuaOrWakil() || $user->isRanger() || $user->isStakeholder() || $user->isAdmin();
         });
+
+        \Illuminate\Support\Facades\Gate::define('admin-access', function (\App\Models\User $user) {
+            return $user->isAdmin();
+        });
     }
 
     /**

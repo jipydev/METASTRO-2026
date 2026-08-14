@@ -18,9 +18,6 @@ class JabatanSeeder extends Seeder
             ['nama_jabatan' => 'Ketua Pengawas', 'deskripsi' => 'Ketua Pengawas bertugas memimpin divisi pengawas dan dapat melihat list panitia/rekap absen pengawas.'],
             ['nama_jabatan' => 'Pengawas', 'deskripsi' => 'Pengawas bertugas mengawasi divisi masing-masing dan melihat list panitia/rekap absen divisi.'],
             ['nama_jabatan' => 'Anggota', 'deskripsi' => 'Anggota biasa yang dapat melihat dan mengajukan izin.'],
-            // Compatibility aliases
-            ['nama_jabatan' => 'Koordinator', 'deskripsi' => 'Alias untuk Ketua'],
-            ['nama_jabatan' => 'Staff', 'deskripsi' => 'Alias untuk Anggota'],
         ];
 
         foreach ($jabatans as $jabatan) {

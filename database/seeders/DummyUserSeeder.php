@@ -53,8 +53,8 @@ class DummyUserSeeder extends Seeder
                 );
 
                 // Role assignment:
-                // Chiper members / Admins get 'admin' role. Everyone else gets 'panitia'.
-                $roleName = (strtolower($divisi->nama_divisi) === 'chiper') ? 'admin' : 'panitia';
+                // Chiper members / Admins get 'Admin' role. Everyone else gets 'Panitia'.
+                $roleName = (strtolower($divisi->nama_divisi) === 'chiper') ? 'Admin' : 'Panitia';
 
                 try {
                     $user->syncRoles([$roleName]);

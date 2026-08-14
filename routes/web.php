@@ -206,7 +206,7 @@ Route::middleware([
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin',
+    'can:admin-access',
 ])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])
         ->name('admin.dashboard');
