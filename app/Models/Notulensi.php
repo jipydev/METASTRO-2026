@@ -5,6 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property int|null $jadwal_id
+ * @property int|null $pembuat_id
+ * @property string $judul
+ * @property string|null $isi_notulensi
+ * @property string|null $lampiran
+ * @property string|null $keputusan_rapat
+ * @property string|null $tindak_lanjut
+ */
 class Notulensi extends Model
 {
     use HasFactory;

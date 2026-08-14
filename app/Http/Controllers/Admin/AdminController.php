@@ -119,8 +119,13 @@ class AdminController extends Controller
         ));
     }
 
+    /**
+     * @param Request $request
+     * @param User $user
+     */
     public function updateUserRole(Request $request, User $user)
     {
+        /** @var User $user */
         if ($user->id === auth()->id()) {
             return redirect()->back()->with('error', 'Anda tidak dapat mengubah role atau status akun Anda sendiri.');
         }
@@ -153,8 +158,12 @@ class AdminController extends Controller
         return redirect()->back()->with('success', "Data dan role pengguna {$user->name} berhasil diperbarui!");
     }
 
+    /**
+     * @param User $user
+     */
     public function destroyUser(User $user)
     {
+        /** @var User $user */
         if ($user->id === auth()->id()) {
             return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
@@ -175,12 +184,17 @@ class AdminController extends Controller
         return view('admin.role_request', compact('roleRequests'));
     }
 
+    /**
+     * @param RoleRequest $roleRequest
+     */
     public function approveRoleRequest(RoleRequest $roleRequest)
     {
+        /** @var RoleRequest $roleRequest */
         if ($roleRequest->status !== 'Pending') {
             return redirect()->back()->with('error', 'Permintaan role ini sudah diproses sebelumnya.');
         }
 
+        /** @var User $user */
         $user = $roleRequest->user;
 
         // Assign Spatie Role
@@ -215,8 +229,13 @@ class AdminController extends Controller
         return redirect()->back()->with('success', "Pengajuan role/jabatan untuk {$user->name} berhasil disetujui!");
     }
 
+    /**
+     * @param Request $request
+     * @param RoleRequest $roleRequest
+     */
     public function rejectRoleRequest(Request $request, RoleRequest $roleRequest)
     {
+        /** @var RoleRequest $roleRequest */
         if ($roleRequest->status !== 'Pending') {
             return redirect()->back()->with('error', 'Permintaan role ini sudah diproses sebelumnya.');
         }

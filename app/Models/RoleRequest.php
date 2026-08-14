@@ -5,6 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property string|null $requested_role
+ * @property int|null $requested_divisi_id
+ * @property int|null $requested_jabatan_id
+ * @property string $status
+ * @property string|null $admin_note
+ * @property int|null $reviewed_by
+ * @property \Illuminate\Support\Carbon|null $reviewed_at
+ * @property \App\Models\User $user
+ * @property \App\Models\Divisi|null $requestedDivisi
+ * @property \App\Models\Jabatan|null $requestedJabatan
+ * @property \App\Models\User|null $reviewer
+ */
 class RoleRequest extends Model
 {
     use HasFactory;

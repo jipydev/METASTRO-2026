@@ -6,6 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property string $judul
+ * @property string|null $isi
+ * @property string $status
+ * @property string|null $lampiran
+ * @property int|null $pembuat_id
+ * @property \Illuminate\Support\Carbon|null $tanggal_publish
+ * @property-read string|null $lampiran_url
+ * @property-read \App\Models\User|null $pembuat
+ */
 class Pengumuman extends Model
 {
     use HasFactory;

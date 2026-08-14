@@ -38,7 +38,7 @@
                         </a>
                     </div>
 
-                    @role('Admin|Sekretaris')
+                    @can('archivist-access')
                         <button @click="
                             selectedTimeline = { id: null, judul: '', tanggal: '', jam: '', tempat: '' };
                             openEditTimeline = true;
@@ -48,7 +48,7 @@
                             </svg>
                             <span>Tambah</span>
                         </button>
-                    @endrole
+                    @endcan
                 </div>
 
                 @if(session('success'))
@@ -97,7 +97,7 @@
                                 </span>
                             </div>
 
-                            @role('Admin|Sekretaris')
+                            @can('archivist-access')
                                 <!-- Sekretaris Control Buttons -->
                                 <div class="pt-2 border-t border-primary-100/50 dark:border-slate-600 space-y-2">
                                     <div class="flex gap-2">
@@ -148,15 +148,15 @@
                                         </form>
                                     </div>
                                 </div>
-                            @endrole
+                            @endcan
                         </div>
                     @empty
                         <div class="text-center py-16">
                             <div class="text-5xl mb-3">📅</div>
                             <p class="font-semibold text-sm text-gray-500 dark:text-slate-400">Belum ada timeline.</p>
-                            @role('Admin|Sekretaris')
+                            @can('archivist-access')
                                 <p class="text-xs text-gray-400 dark:text-slate-500 mt-1">Klik tombol <strong>+ Tambah</strong> untuk menambahkan.</p>
-                            @endrole
+                            @endcan
                         </div>
                     @endforelse
                 </div>
@@ -182,7 +182,7 @@
                         </a>
                     </div>
 
-                    @role('Admin|Sekretaris')
+                    @can('archivist-access')
                         <button @click="
                             selectedTimeline = { id: null, judul: '', tanggal: '', jam: '', tempat: '' };
                             openEditTimeline = true;
@@ -272,7 +272,7 @@
                                 @endif
                             </div>
 
-                            @role('Admin|Sekretaris')
+                            @can('archivist-access')
                                 <div class="pl-3 mt-4 pt-3 border-t border-gray-100 dark:border-slate-700 space-y-2">
                                     <div class="flex gap-2">
                                         <form action="{{ route('absen.toggle', $item->id) }}" method="POST" class="flex-1">
@@ -329,15 +329,15 @@
                                         </form>
                                     </div>
                                 </div>
-                            @endrole
+                            @endcan
                         </div>
                     @empty
                         <div class="col-span-full text-center py-20">
                             <div class="text-6xl mb-4">📅</div>
                             <h3 class="text-xl font-bold text-gray-400 dark:text-slate-500">Belum ada timeline</h3>
-                            @role('Admin|Sekretaris')
+                            @can('archivist-access')
                                 <p class="text-gray-400 dark:text-slate-500 mt-2 text-sm">Klik tombol <strong>+ Tambah Timeline</strong> untuk memulai.</p>
-                            @endrole
+                            @endcan
                         </div>
                     @endforelse
                 </div>

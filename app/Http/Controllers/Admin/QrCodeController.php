@@ -43,6 +43,7 @@ class QrCodeController extends Controller
         $count = 0;
 
         User::where('status_aktif', true)->chunkById(50, function ($users) use ($qrService, &$count) {
+            /** @var User $user */
             foreach ($users as $user) {
                 $qrService->regenerateForUser($user);
                 $count++;

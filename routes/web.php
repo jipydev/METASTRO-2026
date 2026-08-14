@@ -54,10 +54,12 @@ Route::middleware(['auth', 'verified'])->prefix('izin')->name('izin.')->group(fu
     Route::post('/', [PengajuanIzinController::class, 'store'])->name('store');
     Route::get('/history', [PengajuanIzinController::class, 'history'])->name('history');
 
-    // Review izin (Koordinator, Ranger, Admin)
-    Route::get('/review', [PengajuanIzinController::class, 'reviewIndex'])->name('review');
-    Route::post('/{pengajuanIzin}/approve', [PengajuanIzinController::class, 'approve'])->name('approve');
-    Route::post('/{pengajuanIzin}/reject', [PengajuanIzinController::class, 'reject'])->name('reject');
+    // Review izin (Ketua, Wakil, Ranger, Stakeholder, Admin)
+    Route::middleware(['can:review-izin'])->group(function () {
+        Route::get('/review', [PengajuanIzinController::class, 'reviewIndex'])->name('review');
+        Route::post('/{pengajuanIzin}/approve', [PengajuanIzinController::class, 'approve'])->name('approve');
+        Route::post('/{pengajuanIzin}/reject', [PengajuanIzinController::class, 'reject'])->name('reject');
+    });
 });
 
 // View pengumuman detail - semua user terautentikasi bisa mengakses
@@ -68,7 +70,7 @@ Route::middleware(['auth', 'verified'])
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Sekretaris',
+    'can:archivist-access',
 ])->prefix('pengumuman')
     ->name('pengumuman.')
     ->group(function () {
@@ -98,7 +100,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Sekretaris',
+    'can:archivist-access',
 ])->prefix('timeline')
     ->name('timeline.')
     ->group(function () {
@@ -121,7 +123,7 @@ Route::middleware([
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Sekretaris',
+    'can:archivist-access',
 ])->prefix('notulensi')
     ->name('notulensi.')
     ->group(function () {
@@ -146,7 +148,7 @@ Route::middleware(['auth', 'verified'])
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Sekretaris',
+    'can:archivist-access',
 ])->group(function () {
     Route::get('/scan', function () {
         return view('kegiatan.scan');
@@ -175,7 +177,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Ranger|Sekretaris|Stakeholder',
+    'can:view-panitia-list',
 ])->group(function () {
     Route::get('/lihat/list', [ListPanitiaController::class, 'index'])
         ->name('kegiatan.ListPanitia');
@@ -244,7 +246,7 @@ Route::middleware([
 Route::middleware([
     'auth',
     'verified',
-    'role:Admin|Sekretaris',
+    'can:archivist-access',
 ])->group(function () {
     Route::post('/scan/lookup', [ScanController::class, 'lookup'])
         ->name('scan.lookup');

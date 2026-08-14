@@ -55,24 +55,24 @@
                             <x-dropdown-link :href="route('izin.history')">
                                 {{ __('Riwayat Izin Saya') }}
                             </x-dropdown-link>
-                            @if(auth()->user()->isKoordinator() || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Stakeholder'))
+                            @can('review-izin')
                                 <x-dropdown-link :href="route('izin.review')">
                                     {{ __('Review Pengajuan Izin') }}
                                 </x-dropdown-link>
-                            @endif
+                            @endcan
                         </x-slot>
                     </x-dropdown>
 
                     {{-- List Panitia --}}
-                    @if(auth()->user()->hasAnyRole(['Admin', 'Ranger', 'Sekretaris', 'Stakeholder']))
+                    @can('view-panitia-list')
                         <a href="{{ route('kegiatan.ListPanitia') }}"
                             class="hover:text-primary-500 {{ request()->routeIs('kegiatan.ListPanitia') ? 'text-primary-500 font-bold' : '' }}">
                             List Panitia
                         </a>
-                    @endif
+                    @endcan
 
                     {{-- Dropdown Admin Panel --}}
-                    @if(auth()->user()->hasRole('Admin'))
+                    @if(auth()->user()->isAdmin())
                         <x-dropdown align="left" width="48">
                             <x-slot name="trigger">
                                 <button
@@ -208,21 +208,21 @@
                 {{ __('Riwayat Izin') }}
             </x-responsive-nav-link>
 
-            @if(auth()->user()->isKoordinator() || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Stakeholder'))
+            @can('review-izin')
                 <x-responsive-nav-link :href="route('izin.review')" :active="request()->routeIs('izin.review')">
                     {{ __('Review Izin') }}
                 </x-responsive-nav-link>
-            @endif
+            @endcan
 
-            @if(auth()->user()->hasAnyRole(['Admin', 'Ranger', 'Sekretaris', 'Stakeholder']))
+            @can('view-panitia-list')
                 <div class="pt-2 pb-1 px-4 text-xs font-bold uppercase tracking-wider text-slate-400">Panitia</div>
                 <x-responsive-nav-link :href="route('kegiatan.ListPanitia')"
                     :active="request()->routeIs('kegiatan.ListPanitia')">
                     {{ __('List Panitia') }}
                 </x-responsive-nav-link>
-            @endif
+            @endcan
 
-            @if(auth()->user()->hasRole('Admin'))
+            @if(auth()->user()->isAdmin())
                 <div class="pt-2 pb-1 px-4 text-xs font-bold uppercase tracking-wider text-primary-500">Admin Panel</div>
                 <x-responsive-nav-link :href="route('admin.manage-users.index')"
                     :active="request()->routeIs('admin.manage-users.*')">

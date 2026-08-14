@@ -10,14 +10,13 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         $roles = [
+            ['name' => 'admin', 'permissions' => ['lihat presensi', 'scan presensi', 'upload notulensi', 'hapus notulensi', 'tambah timeline', 'ubah timeline', 'hapus timeline', 'ubah pengumuman']],
+            ['name' => 'panitia'],
+            ['name' => 'peserta'],
+            // Capitalized alias for compatibility
             ['name' => 'Admin', 'permissions' => ['lihat presensi', 'scan presensi', 'upload notulensi', 'hapus notulensi', 'tambah timeline', 'ubah timeline', 'hapus timeline', 'ubah pengumuman']],
             ['name' => 'Panitia'],
             ['name' => 'Peserta'],
-            ['name' => 'Ranger', 'permissions' => ['lihat presensi']],
-            ['name' => 'Sekretaris', 'permissions' => ['lihat presensi', 'scan presensi', 'upload notulensi', 'hapus notulensi', 'tambah timeline', 'ubah timeline', 'hapus timeline', 'ubah pengumuman']],
-            ['name' => 'Pengawas'],
-            ['name' => 'Stakeholder'],
-            ['name' => 'Koordinator'],
         ];
 
         foreach ($roles as $role) {

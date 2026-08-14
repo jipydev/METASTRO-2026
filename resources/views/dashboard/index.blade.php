@@ -81,13 +81,13 @@
                         </p>
                     </div>
 
-                    @role('Admin|Sekretaris')
+                    @can('archivist-access')
                         <button
                             @click="selectedPengumuman = { id: null, judul: '', isi: '', status: 'Draft', tanggal_publish: '', lampiran: null }; openTambahPengumuman = true;"
                             class="bg-primary-500 hover:bg-primary-600 text-white px-5 py-2 rounded-xl font-semibold shadow-sm transition cursor-pointer flex items-center gap-1">
                             + Tambah
                         </button>
-                    @endrole
+                    @endcan
                 </div>
 
                 <!-- List Pengumuman -->
@@ -96,7 +96,7 @@
                     {{-- Jika statusnya Draft DAN user yang login bukan Admin/Sekretaris, maka lewati (jangan tampilkan) --}}
                     @if (
                         $item->status == 'Draft' &&
-                            !auth()->user()->hasAnyRole(['Admin', 'Sekretaris']))
+                            !auth()->user()->canManageArchivistFeatures())
                         @continue
                     @endif
 
@@ -174,8 +174,8 @@
                                 </div>
                             @endif
 
-                            {{-- Action Buttons (Admin/Sekretaris) --}}
-                            @role('Admin|Sekretaris')
+                            {{-- Action Buttons (Archivist / Admin) --}}
+                            @can('archivist-access')
                                 <div class="flex gap-2 mt-5 pt-4 border-t border-gray-100 dark:border-slate-700/80">
                                     @php
                                         $pengumumanData = [
@@ -202,7 +202,7 @@
                                         Hapus
                                     </button>
                                 </div>
-                            @endrole
+                            @endcan
                         </div>
                     </div>
                 @empty
@@ -265,11 +265,11 @@
                                 <x-dropdown-link :href="route('izin.history')">
                                     {{ __('Riwayat Izin Saya') }}
                                 </x-dropdown-link>
-                                @if(auth()->user()->isKoordinator() || auth()->user()->hasRole('Ranger') || auth()->user()->hasRole('Admin'))
+                                @can('review-izin')
                                     <x-dropdown-link :href="route('izin.review')">
                                         {{ __('Review Pengajuan Izin') }}
                                     </x-dropdown-link>
-                                @endif
+                                @endcan
                             </x-slot>
                         </x-dropdown>
                     </div>
@@ -346,7 +346,7 @@
 
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-primary-600 dark:text-primary-400 font-bold text-lg md:text-xl">Notulensi</h2>
-                    @role('Admin|Sekretaris')
+                    @can('archivist-access')
                     <button @click="openAddNotulensi = true"
                         class="text-white bg-primary-500 hover:bg-primary-600 rounded-full p-1.5 transition shadow-sm flex items-center justify-center cursor-pointer">
                         <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -354,7 +354,7 @@
                             </path>
                         </svg>
                     </button>
-                    @endrole
+                    @endcan
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
@@ -368,7 +368,7 @@
                                 <button
                                     @click="openViewNotulensi = true; notulensiTitle = 'Notulensi {{ $rabes->judul }}'"
                                     class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition cursor-pointer">Lihat</button>
-                                @role('Admin|Sekretaris')
+                                @can('archivist-access')
                                 <form action="{{ route('notulensi.destroy', $rabes->id) }}" method="POST"
                                     onsubmit="return confirm('Hapus notulensi {{ $rabes->judul }}?')"
                                     class="inline-block">
