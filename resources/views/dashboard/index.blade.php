@@ -95,13 +95,13 @@
                         </p>
                     </div>
 
-                    @role('Admin|Sekretaris')
+                    @can('archivist-access')
                         <button
                             @click="selectedPengumuman = { id: null, judul: '', isi: '', status: 'Draft', tanggal_publish: '', lampiran: null }; openTambahPengumuman = true;"
                             class="bg-primary-500 hover:bg-primary-600 text-white px-5 py-2 rounded-xl font-semibold shadow-sm transition cursor-pointer flex items-center gap-1">
                             + Tambah
                         </button>
-                    @endrole
+                    @endcan
                 </div>
 
                 <!-- List Pengumuman -->
@@ -110,7 +110,7 @@
                     {{-- Jika statusnya Draft DAN user yang login bukan Admin/Sekretaris, maka lewati (jangan tampilkan) --}}
                     @if (
                         $item->status == 'Draft' &&
-                            !auth()->user()->hasAnyRole(['Admin', 'Sekretaris']))
+                            !auth()->user()->canManageArchivistFeatures())
                         @continue
                     @endif
 
@@ -188,8 +188,8 @@
                                 </div>
                             @endif
 
-                            {{-- Action Buttons (Admin/Sekretaris) --}}
-                            @role('Admin|Sekretaris')
+                            {{-- Action Buttons (Archivist / Admin) --}}
+                            @can('archivist-access')
                                 <div class="flex gap-2 mt-5 pt-4 border-t border-gray-100 dark:border-slate-700/80">
                                     @php
                                         $pengumumanData = [
@@ -216,7 +216,7 @@
                                         Hapus
                                     </button>
                                 </div>
-                            @endrole
+                            @endcan
                         </div>
                     </div>
                 @empty
@@ -242,7 +242,7 @@
                         Besar</h2>
                     <div class="flex items-baseline space-x-2 mb-6">
                         <span class="text-4xl md:text-5xl font-bold text-primary-600 dark:text-primary-400">
-                            {{ $rapatTerbaru ? $rapatTerbaru->hadir : 0 }}/{{ $rapatTerbaru ? $rapatTerbaru->total : 0 }}
+                            {{ $hadirCount }}/{{ $totalUserCount }}
                         </span>
                         <span class="text-sm md:text-base font-medium text-gray-500 dark:text-slate-400">Panitia telah
                             hadir</span>
@@ -275,15 +275,35 @@
                     </a>
 
                     {{-- Izin --}}
-                    <button @click="openIzinModal = !openIzinModal"
-                        class="cursor-pointer flex-1 min-w-30 bg-primary-500 hover:bg-primary-600 text-white text-xs md:text-sm font-bold py-3 rounded-xl flex justify-center items-center gap-1 transition shadow-sm">
-                        <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                            </path>
-                        </svg>
-                        IZIN
-                    </button>
+                    <div class="flex-1 min-w-30">
+                        <x-dropdown align="left" width="48">
+                            <x-slot name="trigger">
+                                <button
+                                    class="w-full cursor-pointer bg-primary-500 hover:bg-primary-600 text-white text-xs md:text-sm font-bold py-3 rounded-xl flex justify-center items-center gap-1 transition shadow-sm">
+                                    <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                        </path>
+                                    </svg>
+                                    IZIN
+                                </button>
+                            </x-slot>
+
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('izin.create')">
+                                    {{ __('Ajukan Izin Baru') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('izin.history')">
+                                    {{ __('Riwayat Izin Saya') }}
+                                </x-dropdown-link>
+                                @can('review-izin')
+                                    <x-dropdown-link :href="route('izin.review')">
+                                        {{ __('Review Pengajuan Izin') }}
+                                    </x-dropdown-link>
+                                @endcan
+                            </x-slot>
+                        </x-dropdown>
+                    </div>
 
                     {{-- Scan --}}
                     @can('scan presensi')
@@ -293,13 +313,7 @@
                             SCAN</a>
                     @endcan
 
-                    {{-- Lihat --}}
-                    @if(auth()->user()->can('lihat presensi') && !auth()->user()->hasRole('Panitia') && !auth()->user()->hasRole('Peserta'))
-                        <a href="{{ url('/lihat') }}"
-                            class="cursor-pointer flex-1 min-w-30 bg-primary-500 hover:bg-primary-600 text-white text-xs md:text-sm font-bold py-3 rounded-xl flex justify-center items-center transition gap-1 shadow-sm">
-                            <span class="icon-[mdi--eye]"></span>
-                            LIHAT</a>
-                    @endif
+
                 </div>
             </div>
 
@@ -335,7 +349,7 @@
                     class="text-primary-600 dark:text-primary-400 font-medium text-sm md:text-base md:bg-primary-50/50 dark:md:bg-slate-700/50 md:p-4 rounded-xl">
                     <div>
                         <p class="font-bold mb-1 text-base md:text-lg text-primary-600 dark:text-primary-400">
-                            {{ $rapatTerbaru->judul ?? 'Tidak ada jadwal' }}</p>
+                            {{ $rapatTerbaru?->judul ?? 'Tidak ada jadwal' }}</p>
                         <p class="text-slate-700 dark:text-slate-300">
                             {{ $rapatTerbaru ? \Carbon\Carbon::parse($rapatTerbaru->tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') : '-' }}
                         </p>
@@ -343,7 +357,7 @@
                             {{ $rapatTerbaru ? \Carbon\Carbon::parse($rapatTerbaru->jam)->format('H.i') : '-' }}</p>
                         <div class="flex justify-between items-end mt-4">
                             <p class="font-semibold text-slate-800 dark:text-slate-200">
-                                {{ $rapatTerbaru->tempat ?? '-' }}</p>
+                                {{ $rapatTerbaru?->tempat ?? '-' }}</p>
                         </div>
                     </div>
 
@@ -363,7 +377,7 @@
 
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-primary-600 dark:text-primary-400 font-bold text-lg md:text-xl">Notulensi</h2>
-                    @role('Admin|Sekretaris')
+                    @can('archivist-access')
                     <button @click="openAddNotulensi = true"
                         class="text-white bg-primary-500 hover:bg-primary-600 rounded-full p-1.5 transition shadow-sm flex items-center justify-center cursor-pointer">
                         <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -371,7 +385,7 @@
                             </path>
                         </svg>
                     </button>
-                    @endrole
+                    @endcan
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
@@ -386,8 +400,7 @@
                                 <button
                                     @click="openViewNotulensi = true; notulensiTitle = 'Notulensi {{ $rabes->judul }}'"
                                     class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition cursor-pointer">Lihat</button>
-                                @endunlessrole
-                                @role('Admin|Sekretaris')
+                                @can('archivist-access')
                                 <form action="{{ route('notulensi.destroy', $rabes->id) }}" method="POST"
                                     onsubmit="return confirm('Hapus notulensi {{ $rabes->judul }}?')"
                                     class="inline-block">
@@ -419,7 +432,6 @@
         <x-modal-edit-pengumuman />
         <x-modal-hapus-pengumuman />
         <x-modal-edit-timeline />
-        <x-modal-izin />
         <x-modal-view-notulensi />
 
         <!-- Modal Tambah Notulensi -->

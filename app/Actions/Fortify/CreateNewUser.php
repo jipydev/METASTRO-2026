@@ -16,7 +16,7 @@ class CreateNewUser implements CreatesNewUsers
     /**
      * Validate and create a newly registered user.
      *
-     * @param array<string, string> $input
+     * @param  array<string, string>  $input
      */
     public function create(array $input): User
     {
@@ -28,6 +28,8 @@ class CreateNewUser implements CreatesNewUsers
         $user = User::create([
             'name' => $input['name'],
             'nim' => $input['nim'],
+            'divisi_id' => $input['divisi_id'],
+            'jabatan_id' => $input['jabatan_id'],
             'password' => Hash::make($input['password']),
             'status_aktif' => true,
         ]);

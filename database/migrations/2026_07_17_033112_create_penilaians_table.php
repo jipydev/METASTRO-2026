@@ -28,7 +28,7 @@ return new class extends Migration
             $table->enum('kategori', [
                 'Panitia',
                 'Peserta',
-                'Divisi'
+                'Divisi',
             ]);
 
             $table->unsignedTinyInteger('disiplin');
@@ -45,7 +45,7 @@ return new class extends Migration
 
             $table->unique([
                 'user_id',
-                'penilai_id'
+                'penilai_id',
             ]);
         });
     }

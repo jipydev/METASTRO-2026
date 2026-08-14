@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\QrCodeService;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -16,7 +15,8 @@ class QrCodeController extends Controller
      */
     public function index(): View
     {
-        $users = User::with('divisi', 'jabatan')
+        $users = User::where('status_aktif', true)
+            ->with('divisi', 'jabatan')
             ->orderBy('name')
             ->paginate(20);
 
@@ -40,13 +40,15 @@ class QrCodeController extends Controller
      */
     public function regenerateAll(QrCodeService $qrService): RedirectResponse
     {
-        $users = User::all();
         $count = 0;
 
-        foreach ($users as $user) {
-            $qrService->regenerateForUser($user);
-            $count++;
-        }
+        User::where('status_aktif', true)->chunkById(50, function ($users) use ($qrService, &$count) {
+            /** @var User $user */
+            foreach ($users as $user) {
+                $qrService->regenerateForUser($user);
+                $count++;
+            }
+        });
 
         return redirect()
             ->route('admin.users')

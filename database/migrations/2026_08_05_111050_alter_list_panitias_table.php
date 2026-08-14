@@ -33,7 +33,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('list_panitias');
-        
+
         // Recreate the old structure
         Schema::create('list_panitias', function (Blueprint $table) {
             $table->id();

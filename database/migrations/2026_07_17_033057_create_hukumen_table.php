@@ -23,7 +23,7 @@ return new class extends Migration
             $table->enum('kategori', [
                 'Ringan',
                 'Sedang',
-                'Berat'
+                'Berat',
             ]);
 
             $table->string('pelanggaran');
@@ -35,7 +35,7 @@ return new class extends Migration
             $table->enum('status', [
                 'Belum Dijalankan',
                 'Diproses',
-                'Selesai'
+                'Selesai',
             ])->default('Belum Dijalankan');
 
             $table->text('catatan')->nullable();

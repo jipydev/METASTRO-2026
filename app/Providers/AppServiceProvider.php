@@ -24,6 +24,26 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->registerAuthorizationGates();
+    }
+
+    protected function registerAuthorizationGates(): void
+    {
+        \Illuminate\Support\Facades\Gate::define('archivist-access', function (\App\Models\User $user) {
+            return $user->canManageArchivistFeatures();
+        });
+
+        \Illuminate\Support\Facades\Gate::define('ranger-access', function (\App\Models\User $user) {
+            return $user->canManageRangerFeatures();
+        });
+
+        \Illuminate\Support\Facades\Gate::define('view-panitia-list', function (\App\Models\User $user) {
+            return $user->canViewPanitiaList();
+        });
+
+        \Illuminate\Support\Facades\Gate::define('review-izin', function (\App\Models\User $user) {
+            return $user->isKetuaOrWakil() || $user->isRanger() || $user->isStakeholder() || $user->isAdmin();
+        });
     }
 
     /**
@@ -38,13 +58,13 @@ class AppServiceProvider extends ServiceProvider
         );
 
         Password::defaults(fn (): ?Password => app()->isProduction()
-            ? Password::min(12)
+            ? Password::min(8)
                 ->mixedCase()
                 ->letters()
                 ->numbers()
                 ->symbols()
                 ->uncompromised()
-            : null,
+            : Password::min(8),
         );
     }
 }

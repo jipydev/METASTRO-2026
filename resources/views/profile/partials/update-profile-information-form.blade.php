@@ -14,9 +14,41 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-6" x-data="{ photoPreview: null }">
         @csrf
         @method('patch')
+
+        <!-- Foto Profil -->
+        <div>
+            <x-input-label for="foto" :value="__('Foto Profil')" class="font-semibold text-slate-700 dark:text-slate-300" />
+            <div class="mt-2 flex items-center gap-4">
+                <template x-if="photoPreview">
+                    <img :src="photoPreview" class="w-16 h-16 rounded-full object-cover border-2 border-primary-500 shadow">
+                </template>
+                <template x-if="!photoPreview">
+                    @php
+                        $currentPhoto = $user->foto
+                            ? asset('storage/' . $user->foto)
+                            : 'https://ui-avatars.com/api/?size=256&background=fe5a1d&color=fff&name=' . urlencode($user->name);
+                    @endphp
+                    <img src="{{ $currentPhoto }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover border-2 border-slate-200 dark:border-slate-700 shadow-sm">
+                </template>
+                <div class="flex-1">
+                    <input id="foto" name="foto" type="file" accept="image/*"
+                           @change="
+                               const file = $event.target.files[0];
+                               if (file) {
+                                   const reader = new FileReader();
+                                   reader.onload = (e) => { photoPreview = e.target.result; };
+                                   reader.readAsDataURL(file);
+                               }
+                           "
+                           class="w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary-50 dark:file:bg-primary-950/60 file:text-primary-600 dark:file:text-primary-400 hover:file:bg-primary-100 cursor-pointer" />
+                    <p class="text-xs text-slate-400 mt-1">Format: JPG, JPEG, PNG, WEBP. Maksimal 2MB.</p>
+                </div>
+            </div>
+            <x-input-error class="mt-2" :messages="$errors->get('foto')" />
+        </div>
 
         <div>
             <x-input-label for="name" :value="__('Nama Lengkap')" class="font-semibold text-slate-700 dark:text-slate-300" />

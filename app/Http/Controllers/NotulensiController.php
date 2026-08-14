@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\notulensi;
+use App\Models\Notulensi;
 use Illuminate\Http\Request;
 
 class NotulensiController extends Controller
@@ -50,7 +50,7 @@ class NotulensiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(notulensi $notulensi)
+    public function show(Notulensi $notulensi)
     {
         //
     }
@@ -58,7 +58,7 @@ class NotulensiController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(notulensi $notulensi)
+    public function edit(Notulensi $notulensi)
     {
         //
     }
@@ -66,7 +66,7 @@ class NotulensiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, notulensi $notulensi)
+    public function update(Request $request, Notulensi $notulensi)
     {
         //
     }
@@ -74,7 +74,7 @@ class NotulensiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(notulensi $notulensi)
+    public function destroy(Notulensi $notulensi)
     {
         if ($notulensi->lampiran && \Storage::disk('public')->exists($notulensi->lampiran)) {
             \Storage::disk('public')->delete($notulensi->lampiran);
@@ -88,21 +88,21 @@ class NotulensiController extends Controller
     /**
      * Serve PDF file inline (for preview).
      */
-    public function viewPdf(notulensi $notulensi)
+    public function viewPdf(Notulensi $notulensi)
     {
-        if (!$notulensi->lampiran) {
+        if (! $notulensi->lampiran) {
             abort(404, 'Lampiran tidak ditemukan.');
         }
 
-        $path = storage_path('app/public/' . $notulensi->lampiran);
+        $path = storage_path('app/public/'.$notulensi->lampiran);
 
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             abort(404, 'File tidak ditemukan.');
         }
 
         return response()->file($path, [
-            'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . basename($path) . '"',
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.basename($path).'"',
         ]);
     }
 }

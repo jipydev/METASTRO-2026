@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Divisi;
+use App\Models\Jabatan;
+use App\Models\RoleRequest;
 use App\Models\User;
 use App\Services\QrCodeService;
 use Illuminate\Auth\Events\Registered;
@@ -13,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 class RegisteredUserController extends Controller
 {
@@ -21,7 +25,12 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $divisis = Divisi::all();
+        $jabatans = Jabatan::whereIn('nama_jabatan', ['Koordinator', 'Staff'])->get();
+        // Role pilihan (semua role kecuali Admin)
+        $roles = Role::where('name', '!=', 'Admin')->get();
+
+        return view('auth.register', compact('divisis', 'jabatans', 'roles'));
     }
 
     /**
@@ -33,14 +42,6 @@ class RegisteredUserController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            // 'email' => [
-            //     'required',
-            //     'string',
-            //     'lowercase',
-            //     'email',
-            //     'max:255',
-            //     'unique:users,email',
-            // ],
             'nim' => [
                 'required',
                 'string',
@@ -52,17 +53,58 @@ class RegisteredUserController extends Controller
                 'confirmed',
                 Rules\Password::defaults(),
             ],
+            'divisi_id' => ['required', 'exists:divisi,id'],
+            'jabatan_id' => ['required', 'exists:jabatan,id'],
+            'role' => ['required', 'string', 'exists:roles,name'],
         ]);
 
+        if ($validated['role'] === 'Admin') {
+            throw ValidationException::withMessages([
+                'role' => 'Role Admin tidak dapat dipilih pada registrasi mandiri.',
+            ]);
+        }
+
+        $jabatan = Jabatan::findOrFail($validated['jabatan_id']);
+        $divisi = Divisi::findOrFail($validated['divisi_id']);
+
+        // Jika memilih jabatan Koordinator atau role Koordinator, cek apakah divisi tersebut sudah memiliki Koordinator
+        if ($jabatan->nama_jabatan === 'Koordinator' || $validated['role'] === 'Koordinator') {
+            if ($divisi->koordinator_divisi_nim) {
+                throw ValidationException::withMessages([
+                    'divisi_id' => "Divisi {$divisi->nama_divisi} sudah memiliki Koordinator.",
+                ]);
+            }
+        }
+
+        // Buat user
         $user = User::create([
             'name' => $validated['name'],
-            // 'email' => $validated['email'],
             'nim' => $validated['nim'],
             'password' => Hash::make($validated['password']),
+            'divisi_id' => $validated['divisi_id'],
+            'jabatan_id' => $validated['jabatan_id'],
         ]);
 
-        // Semua user baru otomatis menjadi Panitia
+        // Semua akun otomatis adalah panitia
         $user->assignRole('Panitia');
+
+        // Jika memilih role selain Panitia atau jabatan Koordinator, buat RoleRequest untuk di-review Admin
+        $needsApproval = ($validated['role'] !== 'Panitia' || $jabatan->nama_jabatan === 'Koordinator');
+
+        if ($needsApproval) {
+            RoleRequest::create([
+                'user_id' => $user->id,
+                'requested_role' => $validated['role'],
+                'requested_divisi_id' => $validated['divisi_id'],
+                'requested_jabatan_id' => $validated['jabatan_id'],
+                'status' => 'Pending',
+            ]);
+        } else {
+            // Auto-assign role jika hanya Panitia & Staff
+            if ($validated['role'] !== 'Panitia') {
+                $user->assignRole($validated['role']);
+            }
+        }
 
         // Auto-generate QR code untuk absensi
         $qrService = app(QrCodeService::class);
@@ -72,9 +114,10 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        // Redirect berdasarkan role
-        if ($user->hasRole('Admin')) {
-            return redirect()->route('admin.dashboard');
+        if ($needsApproval) {
+            session()->flash('info', 'Registrasi berhasil! Pendaftaran role/jabatan Anda (' . $validated['role'] . ' - ' . $jabatan->nama_jabatan . ') sedang menunggu persetujuan Admin.');
+        } else {
+            session()->flash('success', 'Registrasi berhasil! Selamat datang di Metastro.');
         }
 
         return redirect()->route('dashboard');
