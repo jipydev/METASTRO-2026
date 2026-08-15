@@ -15,12 +15,17 @@ class QrCodeController extends Controller
      */
     public function index(): View
     {
-        $users = User::where('status_aktif', true)
-            ->with('divisi', 'jabatan')
-            ->orderBy('name')
+        $users = User::where('status', true)
+            ->with(['divisi', 'jabatan'])
+            ->orderBy('nama')
             ->paginate(20);
 
-        return view('admin.users', compact('users'));
+            $data = [
+                'title' => 'Kelola QR Code',
+                'users' => $users,
+            ];
+
+        return view('admin.qr.index', $data);
     }
 
     /**
@@ -31,8 +36,8 @@ class QrCodeController extends Controller
         $qrService->regenerateForUser($user);
 
         return redirect()
-            ->route('admin.users')
-            ->with('success', "QR Code untuk {$user->name} berhasil di-regenerate.");
+            ->route('admin.qr.index')
+            ->with('success', "QR Code untuk {$user->nama} berhasil di-regenerate.");
     }
 
     /**
@@ -42,7 +47,7 @@ class QrCodeController extends Controller
     {
         $count = 0;
 
-        User::where('status_aktif', true)->chunkById(50, function ($users) use ($qrService, &$count) {
+        User::where('status', true)->chunkById(50, function ($users) use ($qrService, &$count) {
             /** @var User $user */
             foreach ($users as $user) {
                 $qrService->regenerateForUser($user);
@@ -51,7 +56,7 @@ class QrCodeController extends Controller
         });
 
         return redirect()
-            ->route('admin.users')
-            ->with('success', "QR Code untuk {$count} user berhasil di-regenerate.");
+            ->route('admin.qr.index')
+            ->with('success', "QR Code untuk {$count} pengguna aktif berhasil di-regenerate.");
     }
 }

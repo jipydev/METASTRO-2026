@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -16,27 +16,8 @@ use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
-/**
- * @property int $id
- * @property string $name
- * @property string $email
- * @property string $nim
- * @property string|null $password
- * @property string|null $nomor_hp
- * @property string|null $foto
- * @property string|null $tanggal_lahir
- * @property string|null $jenis_kelamin
- * @property string|null $alamat
- * @property int|null $divisi_id
- * @property int|null $jabatan_id
- * @property string|null $qr_token
- * @property bool $status_aktif
- * @property bool $is_initial_setup_completed
- * @property \App\Models\Divisi|null $divisi
- * @property \App\Models\Jabatan|null $jabatan
- */
 #[Fillable([
-    'name',
+    'nama',
     'email',
     'nim',
     'password',
@@ -48,10 +29,9 @@ use Spatie\Permission\Traits\HasRoles;
     'divisi_id',
     'jabatan_id',
     'qr_token',
-    'status_aktif',
+    'status',
     'is_initial_setup_completed',
 ])]
-
 #[Hidden([
     'password',
     'remember_token',
@@ -70,234 +50,227 @@ class User extends Authenticatable implements PasskeyUser
     protected function casts(): array
     {
         return [
-            'password' => 'hashed',
+            'password'                   => 'hashed',
+            'email_verified_at'          => 'datetime',
+            'tanggal_lahir'              => 'date',
+            'status'                     => 'boolean',
             'is_initial_setup_completed' => 'boolean',
-            'status_aktif' => 'boolean',
         ];
+    }
+
+    /**
+     * Auto-generate UUID qr_token saat pembuatan user baru
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
+            if (empty($user->qr_token)) {
+                $user->qr_token = (string) Str::uuid();
+            }
+        });
     }
 
     /*
     |--------------------------------------------------------------------------
-    | Relasi
+    | Relasi Eloquent
     |--------------------------------------------------------------------------
     */
 
-    public function roleName(): string
-    {
-        return $this->role ?? 'Belum ada role';
-    }
-
-    public function divisi()
+    public function divisi(): BelongsTo
     {
         return $this->belongsTo(Divisi::class);
     }
 
-    public function jabatan()
+    public function jabatan(): BelongsTo
     {
         return $this->belongsTo(Jabatan::class);
     }
 
-    public function absensi()
+    public function presensis(): HasMany
     {
-        return $this->hasMany(Absensi::class);
+        return $this->hasMany(Presensi::class);
     }
 
-    public function hukuman()
-    {
-        return $this->hasMany(Hukuman::class);
-    }
-
-    public function notulensi()
+    public function notulensi(): HasMany
     {
         return $this->hasMany(Notulensi::class, 'pembuat_id');
     }
 
-    public function pengumuman()
+    public function pengumuman(): HasMany
     {
         return $this->hasMany(Pengumuman::class, 'pembuat_id');
     }
 
-    public function penilaian()
-    {
-        return $this->hasMany(Penilaian::class);
-    }
-
-    public function penilaianDibuat()
-    {
-        return $this->hasMany(Penilaian::class, 'penilai_id');
-    }
-
-    public function pengajuanIzin()
+    public function pengajuanIzin(): HasMany
     {
         return $this->hasMany(PengajuanIzin::class);
     }
 
-    public function roleRequests()
+    /*
+    |--------------------------------------------------------------------------
+    | Core Matchers (ABAC Engine)
+    |--------------------------------------------------------------------------
+    */
+
+    public function isDivisi(string|array $divisi): bool
     {
-        return $this->hasMany(RoleRequest::class);
+        $current = strtolower($this->divisi?->nama ?? '');
+        $targets = array_map('strtolower', (array) $divisi);
+
+        return in_array($current, $targets, true);
+    }
+
+    public function isJabatan(string|array $jabatan): bool
+    {
+        $current = strtolower($this->jabatan?->nama ?? '');
+        $targets = array_map('strtolower', (array) $jabatan);
+
+        return in_array($current, $targets, true);
     }
 
     /*
     |--------------------------------------------------------------------------
-    | Roles & Authorization Helpers
+    | Spatie Roles (RBAC)
     |--------------------------------------------------------------------------
     */
 
     public function isAdmin(): bool
     {
-        return $this->hasAnyRole(['admin', 'Admin']) || $this->isChiper();
+        return $this->hasRole('admin') || $this->isChiper();
     }
 
     public function isPanitia(): bool
     {
-        return $this->hasAnyRole(['panitia', 'Panitia']);
+        return $this->hasRole('panitia');
     }
 
     public function isPeserta(): bool
     {
-        return $this->hasAnyRole(['peserta', 'Peserta']);
+        return $this->hasRole('peserta');
     }
 
     /*
     |--------------------------------------------------------------------------
-    | Divisi Helpers
+    | Shortcut Divisi (Alphabetical A-Z)
     |--------------------------------------------------------------------------
     */
 
     public function isArchivist(): bool
     {
-        $divisiName = strtolower($this->divisi?->nama_divisi ?? '');
-        if (in_array($divisiName, ['archivist', 'sekretaris', 'scribe'])) {
-            return true;
-        }
-
-        if ($this->hasAnyRole(['archivist', 'Archivist', 'sekretaris', 'Sekretaris', 'scribe', 'Scribe'])) {
-            return true;
-        }
-
-        if ($this->divisi_id) {
-            $div = Divisi::find($this->divisi_id);
-            if ($div && in_array(strtolower($div->nama_divisi), ['archivist', 'sekretaris', 'scribe'])) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->isDivisi('archivist');
     }
-
+    public function isChef(): bool
+    {
+        return $this->isDivisi('chef');
+    }
     public function isChiper(): bool
     {
-        $divisiName = strtolower($this->divisi?->nama_divisi ?? '');
-        if ($divisiName === 'chiper' || $this->hasAnyRole(['chiper', 'Chiper'])) {
-            return true;
-        }
-        if ($this->divisi_id) {
-            $div = Divisi::find($this->divisi_id);
-            if ($div && strtolower($div->nama_divisi) === 'chiper') {
-                return true;
-            }
-        }
-        return false;
+        return $this->isDivisi('chiper');
     }
-
-    public function isRanger(): bool
+    public function isDocumenter(): bool
     {
-        $divisiName = strtolower($this->divisi?->nama_divisi ?? '');
-        if ($divisiName === 'ranger' || $this->hasAnyRole(['ranger', 'Ranger'])) {
-            return true;
-        }
-        if ($this->divisi_id) {
-            $div = Divisi::find($this->divisi_id);
-            if ($div && strtolower($div->nama_divisi) === 'ranger') {
-                return true;
-            }
-        }
-        return false;
+        return $this->isDivisi('documenter');
     }
-
+    public function isFundkeeper(): bool
+    {
+        return $this->isDivisi('fundkeeper');
+    }
+    public function isGearmaster(): bool
+    {
+        return $this->isDivisi('gearmaster');
+    }
+    public function isGuardian(): bool
+    {
+        return $this->isDivisi('guardian');
+    }
     public function isGuider(): bool
     {
-        return strtolower($this->divisi?->nama_divisi ?? '') === 'guider';
+        return $this->isDivisi('guider');
     }
-
+    public function isInformer(): bool
+    {
+        return $this->isDivisi('informer');
+    }
+    public function isPathfinder(): bool
+    {
+        return $this->isDivisi('pathfinder');
+    }
+    public function isRanger(): bool
+    {
+        return $this->isDivisi('ranger');
+    }
+    public function isRescuer(): bool
+    {
+        return $this->isDivisi('rescuer');
+    }
+    public function isScribe(): bool
+    {
+        return $this->isDivisi('scribe');
+    }
     public function isStakeholder(): bool
     {
-        $divisiName = strtolower($this->divisi?->nama_divisi ?? '');
-        if ($divisiName === 'stakeholder' || $this->hasAnyRole(['stakeholder', 'Stakeholder'])) {
-            return true;
-        }
-        if ($this->divisi_id) {
-            $div = Divisi::find($this->divisi_id);
-            if ($div && strtolower($div->nama_divisi) === 'stakeholder') {
-                return true;
-            }
-        }
-        return false;
+        return $this->isDivisi('stakeholder');
     }
 
     /*
     |--------------------------------------------------------------------------
-    | Jabatan Helpers
+    | Shortcut Jabatan
     |--------------------------------------------------------------------------
     */
 
     public function isKetua(): bool
     {
-        return strtolower($this->jabatan?->nama_jabatan ?? '') === 'ketua';
+        return $this->isJabatan('ketua');
     }
-
     public function isWakil(): bool
     {
-        return strtolower($this->jabatan?->nama_jabatan ?? '') === 'wakil';
+        return $this->isJabatan('wakil');
     }
-
     public function isKetuaOrWakil(): bool
     {
-        return $this->isKetua() || $this->isWakil();
+        return $this->isJabatan(['ketua', 'wakil']);
     }
-
-    public function isKetuaPengawas(): bool
-    {
-        return strtolower($this->jabatan?->nama_jabatan ?? '') === 'ketua pengawas';
-    }
-
     public function isPengawas(): bool
     {
-        return strtolower($this->jabatan?->nama_jabatan ?? '') === 'pengawas';
+        return $this->isJabatan('pengawas');
     }
-
+    public function isKetuaPengawas(): bool
+    {
+        return $this->isPengawas() && $this->isStakeholder();
+    }
     public function isAnggota(): bool
     {
-        return strtolower($this->jabatan?->nama_jabatan ?? '') === 'anggota';
+        return $this->isJabatan('anggota');
     }
 
     /*
     |--------------------------------------------------------------------------
-    | Privilege Helpers
+    | Hak Akses Fitur Khusus & Utilitas
     |--------------------------------------------------------------------------
     */
 
-    public function canManageArchivistFeatures(): bool
+    /*
+    |--------------------------------------------------------------------------
+    | Hak Akses Fitur Khusus & Utilitas
+    |--------------------------------------------------------------------------
+    */
+
+    public function canScanPresensi(): bool
     {
         return $this->isAdmin() || $this->isArchivist();
     }
 
-    public function canManageRangerFeatures(): bool
+    public function canManageSekretariat(): bool
     {
-        return $this->isAdmin() || $this->isRanger();
-    }
-
-    public function canViewPanitiaList(): bool
-    {
-        return $this->isAdmin() || $this->isRanger() || $this->isArchivist() || $this->isStakeholder() || $this->isPengawas() || $this->isKetuaPengawas();
+        return $this->isAdmin() || $this->isArchivist();
     }
 
     public function initials(): string
     {
-        $initials = Str::initials($this->name, true);
+        $initials = Str::initials($this->nama, true);
 
         return Str::length($initials) > 1
-            ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
+            ? Str::substr($initials, 0, 1) . Str::substr($initials, -1)
             : $initials;
     }
 }

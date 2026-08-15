@@ -2,51 +2,52 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ListPanitia;
+use App\Models\Kegiatan;
 use App\Models\Notulensi;
 use App\Models\Pengumuman;
-use App\Models\Rapat;
+use App\Models\Presensi;
 use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(): View
     {
+        // 1. Ambil pengumuman terbaru
         $pengumumanList = Pengumuman::with('pembuat')
             ->latest('tanggal_publish')
             ->paginate(5);
 
-        $rapatTerbaru = Rapat::where('tanggal', '>=', now()->toDateString())
+        // 2. Ambil kegiatan mendatang atau kegiatan terakhir
+        $kegiatanTerbaru = Kegiatan::where('tanggal', '>=', Carbon::today())
             ->orderBy('tanggal', 'asc')
-            ->orderBy('jam', 'asc')
+            ->orderBy('waktu_mulai', 'asc')
             ->first()
-                        ?? Rapat::orderBy('tanggal', 'desc')
-                            ->orderBy('jam', 'desc')
-                            ->first();
+            ?? Kegiatan::orderBy('tanggal', 'desc')
+            ->orderBy('waktu_mulai', 'desc')
+            ->first();
 
-        $totalUserCount = User::where('status_aktif', true)->count();
+        // 3. Hitung ringkasan statistik
+        $totalUserCount = User::where('status', true)->count();
         $hadirCount = 0;
 
-        if ($rapatTerbaru) {
-            $hadirCount = ListPanitia::where('rapat_id', $rapatTerbaru->id)->count();
+        if ($kegiatanTerbaru) {
+            $hadirCount = Presensi::where('kegiatan_id', $kegiatanTerbaru->id)
+                ->whereIn('status_kehadiran', ['hadir', 'terlambat'])
+                ->count();
         }
 
-        return view('dashboard.index', [
-            'title' => 'Dashboard',
-
-            // Semua pengumuman
-            'pengumumanList' => $pengumumanList,
-
-            // Pengumuman terbaru
+        $data = [
+            'title'             => 'Dashboard',
+            'pengumumanList'    => $pengumumanList,
             'pengumumanTerbaru' => $pengumumanList->first(),
+            'kegiatanTerbaru'   => $kegiatanTerbaru,
+            'totalUserCount'    => $totalUserCount,
+            'hadirCount'        => $hadirCount,
+            'notulensiList'     => Notulensi::with('kegiatan')->latest()->limit(8)->get(),
+        ];
 
-            'rapatTerbaru' => $rapatTerbaru,
-
-            'totalUserCount' => $totalUserCount,
-
-            'hadirCount' => $hadirCount,
-
-            'notulensi_list' => Notulensi::latest()->limit(12)->get(),
-        ]);
+        return view('dashboard.index', $data);
     }
 }

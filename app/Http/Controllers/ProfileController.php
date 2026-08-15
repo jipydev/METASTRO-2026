@@ -3,42 +3,49 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Menampilkan form edit profil.
      */
     public function edit(Request $request): View
     {
+        /** @var User $user */
+        $user = $request->user();
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'title' => 'Pengaturan Profil',
+            'user'  => $user->load(['divisi', 'jabatan']),
         ]);
     }
 
     /**
-     * Update the user's profile information.
+     * Memperbarui informasi profil (Nama, Email, dan Foto).
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        /** @var User $user */
         $user = $request->user();
-        $validated = $request->validated();
 
+        // Handle upload foto baru
         if ($request->hasFile('foto')) {
-            if ($user->foto && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->foto)) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->foto);
+            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+                Storage::disk('public')->delete($user->foto);
             }
 
-            $path = $request->file('foto')->store('profile_photos', 'public');
+            $path = $request->file('foto')->store('foto_profil', 'public');
             $user->foto = $path;
         }
 
-        $user->fill($request->safe()->only(['name', 'email']));
+        // Update data nama & email
+        $user->fill($request->safe()->only(['nama', 'email']));
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
@@ -46,27 +53,6 @@ class ProfileController extends Controller
 
         $user->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
-    }
-
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
-        $user = $request->user();
-
-        Auth::logout();
-
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        return Redirect::route('profile.edit')->with('success', 'Profil Anda berhasil diperbarui.');
     }
 }

@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pengumuman;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -11,28 +14,32 @@ use Illuminate\Support\Facades\Storage;
 class PengumumanController extends Controller
 {
     /**
-     * Simpan Pengumuman
+     * Simpan Pengumuman Baru
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (! $user->canManageSekretariat()) {
+            abort(403, 'Hanya Sekretaris/Archivist dan Admin yang dapat membuat pengumuman.');
+        }
+
         $validated = $request->validate([
-            'judul' => 'required|string|max:255',
-            'isi' => 'required|string',
+            'judul'           => 'required|string|max:255',
+            'isi'             => 'required|string',
             'tanggal_publish' => 'required|date',
-            'status' => 'required|in:Draft,Publish',
-            'lampiran' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
+            'status'          => 'required|in:Draft,Publish',
+            'lampiran'        => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
         ]);
 
-        // UBAH FORMAT TANGGAL SEBELUM MASUK DATABASE
         $validated['tanggal_publish'] = Carbon::parse($request->tanggal_publish)->format('Y-m-d H:i:s');
 
         if ($request->hasFile('lampiran')) {
-            $validated['lampiran'] = $request
-                ->file('lampiran')
-                ->store('pengumuman', 'public');
+            $validated['lampiran'] = $request->file('lampiran')->store('pengumuman', 'public');
         }
 
-        $validated['pembuat_id'] = Auth::id();
+        $validated['pembuat_id'] = $user->id;
 
         Pengumuman::create($validated);
 
@@ -44,31 +51,32 @@ class PengumumanController extends Controller
     /**
      * Update Pengumuman
      */
-    public function update(Request $request, Pengumuman $pengumuman)
+    public function update(Request $request, Pengumuman $pengumuman): RedirectResponse
     {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (! $user->canManageSekretariat()) {
+            abort(403, 'Hanya Sekretaris/Archivist dan Admin yang dapat mengedit pengumuman.');
+        }
+
         $validated = $request->validate([
-            'judul' => 'required|string|max:255',
-            'isi' => 'required|string',
+            'judul'           => 'required|string|max:255',
+            'isi'             => 'required|string',
             'tanggal_publish' => 'required|date',
-            'status' => 'required|in:Draft,Publish',
-            'lampiran' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
+            'status'          => 'required|in:Draft,Publish',
+            'lampiran'        => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
         ]);
 
-        // UBAH FORMAT TANGGAL SEBELUM MASUK DATABASE
         $validated['tanggal_publish'] = Carbon::parse($request->tanggal_publish)->format('Y-m-d H:i:s');
 
         if ($request->hasFile('lampiran')) {
-
-            if (
-                $pengumuman->lampiran &&
-                Storage::disk('public')->exists($pengumuman->lampiran)
-            ) {
+            // Hapus file lama jika ada
+            if ($pengumuman->lampiran && Storage::disk('public')->exists($pengumuman->lampiran)) {
                 Storage::disk('public')->delete($pengumuman->lampiran);
             }
 
-            $validated['lampiran'] = $request
-                ->file('lampiran')
-                ->store('pengumuman', 'public');
+            $validated['lampiran'] = $request->file('lampiran')->store('pengumuman', 'public');
         }
 
         $pengumuman->update($validated);
@@ -81,12 +89,16 @@ class PengumumanController extends Controller
     /**
      * Hapus Pengumuman
      */
-    public function destroy(Pengumuman $pengumuman)
+    public function destroy(Pengumuman $pengumuman): RedirectResponse
     {
-        if (
-            $pengumuman->lampiran &&
-            Storage::disk('public')->exists($pengumuman->lampiran)
-        ) {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (! $user->canManageSekretariat()) {
+            abort(403, 'Hanya Sekretaris/Archivist dan Admin yang dapat menghapus pengumuman.');
+        }
+
+        if ($pengumuman->lampiran && Storage::disk('public')->exists($pengumuman->lampiran)) {
             Storage::disk('public')->delete($pengumuman->lampiran);
         }
 
@@ -98,10 +110,13 @@ class PengumumanController extends Controller
     }
 
     /**
-     * Detail Pengumuman (opsional)
+     * Detail Pengumuman JSON (untuk modal/preview API)
      */
-    public function show(Pengumuman $pengumuman)
+    public function show(Pengumuman $pengumuman): JsonResponse
     {
-        return response()->json($pengumuman);
+        return response()->json([
+            'success' => true,
+            'data'    => $pengumuman->load('pembuat:id,nama'),
+        ]);
     }
 }

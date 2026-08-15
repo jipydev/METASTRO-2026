@@ -13,19 +13,31 @@ class JabatanSeeder extends Seeder
     public function run(): void
     {
         $jabatans = [
-            ['nama_jabatan' => 'Ketua', 'deskripsi' => 'Ketua divisi bertugas memimpin divisi dan mereview izin anggota divisinya.'],
-            ['nama_jabatan' => 'Wakil', 'deskripsi' => 'Wakil divisi membantu ketua dan mereview izin apabila ketua mengajukan izin.'],
-            ['nama_jabatan' => 'Ketua Pengawas', 'deskripsi' => 'Ketua Pengawas bertugas memimpin divisi pengawas dan dapat melihat list panitia/rekap absen pengawas.'],
-            ['nama_jabatan' => 'Pengawas', 'deskripsi' => 'Pengawas bertugas mengawasi divisi masing-masing dan melihat list panitia/rekap absen divisi.'],
-            ['nama_jabatan' => 'Anggota', 'deskripsi' => 'Anggota biasa yang dapat melihat dan mengajukan izin.'],
-            // Compatibility aliases
-            ['nama_jabatan' => 'Koordinator', 'deskripsi' => 'Alias untuk Ketua'],
-            ['nama_jabatan' => 'Staff', 'deskripsi' => 'Alias untuk Anggota'],
+            [
+                'nama'      => 'Ketua',
+                'deskripsi' => 'Ketua divisi bertugas memimpin divisi dan mereview izin anggota divisinya.',
+            ],
+            [
+                'nama'      => 'Wakil',
+                'deskripsi' => 'Wakil divisi membantu ketua dan mereview izin apabila ketua mengajukan izin.',
+            ],
+            [
+                'nama'      => 'Ketua Pengawas',
+                'deskripsi' => 'Ketua Pengawas bertugas memimpin divisi pengawas dan dapat melihat list panitia serta rekap presensi.',
+            ],
+            [
+                'nama'      => 'Pengawas',
+                'deskripsi' => 'Pengawas bertugas mengawasi divisi dan melihat list panitia serta rekap presensi.',
+            ],
+            [
+                'nama'      => 'Anggota',
+                'deskripsi' => 'Anggota divisi yang dapat melihat aktivitas divisi dan mengajukan izin.',
+            ],
         ];
 
         foreach ($jabatans as $jabatan) {
             Jabatan::updateOrCreate(
-                ['nama_jabatan' => $jabatan['nama_jabatan']],
+                ['nama' => $jabatan['nama']],
                 ['deskripsi' => $jabatan['deskripsi']]
             );
         }

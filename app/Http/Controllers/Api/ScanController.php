@@ -3,18 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\ListPanitia;
-use App\Models\Rapat;
+use App\Models\Kegiatan;
+use App\Models\Presensi;
 use App\Services\QrCodeService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class ScanController extends Controller
 {
     /**
-     * Lookup user data from QR token (called by scanner).
+     * Lookup data user dari QR token (dipanggil saat kamera mendeteksi barcode).
      */
     public function lookup(Request $request, QrCodeService $qrService): JsonResponse
     {
@@ -27,125 +28,103 @@ class ScanController extends Controller
         if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'QR Code tidak valid atau user tidak aktif.',
+                'message' => 'QR Code tidak valid atau akun pengguna dinonaktifkan.',
             ], 404);
         }
 
         return response()->json([
             'success' => true,
             'data' => [
-                'id' => $user->id,
-                'nama' => $user->name,
-                'divisi' => $user->divisi?->nama_divisi ?? 'Belum ada divisi',
-                'photo' => $user->foto
-                    ? asset('storage/'.$user->foto)
-                    : 'https://ui-avatars.com/api/?size=256&background=fe5a1d&color=fff&name='.urlencode($user->name),
+                'id'     => $user->id,
+                'nama'   => $user->nama,
+                'nim'    => $user->nim,
+                'divisi' => $user->divisi?->nama ?? 'Tanpa Divisi',
+                'photo'  => $user->foto
+                    ? asset('storage/' . $user->foto)
+                    : 'https://ui-avatars.com/api/?size=256&background=6366f1&color=fff&name=' . urlencode($user->nama),
             ],
         ]);
     }
 
     /**
-     * Record attendance after scan is accepted.
+     * Catat kehadiran ke tabel presensis setelah scan QR disetujui.
      */
     public function recordAttendance(Request $request): JsonResponse
     {
         $request->validate([
-            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'user_id'     => ['required', 'integer', 'exists:users,id'],
+            'kegiatan_id' => ['nullable', 'integer', 'exists:kegiatans,id'],
         ]);
 
         try {
-            // 1. Cari Rapat Besar yang terjadwal HARI INI atau yang statusnya Buka
-            $rapatHariIni = Rapat::whereDate('tanggal', Carbon::today())->first();
-
-            if (! $rapatHariIni) {
-                $rapatHariIni = Rapat::where('status_absen', 'Buka')->first();
+            // 1. Cari kegiatan yang aktif: berdasarkan kegiatan_id yang dikirim ATAU kegiatan hari ini yang status presensinya 'buka'
+            $kegiatan = null;
+            if ($request->filled('kegiatan_id')) {
+                $kegiatan = Kegiatan::find($request->kegiatan_id);
+            } else {
+                $kegiatan = Kegiatan::where('status_presensi', 'buka')
+                    ->whereDate('tanggal', Carbon::today())
+                    ->first() ?? Kegiatan::where('status_presensi', 'buka')->first();
             }
 
-            if (! $rapatHariIni) {
+            if (! $kegiatan) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Tidak ada jadwal Rapat hari ini atau absensi belum dibuka.',
+                    'message' => 'Tidak ada kegiatan aktif atau sesi presensi belum dibuka.',
                 ], 404);
             }
 
-            // 2. Evaluasi status_absen dan jadwal waktu yang diatur Sekretaris
-            $waktuSekarang = Carbon::now();
-            $currentTimeStr = $waktuSekarang->format('H:i:s');
-
-            if ($rapatHariIni->status_absen === 'Tutup') {
+            // 2. Validasi status presensi kegiatan
+            if ($kegiatan->status_presensi === 'tutup') {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Absensi untuk '.$rapatHariIni->judul.' telah DITUTUP oleh Sekretaris.',
+                    'message' => "Presensi untuk kegiatan '{$kegiatan->judul}' sudah DITUTUP.",
                 ], 403);
             }
 
-            if ($rapatHariIni->waktu_buka && $rapatHariIni->status_absen !== 'Buka') {
-                if ($currentTimeStr < $rapatHariIni->waktu_buka) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Absensi belum dibuka. Absensi dijadwalkan buka pada pukul '.substr($rapatHariIni->waktu_buka, 0, 5).' WIB.',
-                    ], 403);
-                }
-            }
+            $waktuSekarang = Carbon::now();
 
-            if ($rapatHariIni->waktu_tutup && $rapatHariIni->status_absen !== 'Buka') {
-                if ($currentTimeStr > $rapatHariIni->waktu_tutup) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Absensi telah ditutup pada pukul '.substr($rapatHariIni->waktu_tutup, 0, 5).' WIB.',
-                    ], 403);
-                }
-            }
-
-            // 3. Cek apakah user sudah absen untuk rapat ini
-            $existing = ListPanitia::where('user_id', $request->user_id)
-                ->where('rapat_id', $rapatHariIni->id)
+            // 3. Cek apakah user sudah pernah absen pada kegiatan ini
+            $existing = Presensi::where('user_id', $request->user_id)
+                ->where('kegiatan_id', $kegiatan->id)
                 ->first();
 
             if ($existing) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'User ini sudah melakukan presensi untuk '.$rapatHariIni->judul,
+                    'message' => "Pengguna ini sudah melakukan presensi sebelumnya pada kegiatan '{$kegiatan->judul}'.",
                 ], 409);
             }
 
-            // 4. Tentukan status (Hadir vs Telat)
-            $status = 'Hadir';
-            if ($rapatHariIni->waktu_telat) {
-                if ($currentTimeStr >= $rapatHariIni->waktu_telat) {
-                    $status = 'Telat';
-                }
-            } else {
-                $jamRapat = Carbon::parse($rapatHariIni->jam);
-                $batasWaktuHadir = $jamRapat->copy()->subMinutes(15);
-                if ($waktuSekarang->greaterThan($batasWaktuHadir)) {
-                    $status = 'Telat';
+            // 4. Tentukan status kehadiran (hadir vs terlambat)
+            $statusKehadiran = 'hadir';
+            if ($kegiatan->waktu_mulai) {
+                $jadwalMulai = Carbon::parse($kegiatan->tanggal->format('Y-m-d') . ' ' . $kegiatan->waktu_mulai);
+                if ($waktuSekarang->greaterThan($jadwalMulai)) {
+                    $statusKehadiran = 'terlambat';
                 }
             }
 
-            // 4. Simpan ke list_panitias
-            ListPanitia::create([
-                'user_id' => $request->user_id,
-                'rapat_id' => $rapatHariIni->id,
-                'scanned_by' => auth()->id(),
-                'jam_tap' => $waktuSekarang->format('H:i:s'),
-                'status' => $status,
+            // 5. Simpan catatan kehadiran ke tabel presensis
+            Presensi::create([
+                'user_id'          => $request->user_id,
+                'kegiatan_id'      => $kegiatan->id,
+                'status_kehadiran' => $statusKehadiran,
+                'waktu_presensi'   => $waktuSekarang,
+                'metode_presensi'  => 'qr_code',
+                'keterangan'       => 'Presensi via Scan QR oleh ' . (Auth::user()?->nama ?? 'Petugas'),
             ]);
-
-            // 5. Update jumlah hadir di tabel Rapat
-            $rapatHariIni->increment('hadir');
 
             return response()->json([
                 'success' => true,
-                'message' => 'Absensi '.$status.' berhasil dicatat untuk '.$rapatHariIni->judul,
+                'message' => "Presensi ({$statusKehadiran}) berhasil dicatat untuk kegiatan '{$kegiatan->judul}'.",
             ]);
-
-        } catch (\Exception $e) {
-            Log::error('Record attendance error: '.$e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Record attendance error: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan absensi.',
+                'message' => 'Terjadi kesalahan sistem saat menyimpan presensi.',
             ], 500);
         }
     }

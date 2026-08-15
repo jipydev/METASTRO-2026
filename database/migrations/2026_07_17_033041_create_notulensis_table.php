@@ -6,36 +6,39 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('notulensi', function (Blueprint $table) {
-
+        Schema::create('notulensis', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('jadwal_id')
-                ->constrained('jadwal')
-                ->cascadeOnDelete();
+            // Relasi ke Kegiatan (Opsional/Nullable)
+            $table->foreignId('kegiatan_id')
+                ->nullable()
+                ->constrained('kegiatans')
+                ->nullOnDelete();
 
+            // Notulis / Pembuat Notulensi
             $table->foreignId('pembuat_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
 
-            $table->string('judul');
-
-            $table->longText('isi_notulensi');
-
-            $table->string('lampiran')->nullable();
-
-            $table->text('keputusan_rapat')->nullable();
-
-            $table->text('tindak_lanjut')->nullable();
+            // Konten Notulensi
+            $table->string('judul', 150);
+            $table->longText('isi')->nullable();
+            $table->string('lampiran')->nullable(); // Path file PDF / dokumen
 
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('notulensi');
+        Schema::dropIfExists('notulensis');
     }
 };

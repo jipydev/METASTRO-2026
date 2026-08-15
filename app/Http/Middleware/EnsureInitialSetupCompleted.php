@@ -17,9 +17,17 @@ class EnsureInitialSetupCompleted
     {
         $user = $request->user();
 
-        if ($user && ! $user->is_initial_setup_completed) {
-            if (! $request->routeIs('initial-setup.*') && ! $request->routeIs('logout')) {
-                return redirect()->route('initial-setup.index');
+        if ($user) {
+            // Kasus 1: User belum selesai setup, tapi mencoba akses halaman lain
+            if (! $user->is_initial_setup_completed) {
+                if (! $request->routeIs('initial-setup.*') && ! $request->routeIs('logout')) {
+                    return redirect()->route('initial-setup.index');
+                }
+            }
+
+            // Kasus 2: User SUDAH selesai setup, tapi mencoba akses kembali halaman onboarding
+            if ($user->is_initial_setup_completed && $request->routeIs('initial-setup.*')) {
+                return redirect()->route('dashboard');
             }
         }
 

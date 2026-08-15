@@ -4,39 +4,40 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * @property int $id
- * @property int|null $jadwal_id
- * @property int|null $pembuat_id
- * @property string $judul
- * @property string|null $isi_notulensi
- * @property string|null $lampiran
- * @property string|null $keputusan_rapat
- * @property string|null $tindak_lanjut
- */
 class Notulensi extends Model
 {
     use HasFactory;
 
-    protected $table = 'notulensi';
+    protected $table = 'notulensis';
 
     protected $fillable = [
-        'jadwal_id',
+        'kegiatan_id',
         'pembuat_id',
         'judul',
-        'isi_notulensi',
+        'isi',
         'lampiran',
-        'keputusan_rapat',
-        'tindak_lanjut',
     ];
 
-    public function jadwal()
+    /*
+    |--------------------------------------------------------------------------
+    | Relasi Eloquent
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Kegiatan / rapat yang terkait
+     */
+    public function kegiatan(): BelongsTo
     {
-        return $this->belongsTo(Jadwal::class);
+        return $this->belongsTo(Kegiatan::class);
     }
 
-    public function pembuat()
+    /**
+     * Notulis / user pembuat catatan
+     */
+    public function pembuat(): BelongsTo
     {
         return $this->belongsTo(User::class, 'pembuat_id');
     }

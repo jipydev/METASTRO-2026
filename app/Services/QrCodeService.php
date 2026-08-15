@@ -17,7 +17,6 @@ class QrCodeService
      */
     public function generateForUser(User $user): string
     {
-        // Generate unique token if not exists
         if (empty($user->qr_token)) {
             $user->update(['qr_token' => Str::uuid()->toString()]);
         }
@@ -30,10 +29,8 @@ class QrCodeService
      */
     public function regenerateForUser(User $user): string
     {
-        // Delete old QR image
         $this->deleteQrImage($user);
 
-        // Generate new token (invalidates old QR)
         $user->update(['qr_token' => Str::uuid()->toString()]);
 
         return $this->generateQrImage($user);
@@ -46,7 +43,7 @@ class QrCodeService
     {
         $qrData = json_encode([
             'user_id' => $user->id,
-            'token' => $user->qr_token,
+            'token'   => $user->qr_token,
         ]);
 
         $renderer = new ImageRenderer(
@@ -57,7 +54,6 @@ class QrCodeService
         $writer = new Writer($renderer);
         $svgContent = $writer->writeString($qrData);
 
-        // Save to storage
         $filename = "qrcodes/user_{$user->id}.svg";
         Storage::disk('public')->put($filename, $svgContent);
 
@@ -96,8 +92,8 @@ class QrCodeService
     public function lookupByToken(string $token): ?User
     {
         return User::where('qr_token', $token)
-            ->where('status_aktif', true)
-            ->with('divisi')
+            ->where('status', true)
+            ->with(['divisi', 'jabatan'])
             ->first();
     }
 }

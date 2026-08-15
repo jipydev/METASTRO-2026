@@ -14,10 +14,8 @@ class Jabatan extends Model
 {
     use HasFactory;
 
-    protected $table = 'jabatan';
-
     protected $fillable = [
-        'nama_jabatan',
+        'nama',
         'deskripsi',
     ];
 

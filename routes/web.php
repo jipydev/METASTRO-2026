@@ -1,264 +1,103 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\QrCodeController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Api\ScanController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ListPanitiaController;
+use App\Http\Controllers\InitialSetupController;
+use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\NotulensiController;
 use App\Http\Controllers\PengajuanIzinController;
 use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TimelineController;
-use App\Http\Controllers\InitialSetupController;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Landing Page
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/', function () {
-    return view('dashboard.landingPage');
+    return view('index');
 })->name('home');
 
 /*
 |--------------------------------------------------------------------------
-| First Time Initial Setup (Onboarding)
+| Onboarding / First Time Setup
 |--------------------------------------------------------------------------
 */
-
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/initial-setup', [InitialSetupController::class, 'index'])
-        ->name('initial-setup.index');
-    Route::post('/initial-setup', [InitialSetupController::class, 'store'])
-        ->name('initial-setup.store');
+    Route::get('/initial-setup', [InitialSetupController::class, 'index'])->name('initial-setup.index');
+    Route::post('/initial-setup', [InitialSetupController::class, 'store'])->name('initial-setup.store');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Dashboard
+| Authenticated User Routes
 |--------------------------------------------------------------------------
 */
+Route::middleware(['auth', 'verified'])->group(function () {
 
-Route::middleware(['auth', 'verified', 'initial.setup'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])
-        ->name('dashboard');
-});
+    // 1. Dashboard Utama
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-/*
-|--------------------------------------------------------------------------
-| Pengajuan Izin Workflow
-|--------------------------------------------------------------------------
-*/
+    // 2. Profile Management
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-Route::middleware(['auth', 'verified'])->prefix('izin')->name('izin.')->group(function () {
-    Route::get('/', function () { return redirect()->route('izin.history'); });
-    Route::get('/create', [PengajuanIzinController::class, 'create'])->name('create');
-    Route::post('/', [PengajuanIzinController::class, 'store'])->name('store');
-    Route::get('/history', [PengajuanIzinController::class, 'history'])->name('history');
+    // 3. QR Absensi & Presensi Pribadi
+    Route::get('/qr-saya', [PresensiController::class, 'index'])->name('qr.show');
+    Route::get('/presensi/riwayat', [PresensiController::class, 'history'])->name('presensi.history');
 
-    // Review izin (Ketua, Wakil, Ranger, Stakeholder, Admin)
-    Route::middleware(['can:review-izin'])->group(function () {
+    // 4. Scanner Kamera, Toggle Sesi, & Monitoring Kehadiran
+    Route::get('/presensi/scan', [PresensiController::class, 'scan'])->name('presensi.scan');
+    Route::get('/presensi/monitoring', [PresensiController::class, 'monitoring'])->name('presensi.monitoring');
+    Route::patch('/kegiatan/{kegiatan}/toggle-absen', [PresensiController::class, 'toggleAbsen'])->name('presensi.toggle');
+
+    // 5. Alur Pengajuan Izin
+    Route::prefix('izin')->name('pengajuan-izin.')->group(function () {
+        Route::get('/', [PengajuanIzinController::class, 'index'])->name('index');
+        Route::get('/buat', [PengajuanIzinController::class, 'create'])->name('create');
+        Route::post('/', [PengajuanIzinController::class, 'store'])->name('store');
         Route::get('/review', [PengajuanIzinController::class, 'reviewIndex'])->name('review');
         Route::post('/{pengajuanIzin}/approve', [PengajuanIzinController::class, 'approve'])->name('approve');
         Route::post('/{pengajuanIzin}/reject', [PengajuanIzinController::class, 'reject'])->name('reject');
     });
-});
 
-// View pengumuman detail - semua user terautentikasi bisa mengakses
-Route::middleware(['auth', 'verified'])
-    ->get('/pengumuman/{pengumuman}', [PengumumanController::class, 'show'])
-    ->name('pengumuman.show');
+    // 6. Timeline & Jadwal Kegiatan
+    Route::resource('kegiatan', KegiatanController::class)->except(['create', 'show', 'edit']);
 
-Route::middleware([
-    'auth',
-    'verified',
-    'can:archivist-access',
-])->prefix('pengumuman')
-    ->name('pengumuman.')
-    ->group(function () {
+    // 7. Pengumuman
+    Route::resource('pengumuman', PengumumanController::class)->only(['store', 'update', 'destroy', 'show']);
 
-        Route::post('/', [PengumumanController::class, 'store'])
-            ->name('store');
+    // 8. Notulensi Rapat
+    Route::post('/notulensi', [NotulensiController::class, 'store'])->name('notulensi.store');
+    Route::delete('/notulensi/{notulensi}', [NotulensiController::class, 'destroy'])->name('notulensi.destroy');
+    Route::get('/notulensi/{notulensi}/view', [NotulensiController::class, 'viewPdf'])->name('notulensi.view');
 
-        Route::put('/{pengumuman}', [PengumumanController::class, 'update'])
-            ->name('update');
-
-        Route::delete('/{pengumuman}', [PengumumanController::class, 'destroy'])
-            ->name('destroy');
+    // 9. Endpoint Internal Ajax Scanner
+    Route::prefix('api/scan')->name('api.scan.')->group(function () {
+        Route::post('/lookup', [ScanController::class, 'lookup'])->name('lookup');
+        Route::post('/record', [ScanController::class, 'recordAttendance'])->name('record');
     });
-
-/*
-|--------------------------------------------------------------------------
-| Timeline
-|--------------------------------------------------------------------------
-*/
-// View: Semua role yang terautentikasi
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/timeline', [TimelineController::class, 'index'])
-        ->name('timeline.index');
-});
-
-// CRUD: Hanya Admin & Sekretaris
-Route::middleware([
-    'auth',
-    'verified',
-    'can:archivist-access',
-])->prefix('timeline')
-    ->name('timeline.')
-    ->group(function () {
-
-        Route::post('/', [TimelineController::class, 'store'])
-            ->name('store');
-
-        Route::put('/{timeline}', [TimelineController::class, 'update'])
-            ->name('update');
-
-        Route::delete('/{timeline}', [TimelineController::class, 'destroy'])
-            ->name('destroy');
-    });
-
-/*
-|--------------------------------------------------------------------------
-| Notulensi
-|--------------------------------------------------------------------------
-*/
-Route::middleware([
-    'auth',
-    'verified',
-    'can:archivist-access',
-])->prefix('notulensi')
-    ->name('notulensi.')
-    ->group(function () {
-
-        Route::post('/', [NotulensiController::class, 'store'])
-            ->name('store');
-
-        Route::delete('/{notulensi}', [NotulensiController::class, 'destroy'])
-            ->name('destroy');
-    });
-
-// View PDF — semua user terautentikasi bisa mengakses
-Route::middleware(['auth', 'verified'])
-    ->get('/notulensi/{notulensi}/view', [NotulensiController::class, 'viewPdf'])
-    ->name('notulensi.view');
-
-/*
-|--------------------------------------------------------------------------
-| Scan
-|--------------------------------------------------------------------------
-*/
-Route::middleware([
-    'auth',
-    'verified',
-    'can:archivist-access',
-])->group(function () {
-    Route::get('/scan', function () {
-        return view('kegiatan.scan');
-    })->name('scan');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Profile
+| Admin Area
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-/*
-|--------------------------------------------------------------------------
-| Lihat List Panitia
-|--------------------------------------------------------------------------
-*/
-
-
-// list panitia
-Route::middleware([
-    'auth',
-    'verified',
-    'can:view-panitia-list',
-])->group(function () {
-    Route::get('/lihat/list', [ListPanitiaController::class, 'index'])
-        ->name('kegiatan.ListPanitia');
-});
-
-/*
-|--------------------------------------------------------------------------
-| SELURUH PANITIA
-|--------------------------------------------------------------------------
-*/
-Route::middleware([
-    'auth',
-    'verified',
-])->group(function () {
-
-    Route::get('/qr', [PresensiController::class, 'index'])
-        ->name('kegiatan.QR');
-});
-
-/*
-|--------------------------------------------------------------------------
-| ADMIN
-|--------------------------------------------------------------------------
-*/
-
-Route::middleware([
-    'auth',
-    'verified',
-    'role:Admin',
-])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])
-        ->name('admin.dashboard');
-    Route::get('/admin/role-request', [AdminController::class, 'roleRequest'])
-        ->name('admin.role-request');
-    Route::post('/admin/role-request/{roleRequest}/approve', [AdminController::class, 'approveRoleRequest'])
-        ->name('admin.role-request.approve');
-    Route::post('/admin/role-request/{roleRequest}/reject', [AdminController::class, 'rejectRoleRequest'])
-        ->name('admin.role-request.reject');
-
-    // Manage Users
-    Route::get('/admin/manage-users', [AdminController::class, 'manageUsers'])
-        ->name('admin.manage-users.index');
-    Route::get('/admin/manage-users/create', [AdminController::class, 'createUserForm'])
-        ->name('admin.manage-users.create');
-    Route::post('/admin/manage-users', [AdminController::class, 'storeUser'])
-        ->name('admin.manage-users.store');
-    Route::put('/admin/manage-users/{user}', [AdminController::class, 'updateUserRole'])
-        ->name('admin.manage-users.update');
-    Route::delete('/admin/manage-users/{user}', [AdminController::class, 'destroyUser'])
-        ->name('admin.manage-users.destroy');
+Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+    // Kelola Pengguna (Users CRUD murni)
+    Route::resource('users', UserController::class);
 
     // QR Code Management
-    Route::get('/admin/users', [QrCodeController::class, 'index'])
-        ->name('admin.users');
-    Route::post('/admin/users/{user}/regenerate-qr', [QrCodeController::class, 'regenerate'])
-        ->name('admin.users.regenerate-qr');
-    Route::post('/admin/users/regenerate-all-qr', [QrCodeController::class, 'regenerateAll'])
-        ->name('admin.users.regenerate-all-qr');
+    Route::get('/qr', [QrCodeController::class, 'index'])->name('qr.index');
+    Route::get('/qr/{user}', [QrCodeController::class, 'show'])->name('qr.show');
+    Route::post('/qr/{user}/regenerate', [QrCodeController::class, 'regenerate'])->name('qr.regenerate');
+    Route::post('/qr/regenerate-all', [QrCodeController::class, 'regenerateAll'])->name('qr.regenerate-all');
 });
-
-/*
-|--------------------------------------------------------------------------
-| API Scan (web routes with CSRF protection)
-|--------------------------------------------------------------------------
-*/
-Route::middleware([
-    'auth',
-    'verified',
-    'can:archivist-access',
-])->group(function () {
-    Route::post('/scan/lookup', [ScanController::class, 'lookup'])
-        ->name('scan.lookup');
-    Route::post('/scan/attendance', [ScanController::class, 'recordAttendance'])
-        ->name('scan.attendance');
-
-    // Kontrol & Penjadwalan Absensi (Sekretaris & Admin)
-    Route::post('/absen/{rapat}/toggle', [PresensiController::class, 'toggleAbsen'])
-        ->name('absen.toggle');
-    Route::post('/absen/{rapat}/schedule', [PresensiController::class, 'updateJadwalAbsen'])
-        ->name('absen.schedule');
-});
-
 
 require __DIR__ . '/auth.php';

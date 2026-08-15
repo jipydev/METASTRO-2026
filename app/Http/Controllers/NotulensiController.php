@@ -3,106 +3,87 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notulensi;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class NotulensiController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menyimpan dokumen notulensi baru.
      */
-    public function index()
+    public function store(Request $request): RedirectResponse
     {
-        //
-    }
+        /** @var User $user */
+        $user = Auth::user();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        if (! $user->canManageSekretariat()) {
+            abort(403, 'Hanya Sekretaris/Archivist dan Admin yang dapat mengunggah notulensi.');
+        }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'judul' => 'required|string|max:255',
-            'lampiran' => 'required|mimes:pdf|max:5120', // 5MB max
+        $validated = $request->validate([
+            'judul'         => 'required|string|max:255',
+            'kegiatan_id'   => 'nullable|exists:kegiatans,id',
+            'file_notulensi' => 'required|mimes:pdf|max:5120', // Maksimal 5MB
         ]);
 
         $filePath = null;
-        if ($request->hasFile('lampiran')) {
-            $filePath = $request->file('lampiran')->store('notulensi_pdfs', 'public');
+        if ($request->hasFile('file_notulensi')) {
+            $filePath = $request->file('file_notulensi')->store('notulensi_pdfs', 'public');
         }
 
-        notulensi::create([
-            'judul' => $request->judul,
-            'lampiran' => $filePath,
-            'pembuat_id' => auth()->id(),
+        Notulensi::create([
+            'judul'          => $validated['judul'],
+            'kegiatan_id'    => $validated['kegiatan_id'] ?? null,
+            'file_notulensi' => $filePath,
+            'pembuat_id'     => $user->id,
         ]);
 
-        return redirect()->back()->with('success', 'Notulensi berhasil ditambahkan.');
+        return redirect()->back()->with('success', 'Dokumen notulensi berhasil diunggah.');
     }
 
     /**
-     * Display the specified resource.
+     * Menghapus dokumen notulensi.
      */
-    public function show(Notulensi $notulensi)
+    public function destroy(Notulensi $notulensi): RedirectResponse
     {
-        //
-    }
+        /** @var User $user */
+        $user = Auth::user();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Notulensi $notulensi)
-    {
-        //
-    }
+        if (! $user->canManageSekretariat()) {
+            abort(403, 'Hanya Sekretaris/Archivist dan Admin yang dapat menghapus notulensi.');
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Notulensi $notulensi)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Notulensi $notulensi)
-    {
-        if ($notulensi->lampiran && \Storage::disk('public')->exists($notulensi->lampiran)) {
-            \Storage::disk('public')->delete($notulensi->lampiran);
+        if ($notulensi->file_notulensi && Storage::disk('public')->exists($notulensi->file_notulensi)) {
+            Storage::disk('public')->delete($notulensi->file_notulensi);
         }
 
         $notulensi->delete();
 
-        return redirect()->back()->with('success', 'Notulensi berhasil dihapus.');
+        return redirect()->back()->with('success', 'Arsip notulensi berhasil dihapus.');
     }
 
     /**
-     * Serve PDF file inline (for preview).
+     * Pratinjau file PDF secara inline di browser.
      */
-    public function viewPdf(Notulensi $notulensi)
+    public function viewPdf(Notulensi $notulensi): BinaryFileResponse
     {
-        if (! $notulensi->lampiran) {
-            abort(404, 'Lampiran tidak ditemukan.');
+        if (! $notulensi->file_notulensi) {
+            abort(404, 'File lampiran tidak ditemukan.');
         }
 
-        $path = storage_path('app/public/'.$notulensi->lampiran);
+        $path = storage_path('app/public/' . $notulensi->file_notulensi);
 
         if (! file_exists($path)) {
-            abort(404, 'File tidak ditemukan.');
+            abort(404, 'File fisik tidak ditemukan di server.');
         }
 
         return response()->file($path, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.basename($path).'"',
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . basename($path) . '"',
         ]);
     }
 }

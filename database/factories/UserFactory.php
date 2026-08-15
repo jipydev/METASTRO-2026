@@ -12,9 +12,6 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
     protected static ?string $password;
 
     /**
@@ -25,37 +22,57 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            // 'email' => fake()->unique()->safeEmail(),
-            'nim' => fake()->unique()->numerify('##########'),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
-            'two_factor_secret' => null,
-            'two_factor_recovery_codes' => null,
-            'two_factor_confirmed_at' => null,
+            'nim'                        => fake()->unique()->numerify('#######'), // 7 digit
+            'nama'                       => fake()->name(),
+            'email'                      => fake()->unique()->safeEmail(),
+            'email_verified_at'          => now(),
+            'password'                   => static::$password ??= Hash::make('password'),
+            'nomor_hp'                   => fake()->unique()->numerify('08##########'),
+            'tanggal_lahir'              => fake()->date('Y-m-d', '-18 years'),
+            'jenis_kelamin'              => fake()->randomElement(['laki-laki', 'perempuan']),
+            'status'                     => true,
+            'is_initial_setup_completed' => true,
+            'remember_token'             => Str::random(10),
         ];
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * State untuk Admin
      */
-    public function unverified(): static
+    public function admin(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('admin');
+        });
     }
 
     /**
-     * Indicate that the model has two-factor authentication configured.
+     * State untuk Panitia
      */
-    public function withTwoFactor(): static
+    public function panitia(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'two_factor_secret' => encrypt('secret'),
-            'two_factor_recovery_codes' => encrypt(json_encode(['recovery-code-1'])),
-            'two_factor_confirmed_at' => now(),
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('panitia');
+        });
+    }
+
+    /**
+     * State untuk Peserta
+     */
+    public function peserta(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('peserta');
+        });
+    }
+
+    /**
+     * Unverified Email State
+     */
+    public function unverified(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'email_verified_at' => null,
         ]);
     }
 }

@@ -77,11 +77,6 @@
                         @include('profile.partials.update-password-form')
                     </div>
 
-                    <!-- Delete Account / Danger Zone -->
-                    <div class="p-6 sm:p-8 bg-red-50/40 dark:bg-red-950/20 border border-red-200 dark:border-red-900/60 shadow-sm rounded-3xl transition-colors duration-200">
-                        @include('profile.partials.delete-user-form')
-                    </div>
-
                 </div>
 
             </div>

@@ -5,40 +5,34 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 
-/**
- * @property int $id
- * @property string $judul
- * @property string|null $isi
- * @property string $status
- * @property string|null $lampiran
- * @property int|null $pembuat_id
- * @property \Illuminate\Support\Carbon|null $tanggal_publish
- * @property-read string|null $lampiran_url
- * @property-read \App\Models\User|null $pembuat
- */
 class Pengumuman extends Model
 {
     use HasFactory;
 
-    protected $table = 'pengumuman';
+    protected $table = 'pengumumans';
 
     protected $fillable = [
         'judul',
         'isi',
-        'status',
         'lampiran',
-        'pembuat_id',
+        'target',
         'tanggal_publish',
+        'status',
+        'pembuat_id',
     ];
 
-    protected $casts = [
-        'tanggal_publish' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'tanggal_publish' => 'datetime',
+        ];
+    }
 
     /*
     |--------------------------------------------------------------------------
-    | Relasi
+    | Relasi Eloquent
     |--------------------------------------------------------------------------
     */
 
@@ -49,27 +43,28 @@ class Pengumuman extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | Scope
+    | Local Scopes (Memudahkan Query di Controller)
     |--------------------------------------------------------------------------
     */
 
-    public function scopePublish($query)
+    /**
+     * Scope hanya pengumuman yang sudah terbit
+     */
+    public function scopePublished(Builder $query): Builder
     {
-        return $query->where('status', 'Publish');
+        return $query->where('status', 'published')
+            ->where('tanggal_publish', '<=', now());
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Accessor
-    |--------------------------------------------------------------------------
-    */
-
-    public function getLampiranUrlAttribute()
+    /**
+     * Scope berdasarkan target pembaca user yang login
+     */
+    public function scopeForUser(Builder $query, User $user): Builder
     {
-        if (! $this->lampiran) {
-            return null;
+        if ($user->isAdmin() || $user->isPanitia()) {
+            return $query->whereIn('target', ['semua', 'panitia']);
         }
 
-        return asset('storage/'.$this->lampiran);
+        return $query->whereIn('target', ['semua', 'peserta']);
     }
 }

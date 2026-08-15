@@ -4,8 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
@@ -15,39 +13,37 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Try to use roles seeded by RoleSeeder; fall back to a default list
-        $roles = Role::pluck('name')->toArray();
-        if (empty($roles)) {
-            $roles = ['Admin', 'Panitia', 'Peserta', 'Koordinator Divisi', 'Ranger', 'Sekretaris', 'Pengawas'];
+        // 1. Pastikan role Spatie tersedia
+        foreach (['admin', 'panitia', 'peserta'] as $role) {
+            Role::firstOrCreate(['name' => $role, 'guard_name' => 'web']);
         }
 
-        foreach ($roles as $i => $roleName) {
-            $slug = Str::slug($roleName, '_');
-            // $email = $slug . '@metastro.id';
-            $nim = '0000'.($i + 1);
+        // 2. Akun Super Admin (Chiper)
+        User::factory()->admin()->create([
+            'nim'        => '0000001',
+            'nama'       => 'Administrator',
+            'email'      => 'admin@metastro.id',
+            'divisi_id'  => 3, // Chiper
+            'jabatan_id' => 1, // Ketua
+        ]);
 
-            $user = User::firstOrCreate(
-                ['nim' => $nim],
-                [
-                    'name' => $roleName.' User',
-                    'password' => Hash::make('metastro2026'),
-                    'divisi_id' => 1,
-                    'jabatan_id' => 1,
-                    // keep role_id null or default if your app relies on it
-                    'role_id' => 1,
-                    'status_aktif' => true,
-                    'email_verified_at' => now(),
-                ]
-            );
+        // 3. Akun Panitia (Gearmaster)
+        User::factory()->panitia()->create([
+            'nim'        => '0000002',
+            'nama'       => 'Ketua Gearmaster',
+            'email'      => 'panitia@metastro.id',
+            'divisi_id'  => 6, // Gearmaster
+            'jabatan_id' => 1, // Ketua
+        ]);
 
-            // Assign Spatie role if available
-            try {
-                if (! $user->hasRole($roleName)) {
-                    $user->assignRole($roleName);
-                }
-            } catch (\Throwable $e) {
-                // If Spatie isn't configured yet, ignore role assignment
-            }
-        }
+        // 4. Akun Peserta Uji Coba
+        User::factory()->peserta()->create([
+            'nim'   => '0000003',
+            'nama'  => 'Peserta Contoh',
+            'email' => 'peserta@metastro.id',
+        ]);
+
+        // 5. (Opsional) Buat 10 Peserta Dummy Acak Sekaligus
+        User::factory()->count(10)->peserta()->create();
     }
 }

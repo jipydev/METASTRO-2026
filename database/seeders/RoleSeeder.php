@@ -3,33 +3,42 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class RoleSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
+        // 1. Reset cached roles and permissions bawaan Spatie
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
+        // 2. Daftar Role Utama
         $roles = [
-            ['name' => 'admin', 'permissions' => ['lihat presensi', 'scan presensi', 'upload notulensi', 'hapus notulensi', 'tambah timeline', 'ubah timeline', 'hapus timeline', 'ubah pengumuman']],
-            ['name' => 'panitia'],
-            ['name' => 'peserta'],
-            // Capitalized alias for compatibility
-            ['name' => 'Admin', 'permissions' => ['lihat presensi', 'scan presensi', 'upload notulensi', 'hapus notulensi', 'tambah timeline', 'ubah timeline', 'hapus timeline', 'ubah pengumuman']],
-            ['name' => 'Panitia'],
-            ['name' => 'Peserta'],
+            'admin',
+            'panitia',
+            'peserta',
         ];
 
-        foreach ($roles as $role) {
-            $roleModel = Role::firstOrCreate([
-                'name' => $role['name'],
+        foreach ($roles as $roleName) {
+            Role::firstOrCreate([
+                'name'       => $roleName,
                 'guard_name' => 'web',
             ]);
-
-            if ($role['permissions'] ?? false) {
-                foreach ($role['permissions'] as $permission) {
-                    $roleModel->givePermissionTo($permission);
-                }
-            }
         }
+
+        // 3. (Opsional) Jika nanti ada permission global yang ingin dipakai:
+        // $permissions = [
+        //     'akses dashboard admin',
+        //     'kelola user',
+        // ];
+        // foreach ($permissions as $permission) {
+        //     Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+        // }
+        // Role::findByName('admin')->givePermissionTo($permissions);
     }
 }

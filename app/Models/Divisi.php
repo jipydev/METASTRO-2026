@@ -9,12 +9,10 @@ class Divisi extends Model
 {
     use HasFactory;
 
-    protected $table = 'divisi';
-
     protected $fillable = [
-        'nama_divisi',
+        'nama',
         'deskripsi',
-        'koordinator_divisi_nim',
+        'koordinator_id',
     ];
 
     public function users()
@@ -24,7 +22,7 @@ class Divisi extends Model
 
     public function koordinator()
     {
-        return $this->belongsTo(User::class, 'koordinator_divisi_nim', 'nim');
+        return $this->belongsTo(User::class, 'koordinator_id');
     }
 
     public function penilaian()
