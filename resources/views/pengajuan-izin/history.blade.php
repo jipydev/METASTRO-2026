@@ -48,7 +48,6 @@
 
             @if($pengajuanList->isEmpty())
                 <div class="text-center py-12 text-slate-400 dark:text-slate-500">
-                    <span class="text-4xl block mb-2">📑</span>
                     <p class="text-xs font-medium">Anda belum pernah membuat pengajuan izin.</p>
                 </div>
             @else
