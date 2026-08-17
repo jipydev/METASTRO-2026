@@ -310,7 +310,7 @@ class User extends Authenticatable implements PasskeyUser
 
     public function isAdmin(): bool
     {
-        return $this->isChiper();
+        return $this->hasRole('admin');
     }
 
     public function isPanitia(): bool
@@ -465,7 +465,7 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
-     * Admin (Chiper): semua panitia aktif termasuk pengawas.
+     * Admin issuer: semua panitia aktif termasuk pengawas.
      *
      * @param  Builder<self>  $query
      */
@@ -500,24 +500,11 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
-     * Mengembalikan role utama pengguna (Admin, Panitia, atau Peserta).
-     *
-     * @return Collection<int, string>
+     * Label role utama untuk tampilan UI.
      */
-    public function getRoleNames(): Collection
+    public function displayRole(): string
     {
-        // 1. Admin (Jika Chiper / Admin)
-        if ($this->isAdmin()) {
-            return collect(['Admin']);
-        }
-
-        // 2. Panitia (Jika memiliki divisi atau jabatan kepanitiaan)
-        if ($this->divisi_id || $this->jabatan_id) {
-            return collect(['Panitia']);
-        }
-
-        // 3. Peserta (Default)
-        return collect(['Peserta']);
+        return ucfirst($this->roles->first()?->name ?? 'peserta');
     }
 
     /**

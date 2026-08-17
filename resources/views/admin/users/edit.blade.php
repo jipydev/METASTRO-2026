@@ -70,7 +70,7 @@
                         <div>
                             <label for="role" class="block font-bold text-gray-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Role *</label>
                             <select id="role" name="role" required class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
-                                @php $currentRole = $user->getRoleNames()->first(); @endphp
+                                @php $currentRole = $user->roles->first()?->name; @endphp
                                 @foreach($roles as $r)
                                     <option value="{{ $r->name }}" {{ old('role', $currentRole) == $r->name ? 'selected' : '' }}>
                                         {{ ucfirst($r->name) }}
@@ -78,6 +78,7 @@
                                 @endforeach
                             </select>
                             <x-input-error :messages="$errors->get('role')" class="mt-1" />
+                            <p class="text-[11px] text-gray-400 dark:text-slate-500 mt-1">Role dan divisi dipilih terpisah. Anggota Chiper bisa admin atau panitia.</p>
                         </div>
 
                         {{-- Divisi --}}

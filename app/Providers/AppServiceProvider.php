@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function registerAuthorizationGates(): void
     {
-        // Gate untuk fitur khusus Admin (Chiper)
+        // Gate untuk fitur khusus Admin
         Gate::define('admin-access', function (User $user) {
             return $user->isAdmin();
         });

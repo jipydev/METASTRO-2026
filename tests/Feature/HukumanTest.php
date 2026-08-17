@@ -92,7 +92,7 @@ class HukumanTest extends TestCase
         $pengawasJabatan = Jabatan::query()->where('nama', 'Pengawas')->firstOrFail();
         $anggotaJabatan = Jabatan::query()->where('nama', 'Anggota')->firstOrFail();
 
-        $admin = User::factory()->create([
+        $admin = User::factory()->admin()->create([
             'divisi_id' => $chiperDivisi->id,
             'jabatan_id' => $anggotaJabatan->id,
         ]);

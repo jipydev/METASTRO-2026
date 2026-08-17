@@ -39,7 +39,7 @@ class DashboardTest extends TestCase
             'divisi_id' => $rangerDivisi->id,
             'jabatan_id' => $jabatan->id,
         ]);
-        $admin = User::factory()->create([
+        $admin = User::factory()->admin()->create([
             'divisi_id' => $chiperDivisi->id,
             'jabatan_id' => $jabatan->id,
         ]);

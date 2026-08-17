@@ -73,7 +73,7 @@ class UserSeeder extends Seeder
 
                 $slug = Str::slug($divisi->nama);
                 $jabatanSlug = Str::slug($jabatanNama);
-                $role = strcasecmp($divisi->nama, 'Chiper') === 0 ? 'admin' : 'panitia';
+                $role = 'panitia';
 
                 $this->upsertUser([
                     'nim' => (string) $nim++,

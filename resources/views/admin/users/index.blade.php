@@ -182,10 +182,10 @@
 
                                     {{-- Kolom Role --}}
                                     <td class="px-5 py-3.5">
-                                        @foreach ($user->getRoleNames() as $role)
+                                        @foreach ($user->roles as $role)
                                             <span
-                                                class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold {{ $role === 'Admin' ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300' : ($role === 'Panitia' ? 'bg-indigo-100 text-slate-700 dark:bg-slate-800/60 dark:text-slate-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300') }}">
-                                                {{ $role }}
+                                                class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold {{ $role->name === 'admin' ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300' : ($role->name === 'panitia' ? 'bg-indigo-100 text-slate-700 dark:bg-slate-800/60 dark:text-slate-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300') }}">
+                                                {{ ucfirst($role->name) }}
                                             </span>
                                         @endforeach
                                     </td>

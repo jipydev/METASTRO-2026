@@ -41,7 +41,7 @@
                         <!-- Badges -->
                         <div class="flex flex-wrap justify-center gap-2 mt-4">
                             <span class="px-3 py-1 bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400 rounded-full text-xs font-bold border border-primary-200 dark:border-primary-900">
-                                {{ $user->divisi ? $user->formatted_divisi_jabatan : ($user->getRoleNames()->first() ?? 'Peserta') }}
+                                {{ $user->divisi ? $user->formatted_divisi_jabatan : $user->displayRole() }}
                             </span>
                             @if($user->roles->count() > 0)
                                 <span class="px-3 py-1 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 rounded-full text-xs font-bold border border-amber-200 dark:border-amber-900">

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 /**
  * @extends Factory<User>
@@ -42,6 +43,7 @@ class UserFactory extends Factory
     public function admin(): static
     {
         return $this->afterCreating(function (User $user) {
+            Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
             $user->assignRole('admin');
         });
     }
@@ -52,6 +54,7 @@ class UserFactory extends Factory
     public function panitia(): static
     {
         return $this->afterCreating(function (User $user) {
+            Role::firstOrCreate(['name' => 'panitia', 'guard_name' => 'web']);
             $user->assignRole('panitia');
         });
     }
@@ -62,6 +65,7 @@ class UserFactory extends Factory
     public function peserta(): static
     {
         return $this->afterCreating(function (User $user) {
+            Role::firstOrCreate(['name' => 'peserta', 'guard_name' => 'web']);
             $user->assignRole('peserta');
         });
     }

@@ -148,7 +148,7 @@
             <div class="relative mt-1">
                 <input type="text"
                        class="form-control-app w-full bg-slate-100 dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 cursor-not-allowed"
-                       value="{{ $user->divisi ? $user->formatted_divisi_jabatan : ($user->getRoleNames()->first() ?? 'Peserta') }}"
+                       value="{{ $user->divisi ? $user->formatted_divisi_jabatan : $user->displayRole() }}"
                        readonly disabled />
             </div>
             <p class="mt-1 text-xs text-slate-400">Hubungi admin jika divisi atau jabatan perlu diubah.</p>
