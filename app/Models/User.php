@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
@@ -60,6 +62,55 @@ class User extends Authenticatable implements PasskeyUser
             'is_initial_setup_completed' => 'boolean',
             'qr_updated_at' => 'datetime',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::deleting(function (User $user): void {
+            $user->prepareForDeletion();
+        });
+    }
+
+    /**
+     * Bersihkan relasi sebelum user dihapus agar tidak gagal di FK hosting.
+     */
+    public function prepareForDeletion(): void
+    {
+        Divisi::query()
+            ->where('koordinator_id', $this->id)
+            ->update(['koordinator_id' => null]);
+
+        if (Schema::hasTable('hukumans')) {
+            Hukuman::query()
+                ->where('user_id', $this->id)
+                ->orWhere('issued_by', $this->id)
+                ->delete();
+        }
+
+        Presensi::query()
+            ->where('scanned_by', $this->id)
+            ->update(['scanned_by' => null]);
+
+        PengajuanIzin::query()
+            ->where('reviewed_by_koordinator', $this->id)
+            ->update(['reviewed_by_koordinator' => null]);
+
+        PengajuanIzin::query()
+            ->where('reviewed_by_ranger', $this->id)
+            ->update(['reviewed_by_ranger' => null]);
+
+        if (Schema::hasTable('kegiatans')) {
+            Kegiatan::query()
+                ->where('created_by', $this->id)
+                ->update(['created_by' => null]);
+        }
+
+        $this->notifications()->delete();
+        $this->syncRoles([]);
+
+        if ($this->foto) {
+            Storage::disk('public')->delete($this->foto);
+        }
     }
 
     /*

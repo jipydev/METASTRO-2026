@@ -78,7 +78,7 @@
                                 @endforeach
                             </select>
                             <x-input-error :messages="$errors->get('role')" class="mt-1" />
-                            <p class="text-[11px] text-gray-400 dark:text-slate-500 mt-1">Role dan divisi dipilih terpisah. Anggota Chiper bisa admin atau panitia.</p>
+                            
                         </div>
 
                         {{-- Divisi --}}

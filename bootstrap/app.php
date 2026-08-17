@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
@@ -30,6 +31,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => RoleOrPermissionMiddleware::class,
             'initial.setup' => \App\Http\Middleware\EnsureInitialSetupCompleted::class,
         ]);
+    })
+
+    ->withSchedule(function (Schedule $schedule): void {
+        $schedule->command('pengumuman:publish-scheduled')->everyMinute();
     })
 
     ->withExceptions(function (Exceptions $exceptions): void {

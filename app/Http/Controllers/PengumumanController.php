@@ -7,7 +7,7 @@ use App\Models\Pengumuman;
 use App\Models\User;
 use App\Services\FileCompressionService;
 use App\Services\NotificationDispatcher;
-use Carbon\Carbon;
+use App\Services\PengumumanPublisher;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,13 +17,18 @@ use Illuminate\View\View;
 
 class PengumumanController extends Controller
 {
-    public function __construct(private NotificationDispatcher $notifications) {}
+    public function __construct(
+        private NotificationDispatcher $notifications,
+        private PengumumanPublisher $publisher,
+    ) {}
 
     /**
      * Daftar pengumuman lengkap.
      */
     public function index(Request $request): View
     {
+        $this->publisher->publishDue();
+
         /** @var User $user */
         $user = $request->user();
 
@@ -39,7 +44,7 @@ class PengumumanController extends Controller
             ->when($request->filled('status'), function ($q) use ($request) {
                 $status = strtolower($request->string('status')->toString());
                 if ($status === 'published') {
-                    $q->whereIn('status', ['published', 'Publish']);
+                    $q->publishedAndLive();
                 } elseif ($status === 'draft') {
                     $q->whereIn('status', ['draft', 'Draft']);
                 }
@@ -52,6 +57,7 @@ class PengumumanController extends Controller
         return view('pengumuman.index', [
             'title' => 'Pengumuman',
             'pengumumans' => $pengumumans,
+            'minPublishAt' => now()->format('Y-m-d\TH:i'),
         ]);
     }
 
@@ -67,11 +73,7 @@ class PengumumanController extends Controller
             abort(403, 'Anda tidak memiliki hak akses untuk membuat pengumuman.');
         }
 
-        $validated = $request->validated();
-
-        $validated['tanggal_publish'] = ! empty($validated['tanggal_publish'])
-            ? Carbon::parse($validated['tanggal_publish'])->format('Y-m-d H:i:s')
-            : null;
+        $validated = $this->publisher->resolveAttributes($request->validated());
 
         if ($request->hasFile('lampiran')) {
             $validated['lampiran'] = $files->store($request->file('lampiran'), 'pengumuman');
@@ -81,27 +83,29 @@ class PengumumanController extends Controller
 
         $pengumuman = Pengumuman::create($validated);
 
-        $this->notifications->pengumumanPublished($pengumuman, $user->id);
+        if ($pengumuman->isPublished()) {
+            $this->notifications->pengumumanPublished($pengumuman, $user->id);
+        }
+
+        $message = $pengumuman->isScheduled()
+            ? 'Pengumuman draft terjadwal berhasil disimpan.'
+            : 'Pengumuman berhasil ditambahkan.';
 
         return redirect()
             ->back()
-            ->with('success', 'Pengumuman berhasil ditambahkan.');
+            ->with('success', $message);
     }
 
     /**
      * Update Pengumuman
      */
-    public function update(PengumumanRequest $request, Pengumuman $pengumuman, FileCompressionService $files)
+    public function update(PengumumanRequest $request, Pengumuman $pengumuman, FileCompressionService $files): RedirectResponse
     {
         if (! $pengumuman->canBeManagedBy($request->user())) {
             abort(403, 'Anda tidak memiliki hak akses untuk mengubah pengumuman ini.');
         }
 
-        $validated = $request->validated();
-
-        $validated['tanggal_publish'] = ! empty($validated['tanggal_publish'])
-            ? Carbon::parse($validated['tanggal_publish'])->format('Y-m-d H:i:s')
-            : null;
+        $validated = $this->publisher->resolveAttributes($request->validated());
 
         if ($request->hasFile('lampiran')) {
             if ($pengumuman->lampiran && Storage::disk('public')->exists($pengumuman->lampiran)) {
@@ -117,12 +121,15 @@ class PengumumanController extends Controller
             $this->notifications->pengumumanPublished($pengumuman, $request->user()?->id);
         }
 
-        return redirect()->back()->with('success', 'Pengumuman berhasil diperbarui.');
+        $message = $pengumuman->isScheduled()
+            ? 'Jadwal pengumuman berhasil diperbarui.'
+            : 'Pengumuman berhasil diperbarui.';
+
+        return redirect()->back()->with('success', $message);
     }
 
-    public function destroy(Request $request, Pengumuman $pengumuman)
+    public function destroy(Request $request, Pengumuman $pengumuman): RedirectResponse
     {
-        // Admin otomatis lolos di sini
         if (! $pengumuman->canBeManagedBy($request->user())) {
             abort(403, 'Anda tidak memiliki hak akses untuk menghapus pengumuman ini.');
         }

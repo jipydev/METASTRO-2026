@@ -33,7 +33,34 @@ class Pengumuman extends Model
 
     public function isPublished(): bool
     {
-        return in_array(strtolower((string) $this->status), ['published', 'publish'], true);
+        return in_array(strtolower((string) $this->status), ['published', 'publish'], true)
+            && ($this->tanggal_publish === null || $this->tanggal_publish->lte(now()));
+    }
+
+    public function isDraft(): bool
+    {
+        return ! in_array(strtolower((string) $this->status), ['published', 'publish'], true);
+    }
+
+    public function isScheduled(): bool
+    {
+        return $this->isDraft()
+            && $this->tanggal_publish !== null
+            && $this->tanggal_publish->isFuture();
+    }
+
+    /**
+     * @param  Builder<Pengumuman>  $query
+     * @return Builder<Pengumuman>
+     */
+    public function scopePublishedAndLive($query)
+    {
+        return $query
+            ->whereIn('status', ['published', 'Publish'])
+            ->where(function ($inner) {
+                $inner->whereNull('tanggal_publish')
+                    ->orWhere('tanggal_publish', '<=', now());
+            });
     }
 
     /**
@@ -47,7 +74,7 @@ class Pengumuman extends Model
         }
 
         return $query->where(function ($q) use ($user) {
-            $q->whereIn('status', ['published', 'Publish']);
+            $q->publishedAndLive();
 
             if ($user) {
                 $q->orWhere(function ($draft) use ($user) {

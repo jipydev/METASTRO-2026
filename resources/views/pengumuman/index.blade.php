@@ -17,7 +17,8 @@
         openTambahPengumuman: false,
         openEditPengumuman: false,
         openDeletePengumuman: false,
-        selectedPengumuman: { id: null, judul: '', isi: '', status: 'draft', tanggal_publish: '' }
+        minPublishAt: @js($minPublishAt),
+        selectedPengumuman: { id: null, judul: '', isi: '', status: 'draft', tanggal_publish: @js($minPublishAt) }
     }" class="page-shell">
 
         <div class="page-wrap">
@@ -28,7 +29,7 @@
                 </div>
                 @if (auth()->user()->canCreatePengumuman())
                     <button type="button"
-                        @click="selectedPengumuman = { id: null, judul: '', isi: '', status: 'draft', tanggal_publish: '' }; openTambahPengumuman = true;"
+                        @click="selectedPengumuman = { id: null, judul: '', isi: '', status: 'draft', tanggal_publish: minPublishAt }; openTambahPengumuman = true;"
                         class="btn-primary">
                         + Tambah
                     </button>
@@ -61,12 +62,18 @@
                             <div class="min-w-0 flex-1">
                                 <div class="flex flex-wrap items-center gap-2">
                                     <h2 class="text-sm font-bold text-slate-900 dark:text-white">{{ $item->judul }}</h2>
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider {{ $item->isPublished() ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300' }}">
-                                        {{ $item->status }}
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider {{ $item->isPublished() ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300' : ($item->isScheduled() ? 'bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300') }}">
+                                        {{ $item->isScheduled() ? 'Terjadwal' : ucfirst((string) $item->status) }}
                                     </span>
                                 </div>
                                 <p class="text-[11px] text-slate-400 mt-1">
-                                    {{ $item->tanggal_publish?->locale('id')->isoFormat('D MMMM Y, HH.mm') ?? 'Draft' }} WIB
+                                    @if ($item->isPublished())
+                                        Dipublikasikan {{ $item->tanggal_publish?->locale('id')->isoFormat('D MMMM Y, HH.mm') ?? '—' }} WIB
+                                    @elseif ($item->isScheduled())
+                                        Rilis otomatis {{ $item->tanggal_publish->locale('id')->isoFormat('D MMMM Y, HH.mm') }} WIB
+                                    @else
+                                        {{ $item->tanggal_publish?->locale('id')->isoFormat('D MMMM Y, HH.mm') ?? 'Draft' }} WIB
+                                    @endif
                                     • {{ $item->pembuat?->nama ?? 'Admin' }}
                                     ({{ $item->pembuat?->divisi?->nama ?? 'Umum' }})
                                 </p>
@@ -142,14 +149,21 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Status *</label>
-                                <select name="status" class="{{ $fieldClass }}">
-                                    <option value="draft">Draft (Hanya Divisi Saya)</option>
-                                    <option value="published">Publish (Semua Panitia)</option>
+                                <select name="status" x-model="selectedPengumuman.status" class="{{ $fieldClass }}">
+                                    <option value="draft">Draft (Jadwalkan rilis)</option>
+                                    <option value="published">Publish (Langsung sekarang)</option>
                                 </select>
                             </div>
-                            <div>
+                            <div x-show="selectedPengumuman.status === 'draft'" x-cloak>
+                                <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Tanggal Rilis *</label>
+                                <input type="datetime-local" name="tanggal_publish" :min="minPublishAt" x-model="selectedPengumuman.tanggal_publish" required class="{{ $fieldClass }}">
+                                <p class="text-[11px] text-slate-400 mt-1">Minimal waktu sekarang. Otomatis publish saat jadwal tiba.</p>
+                            </div>
+                            <div x-show="selectedPengumuman.status === 'published'" x-cloak>
                                 <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Tanggal Publish</label>
-                                <input type="datetime-local" name="tanggal_publish" required class="{{ $fieldClass }}">
+                                <div class="{{ $fieldClass }} bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 cursor-not-allowed">
+                                    Otomatis: waktu simpan (now)
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -186,13 +200,20 @@
                             <div>
                                 <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Status *</label>
                                 <select name="status" x-model="selectedPengumuman.status" class="{{ $fieldClass }}">
-                                    <option value="published">Publish (Semua Panitia)</option>
-                                    <option value="draft">Draft (Hanya Divisi Saya)</option>
+                                    <option value="published">Publish (Langsung sekarang)</option>
+                                    <option value="draft">Draft (Jadwalkan rilis)</option>
                                 </select>
                             </div>
-                            <div>
+                            <div x-show="selectedPengumuman.status === 'draft'" x-cloak>
+                                <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Tanggal Rilis *</label>
+                                <input type="datetime-local" name="tanggal_publish" :min="minPublishAt" x-model="selectedPengumuman.tanggal_publish" class="{{ $fieldClass }}">
+                                <p class="text-[11px] text-slate-400 mt-1">Minimal waktu sekarang. Otomatis publish saat jadwal tiba.</p>
+                            </div>
+                            <div x-show="selectedPengumuman.status === 'published'" x-cloak>
                                 <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Tanggal Publish</label>
-                                <input type="datetime-local" name="tanggal_publish" x-model="selectedPengumuman.tanggal_publish" class="{{ $fieldClass }}">
+                                <div class="{{ $fieldClass }} bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 cursor-not-allowed">
+                                    Otomatis: waktu simpan (now)
+                                </div>
                             </div>
                         </div>
                         <div>

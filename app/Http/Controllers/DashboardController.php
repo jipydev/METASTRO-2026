@@ -7,16 +7,21 @@ use App\Models\Kegiatan;
 use App\Models\Notulensi;
 use App\Models\Pengumuman;
 use App\Models\User;
+use App\Services\PengumumanPublisher;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
+    public function __construct(private PengumumanPublisher $publisher) {}
+
     public function index(Request $request): View
     {
         /** @var User $user */
         $user = $request->user();
+
+        $this->publisher->publishDue();
 
         $pengumumanList = Pengumuman::with('pembuat.divisi')
             ->visibleTo($user)

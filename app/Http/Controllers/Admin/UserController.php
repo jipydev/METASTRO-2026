@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\Divisi;
 use App\Models\Jabatan;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
@@ -196,7 +197,16 @@ class UserController extends Controller
             return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
-        $user->delete();
+        try {
+            $user->delete();
+        } catch (QueryException $exception) {
+            report($exception);
+
+            return back()->with(
+                'error',
+                'Pengguna tidak dapat dihapus karena masih terhubung ke data lain. Coba nonaktifkan akun terlebih dahulu.'
+            );
+        }
 
         return back()->with('success', 'Pengguna berhasil dihapus.');
     }
