@@ -233,6 +233,51 @@
                 </a>
             </section>
 
+            @if ($hukumanStats)
+                <section class="md:col-span-2 lg:col-span-3 bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700 shadow-sm min-w-0">
+                    <div class="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="min-w-0">
+                            <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <svg class="w-5 h-5 text-brand-600 dark:text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                <span>Rekapitulasi Hukuman</span>
+                            </h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                @if (auth()->user()->isAdmin())
+                                    Statistik seluruh hukuman yang tercatat
+                                @else
+                                    Statistik hukuman yang Anda terbitkan
+                                @endif
+                            </p>
+                        </div>
+
+                        <div class="flex items-center gap-2 shrink-0">
+                            @if (auth()->user()->canIssueHukumanRanger())
+                                <a href="{{ route('hukuman.kelola', 'ranger') }}"
+                                   class="px-3 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-xl shadow-sm transition whitespace-nowrap">
+                                    Kelola Hukuman
+                                </a>
+                            @elseif (auth()->user()->canIssueHukumanPengawas())
+                                <a href="{{ route('hukuman.kelola', 'pengawas') }}"
+                                   class="px-3 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-xl shadow-sm transition whitespace-nowrap">
+                                    Kelola Hukuman
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+
+                    <x-hukuman-stats
+                        :total="$hukumanStats['total']"
+                        :aktif="$hukumanStats['aktif']"
+                        :menunggu-pembelaan="$hukumanStats['menunggu_pembelaan']"
+                        :deadline="$hukumanStats['deadline']"
+                        :selesai="$hukumanStats['selesai']"
+                        :ringan="$hukumanStats['ringan']"
+                        :sedang="$hukumanStats['sedang']"
+                        :berat="$hukumanStats['berat']"
+                        :khusus="$hukumanStats['khusus']" />
+                </section>
+            @endif
+
             {{-- 4. NOTULENSI SECTION --}}
             <section class="md:col-span-2 lg:col-span-3 bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700 shadow-sm min-w-0">
                 <div class="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">

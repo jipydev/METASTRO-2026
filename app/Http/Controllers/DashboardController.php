@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Hukuman;
 use App\Models\Kegiatan;
 use App\Models\Notulensi;
 use App\Models\Pengumuman;
@@ -75,6 +76,7 @@ class DashboardController extends Controller
             'belumAbsenCount' => $belumAbsenCount,
             'notulensiList' => Notulensi::with(['kegiatan', 'pembuat.divisi'])->latest()->limit(3)->get(),
             'kegiatanOptions' => Kegiatan::orderBy('tanggal', 'desc')->limit(50)->get(['id', 'nama', 'tanggal']),
+            'hukumanStats' => $user->canManageHukuman() ? Hukuman::rekapForManager($user) : null,
         ]);
     }
 }

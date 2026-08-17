@@ -123,4 +123,51 @@ class Hukuman extends Model
     {
         return $query->whereNull('selesai_at');
     }
+
+    /**
+     * Rekap statistik hukuman untuk Ranger / Admin / Pengawas di dashboard.
+     *
+     * @return array{
+     *     total: int,
+     *     aktif: int,
+     *     menunggu_pembelaan: int,
+     *     deadline: int,
+     *     selesai: int,
+     *     ringan: int,
+     *     sedang: int,
+     *     berat: int,
+     *     khusus: int
+     * }
+     */
+    public static function rekapForManager(User $user): array
+    {
+        $query = static::query();
+
+        if (! $user->isAdmin()) {
+            $query->where('issued_by', $user->id);
+        }
+
+        $total = (clone $query)->count();
+        $selesai = (clone $query)->whereNotNull('selesai_at')->count();
+        $aktif = (clone $query)->whereNull('selesai_at')->count();
+        $menungguPembelaan = (clone $query)->whereNull('selesai_at')->whereNull('pembelaan_at')->count();
+        $deadline = (clone $query)->whereNull('selesai_at')->where('deadline_at', '<', now())->count();
+
+        $byKategori = (clone $query)
+            ->selectRaw('kategori, COUNT(*) as total')
+            ->groupBy('kategori')
+            ->pluck('total', 'kategori');
+
+        return [
+            'total' => $total,
+            'aktif' => $aktif,
+            'menunggu_pembelaan' => $menungguPembelaan,
+            'deadline' => $deadline,
+            'selesai' => $selesai,
+            'ringan' => (int) ($byKategori['ringan'] ?? 0),
+            'sedang' => (int) ($byKategori['sedang'] ?? 0),
+            'berat' => (int) ($byKategori['berat'] ?? 0),
+            'khusus' => (int) ($byKategori['khusus'] ?? 0),
+        ];
+    }
 }
