@@ -68,6 +68,47 @@ class Kegiatan extends Model
     }
 
     /**
+     * Rekap jumlah kehadiran untuk kegiatan ini.
+     *
+     * @return array{hadir: int, terlambat: int, izin: int, sakit: int, alpa: int, belum: int}
+     */
+    public function rekapKehadiran(int $totalPanitia): array
+    {
+        $presensis = $this->relationLoaded('presensis')
+            ? $this->presensis
+            : $this->presensis()->get();
+
+        $hadir = 0;
+        $terlambat = 0;
+        $izin = 0;
+        $sakit = 0;
+        $alpa = 0;
+
+        foreach ($presensis as $presensi) {
+            $presensi->setRelation('kegiatan', $this);
+
+            match ($presensi->status) {
+                'izin' => $izin++,
+                'sakit' => $sakit++,
+                'alpa' => $alpa++,
+                'hadir' => $presensi->isTerlambat() ? $terlambat++ : $hadir++,
+                default => null,
+            };
+        }
+
+        $tercatat = $hadir + $terlambat + $izin + $sakit + $alpa;
+
+        return [
+            'hadir' => $hadir,
+            'terlambat' => $terlambat,
+            'izin' => $izin,
+            'sakit' => $sakit,
+            'alpa' => $alpa,
+            'belum' => max(0, $totalPanitia - $tercatat),
+        ];
+    }
+
+    /**
      * Jam tap default untuk input manual / impor tanpa kolom waktu: 15 menit sebelum mulai.
      */
     public function defaultJamTap(): CarbonInterface

@@ -74,7 +74,7 @@
 
                     {{-- Tambah Pengguna --}}
                     <a href="{{ route('admin.users.create') }}"
-                        class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+                        class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer">
                         <span>+</span> Tambah Pengguna
                     </a>
                 </div>
@@ -191,9 +191,11 @@
                                     </td>
 
                                     <td class="px-5 py-3.5">
-                                        <div class="font-semibold text-slate-800 dark:text-slate-200">
-                                            {{ $user->formatted_divisi_jabatan }}
-                                        </div>
+                                        @if ($user->divisi)
+                                            <x-divisi-badge :divisi="$user->divisi" :label="$user->formatted_divisi_jabatan" />
+                                        @else
+                                            <span class="text-slate-400">—</span>
+                                        @endif
                                     </td>
 
                                     {{-- Kolom Status Token QR --}}
@@ -222,7 +224,7 @@
 
                                             {{-- 1. Tombol Lihat QR --}}
                                             <button type="button"
-                                                @click="initViewQr({{ json_encode(['id' => $user->id, 'nama' => $user->nama, 'nim' => $user->nim, 'qr_token' => $user->qr_token, 'divisi' => $user->divisi?->nama ?? 'Peserta']) }})"
+                                                @click="initViewQr({{ json_encode(['id' => $user->id, 'nama' => $user->nama, 'nim' => $user->nim, 'qr_token' => $user->qr_token, 'divisi' => $user->formatted_divisi_jabatan, 'divisi_badge' => $user->divisi?->badgeClasses() ?? '']) }})"
                                                 class="p-1.5 rounded-lg text-slate-500 hover:text-brand-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-indigo-950/60 transition cursor-pointer"
                                                 title="Lihat QR Code">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
@@ -331,7 +333,8 @@
                         <p class="text-slate-400 text-[11px] font-mono mt-0.5">NIM: <span
                                 x-text="selectedUser.nim"></span></p>
                         <span
-                            class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 dark:bg-indigo-950 dark:text-slate-400"
+                            class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border"
+                            :class="selectedUser.divisi_badge || 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'"
                             x-text="selectedUser.divisi"></span>
                     </div>
 

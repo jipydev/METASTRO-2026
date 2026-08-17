@@ -72,20 +72,29 @@ class Presensi extends Model
 
     public function isTerlambat(): bool
     {
+        return $this->menitTerlambat() > 0;
+    }
+
+    public function menitTerlambat(): int
+    {
         if ($this->status !== 'hadir' || ! $this->jam_tap) {
-            return false;
+            return 0;
         }
 
         $kegiatan = $this->relationLoaded('kegiatan') ? $this->kegiatan : $this->kegiatan()->first();
         if (! $kegiatan?->waktu_mulai) {
-            return false;
+            return 0;
         }
 
         $jadwalMulai = Carbon::parse(
             Carbon::parse($kegiatan->tanggal)->format('Y-m-d').' '.$kegiatan->waktu_mulai
         );
 
-        return $this->jam_tap->greaterThan($jadwalMulai);
+        if ($this->jam_tap->lessThanOrEqualTo($jadwalMulai)) {
+            return 0;
+        }
+
+        return max(1, (int) abs($this->jam_tap->diffInMinutes($jadwalMulai)));
     }
 
     public function getStatusTampilanAttribute(): string

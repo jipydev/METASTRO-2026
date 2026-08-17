@@ -9,11 +9,21 @@ use App\Models\Divisi;
 use App\Models\Jabatan;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    /** @return array<string, mixed> */
+    private function jabatanFormData(): array
+    {
+        return [
+            'stakeholderDivisiId' => Divisi::query()->where('nama', 'Stakeholder')->value('id'),
+            'operationalJabatan' => Jabatan::orderedOperational(),
+            'stakeholderJabatan' => Jabatan::orderedStakeholder(),
+        ];
+    }
     public function index(Request $request)
     {
         $query = User::with(['divisi', 'jabatan']);
@@ -112,6 +122,7 @@ class UserController extends Controller
             'divisis' => $divisis,
             'jabatans' => $jabatans,
             'roles' => $roles,
+            ...$this->jabatanFormData(),
         ];
 
         return view('admin.users.create', $data);
@@ -170,6 +181,7 @@ class UserController extends Controller
             'divisis' => $divisis,
             'jabatans' => $jabatans,
             'roles' => $roles,
+            ...$this->jabatanFormData(),
         ];
 
         return view('admin.users.edit', $data);

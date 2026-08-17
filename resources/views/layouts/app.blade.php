@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full overflow-x-hidden">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="min-h-dvh overflow-x-hidden">
 
 <head>
     <meta charset="utf-8">
@@ -33,7 +33,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-poppins antialiased bg-gray-100 dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-screen overflow-x-hidden transition-colors duration-200"
+<body class="font-poppins antialiased bg-brand-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-dvh overflow-x-hidden transition-colors duration-200"
     x-data="{
         sidebarOpen: false,
         sidebarCollapsed: false,
@@ -57,14 +57,15 @@
             }
         }
     }">
-    <div class="min-h-screen flex">
+    <div class="min-h-dvh">
         <div x-show="sidebarOpen" x-cloak x-transition.opacity
             class="fixed inset-0 z-40 bg-black/40 lg:hidden"
             @click="sidebarOpen = false"></div>
 
         @include('layouts.navigation')
 
-        <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+        <div class="flex min-h-dvh flex-col min-w-0 transition-[margin] duration-200 lg:ml-64"
+            :class="sidebarCollapsed && !sidebarOpen ? 'lg:!ml-[4.75rem]' : ''">
             <header class="sticky top-0 z-30 h-14 flex items-center gap-3 px-4 lg:px-6 bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700/80">
                 <button type="button" @click="toggleSidebar()"
                     class="lg:hidden p-2 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60">

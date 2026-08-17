@@ -1,5 +1,5 @@
 <x-app-layout :$title>
-    <div class="py-8 font-poppins min-h-screen bg-gray-100 dark:bg-slate-900 transition-colors duration-200">
+    <div class="py-8 font-poppins min-h-screen bg-brand-50 dark:bg-slate-900 transition-colors duration-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
             <!-- Page Header -->

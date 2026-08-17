@@ -40,16 +40,16 @@
         openAddNotulensi: {{ $errors->has('lampiran') ? 'true' : 'false' }},
         openEditNotulensi: false,
         selectedNotulensi: { id: null, judul: '', isi: '', kegiatan_id: '', hasLampiran: false },
-    }" class="bg-slate-50 dark:bg-slate-900 pb-8 font-poppins transition-colors duration-200">
+    }" class="bg-brand-50 dark:bg-slate-900 pb-8 font-poppins transition-colors duration-200">
 
         <div class="max-w-7xl mx-auto px-3 py-4 sm:p-6 lg:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
 
             {{-- 1. PENGUMUMAN SECTION --}}
-            <section class="md:col-span-2 bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700 shadow-sm min-w-0">
+            <section class="md:col-span-2 lg:col-span-3 bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700 shadow-sm min-w-0">
                 <div class="flex flex-col gap-3 mb-5 sm:flex-row sm:items-center sm:justify-between">
                     <div class="min-w-0">
                         <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <svg class="w-5 h-5 text-slate-600 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                            <svg class="w-5 h-5 text-brand-600 dark:text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
                             <span>Pengumuman</span>
                         </h2>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Informasi terbaru untuk panitia</p>
@@ -60,7 +60,7 @@
                         @if (auth()->user()->canCreatePengumuman())
                             <button type="button"
                                 @click="selectedPengumuman = { id: null, judul: '', isi: '', status: 'draft', tanggal_publish: '' }; openTambahPengumuman = true;"
-                                class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm transition cursor-pointer whitespace-nowrap">
+                                class="px-3 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-xl shadow-sm transition cursor-pointer whitespace-nowrap">
                                 + Tambah
                             </button>
                         @endif
@@ -147,11 +147,67 @@
                 </div>
             </section>
 
-            {{-- 2. JADWAL KEGIATAN --}}
+            {{-- 2. PRESENSI SECTION --}}
+            <section class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700 shadow-sm flex flex-col justify-between min-w-0">
+                <div>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <svg class="w-5 h-5 text-brand-600 dark:text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012-2m-6 9l2 2 4-4"></path></svg>
+                                <span>Rekapitulasi Presensi</span>
+                            </h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                                Sesi Aktif: <strong class="text-slate-700 dark:text-slate-200">{{ $kegiatanTerbaru?->nama ?? 'Tidak ada sesi aktif' }}</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Grid Badge / Pill Status Kehadiran --}}
+                    <x-presensi-stats class="my-5"
+                        :hadir="$hadirCount ?? 0"
+                        :terlambat="$terlambatCount ?? 0"
+                        :izin="$izinCount ?? 0"
+                        :sakit="$sakitCount ?? 0"
+                        :belum="$belumAbsenCount ?? 0" />
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-4 border-t border-slate-100 dark:border-slate-700/80">
+                    <a href="{{ route('presensi.index') }}"
+                        class="px-2 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center justify-center text-center transition">
+                        <span>QR Saya</span>
+                    </a>
+
+                    <a href="{{ route('presensi.history') }}"
+                        class="px-2 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center justify-center text-center transition">
+                        <span>Riwayat</span>
+                    </a>
+
+                    <a href="{{ route('pengajuan-izin.create') }}"
+                        class="px-2 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center justify-center text-center transition">
+                        <span>Ajukan Izin</span>
+                    </a>
+
+                    @if (auth()->user()->canScanPresensi())
+                        <a href="{{ route('presensi.scan') }}"
+                            class="px-2 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center justify-center text-center transition">
+                            <span>Scan QR</span>
+                        </a>
+                    @endif
+
+                    @if (auth()->user()->canViewPanitiaList())
+                        <a href="{{ route('presensi.monitoring') }}"
+                            class="px-2 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center justify-center text-center transition">
+                            <span>Monitoring</span>
+                        </a>
+                    @endif
+                </div>
+            </section>
+
+            {{-- 3. JADWAL KEGIATAN --}}
             <section class="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700 shadow-sm flex flex-col justify-between min-w-0">
                 <div>
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <svg class="w-5 h-5 text-brand-600 dark:text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <span>Agenda Terdekat</span>
                     </h2>
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Kegiatan atau rapat mendatang</p>
@@ -182,82 +238,12 @@
                 </a>
             </section>
 
-            {{-- 3. PRESENSI SECTION --}}
-            <section class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700 shadow-sm flex flex-col justify-between min-w-0">
-                <div>
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
-                        <div>
-                            <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012-2m-6 9l2 2 4-4"></path></svg>
-                                <span>Rekapitulasi Presensi</span>
-                            </h2>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
-                                Sesi Aktif: <strong class="text-slate-700 dark:text-slate-200">{{ $kegiatanTerbaru?->nama ?? 'Tidak ada sesi aktif' }}</strong>
-                            </p>
-                        </div>
-                    </div>
-
-                    {{-- Grid Badge / Pill Status Kehadiran --}}
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-5">
-                        {{-- Hadir --}}
-                        <div class="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-100 dark:border-emerald-800/40 flex flex-col justify-between">
-                            <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Hadir</span>
-                            <span class="text-2xl font-black text-emerald-700 dark:text-emerald-300 font-mono mt-1">{{ $hadirCount ?? 0 }}</span>
-                        </div>
-
-                        {{-- Izin --}}
-                        <div class="p-3 bg-blue-50 dark:bg-blue-950/40 rounded-xl border border-blue-100 dark:border-blue-800/40 flex flex-col justify-between">
-                            <span class="text-[11px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Izin</span>
-                            <span class="text-2xl font-black text-blue-700 dark:text-blue-300 font-mono mt-1">{{ $izinCount ?? 0 }}</span>
-                        </div>
-
-                        {{-- Sakit --}}
-                        <div class="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-xl border border-amber-100 dark:border-amber-800/40 flex flex-col justify-between">
-                            <span class="text-[11px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Sakit</span>
-                            <span class="text-2xl font-black text-amber-700 dark:text-amber-300 font-mono mt-1">{{ $sakitCount ?? 0 }}</span>
-                        </div>
-
-                        {{-- Belum Absen --}}
-                        <div class="p-3 bg-slate-100 dark:bg-slate-700/50 rounded-xl border border-slate-200 dark:border-slate-600 flex flex-col justify-between">
-                            <span class="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider leading-tight">Belum Absen</span>
-                            <span class="text-2xl font-black text-slate-700 dark:text-slate-300 font-mono mt-1">{{ $belumAbsenCount ?? 0 }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-4 border-t border-slate-100 dark:border-slate-700/80">
-                    <a href="{{ route('presensi.index') }}"
-                        class="px-2 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center justify-center text-center transition">
-                        <span>QR Saya</span>
-                    </a>
-
-                    <a href="{{ route('pengajuan-izin.create') }}"
-                        class="px-2 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center justify-center text-center transition">
-                        <span>Ajukan Izin</span>
-                    </a>
-
-                    @if (auth()->user()->canScanPresensi())
-                        <a href="{{ route('presensi.scan') }}"
-                            class="px-2 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center justify-center text-center transition">
-                            <span>Scan QR</span>
-                        </a>
-                    @endif
-
-                    @if (auth()->user()->canViewPanitiaList())
-                        <a href="{{ route('presensi.monitoring') }}"
-                            class="px-2 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center justify-center text-center transition">
-                            <span>Monitoring</span>
-                        </a>
-                    @endif
-                </div>
-            </section>
-
             {{-- 4. NOTULENSI SECTION --}}
-            <section class="md:col-span-2 lg:col-span-1 bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700 shadow-sm min-w-0">
+            <section class="md:col-span-2 lg:col-span-3 bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700 shadow-sm min-w-0">
                 <div class="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
                     <div class="min-w-0">
                         <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <svg class="w-5 h-5 text-slate-600 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <svg class="w-5 h-5 text-brand-600 dark:text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             <span>Notulensi Rapat</span>
                         </h2>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Arsip berkas hasil koordinasi kegiatan</p>
@@ -268,7 +254,7 @@
                         @if (auth()->user()->canManageSekretariat())
                             <button type="button"
                                 @click="openAddNotulensi = true"
-                                class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition shadow-sm cursor-pointer whitespace-nowrap">
+                                class="px-3 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-xl transition shadow-sm cursor-pointer whitespace-nowrap">
                                 + Tambah
                             </button>
                         @endif

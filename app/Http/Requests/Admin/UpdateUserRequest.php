@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateUserRequest extends FormRequest
+class UpdateUserRequest extends UserFormRequest
 {
     public function authorize(): bool
     {
@@ -36,7 +36,7 @@ class UpdateUserRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:255', Rule::unique(User::class, 'email')->ignore($user->id)],
             'role' => ['required', 'exists:roles,name'],
             'divisi_id' => ['nullable', 'exists:divisis,id'],
-            'jabatan_id' => ['nullable', 'exists:jabatans,id'],
+            'jabatan_id' => ['nullable', 'exists:jabatans,id', $this->jabatanDivisiRule()],
             'status' => ['required', 'in:0,1'],
         ];
     }

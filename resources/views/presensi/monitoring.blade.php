@@ -104,6 +104,16 @@
                 @endif
             </div>
 
+            @if ($selectedKegiatan)
+                <x-presensi-stats class="mb-6"
+                    :hadir="$hadirCount"
+                    :terlambat="$terlambatCount"
+                    :izin="$izinCount"
+                    :sakit="$sakitCount"
+                    :belum="$belumAbsenCount"
+                    :belum-label="$belumLabel" />
+            @endif
+
             <form method="GET" action="{{ route('presensi.monitoring') }}" class="filter-bar">
                 <div class="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-12 gap-3 items-end">
                     <div class="sm:col-span-2 xl:col-span-4">
@@ -129,7 +139,7 @@
                         <label for="filter-status" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Status</label>
                         <select id="filter-status" name="status" onchange="this.form.submit()" class="form-control-app w-full">
                             <option value="">Semua Status</option>
-                            @foreach (['hadir' => 'Hadir', 'terlambat' => 'Terlambat', 'izin' => 'Izin', 'sakit' => 'Sakit', 'alpa' => 'Alpa', 'belum_hadir' => 'Belum Hadir'] as $key => $label)
+                            @foreach (['hadir' => 'Hadir', 'terlambat' => 'Terlambat', 'izin' => 'Izin', 'sakit' => 'Sakit', 'alpa' => 'Alpa'] as $key => $label)
                                 <option value="{{ $key }}" @selected($statusFilter === $key)>{{ $label }}</option>
                             @endforeach
                         </select>
@@ -174,7 +184,7 @@
                                 @php
                                     $badgeClass = match ($row['status']) {
                                         'hadir' => 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-                                        'terlambat' => 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+                                        'terlambat' => 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200 dark:border-rose-800',
                                         'izin' => 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800',
                                         'sakit' => 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800',
                                         'alpa' => 'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-300 border-red-200 dark:border-red-800',
@@ -192,8 +202,8 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-5 py-3.5 font-medium text-slate-800 dark:text-slate-200">
-                                        {{ $row['divisi_jabatan'] }}
+                                    <td class="px-5 py-3.5">
+                                        <x-divisi-badge :divisi="$row['divisi_nama']" :label="$row['divisi_jabatan']" size="xs" />
                                     </td>
                                     <td class="px-5 py-3.5 text-center whitespace-nowrap font-mono text-[11px]">
                                         {{ $row['waktu_presensi'] !== '-' ? $row['waktu_presensi'] . ' WIB' : '-' }}

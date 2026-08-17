@@ -57,6 +57,13 @@ class PresensiController extends Controller
         };
 
         $usersData = [];
+        $hadirCount = 0;
+        $terlambatCount = 0;
+        $izinCount = 0;
+        $sakitCount = 0;
+        $belumAbsenCount = 0;
+        $belumLabel = 'Belum Absen';
+
         if ($selectedKegiatan) {
             $users = User::where('status', true)
                 ->whereNotNull('divisi_id')
@@ -78,6 +85,7 @@ class PresensiController extends Controller
                 : Carbon::parse($tanggalStr.' '.$selectedKegiatan->waktu_mulai)->addHours(3);
 
             $isKegiatanPassed = now()->greaterThan($waktuSelesaiKegiatan);
+            $belumLabel = $isKegiatanPassed ? 'Alpa' : 'Belum Absen';
 
             foreach ($users as $user) {
                 $presensi = $presensiMap->get($user->id);
@@ -93,6 +101,14 @@ class PresensiController extends Controller
                     $status = $isKegiatanPassed ? 'alpa' : 'belum_hadir';
                     $waktuPresensi = '-';
                 }
+
+                match ($status) {
+                    'hadir' => $hadirCount++,
+                    'terlambat' => $terlambatCount++,
+                    'izin' => $izinCount++,
+                    'sakit' => $sakitCount++,
+                    default => $belumAbsenCount++,
+                };
 
                 if ($statusFilter && $status !== $statusFilter) {
                     continue;
@@ -253,6 +269,12 @@ class PresensiController extends Controller
             'search' => $search,
             'sort' => $sort,
             'panitiaOptions' => $panitiaOptions,
+            'hadirCount' => $hadirCount,
+            'terlambatCount' => $terlambatCount,
+            'izinCount' => $izinCount,
+            'sakitCount' => $sakitCount,
+            'belumAbsenCount' => $belumAbsenCount,
+            'belumLabel' => $belumLabel,
         ]);
     }
 
@@ -458,38 +480,50 @@ class PresensiController extends Controller
     }
 
     /**
-     * Rekap riwayat presensi.
+     * Riwayat presensi milik user yang sedang login.
      */
     public function history(Request $request): View
     {
         /** @var User $user */
         $user = Auth::user();
 
-        $presensis = Presensi::with(['kegiatan', 'user.divisi', 'scanner.divisi', 'pengajuanIzin.reviewerRanger.divisi'])
-            ->when(! $user->isAdmin() && ! $user->canScanPresensi(), function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            })
-            ->when($request->filled('search'), function ($q) use ($request) {
-                $search = $request->string('search')->toString();
-                $q->where(function ($inner) use ($search) {
-                    $inner->whereHas('user', function ($userQuery) use ($search) {
-                        $userQuery->where('nama', 'like', "%{$search}%")
-                            ->orWhere('nim', 'like', "%{$search}%");
-                    })->orWhereHas('kegiatan', function ($kegiatanQuery) use ($search) {
-                        $kegiatanQuery->where('nama', 'like', "%{$search}%");
-                    });
+        $search = trim((string) $request->query('search', ''));
+        $statusFilter = (string) $request->query('status', '');
+
+        $records = Presensi::with(['kegiatan', 'scanner.divisi', 'pengajuanIzin.reviewerRanger.divisi'])
+            ->where('user_id', $user->id)
+            ->when($search !== '', function ($q) use ($search) {
+                $q->whereHas('kegiatan', function ($kegiatanQuery) use ($search) {
+                    $kegiatanQuery->where('nama', 'like', "%{$search}%");
                 });
             })
-            ->when($request->filled('status'), function ($q) use ($request) {
-                $q->where('status', $request->string('status')->toString());
-            })
             ->latest('jam_tap')
-            ->paginate(20)
-            ->withQueryString();
+            ->get();
+
+        if ($statusFilter !== '') {
+            $records = $records->filter(
+                fn (Presensi $presensi) => $presensi->status_tampilan === $statusFilter
+            )->values();
+        }
+
+        $perPage = 15;
+        $page = max(1, (int) $request->integer('page', 1));
+        $presensis = new LengthAwarePaginator(
+            $records->forPage($page, $perPage)->values(),
+            $records->count(),
+            $perPage,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
 
         return view('presensi.history', [
-            'title' => 'Rekap Riwayat Presensi',
+            'title' => 'Riwayat Presensi Saya',
             'presensis' => $presensis,
+            'search' => $search,
+            'statusFilter' => $statusFilter,
         ]);
     }
 }

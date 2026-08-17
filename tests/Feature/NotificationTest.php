@@ -144,15 +144,31 @@ class NotificationTest extends TestCase
             'user_id' => $user->id,
             'kegiatan_id' => $kegiatan->id,
             'status' => 'hadir',
-            'jam_tap' => now(),
+            'jam_tap' => now()->setTime(7, 50),
         ]);
         $user->notify(new PresensiRecordedNotification($presensi, 'self'));
 
         $this->actingAs($user)
             ->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('Anda berhasil absen', false)
+            ->assertSee('Anda hadir di RABES 1 dengan tepat waktu.', false)
             ->assertSee('Notifikasi', false);
+    }
+
+    public function test_late_attendance_notification_includes_minutes(): void
+    {
+        $user = User::factory()->create();
+        $kegiatan = $this->openKegiatan();
+        $presensi = Presensi::create([
+            'user_id' => $user->id,
+            'kegiatan_id' => $kegiatan->id,
+            'status' => 'hadir',
+            'jam_tap' => now()->setTime(8, 17),
+        ]);
+
+        $data = (new PresensiRecordedNotification($presensi, 'self'))->toDatabase($user);
+
+        $this->assertSame('Anda hadir di RABES 1 tetapi telat 17 menit.', $data['message']);
     }
 
     public function test_opening_a_notification_marks_it_read(): void

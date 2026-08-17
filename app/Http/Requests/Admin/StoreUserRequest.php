@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreUserRequest extends FormRequest
+class StoreUserRequest extends UserFormRequest
 {
     public function authorize(): bool
     {
@@ -34,7 +34,7 @@ class StoreUserRequest extends FormRequest
             'password' => ['required', 'string', 'min:6'],
             'role' => ['required', 'exists:roles,name'],
             'divisi_id' => ['nullable', 'exists:divisis,id'],
-            'jabatan_id' => ['nullable', 'exists:jabatans,id'],
+            'jabatan_id' => ['nullable', 'exists:jabatans,id', $this->jabatanDivisiRule()],
         ];
     }
 

@@ -272,7 +272,17 @@ class User extends Authenticatable implements PasskeyUser
 
     public function isKetuaPengawas(): bool
     {
-        return $this->isPengawas() && $this->isStakeholder();
+        return $this->isStakeholder() && $this->isJabatan('Ketua Pengawas');
+    }
+
+    public function isWakilKetuaPengawas(): bool
+    {
+        return $this->isStakeholder() && $this->isJabatan('Wakil Ketua Pengawas');
+    }
+
+    public function isPersonInCharge(): bool
+    {
+        return $this->isStakeholder() && $this->isJabatan('Person in Charge');
     }
 
     public function isAnggota(): bool
@@ -424,36 +434,18 @@ class User extends Authenticatable implements PasskeyUser
             return '— / —';
         }
 
-        $divisiName = strtolower($this->divisi->nama);
+        if ($this->isStakeholder() && $this->jabatan) {
+            return $this->jabatan->nama;
+        }
+
         $jabatanName = strtolower($this->jabatan?->nama ?? 'anggota');
 
-        // Aturan Khusus Divisi Stakeholder
-        if ($divisiName === 'stakeholder') {
-            if ($jabatanName === 'ketua') {
-                return 'Ketua Pelaksana';
-            }
-            if ($jabatanName === 'wakil') {
-                return 'Wakil Ketua Pelaksana';
-            }
-            if ($jabatanName === 'anggota') {
-                return 'Steering Committee';
-            }
-            if ($jabatanName === 'pengawas' || str_contains($jabatanName, 'ketua pengawas')) {
-                return 'Ketua Pengawas';
-            }
-        }
-
-        // Aturan untuk Divisi Lain (Chiper, Ranger, Archivist, dll)
-        $prefix = '';
-        if ($jabatanName === 'ketua') {
-            $prefix = 'Koordinator ';
-        } elseif ($jabatanName === 'wakil') {
-            $prefix = 'Wakil Koordinator ';
-        } elseif ($jabatanName === 'pengawas') {
-            $prefix = 'Pengawas ';
-        } else {
-            $prefix = 'Anggota ';
-        }
+        $prefix = match ($jabatanName) {
+            'ketua' => 'Koordinator ',
+            'wakil' => 'Wakil Koordinator ',
+            'pengawas' => 'Pengawas ',
+            default => 'Anggota ',
+        };
 
         return $prefix.$this->divisi->nama;
     }

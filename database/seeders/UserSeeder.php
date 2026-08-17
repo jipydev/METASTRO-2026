@@ -51,11 +51,17 @@ class UserSeeder extends Seeder
         $nim = 1000001;
 
         foreach ($divisis as $divisi) {
-            $jabatans = ['Ketua', 'Wakil', 'Anggota'];
-
-            if (strcasecmp($divisi->nama, 'Stakeholder') === 0) {
-                $jabatans = ['Ketua', 'Wakil', 'Anggota', 'Ketua Pengawas', 'Pengawas'];
-            }
+            $jabatans = match (strcasecmp($divisi->nama, 'Stakeholder')) {
+                0 => [
+                    'Person in Charge',
+                    'Ketua Pelaksana',
+                    'Wakil Ketua Pelaksana',
+                    'Ketua Pengawas',
+                    'Wakil Ketua Pengawas',
+                    'Steering Committee',
+                ],
+                default => ['Ketua', 'Wakil', 'Anggota'],
+            };
 
             foreach ($jabatans as $jabatanNama) {
                 $isChiperKetua = strcasecmp($divisi->nama, 'Chiper') === 0 && $jabatanNama === 'Ketua';
@@ -79,8 +85,10 @@ class UserSeeder extends Seeder
                 ]);
             }
 
+            $leaderJabatan = strcasecmp($divisi->nama, 'Stakeholder') === 0 ? 'Ketua Pelaksana' : 'Ketua';
+
             $ketua = User::where('divisi_id', $divisi->id)
-                ->whereHas('jabatan', fn ($q) => $q->where('nama', 'Ketua'))
+                ->whereHas('jabatan', fn ($q) => $q->where('nama', $leaderJabatan))
                 ->first();
 
             if ($ketua) {

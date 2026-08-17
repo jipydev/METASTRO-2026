@@ -18,7 +18,7 @@
                     </a>
                 @endif
                 <a href="{{ route('pengajuan-izin.create') }}"
-                   class="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs shadow-sm transition">
+                   class="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl text-xs shadow-sm transition">
                     + Ajukan Izin
                 </a>
             </div>

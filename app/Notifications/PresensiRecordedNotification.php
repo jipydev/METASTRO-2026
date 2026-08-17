@@ -35,7 +35,7 @@ class PresensiRecordedNotification extends Notification
         if ($this->audience === 'self') {
             return [
                 'title' => 'Presensi berhasil',
-                'message' => "Anda berhasil absen pada kegiatan {$kegiatan}.",
+                'message' => $this->selfMessage($kegiatan),
                 'url' => route('presensi.history'),
                 'type' => 'presensi',
             ];
@@ -51,5 +51,20 @@ class PresensiRecordedNotification extends Notification
             ])),
             'type' => 'presensi',
         ];
+    }
+
+    private function selfMessage(string $kegiatan): string
+    {
+        if ($this->presensi->status !== 'hadir') {
+            return "Anda berhasil absen pada kegiatan {$kegiatan}.";
+        }
+
+        if ($this->presensi->isTerlambat()) {
+            $menit = $this->presensi->menitTerlambat();
+
+            return "Anda hadir di {$kegiatan} tetapi telat {$menit} menit.";
+        }
+
+        return "Anda hadir di {$kegiatan} dengan tepat waktu.";
     }
 }

@@ -7,9 +7,9 @@
 @endphp
 
 <aside
-    class="flex w-64 min-h-screen shrink-0 flex-col overflow-hidden bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700/80
-        max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:z-50 max-lg:h-dvh max-lg:min-h-0
-        max-lg:w-[min(16rem,calc(100vw-3.5rem))] max-lg:-translate-x-full max-lg:shadow-xl max-lg:transition-transform max-lg:duration-200"
+    class="fixed inset-y-0 left-0 z-50 flex h-dvh w-64 flex-col overflow-hidden bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700/80
+        transition-[width,transform] duration-200
+        max-lg:w-[min(16rem,calc(100vw-3.5rem))] max-lg:-translate-x-full max-lg:shadow-xl"
     :class="{
         'max-lg:translate-x-0': sidebarOpen,
         '!w-[4.75rem]': sidebarCollapsed && !sidebarOpen
@@ -33,7 +33,11 @@
         </button>
     </div>
 
-    <nav class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2.5 py-4 space-y-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+    @php
+        $navGroup = 'px-3 pt-4 pb-1 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500';
+    @endphp
+
+    <nav class="sidebar-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-2.5 py-4 space-y-0.5">
         <a href="{{ route('dashboard') }}" title="Dashboard"
             class="{{ $navItem(request()->routeIs('dashboard')) }}"
             :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
@@ -62,8 +66,12 @@
             <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Notulensi</span>
         </a>
 
-        <a href="{{ route('presensi.index') }}" title="Presensi"
-            class="{{ $navItem(request()->routeIs('presensi.*')) }}"
+        {{-- Group: Presensi --}}
+        <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Presensi</p>
+        <hr class="border-slate-100 dark:border-slate-700/60 !my-1" x-show="sidebarCollapsed && !sidebarOpen" x-cloak>
+
+        <a href="{{ route('presensi.index') }}" title="QR Saya"
+            class="{{ $navItem(request()->routeIs('presensi.index')) }}"
             :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <rect x="3" y="3" width="7" height="7" rx="1.2" />
@@ -77,17 +85,59 @@
                 <rect x="14" y="18.5" width="2.5" height="2.5" />
                 <rect x="18" y="18" width="3" height="3" />
             </svg>
-            <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Presensi</span>
+            <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>QR Saya</span>
         </a>
 
-        <a href="{{ route('pengajuan-izin.index') }}" title="Izin"
-            class="{{ $navItem(request()->routeIs('pengajuan-izin.*')) }}"
+        <a href="{{ route('presensi.history') }}" title="Riwayat"
+            class="{{ $navItem(request()->routeIs('presensi.history')) }}"
+            :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Riwayat</span>
+        </a>
+
+        @if (auth()->user()->canScanPresensi())
+            <a href="{{ route('presensi.scan') }}" title="Scan QR"
+                class="{{ $navItem(request()->routeIs('presensi.scan')) }}"
+                :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Scan QR</span>
+            </a>
+        @endif
+
+        @if (auth()->user()->canViewPanitiaList())
+            <a href="{{ route('presensi.monitoring') }}" title="Monitoring"
+                class="{{ $navItem(request()->routeIs('presensi.monitoring')) }}"
+                :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Monitoring</span>
+            </a>
+        @endif
+
+        {{-- Group: Perizinan --}}
+        <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Perizinan</p>
+        <hr class="border-slate-100 dark:border-slate-700/60 !my-1" x-show="sidebarCollapsed && !sidebarOpen" x-cloak>
+
+        <a href="{{ route('pengajuan-izin.index') }}" title="Pengajuan Izin"
+            class="{{ $navItem(request()->routeIs('pengajuan-izin.index') || request()->routeIs('pengajuan-izin.create')) }}"
             :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-            <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Izin</span>
+            <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Pengajuan Izin</span>
         </a>
 
+        @if (auth()->user()->canReviewIzin())
+            <a href="{{ route('pengajuan-izin.review') }}" title="Review Izin"
+                class="{{ $navItem(request()->routeIs('pengajuan-izin.review')) }}"
+                :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+                <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Review Izin</span>
+            </a>
+        @endif
+
         @if (auth()->user()->isAdmin())
+            {{-- Group: Admin --}}
+            <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Admin</p>
+            <hr class="border-slate-100 dark:border-slate-700/60 !my-1" x-show="sidebarCollapsed && !sidebarOpen" x-cloak>
+
             <a href="{{ route('admin.users.index') }}" title="Pengguna"
                 class="{{ $navItem(request()->routeIs('admin.*')) }}"
                 :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">

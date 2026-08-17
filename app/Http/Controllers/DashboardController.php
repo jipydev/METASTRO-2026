@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Kegiatan;
 use App\Models\Notulensi;
 use App\Models\Pengumuman;
-use App\Models\Presensi;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -39,6 +38,7 @@ class DashboardController extends Controller
             ->count();
 
         $hadirCount = 0;
+        $terlambatCount = 0;
         $izinCount = 0;
         $sakitCount = 0;
         $belumAbsenCount = $totalUserCount;
@@ -54,18 +54,12 @@ class DashboardController extends Controller
         }
 
         if ($kegiatanTerbaru) {
-            $rekap = Presensi::where('kegiatan_id', $kegiatanTerbaru->id)
-                ->selectRaw("
-            SUM(CASE WHEN status = 'hadir' THEN 1 ELSE 0 END) as hadir,
-            SUM(CASE WHEN status = 'izin' THEN 1 ELSE 0 END) as izin,
-            SUM(CASE WHEN status = 'sakit' THEN 1 ELSE 0 END) as sakit
-        ")
-                ->first();
-
-            $hadirCount = (int) ($rekap->hadir ?? 0);
-            $izinCount = (int) ($rekap->izin ?? 0);
-            $sakitCount = (int) ($rekap->sakit ?? 0);
-            $belumAbsenCount = max(0, $totalUserCount - $hadirCount - $izinCount - $sakitCount);
+            $rekap = $kegiatanTerbaru->rekapKehadiran($totalUserCount);
+            $hadirCount = $rekap['hadir'];
+            $terlambatCount = $rekap['terlambat'];
+            $izinCount = $rekap['izin'];
+            $sakitCount = $rekap['sakit'];
+            $belumAbsenCount = $rekap['belum'] + $rekap['alpa'];
         }
 
         return view('dashboard.index', [
@@ -75,6 +69,7 @@ class DashboardController extends Controller
             'kegiatanTerbaru' => $kegiatanTerbaru,
             'totalUserCount' => $totalUserCount,
             'hadirCount' => $hadirCount,
+            'terlambatCount' => $terlambatCount,
             'izinCount' => $izinCount,
             'sakitCount' => $sakitCount,
             'belumAbsenCount' => $belumAbsenCount,
