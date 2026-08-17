@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HukumanController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Api\ScanController;
 use App\Http\Controllers\DashboardController;
@@ -28,7 +29,7 @@ Route::get('/', function () {
 | Onboarding / First Time Setup
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'initial.setup'])->group(function () {
     Route::get('/initial-setup', [InitialSetupController::class, 'index'])->name('initial-setup.index');
     Route::post('/initial-setup', [InitialSetupController::class, 'store'])->name('initial-setup.store');
 });
@@ -38,7 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 | Authenticated User Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'initial.setup'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -75,6 +76,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('notulensi', NotulensiController::class)->except(['create', 'edit']);
 
+    Route::prefix('hukuman')->name('hukuman.')->group(function () {
+        Route::get('/', [HukumanController::class, 'index'])->name('index');
+        Route::get('/kelola/{mode}', [HukumanController::class, 'kelola'])->where('mode', 'ranger|pengawas')->name('kelola');
+        Route::get('/buat/{mode}', [HukumanController::class, 'create'])->where('mode', 'ranger|pengawas')->name('create');
+        Route::post('/{mode}', [HukumanController::class, 'store'])->where('mode', 'ranger|pengawas')->name('store');
+        Route::get('/{hukuman}', [HukumanController::class, 'show'])->whereNumber('hukuman')->name('show');
+        Route::post('/{hukuman}/pembelaan', [HukumanController::class, 'submitPembelaan'])->whereNumber('hukuman')->name('pembelaan');
+        Route::post('/{hukuman}/tugas', [HukumanController::class, 'submitTugas'])->whereNumber('hukuman')->name('tugas');
+        Route::post('/{hukuman}/selesai', [HukumanController::class, 'complete'])->whereNumber('hukuman')->name('selesai');
+    });
+
     Route::prefix('api/scan')->name('api.scan.')->group(function () {
         Route::post('/lookup', [ScanController::class, 'lookup'])->name('lookup');
         Route::post('/', [ScanController::class, 'store'])->name('store');
@@ -86,7 +98,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 | Admin Area
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified', 'can:admin-access'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'initial.setup', 'can:admin-access'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('users', UserController::class)->except(['show']);
     Route::patch('users/{user}/reset-qr', [UserController::class, 'resetQr'])->name('users.reset-qr');
     Route::patch('users-reset-all-qr', [UserController::class, 'resetAllQr'])->name('users.reset-all-qr');

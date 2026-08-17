@@ -1,0 +1,236 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Divisi;
+use App\Models\Hukuman;
+use App\Models\Jabatan;
+use App\Models\User;
+use App\Notifications\HukumanNotification;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
+use Tests\TestCase;
+
+class HukumanTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_ranger_can_punish_panitia_but_not_pengawas(): void
+    {
+        Notification::fake();
+
+        $rangerDivisi = Divisi::create(['nama' => 'Ranger']);
+        $chefDivisi = Divisi::create(['nama' => 'Chef']);
+        $stakeholderDivisi = Divisi::create(['nama' => 'Stakeholder']);
+
+        $anggotaJabatan = Jabatan::query()->where('nama', 'Anggota')->firstOrFail();
+        $pengawasJabatan = Jabatan::query()->where('nama', 'Pengawas')->firstOrFail();
+        $ketuaPengawasJabatan = Jabatan::query()->where('nama', 'Ketua Pengawas')->firstOrFail();
+
+        $ranger = User::factory()->create([
+            'divisi_id' => $rangerDivisi->id,
+            'jabatan_id' => $anggotaJabatan->id,
+        ]);
+        $target = User::factory()->create([
+            'nama' => 'Panitia Chef',
+            'divisi_id' => $chefDivisi->id,
+            'jabatan_id' => $anggotaJabatan->id,
+        ]);
+        $pengawas = User::factory()->create([
+            'nama' => 'Pengawas Ops',
+            'divisi_id' => $chefDivisi->id,
+            'jabatan_id' => $pengawasJabatan->id,
+        ]);
+        $ketuaPengawas = User::factory()->create([
+            'nama' => 'Ketua Pengawas Stakeholder',
+            'divisi_id' => $stakeholderDivisi->id,
+            'jabatan_id' => $ketuaPengawasJabatan->id,
+        ]);
+
+        $this->actingAs($ranger)
+            ->post(route('hukuman.store', 'ranger'), [
+                'user_id' => $target->id,
+                'kategori' => 'ringan',
+                'alasan' => 'Terlambat briefing.',
+            ])
+            ->assertRedirect(route('hukuman.kelola', 'ranger'));
+
+        $this->assertDatabaseHas('hukumans', [
+            'user_id' => $target->id,
+            'issued_by' => $ranger->id,
+            'kategori' => 'ringan',
+            'issuer_mode' => 'ranger',
+        ]);
+
+        Notification::assertSentTo($target, HukumanNotification::class, function (HukumanNotification $notification) {
+            return $notification->event === 'issued' && $notification->audience === 'target';
+        });
+
+        $this->actingAs($ranger)
+            ->post(route('hukuman.store', 'ranger'), [
+                'user_id' => $pengawas->id,
+                'kategori' => 'sedang',
+                'alasan' => 'Should fail.',
+            ])
+            ->assertSessionHasErrors('user_id');
+
+        $this->actingAs($ranger)
+            ->post(route('hukuman.store', 'ranger'), [
+                'user_id' => $ketuaPengawas->id,
+                'kategori' => 'sedang',
+                'alasan' => 'Should fail too.',
+            ])
+            ->assertSessionHasErrors('user_id');
+    }
+
+    public function test_pengawas_can_only_punish_other_pengawas(): void
+    {
+        $chefDivisi = Divisi::create(['nama' => 'Chef']);
+        $stakeholderDivisi = Divisi::create(['nama' => 'Stakeholder']);
+
+        $pengawasJabatan = Jabatan::query()->where('nama', 'Pengawas')->firstOrFail();
+        $ketuaPengawasJabatan = Jabatan::query()->where('nama', 'Ketua Pengawas')->firstOrFail();
+        $anggotaJabatan = Jabatan::query()->where('nama', 'Anggota')->firstOrFail();
+
+        $issuer = User::factory()->create([
+            'divisi_id' => $stakeholderDivisi->id,
+            'jabatan_id' => $ketuaPengawasJabatan->id,
+        ]);
+        $targetPengawas = User::factory()->create([
+            'nama' => 'Pengawas Lain',
+            'divisi_id' => $chefDivisi->id,
+            'jabatan_id' => $pengawasJabatan->id,
+        ]);
+        $panitia = User::factory()->create([
+            'nama' => 'Panitia Biasa',
+            'divisi_id' => $chefDivisi->id,
+            'jabatan_id' => $anggotaJabatan->id,
+        ]);
+
+        $this->actingAs($issuer)
+            ->post(route('hukuman.store', 'pengawas'), [
+                'user_id' => $targetPengawas->id,
+                'kategori' => 'berat',
+                'alasan' => 'Pelanggaran protokol.',
+            ])
+            ->assertRedirect(route('hukuman.kelola', 'pengawas'));
+
+        $this->assertDatabaseHas('hukumans', [
+            'user_id' => $targetPengawas->id,
+            'issuer_mode' => 'pengawas',
+        ]);
+
+        $this->actingAs($issuer)
+            ->post(route('hukuman.store', 'pengawas'), [
+                'user_id' => $panitia->id,
+                'kategori' => 'ringan',
+                'alasan' => 'Invalid target.',
+            ])
+            ->assertSessionHasErrors('user_id');
+    }
+
+    public function test_target_must_submit_pembelaan_before_completing(): void
+    {
+        Notification::fake();
+
+        $rangerDivisi = Divisi::create(['nama' => 'Ranger']);
+        $chefDivisi = Divisi::create(['nama' => 'Chef']);
+        $jabatan = Jabatan::query()->where('nama', 'Anggota')->firstOrFail();
+
+        $ranger = User::factory()->create([
+            'divisi_id' => $rangerDivisi->id,
+            'jabatan_id' => $jabatan->id,
+        ]);
+        $target = User::factory()->create([
+            'divisi_id' => $chefDivisi->id,
+            'jabatan_id' => $jabatan->id,
+        ]);
+
+        $this->actingAs($ranger)->post(route('hukuman.store', 'ranger'), [
+            'user_id' => $target->id,
+            'kategori' => 'sedang',
+            'alasan' => 'Tidak hadir rapat.',
+        ]);
+
+        $hukuman = Hukuman::firstOrFail();
+
+        $this->actingAs($target)
+            ->post(route('hukuman.selesai', $hukuman))
+            ->assertForbidden();
+
+        $this->actingAs($target)
+            ->post(route('hukuman.pembelaan', $hukuman), [
+                'pembelaan' => 'Ada kendala mendadak.',
+            ])
+            ->assertRedirect(route('hukuman.show', $hukuman));
+
+        Notification::assertSentTo($ranger, HukumanNotification::class, function (HukumanNotification $notification) {
+            return $notification->event === 'pembelaan';
+        });
+
+        $hukuman->refresh();
+        $this->assertTrue($hukuman->sudahPembelaan());
+
+        $this->actingAs($target)
+            ->post(route('hukuman.tugas', $hukuman), [
+                'tugas_link' => 'https://drive.google.com/file/d/example',
+            ])
+            ->assertRedirect(route('hukuman.show', $hukuman));
+
+        Notification::assertSentTo($ranger, HukumanNotification::class, function (HukumanNotification $notification) {
+            return $notification->event === 'tugas';
+        });
+
+        $this->actingAs($target)
+            ->post(route('hukuman.selesai', $hukuman))
+            ->assertRedirect(route('hukuman.index'));
+
+        Notification::assertSentTo($ranger, HukumanNotification::class, function (HukumanNotification $notification) {
+            return $notification->event === 'selesai';
+        });
+
+        $hukuman->refresh();
+        $this->assertTrue($hukuman->isSelesai());
+        $this->assertNotNull($hukuman->tugas_link);
+    }
+
+    public function test_hukuman_deadline_is_two_days(): void
+    {
+        $rangerDivisi = Divisi::create(['nama' => 'Ranger']);
+        $chefDivisi = Divisi::create(['nama' => 'Chef']);
+        $jabatan = Jabatan::query()->where('nama', 'Anggota')->firstOrFail();
+
+        $ranger = User::factory()->create([
+            'divisi_id' => $rangerDivisi->id,
+            'jabatan_id' => $jabatan->id,
+        ]);
+        $target = User::factory()->create([
+            'divisi_id' => $chefDivisi->id,
+            'jabatan_id' => $jabatan->id,
+        ]);
+
+        $this->actingAs($ranger)->post(route('hukuman.store', 'ranger'), [
+            'user_id' => $target->id,
+            'kategori' => 'khusus',
+            'alasan' => 'Pelanggaran berat.',
+        ]);
+
+        $hukuman = Hukuman::firstOrFail();
+
+        $this->assertTrue($hukuman->deadline_at->equalTo($hukuman->created_at->copy()->addDays(2)));
+    }
+
+    public function test_non_manager_cannot_access_kelola(): void
+    {
+        $chefDivisi = Divisi::create(['nama' => 'Chef']);
+        $jabatan = Jabatan::query()->where('nama', 'Anggota')->firstOrFail();
+        $panitia = User::factory()->create([
+            'divisi_id' => $chefDivisi->id,
+            'jabatan_id' => $jabatan->id,
+        ]);
+
+        $this->actingAs($panitia)
+            ->get(route('hukuman.kelola', 'ranger'))
+            ->assertForbidden();
+    }
+}

@@ -133,6 +133,35 @@
             </a>
         @endif
 
+        {{-- Group: Hukuman --}}
+        <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Hukuman</p>
+        <hr class="border-slate-100 dark:border-slate-700/60 !my-1" x-show="sidebarCollapsed && !sidebarOpen" x-cloak>
+
+        <a href="{{ route('hukuman.index') }}" title="Hukuman Saya"
+            class="{{ $navItem(request()->routeIs('hukuman.index') || request()->routeIs('hukuman.show')) }}"
+            :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Hukuman Saya</span>
+        </a>
+
+        @if (auth()->user()->canIssueHukumanRanger())
+            <a href="{{ route('hukuman.kelola', 'ranger') }}" title="Kelola Hukuman"
+                class="{{ $navItem(request()->routeIs('hukuman.kelola') && request()->route('mode') !== 'pengawas' || request()->routeIs('hukuman.create') && request()->route('mode') !== 'pengawas') }}"
+                :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Kelola Hukuman</span>
+            </a>
+        @endif
+
+        @if (auth()->user()->canIssueHukumanPengawas())
+            <a href="{{ route('hukuman.kelola', 'pengawas') }}" title="Hukuman Pengawas"
+                class="{{ $navItem(request()->routeIs('hukuman.kelola') && request()->route('mode') === 'pengawas' || request()->routeIs('hukuman.create') && request()->route('mode') === 'pengawas') }}"
+                :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Hukuman Pengawas</span>
+            </a>
+        @endif
+
         @if (auth()->user()->isAdmin())
             {{-- Group: Admin --}}
             <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Admin</p>

@@ -2,12 +2,14 @@
 
 namespace App\Services;
 
+use App\Models\Hukuman;
 use App\Models\Kegiatan;
 use App\Models\Notulensi;
 use App\Models\PengajuanIzin;
 use App\Models\Pengumuman;
 use App\Models\Presensi;
 use App\Models\User;
+use App\Notifications\HukumanNotification;
 use App\Notifications\IzinStatusUpdatedNotification;
 use App\Notifications\IzinSubmittedNotification;
 use App\Notifications\PresensiRecordedNotification;
@@ -143,6 +145,30 @@ class NotificationDispatcher
         ), $exceptUserId);
     }
 
+    public function hukumanIssued(Hukuman $hukuman): void
+    {
+        $hukuman->loadMissing('user');
+
+        if ($hukuman->user) {
+            $hukuman->user->notify(new HukumanNotification($hukuman, 'issued', 'target'));
+        }
+    }
+
+    public function hukumanPembelaanSubmitted(Hukuman $hukuman): void
+    {
+        $this->notifyHukumanIssuer($hukuman, 'pembelaan');
+    }
+
+    public function hukumanTugasSubmitted(Hukuman $hukuman): void
+    {
+        $this->notifyHukumanIssuer($hukuman, 'tugas');
+    }
+
+    public function hukumanCompleted(Hukuman $hukuman): void
+    {
+        $this->notifyHukumanIssuer($hukuman, 'selesai');
+    }
+
     private function notifyPanitia(ReminderNotification $notification, ?int $exceptUserId = null): void
     {
         $recipients = User::activePanitia($exceptUserId);
@@ -164,5 +190,16 @@ class NotificationDispatcher
         }
 
         Notification::send($rangers, new IzinSubmittedNotification($izin, 'ranger'));
+    }
+
+    private function notifyHukumanIssuer(Hukuman $hukuman, string $event): void
+    {
+        $hukuman->loadMissing('issuer');
+
+        if (! $hukuman->issuer) {
+            return;
+        }
+
+        $hukuman->issuer->notify(new HukumanNotification($hukuman, $event, 'issuer'));
     }
 }

@@ -98,6 +98,16 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(PengajuanIzin::class);
     }
 
+    public function hukumans(): HasMany
+    {
+        return $this->hasMany(Hukuman::class);
+    }
+
+    public function hukumansDiterbitkan(): HasMany
+    {
+        return $this->hasMany(Hukuman::class, 'issued_by');
+    }
+
     /**
      * Panitia aktif (punya divisi atau jabatan).
      *
@@ -267,7 +277,9 @@ class User extends Authenticatable implements PasskeyUser
 
     public function isPengawas(): bool
     {
-        return $this->isJabatan('pengawas');
+        return $this->isJabatan('pengawas')
+            || $this->isKetuaPengawas()
+            || $this->isWakilKetuaPengawas();
     }
 
     public function isKetuaPengawas(): bool
@@ -393,6 +405,62 @@ class User extends Authenticatable implements PasskeyUser
     public function canViewPanitiaList(): bool
     {
         return $this->isAdmin() || $this->isArchivist() || $this->isRanger() || $this->isStakeholder();
+    }
+
+    public function canIssueHukumanRanger(): bool
+    {
+        return $this->isAdmin() || $this->isRanger();
+    }
+
+    public function canIssueHukumanPengawas(): bool
+    {
+        return $this->isPengawas();
+    }
+
+    public function canManageHukuman(): bool
+    {
+        return $this->canIssueHukumanRanger() || $this->canIssueHukumanPengawas();
+    }
+
+    public function isTargetHukumanPengawas(): bool
+    {
+        if (! $this->jabatan) {
+            return false;
+        }
+
+        return in_array($this->jabatan->nama, ['Pengawas', 'Ketua Pengawas', 'Wakil Ketua Pengawas'], true);
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     */
+    public function scopeHukumanTargetRanger(Builder $query): Builder
+    {
+        return $query
+            ->where('status', true)
+            ->whereNotNull('divisi_id')
+            ->where(function (Builder $inner) {
+                $inner->whereNull('jabatan_id')
+                    ->orWhereHas('jabatan', fn (Builder $jabatan) => $jabatan->whereNotIn('nama', [
+                        'Pengawas',
+                        'Ketua Pengawas',
+                        'Wakil Ketua Pengawas',
+                    ]));
+            });
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     */
+    public function scopeHukumanTargetPengawas(Builder $query): Builder
+    {
+        return $query
+            ->where('status', true)
+            ->whereHas('jabatan', fn (Builder $jabatan) => $jabatan->whereIn('nama', [
+                'Pengawas',
+                'Ketua Pengawas',
+                'Wakil Ketua Pengawas',
+            ]));
     }
 
     public function initials(): string

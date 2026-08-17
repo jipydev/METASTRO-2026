@@ -68,7 +68,7 @@
             @empty
                 <div class="px-4 py-8 text-center">
                     <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Belum ada notifikasi</p>
-                    <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">Update presensi, izin, pengumuman, dan kegiatan akan muncul di sini.</p>
+                    <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">Update presensi, izin, hukuman, pengumuman, dan kegiatan akan muncul di sini.</p>
                 </div>
             @endforelse
         </div>
