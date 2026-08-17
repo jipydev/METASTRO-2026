@@ -15,6 +15,7 @@
     </x-slot>
 
     @php
+        $isEdit = isset($hukuman);
         $targetOptions = $targets->map(fn ($user) => [
             'id' => $user->id,
             'nama' => $user->nama,
@@ -22,6 +23,9 @@
             'divisi' => $user->divisi?->nama ?? 'Umum',
             'jabatan' => $user->formatted_divisi_jabatan,
         ])->values();
+        $selectedUserId = (string) old('user_id', $isEdit ? $hukuman->user_id : '');
+        $selectedKategori = old('kategori', $isEdit ? $hukuman->kategori : '');
+        $alasanValue = old('alasan', $isEdit ? $hukuman->alasan : '');
     @endphp
 
     <div class="py-8 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 font-poppins">
@@ -35,9 +39,9 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 class="text-base font-bold text-gray-900 dark:text-white">Form Hukuman</h3>
+                        <h3 class="text-base font-bold text-gray-900 dark:text-white">{{ $isEdit ? 'Edit Hukuman' : 'Form Hukuman' }}</h3>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                            Lengkapi target, kategori, dan alasan sebelum menerbitkan hukuman.
+                            {{ $isEdit ? 'Perbarui target, kategori, atau alasan hukuman.' : 'Lengkapi target, kategori, dan alasan sebelum menerbitkan hukuman.' }}
                         </p>
                     </div>
                 </div>
@@ -45,11 +49,11 @@
 
             <form
                 method="POST"
-                action="{{ route('hukuman.store', $mode) }}"
+                action="{{ $isEdit ? route('hukuman.update', $hukuman) : route('hukuman.store', $mode) }}"
                 class="p-6 sm:p-8 space-y-6 text-xs"
                 x-data="{
                     targets: {{ \Illuminate\Support\Js::from($targetOptions) }},
-                    selectedId: @js((string) old('user_id', '')),
+                    selectedId: @js($selectedUserId),
                     targetQuery: '',
                     targetOpen: false,
                     targetLabel(item) {
@@ -93,6 +97,9 @@
                 @submit="validateTarget($event)"
             >
                 @csrf
+                @if ($isEdit)
+                    @method('PUT')
+                @endif
 
                 {{-- Target dengan search --}}
                 <div class="space-y-1.5">
@@ -183,7 +190,7 @@
                                     name="kategori"
                                     value="{{ $kategori }}"
                                     class="peer sr-only"
-                                    @checked(old('kategori') === $kategori)
+                                    @checked($selectedKategori === $kategori)
                                     @if ($loop->first) required @endif
                                 >
                                 <span class="flex items-center justify-center min-h-[2.75rem] px-3 py-2 rounded-xl text-[11px] font-bold border text-center transition
@@ -222,7 +229,7 @@
                         maxlength="2000"
                         placeholder="Jelaskan pelanggaran atau alasan hukuman secara jelas..."
                         class="form-control-app w-full resize-y min-h-[120px]"
-                    >{{ old('alasan') }}</textarea>
+                    >{{ $alasanValue }}</textarea>
                     @error('alasan')
                         <p class="text-xs text-red-600 dark:text-red-400 font-semibold">{{ $message }}</p>
                     @enderror
@@ -234,7 +241,11 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <p class="text-[11px] leading-relaxed text-amber-900 dark:text-amber-100">
-                        Target memiliki waktu <strong>2×24 jam (2 hari)</strong> sejak hukuman diterbitkan untuk mengajukan pembelaan dan menyelesaikan tugas.
+                        @if ($isEdit)
+                            Mengubah target akan mereset pembelaan, tugas, dan deadline menjadi 2×24 jam dari sekarang.
+                        @else
+                            Target memiliki waktu <strong>2×24 jam (2 hari)</strong> sejak hukuman diterbitkan untuk mengajukan pembelaan dan menyelesaikan tugas.
+                        @endif
                     </p>
                 </div>
 
@@ -249,7 +260,7 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
-                        Terbitkan Hukuman
+                        {{ $isEdit ? 'Simpan Perubahan' : 'Terbitkan Hukuman' }}
                     </button>
                 </div>
             </form>

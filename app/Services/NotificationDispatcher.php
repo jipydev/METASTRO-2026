@@ -154,6 +154,20 @@ class NotificationDispatcher
         }
     }
 
+    public function hukumanUpdated(Hukuman $hukuman): void
+    {
+        $hukuman->loadMissing('user');
+
+        if ($hukuman->user) {
+            $hukuman->user->notify(new HukumanNotification($hukuman, 'updated', 'target'));
+        }
+    }
+
+    public function hukumanCancelled(Hukuman $hukuman, User $previousTarget): void
+    {
+        $previousTarget->notify(new HukumanNotification($hukuman, 'dibatalkan', 'target'));
+    }
+
     public function hukumanPembelaanSubmitted(Hukuman $hukuman): void
     {
         $this->notifyHukumanIssuer($hukuman, 'pembelaan');

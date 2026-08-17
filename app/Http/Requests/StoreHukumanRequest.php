@@ -12,13 +12,25 @@ class StoreHukumanRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        $user = $this->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        $hukuman = $this->route('hukuman');
+
+        if ($hukuman instanceof Hukuman) {
+            return $user->canManageHukumanRecord($hukuman);
+        }
+
         $mode = $this->issuerMode();
 
         if ($mode === 'ranger') {
-            return $this->user()?->canIssueHukumanRanger() ?? false;
+            return $user->canIssueHukumanRanger();
         }
 
-        return $this->user()?->canIssueHukumanPengawas() ?? false;
+        return $user->canIssueHukumanPengawas();
     }
 
     /**
@@ -81,7 +93,13 @@ class StoreHukumanRequest extends FormRequest
 
     public function issuerMode(): string
     {
-        return $this->route('mode', 'ranger') === 'pengawas' ? 'pengawas' : 'ranger';
+        $hukuman = $this->route('hukuman');
+
+        if ($hukuman instanceof Hukuman) {
+            return $hukuman->issuer_mode === 'pengawas' ? 'pengawas' : 'ranger';
+        }
+
+        return $this->route('mode') === 'pengawas' ? 'pengawas' : 'ranger';
     }
 
     private function isValidRangerTarget(User $target): bool

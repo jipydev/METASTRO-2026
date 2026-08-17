@@ -422,6 +422,21 @@ class User extends Authenticatable implements PasskeyUser
         return $this->canIssueHukumanRanger() || $this->canIssueHukumanPengawas();
     }
 
+    public function canManageHukumanRecord(Hukuman $hukuman): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if ($this->id !== $hukuman->issued_by) {
+            return false;
+        }
+
+        return $hukuman->issuer_mode === 'pengawas'
+            ? $this->canIssueHukumanPengawas()
+            : $this->canIssueHukumanRanger();
+    }
+
     public function isTargetHukumanPengawas(): bool
     {
         if (! $this->jabatan) {

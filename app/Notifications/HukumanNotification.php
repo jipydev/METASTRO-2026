@@ -35,6 +35,18 @@ class HukumanNotification extends Notification
         $kategori = $this->hukuman->kategoriLabel();
 
         return match ($this->event) {
+            'updated' => [
+                'title' => 'Hukuman diperbarui',
+                'message' => "Detail hukuman kategori {$kategori} telah diperbarui. Periksa kembali alasan dan tugasnya.",
+                'url' => route('hukuman.show', $this->hukuman),
+                'type' => 'hukuman',
+            ],
+            'dibatalkan' => [
+                'title' => 'Hukuman dibatalkan',
+                'message' => "Hukuman kategori {$kategori} yang diberikan kepada Anda telah dibatalkan.",
+                'url' => route('hukuman.index'),
+                'type' => 'hukuman',
+            ],
             'pembelaan' => [
                 'title' => 'Pembelaan hukuman',
                 'message' => "{$target} mengajukan pembelaan untuk hukuman kategori {$kategori}.",

@@ -110,6 +110,109 @@ class HukumanController extends Controller
             ->with('success', 'Hukuman berhasil diterbitkan.');
     }
 
+    public function edit(Hukuman $hukuman): View
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (! $user->canManageHukumanRecord($hukuman)) {
+            abort(403);
+        }
+
+        $mode = $hukuman->issuer_mode === 'pengawas' ? 'pengawas' : 'ranger';
+        $targets = $this->targetQuery($user, $mode)
+            ->with(['divisi', 'jabatan'])
+            ->orderBy('nama')
+            ->get();
+
+        if ($hukuman->user && ! $targets->contains('id', $hukuman->user_id)) {
+            $targets->push($hukuman->user->loadMissing(['divisi', 'jabatan']));
+            $targets = $targets->sortBy('nama')->values();
+        }
+
+        return view('hukuman.create', [
+            'title' => 'Edit Hukuman',
+            'mode' => $mode,
+            'hukuman' => $hukuman,
+            'targets' => $targets,
+            'kategoriOptions' => Hukuman::KATEGORI,
+            'isAdminIssuer' => $user->isAdmin() && $mode === 'ranger',
+        ]);
+    }
+
+    public function update(StoreHukumanRequest $request, Hukuman $hukuman): RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (! $user->canManageHukumanRecord($hukuman)) {
+            abort(403);
+        }
+
+        $validated = $request->validated();
+        $previousUserId = $hukuman->user_id;
+        $targetChanged = (int) $validated['user_id'] !== (int) $previousUserId;
+
+        $payload = [
+            'user_id' => $validated['user_id'],
+            'kategori' => $validated['kategori'],
+            'alasan' => $validated['alasan'],
+        ];
+
+        if ($targetChanged) {
+            $payload = array_merge($payload, [
+                'pembelaan' => null,
+                'pembelaan_at' => null,
+                'tugas_link' => null,
+                'tugas_submitted_at' => null,
+                'selesai_at' => null,
+                'deadline_at' => now()->addDays(2),
+            ]);
+        }
+
+        $hukuman->update($payload);
+        $hukuman = $hukuman->fresh(['user', 'issuer']);
+
+        if ($targetChanged) {
+            $previousTarget = User::query()->find($previousUserId);
+
+            if ($previousTarget) {
+                $this->notifications->hukumanCancelled($hukuman, $previousTarget);
+            }
+
+            $this->notifications->hukumanIssued($hukuman);
+        } else {
+            $this->notifications->hukumanUpdated($hukuman);
+        }
+
+        return redirect()
+            ->route('hukuman.show', $hukuman)
+            ->with('success', 'Hukuman berhasil diperbarui.');
+    }
+
+    public function destroy(Hukuman $hukuman): RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (! $user->canManageHukumanRecord($hukuman)) {
+            abort(403);
+        }
+
+        $mode = $hukuman->issuer_mode === 'pengawas' ? 'pengawas' : 'ranger';
+        $target = $hukuman->user;
+
+        if ($target) {
+            $this->notifications->hukumanCancelled($hukuman, $target);
+        }
+
+        $hukuman->delete();
+
+        return redirect()
+            ->route('hukuman.kelola', ['mode' => $mode])
+            ->with('success', 'Hukuman berhasil dihapus.');
+    }
+
     public function show(Hukuman $hukuman): View|RedirectResponse
     {
         /** @var User $user */
@@ -125,6 +228,7 @@ class HukumanController extends Controller
             'title' => 'Detail Hukuman',
             'hukuman' => $hukuman,
             'isTarget' => $user->id === $hukuman->user_id,
+            'canManage' => $user->canManageHukumanRecord($hukuman),
         ]);
     }
 
@@ -203,10 +307,14 @@ class HukumanController extends Controller
             return true;
         }
 
-        if ($user->isAdmin() && $hukuman->issuer_mode === 'ranger') {
+        if ($user->isAdmin()) {
             return true;
         }
 
-        return $user->id === $hukuman->issued_by;
+        if ($user->id === $hukuman->issued_by) {
+            return true;
+        }
+
+        return false;
     }
 }

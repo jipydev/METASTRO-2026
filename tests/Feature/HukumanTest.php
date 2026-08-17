@@ -267,4 +267,79 @@ class HukumanTest extends TestCase
             ->get(route('hukuman.kelola', 'ranger'))
             ->assertForbidden();
     }
+
+    public function test_issuer_can_update_and_delete_hukuman(): void
+    {
+        Notification::fake();
+
+        $rangerDivisi = Divisi::create(['nama' => 'Ranger']);
+        $chefDivisi = Divisi::create(['nama' => 'Chef']);
+        $jabatan = Jabatan::query()->where('nama', 'Anggota')->firstOrFail();
+
+        $ranger = User::factory()->create([
+            'divisi_id' => $rangerDivisi->id,
+            'jabatan_id' => $jabatan->id,
+        ]);
+        $target = User::factory()->create([
+            'nama' => 'Target Awal',
+            'divisi_id' => $chefDivisi->id,
+            'jabatan_id' => $jabatan->id,
+        ]);
+        $replacement = User::factory()->create([
+            'nama' => 'Target Baru',
+            'divisi_id' => $chefDivisi->id,
+            'jabatan_id' => $jabatan->id,
+        ]);
+
+        $this->actingAs($ranger)->post(route('hukuman.store', 'ranger'), [
+            'user_id' => $target->id,
+            'kategori' => 'ringan',
+            'alasan' => 'Terlambat briefing.',
+        ]);
+
+        $hukuman = Hukuman::firstOrFail();
+
+        $this->actingAs($ranger)
+            ->put(route('hukuman.update', $hukuman), [
+                'user_id' => $target->id,
+                'kategori' => 'sedang',
+                'alasan' => 'Terlambat briefing dan tidak izin.',
+            ])
+            ->assertRedirect(route('hukuman.show', $hukuman));
+
+        $this->assertDatabaseHas('hukumans', [
+            'id' => $hukuman->id,
+            'kategori' => 'sedang',
+            'alasan' => 'Terlambat briefing dan tidak izin.',
+        ]);
+
+        Notification::assertSentTo($target, HukumanNotification::class, function (HukumanNotification $notification) {
+            return $notification->event === 'updated';
+        });
+
+        $this->actingAs($ranger)
+            ->put(route('hukuman.update', $hukuman), [
+                'user_id' => $replacement->id,
+                'kategori' => 'sedang',
+                'alasan' => 'Terlambat briefing dan tidak izin.',
+            ])
+            ->assertRedirect(route('hukuman.show', $hukuman));
+
+        Notification::assertSentTo($target, HukumanNotification::class, function (HukumanNotification $notification) {
+            return $notification->event === 'dibatalkan';
+        });
+        Notification::assertSentTo($replacement, HukumanNotification::class, function (HukumanNotification $notification) {
+            return $notification->event === 'issued';
+        });
+
+        $this->actingAs($target)
+            ->delete(route('hukuman.destroy', $hukuman))
+            ->assertForbidden();
+
+        $this->actingAs($ranger)
+            ->delete(route('hukuman.destroy', $hukuman))
+            ->assertRedirect(route('hukuman.kelola', 'ranger'));
+
+        $this->assertDatabaseMissing('hukumans', ['id' => $hukuman->id]);
+    }
 }

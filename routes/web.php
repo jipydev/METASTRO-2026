@@ -81,6 +81,9 @@ Route::middleware(['auth', 'verified', 'initial.setup'])->group(function () {
         Route::get('/kelola/{mode}', [HukumanController::class, 'kelola'])->where('mode', 'ranger|pengawas')->name('kelola');
         Route::get('/buat/{mode}', [HukumanController::class, 'create'])->where('mode', 'ranger|pengawas')->name('create');
         Route::post('/{mode}', [HukumanController::class, 'store'])->where('mode', 'ranger|pengawas')->name('store');
+        Route::get('/{hukuman}/edit', [HukumanController::class, 'edit'])->whereNumber('hukuman')->name('edit');
+        Route::put('/{hukuman}', [HukumanController::class, 'update'])->whereNumber('hukuman')->name('update');
+        Route::delete('/{hukuman}', [HukumanController::class, 'destroy'])->whereNumber('hukuman')->name('destroy');
         Route::get('/{hukuman}', [HukumanController::class, 'show'])->whereNumber('hukuman')->name('show');
         Route::post('/{hukuman}/pembelaan', [HukumanController::class, 'submitPembelaan'])->whereNumber('hukuman')->name('pembelaan');
         Route::post('/{hukuman}/tugas', [HukumanController::class, 'submitTugas'])->whereNumber('hukuman')->name('tugas');

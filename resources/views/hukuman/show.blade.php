@@ -90,6 +90,24 @@
                 <p class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold mb-1">Alasan</p>
                 <p class="text-sm text-gray-700 dark:text-slate-300 whitespace-pre-wrap">{{ $hukuman->alasan }}</p>
             </div>
+
+            @if ($canManage ?? false)
+                <div class="flex flex-wrap gap-2 pt-2 border-t border-gray-100 dark:border-slate-700">
+                    <a href="{{ route('hukuman.edit', $hukuman) }}"
+                       class="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs transition">
+                        Edit Hukuman
+                    </a>
+                    <form method="POST" action="{{ route('hukuman.destroy', $hukuman) }}"
+                          onsubmit="return confirm('Hapus hukuman ini? Target akan mendapat notifikasi pembatalan.')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                                class="inline-flex items-center px-4 py-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-950/60 text-rose-600 dark:text-rose-300 font-semibold rounded-xl text-xs transition">
+                            Hapus Hukuman
+                        </button>
+                    </form>
+                </div>
+            @endif
         </div>
 
         {{-- Pembelaan (read-only jika sudah ada) --}}
