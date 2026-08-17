@@ -177,11 +177,6 @@
                         <span>QR Saya</span>
                     </a>
 
-                    <a href="{{ route('presensi.history') }}"
-                        class="px-2 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center justify-center text-center transition">
-                        <span>Riwayat</span>
-                    </a>
-
                     <a href="{{ route('pengajuan-izin.create') }}"
                         class="px-2 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center justify-center text-center transition">
                         <span>Ajukan Izin</span>
