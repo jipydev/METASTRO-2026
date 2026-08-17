@@ -5,15 +5,6 @@
                 <h2 class="font-bold text-xl text-gray-900 dark:text-white leading-tight">
                     {{ $title }}
                 </h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    @if ($mode === 'pengawas')
-                        Pilih pengawas yang akan dihukum
-                    @elseif ($isAdminIssuer ?? false)
-                        Pilih siapa saja yang akan dihukum — termasuk pengawas (kasta tertinggi)
-                    @else
-                        Pilih panitia atau admin yang akan dihukum (pengawas dikecualikan)
-                    @endif
-                </p>
             </div>
 
             <a href="{{ route('hukuman.kelola', $mode) }}"
@@ -31,12 +22,6 @@
             'divisi' => $user->divisi?->nama ?? 'Umum',
             'jabatan' => $user->formatted_divisi_jabatan,
         ])->values();
-        $kategoriBadges = [
-            'ringan' => 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800',
-            'sedang' => 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800',
-            'berat' => 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-950/50 dark:text-orange-300 dark:border-orange-800',
-            'khusus' => 'bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-800',
-        ];
     @endphp
 
     <div class="py-8 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 font-poppins">
@@ -67,7 +52,6 @@
                     selectedId: @js((string) old('user_id', '')),
                     targetQuery: '',
                     targetOpen: false,
-                    kategori: @js(old('kategori', '')),
                     targetLabel(item) {
                         return item.nama + ' — ' + item.jabatan;
                     },
@@ -119,8 +103,8 @@
                     <input type="hidden" name="user_id" x-model="selectedId">
 
                     <div class="relative" @click.outside="targetOpen = false">
-                        <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 z-10">
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400">
+                            <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
                             </svg>
                         </span>
@@ -133,10 +117,10 @@
                             @keydown.enter.prevent="filteredTargets[0] && selectTarget(filteredTargets[0])"
                             autocomplete="off"
                             placeholder="Cari nama, NIM, atau divisi..."
-                            class="form-control-app w-full pl-10 pr-10"
+                            class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 py-2.5 pl-11 pr-10 text-xs text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
                         >
-                        <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400">
-                            <svg class="h-4 w-4 transition-transform" :class="targetOpen && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+                            <svg class="h-4 w-4 shrink-0 transition-transform" :class="targetOpen && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                             </svg>
                         </span>
@@ -177,48 +161,53 @@
                 </div>
 
                 {{-- Kategori --}}
-                <div class="space-y-2">
-                    <label for="kategori" class="block font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider text-[11px]">
+                <fieldset class="space-y-2">
+                    <legend class="block font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider text-[11px] mb-2">
                         Kategori Hukuman <span class="text-brand-600">*</span>
-                    </label>
-                    <select
-                        name="kategori"
-                        id="kategori"
-                        required
-                        x-model="kategori"
-                        class="form-control-app w-full"
-                    >
-                        <option value="">— Pilih kategori —</option>
-                        @foreach ($kategoriOptions as $kategori)
-                            <option value="{{ $kategori }}">{{ ucfirst($kategori) }}</option>
-                        @endforeach
-                    </select>
+                    </legend>
 
-                    <div class="flex flex-wrap gap-2 pt-1">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                         @foreach ($kategoriOptions as $kategori)
-                            <button
-                                type="button"
-                                @click="kategori = '{{ $kategori }}'"
-                                class="px-3 py-1.5 rounded-lg text-[11px] font-bold border transition"
-                                :class="kategori === '{{ $kategori }}'
-                                    ? '{{ $kategoriBadges[$kategori] }} ring-2 ring-offset-1 ring-brand-400/40'
-                                    : 'bg-slate-50 text-slate-500 border-slate-200 dark:bg-slate-700/40 dark:text-slate-400 dark:border-slate-600 hover:border-brand-300'"
-                            >
-                                {{ ucfirst($kategori) }}
-                            </button>
+                            @php
+                                $checkedClass = match ($kategori) {
+                                    'ringan' => 'peer-checked:bg-emerald-100 peer-checked:text-emerald-700 peer-checked:border-emerald-200 dark:peer-checked:bg-emerald-950/50 dark:peer-checked:text-emerald-300 dark:peer-checked:border-emerald-800',
+                                    'sedang' => 'peer-checked:bg-amber-100 peer-checked:text-amber-700 peer-checked:border-amber-200 dark:peer-checked:bg-amber-950/50 dark:peer-checked:text-amber-300 dark:peer-checked:border-amber-800',
+                                    'berat' => 'peer-checked:bg-orange-100 peer-checked:text-orange-700 peer-checked:border-orange-200 dark:peer-checked:bg-orange-950/50 dark:peer-checked:text-orange-300 dark:peer-checked:border-orange-800',
+                                    'khusus' => 'peer-checked:bg-rose-100 peer-checked:text-rose-700 peer-checked:border-rose-200 dark:peer-checked:bg-rose-950/50 dark:peer-checked:text-rose-300 dark:peer-checked:border-rose-800',
+                                    default => 'peer-checked:bg-brand-100 peer-checked:text-brand-700 peer-checked:border-brand-200',
+                                };
+                            @endphp
+                            <label class="cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="kategori"
+                                    value="{{ $kategori }}"
+                                    class="peer sr-only"
+                                    @checked(old('kategori') === $kategori)
+                                    @if ($loop->first) required @endif
+                                >
+                                <span class="flex items-center justify-center min-h-[2.75rem] px-3 py-2 rounded-xl text-[11px] font-bold border text-center transition
+                                    bg-slate-50 text-slate-500 border-slate-200
+                                    dark:bg-slate-700/40 dark:text-slate-400 dark:border-slate-600
+                                    peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-brand-400/40
+                                    hover:border-brand-300 dark:hover:border-brand-500 {{ $checkedClass }}">
+                                    {{ ucfirst($kategori) }}
+                                </span>
+                            </label>
                         @endforeach
                     </div>
 
-                    <p class="text-[11px] text-slate-400 flex items-start gap-1.5">
+                    <p class="text-[11px] text-slate-400 flex items-start gap-1.5 pt-0.5">
                         <svg class="w-3.5 h-3.5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         Detail tugas per kategori tidak ditampilkan di web. Panitia mengerjakannya offline sesuai arahan Ranger.
                     </p>
+
                     @error('kategori')
                         <p class="text-xs text-red-600 dark:text-red-400 font-semibold">{{ $message }}</p>
                     @enderror
-                </div>
+                </fieldset>
 
                 {{-- Alasan --}}
                 <div class="space-y-1.5">
