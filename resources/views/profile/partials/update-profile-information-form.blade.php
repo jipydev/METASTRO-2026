@@ -1,4 +1,7 @@
 <section class="font-poppins">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
     <header class="mb-6 border-b border-gray-100 dark:border-slate-700 pb-4">
         <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <span class="p-2 rounded-xl bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400">👤</span>
@@ -14,7 +17,83 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-6" x-data="{ photoPreview: null }">
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-6" x-data="{
+        photoPreview: null,
+        cropper: null,
+        showCropModal: false,
+        cropImageSrc: null,
+
+        previewPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('Ukuran file maksimal 10MB. Silakan pilih foto yang lebih kecil.');
+                    event.target.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.cropImageSrc = e.target.result;
+                    this.showCropModal = true;
+
+                    this.$nextTick(() => {
+                        if (this.cropper) {
+                            this.cropper.destroy();
+                        }
+                        const imageElement = document.getElementById('profileCropImage');
+                        this.cropper = new Cropper(imageElement, {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                            autoCropArea: 1,
+                        });
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+
+        saveCrop() {
+            if (this.cropper) {
+                const canvas = this.cropper.getCroppedCanvas({
+                    maxWidth: 1024,
+                    maxHeight: 1024
+                });
+
+                const maxSize = 1024 * 1024;
+                let quality = 0.9;
+
+                const compressAndSave = (q) => {
+                    canvas.toBlob((blob) => {
+                        if (blob.size > maxSize && q > 0.1) {
+                            compressAndSave(q - 0.1);
+                        } else {
+                            this.photoPreview = canvas.toDataURL('image/jpeg', q);
+
+                            const file = new File([blob], 'profile.jpg', { type: 'image/jpeg', lastModified: new Date().getTime() });
+                            const container = new DataTransfer();
+                            container.items.add(file);
+                            document.getElementById('foto').files = container.files;
+                            this.closeCropModal();
+                        }
+                    }, 'image/jpeg', q);
+                };
+
+                compressAndSave(quality);
+            }
+        },
+
+        closeCropModal() {
+            this.showCropModal = false;
+            if (this.cropper) {
+                this.cropper.destroy();
+                this.cropper = null;
+            }
+            if (!this.photoPreview) {
+                document.getElementById('foto').value = '';
+            }
+        }
+    }">
         @csrf
         @method('patch')
 
@@ -23,7 +102,7 @@
             <x-input-label for="foto" :value="__('Foto Profil')" class="font-semibold text-slate-700 dark:text-slate-300" />
             <div class="mt-2 flex items-center gap-4">
                 <template x-if="photoPreview">
-                    <img :src="photoPreview" class="w-16 h-16 rounded-full object-cover border-2 border-primary-500 shadow">
+                    <img :src="photoPreview" class="w-16 h-16 rounded-full object-cover border-2 border-brand-500 shadow">
                 </template>
                 <template x-if="!photoPreview">
                     @php
@@ -34,17 +113,10 @@
                     <img src="{{ $currentPhoto }}" alt="{{ $user->nama }}" class="w-16 h-16 rounded-full object-cover border-2 border-slate-200 dark:border-slate-700 shadow-sm">
                 </template>
                 <div class="flex-1">
-                    <input id="foto" name="foto" type="file" accept="image/*"
-                           @change="
-                               const file = $event.target.files[0];
-                               if (file) {
-                                   const reader = new FileReader();
-                                   reader.onload = (e) => { photoPreview = e.target.result; };
-                                   reader.readAsDataURL(file);
-                               }
-                           "
+                    <input id="foto" name="foto" type="file" accept="image/*" data-skip-compress="true"
+                           @change="previewPhoto($event)"
                            class="w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary-50 dark:file:bg-primary-950/60 file:text-primary-600 dark:file:text-primary-400 hover:file:bg-primary-100 cursor-pointer" />
-                    <p class="text-xs text-slate-400 mt-1">Format: JPG, JPEG, PNG, WEBP. Maksimal 2MB.</p>
+                    <p class="text-xs text-slate-400 mt-1">Pilih foto hingga 10MB, lalu potong 1:1. Hasil unggahan maksimal 2MB.</p>
                 </div>
             </div>
             <x-input-error class="mt-2" :messages="$errors->get('foto')" />
@@ -121,6 +193,27 @@
                     ✓ {{ __('Tersimpan.') }}
                 </p>
             @endif
+        </div>
+
+        <div x-show="showCropModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+            <div @click.away="closeCropModal()" class="bg-white dark:bg-slate-800 rounded-3xl p-6 w-full max-w-lg shadow-2xl flex flex-col relative z-50 overflow-hidden border border-gray-100 dark:border-slate-700">
+                <h3 class="text-base font-bold text-gray-900 dark:text-white mb-3">Sesuaikan Potongan Foto</h3>
+
+                <div class="w-full bg-slate-900 rounded-xl overflow-hidden" style="max-height: 380px; height: 380px;">
+                    <img id="profileCropImage" :src="cropImageSrc" class="max-w-full block" alt="Crop Area">
+                </div>
+
+                <div class="flex justify-end gap-2.5 mt-5">
+                    <button type="button" @click="closeCropModal()"
+                            class="px-4 py-2 text-xs rounded-xl font-semibold text-gray-700 dark:text-slate-300 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 transition">
+                        Batal
+                    </button>
+                    <button type="button" @click="saveCrop()"
+                            class="px-5 py-2 text-xs rounded-xl font-semibold text-white bg-brand-600 hover:bg-brand-700 transition shadow-sm">
+                        Terapkan Foto
+                    </button>
+                </div>
+            </div>
         </div>
     </form>
 </section>
