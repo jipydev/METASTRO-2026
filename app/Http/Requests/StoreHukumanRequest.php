@@ -66,7 +66,11 @@ class StoreHukumanRequest extends FormRequest
             $mode = $this->issuerMode();
 
             if ($mode === 'ranger' && ! $this->isValidRangerTarget($target)) {
-                $validator->errors()->add('user_id', 'Pengawas tidak dapat dihukum melalui mode Ranger.');
+                $message = $this->user()?->isAdmin()
+                    ? 'Target tidak valid untuk hukuman.'
+                    : 'Pengawas tidak dapat dihukum melalui mode Ranger.';
+
+                $validator->errors()->add('user_id', $message);
             }
 
             if ($mode === 'pengawas' && ! $target->isTargetHukumanPengawas()) {
@@ -84,6 +88,10 @@ class StoreHukumanRequest extends FormRequest
     {
         if (! $target->status || ! $target->divisi_id) {
             return false;
+        }
+
+        if ($this->user()?->isAdmin()) {
+            return true;
         }
 
         return ! $target->isTargetHukumanPengawas();

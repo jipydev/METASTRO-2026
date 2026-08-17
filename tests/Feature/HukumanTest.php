@@ -83,6 +83,40 @@ class HukumanTest extends TestCase
             ->assertSessionHasErrors('user_id');
     }
 
+    public function test_admin_can_punish_pengawas_in_ranger_mode(): void
+    {
+        Notification::fake();
+
+        $chiperDivisi = Divisi::create(['nama' => 'Chiper']);
+        $chefDivisi = Divisi::create(['nama' => 'Chef']);
+        $pengawasJabatan = Jabatan::query()->where('nama', 'Pengawas')->firstOrFail();
+        $anggotaJabatan = Jabatan::query()->where('nama', 'Anggota')->firstOrFail();
+
+        $admin = User::factory()->create([
+            'divisi_id' => $chiperDivisi->id,
+            'jabatan_id' => $anggotaJabatan->id,
+        ]);
+        $pengawas = User::factory()->create([
+            'nama' => 'Pengawas Ops',
+            'divisi_id' => $chefDivisi->id,
+            'jabatan_id' => $pengawasJabatan->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('hukuman.store', 'ranger'), [
+                'user_id' => $pengawas->id,
+                'kategori' => 'berat',
+                'alasan' => 'Admin menghukum pengawas.',
+            ])
+            ->assertRedirect(route('hukuman.kelola', 'ranger'));
+
+        $this->assertDatabaseHas('hukumans', [
+            'user_id' => $pengawas->id,
+            'issued_by' => $admin->id,
+            'issuer_mode' => 'ranger',
+        ]);
+    }
+
     public function test_pengawas_can_only_punish_other_pengawas(): void
     {
         $chefDivisi = Divisi::create(['nama' => 'Chef']);

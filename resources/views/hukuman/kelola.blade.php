@@ -5,6 +5,15 @@
                 <h2 class="font-bold text-xl text-gray-900 dark:text-white leading-tight">
                     {{ $mode === 'pengawas' ? __('Kelola Hukuman Pengawas') : __('Kelola Hukuman') }}
                 </h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    @if ($mode === 'pengawas')
+                        Hukuman antar pengawas — target hanya jabatan pengawas
+                    @elseif ($isAdminIssuer ?? false)
+                        Admin dapat menghukum seluruh panitia, termasuk pengawas
+                    @else
+                        Hukuman panitia & admin — pengawas tidak termasuk target
+                    @endif
+                </p>
             </div>
 
             <a href="{{ route('hukuman.create', $mode) }}"

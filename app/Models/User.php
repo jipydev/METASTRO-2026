@@ -450,6 +450,18 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
+     * Admin (Chiper): semua panitia aktif termasuk pengawas.
+     *
+     * @param  Builder<self>  $query
+     */
+    public function scopeHukumanTargetAdmin(Builder $query): Builder
+    {
+        return $query
+            ->where('status', true)
+            ->whereNotNull('divisi_id');
+    }
+
+    /**
      * @param  Builder<self>  $query
      */
     public function scopeHukumanTargetPengawas(Builder $query): Builder

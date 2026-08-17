@@ -56,6 +56,7 @@ class HukumanController extends Controller
             'title' => $mode === 'pengawas' ? 'Kelola Hukuman Pengawas' : 'Kelola Hukuman',
             'mode' => $mode,
             'hukumans' => $hukumans,
+            'isAdminIssuer' => $user->isAdmin() && $mode === 'ranger',
         ]);
     }
 
@@ -68,7 +69,7 @@ class HukumanController extends Controller
             abort(403);
         }
 
-        $targets = $this->targetQuery($mode)
+        $targets = $this->targetQuery($user, $mode)
             ->with(['divisi', 'jabatan'])
             ->orderBy('nama')
             ->get();
@@ -78,6 +79,7 @@ class HukumanController extends Controller
             'mode' => $mode,
             'targets' => $targets,
             'kategoriOptions' => Hukuman::KATEGORI,
+            'isAdminIssuer' => $user->isAdmin() && $mode === 'ranger',
         ]);
     }
 
@@ -185,11 +187,13 @@ class HukumanController extends Controller
     }
 
     /** @return \Illuminate\Database\Eloquent\Builder<User> */
-    private function targetQuery(string $mode)
+    private function targetQuery(User $user, string $mode)
     {
         return match ($mode) {
             'pengawas' => User::hukumanTargetPengawas(),
-            default => User::hukumanTargetRanger(),
+            default => $user->isAdmin()
+                ? User::hukumanTargetAdmin()
+                : User::hukumanTargetRanger(),
         };
     }
 
