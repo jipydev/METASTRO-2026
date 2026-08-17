@@ -1,6 +1,6 @@
 <div x-cloak x-show="openIzinModal" @keydown.window.escape="openIzinModal = false"
     class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-    <form action="{{ route('izin.store') }}" method="post" enctype="multipart/form-data" @click.outside="openIzinModal = false"
+    <form action="{{ route('pengajuan-izin.store') }}" method="post" enctype="multipart/form-data" @click.outside="openIzinModal = false"
         class="bg-white dark:bg-slate-800 p-4 sm:p-6 md:p-8 border border-primary-500 rounded-t-2xl sm:rounded-2xl w-full text-slate-900 dark:text-slate-100 grid grid-cols-1 gap-4 sm:gap-6 max-w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl font-poppins"
         role="dialog" aria-modal="true" aria-labelledby="izinTitle">
         @csrf

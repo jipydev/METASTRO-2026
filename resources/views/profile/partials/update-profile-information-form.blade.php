@@ -29,9 +29,9 @@
                     @php
                         $currentPhoto = $user->foto
                             ? asset('storage/' . $user->foto)
-                            : 'https://ui-avatars.com/api/?size=256&background=fe5a1d&color=fff&name=' . urlencode($user->name);
+                            : 'https://ui-avatars.com/api/?size=256&background=fe5a1d&color=fff&name=' . urlencode($user->nama);
                     @endphp
-                    <img src="{{ $currentPhoto }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover border-2 border-slate-200 dark:border-slate-700 shadow-sm">
+                    <img src="{{ $currentPhoto }}" alt="{{ $user->nama }}" class="w-16 h-16 rounded-full object-cover border-2 border-slate-200 dark:border-slate-700 shadow-sm">
                 </template>
                 <div class="flex-1">
                     <input id="foto" name="foto" type="file" accept="image/*"
@@ -51,21 +51,43 @@
         </div>
 
         <div>
-            <x-input-label for="name" :value="__('Nama Lengkap')" class="font-semibold text-slate-700 dark:text-slate-300" />
+            <x-input-label for="nama" :value="__('Nama Lengkap')" class="font-semibold text-slate-700 dark:text-slate-300" />
             <div class="relative mt-1">
-                <input id="name" name="name" type="text" 
-                       class="w-full rounded-xl border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:border-primary-500 focus:ring-primary-500 text-sm py-2.5 px-3.5"
-                       value="{{ old('name', $user->name) }}" required autocomplete="name" />
+                <input id="nama" name="nama" type="text"
+                       class="form-control-app w-full"
+                       value="{{ old('nama', $user->nama) }}" required maxlength="255" autocomplete="name" />
             </div>
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+            <x-input-error class="mt-2" :messages="$errors->get('nama')" />
+        </div>
+
+        <div>
+            <x-input-label for="nim" :value="__('NIM')" class="font-semibold text-slate-700 dark:text-slate-300" />
+            <div class="relative mt-1">
+                <input id="nim" name="nim" type="text"
+                       class="form-control-app w-full font-mono"
+                       value="{{ old('nim', $user->nim) }}" required maxlength="20" autocomplete="username" />
+            </div>
+            <p class="mt-1 text-xs text-slate-400">NIM dipakai untuk login. Pastikan sesuai data resmi.</p>
+            <x-input-error class="mt-2" :messages="$errors->get('nim')" />
+        </div>
+
+        <div>
+            <x-input-label :value="__('Divisi & Jabatan')" class="font-semibold text-slate-700 dark:text-slate-300" />
+            <div class="relative mt-1">
+                <input type="text"
+                       class="form-control-app w-full bg-slate-100 dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 cursor-not-allowed"
+                       value="{{ $user->divisi ? $user->formatted_divisi_jabatan : ($user->getRoleNames()->first() ?? 'Peserta') }}"
+                       readonly disabled />
+            </div>
+            <p class="mt-1 text-xs text-slate-400">Hubungi admin jika divisi atau jabatan perlu diubah.</p>
         </div>
 
         <div>
             <x-input-label for="email" :value="__('Alamat Email')" class="font-semibold text-slate-700 dark:text-slate-300" />
             <div class="relative mt-1">
-                <input id="email" name="email" type="email" 
-                       class="w-full rounded-xl border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:border-primary-500 focus:ring-primary-500 text-sm py-2.5 px-3.5"
-                       value="{{ old('email', $user->email) }}" required autocomplete="username" />
+                <input id="email" name="email" type="email"
+                       class="form-control-app w-full"
+                       value="{{ old('email', $user->email) }}" required maxlength="255" autocomplete="username" />
             </div>
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 

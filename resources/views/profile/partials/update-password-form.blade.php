@@ -1,7 +1,6 @@
 <section class="font-poppins">
     <header class="mb-6 border-b border-gray-100 dark:border-slate-700 pb-4">
         <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <span class="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400">🔒</span>
             {{ __('Ubah Password') }}
         </h2>
 
@@ -14,32 +13,35 @@
         @csrf
         @method('put')
 
-        <div>
-            <x-input-label for="update_password_current_password" :value="__('Password Saat Ini')" class="font-semibold text-slate-700 dark:text-slate-300" />
-            <input id="update_password_current_password" name="current_password" type="password" 
-                   class="mt-1 w-full rounded-xl border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:border-primary-500 focus:ring-primary-500 text-sm py-2.5 px-3.5" 
-                   autocomplete="current-password" />
-            <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
-        </div>
+        <x-password-input
+            id="update_password_current_password"
+            name="current_password"
+            :label="__('Password Saat Ini')"
+            autocomplete="current-password"
+            required
+            :error-bag="$errors->updatePassword->get('current_password')" />
 
-        <div>
-            <x-input-label for="update_password_password" :value="__('Password Baru')" class="font-semibold text-slate-700 dark:text-slate-300" />
-            <input id="update_password_password" name="password" type="password" 
-                   class="mt-1 w-full rounded-xl border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:border-primary-500 focus:ring-primary-500 text-sm py-2.5 px-3.5" 
-                   autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
-        </div>
+        <x-password-input
+            id="update_password_password"
+            name="password"
+            :label="__('Password Baru')"
+            autocomplete="new-password"
+            required
+            minlength="8"
+            :error-bag="$errors->updatePassword->get('password')" />
 
-        <div>
-            <x-input-label for="update_password_password_confirmation" :value="__('Konfirmasi Password')" class="font-semibold text-slate-700 dark:text-slate-300" />
-            <input id="update_password_password_confirmation" name="password_confirmation" type="password" 
-                   class="mt-1 w-full rounded-xl border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:border-primary-500 focus:ring-primary-500 text-sm py-2.5 px-3.5" 
-                   autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
-        </div>
+        <x-password-input
+            id="update_password_password_confirmation"
+            name="password_confirmation"
+            :label="__('Konfirmasi Password')"
+            autocomplete="new-password"
+            required
+            minlength="8"
+            :error-bag="$errors->updatePassword->get('password_confirmation')" />
 
         <div class="flex items-center gap-4 pt-2">
-            <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-6 py-2.5 rounded-xl shadow-sm transition cursor-pointer">
+            <button type="submit"
+                class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-6 py-2.5 rounded-xl shadow-sm transition cursor-pointer">
                 {{ __('Perbarui Password') }}
             </button>
 

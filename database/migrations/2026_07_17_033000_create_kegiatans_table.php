@@ -21,13 +21,13 @@ return new class extends Migration
             $table->string('tempat', 150);
 
             // Waktu Pelaksanaan Kegiatan
-            $table->dateTime('waktu_mulai')->index();
-            $table->dateTime('waktu_selesai')->nullable()->index();
+            $table->date('tanggal');
+            $table->time('waktu_mulai');
+            $table->time('waktu_selesai')->nullable()->index();
 
             // Kontrol & Penjadwalan Sesi Presensi
             $table->enum('status_presensi', ['tutup', 'buka', 'dijadwalkan'])->default('tutup')->index();
             $table->time('presensi_mulai')->nullable();   // Jam mulai boleh scan
-            $table->time('presensi_toleransi')->nullable(); // Batas jam toleransi (lewat ini = telat)
             $table->time('presensi_selesai')->nullable(); // Batas akhir scan ditutup
 
             // Penanggung Jawab / Pembuat Kegiatan

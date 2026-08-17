@@ -1,4 +1,4 @@
-<x-guest-layout>
+﻿<x-guest-layout :$title>
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
@@ -19,7 +19,7 @@
         <!-- Role -->
         <div class="mt-4">
             <x-input-label for="role" :value="__('Role')" />
-            <select id="role" name="role" required class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+            <select id="role" name="role" required class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-brand-500 dark:focus:border-indigo-600 focus:ring-brand-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                 <option value="" disabled selected>-- Pilih Role --</option>
                 @foreach($roles as $r)
                     <option value="{{ $r->name }}" {{ old('role') == $r->name ? 'selected' : '' }}>{{ $r->name }}</option>
@@ -31,7 +31,7 @@
         <!-- Divisi -->
         <div class="mt-4">
             <x-input-label for="divisi_id" :value="__('Divisi')" />
-            <select id="divisi_id" name="divisi_id" required class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+            <select id="divisi_id" name="divisi_id" required class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-brand-500 dark:focus:border-indigo-600 focus:ring-brand-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                 <option value="" disabled selected>-- Pilih Divisi --</option>
                 @foreach($divisis as $d)
                     <option value="{{ $d->id }}" {{ old('divisi_id') == $d->id ? 'selected' : '' }}>{{ $d->nama_divisi }}</option>
@@ -43,7 +43,7 @@
         <!-- Jabatan -->
         <div class="mt-4">
             <x-input-label for="jabatan_id" :value="__('Jabatan')" />
-            <select id="jabatan_id" name="jabatan_id" required class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+            <select id="jabatan_id" name="jabatan_id" required class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-brand-500 dark:focus:border-indigo-600 focus:ring-brand-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                 <option value="" disabled selected>-- Pilih Jabatan --</option>
                 @foreach($jabatans as $j)
                     <option value="{{ $j->id }}" {{ old('jabatan_id') == $j->id ? 'selected' : '' }}>{{ $j->nama_jabatan }}</option>
@@ -72,7 +72,7 @@
         </div>
 
         <div class="flex items-center justify-end mt-6">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
+            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
                 {{ __('Already registered?') }}
             </a>
 

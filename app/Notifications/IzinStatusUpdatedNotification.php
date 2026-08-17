@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\PengajuanIzin;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -9,28 +10,53 @@ class IzinStatusUpdatedNotification extends Notification
 {
     use Queueable;
 
-    protected $absensi;
-    protected $validator; // 'Koordinator Divisi' or 'Ranger'
+    public function __construct(
+        public PengajuanIzin $izin,
+        public string $step,
+        public string $decision,
+    ) {}
 
-    public function __construct($absensi, $validator)
-    {
-        $this->absensi = $absensi;
-        $this->validator = $validator;
-    }
-
-    public function via($notifiable)
+    /**
+     * @return list<string>
+     */
+    public function via(object $notifiable): array
     {
         return ['database'];
     }
 
-    public function toDatabase($notifiable)
+    /**
+     * @return array<string, mixed>
+     */
+    public function toDatabase(object $notifiable): array
     {
-        $status = str_contains($this->absensi->status_validasi, 'ditolak') ? 'Ditolak' : 'Disetujui';
-        
+        $this->izin->loadMissing('kegiatan');
+
+        $kegiatan = $this->izin->kegiatan?->nama ?? 'kegiatan';
+        $aktor = $this->step === 'ranger' ? 'Ranger' : 'Koordinator';
+
+        if ($this->decision === 'approved' && $this->step === 'koordinator') {
+            return [
+                'title' => 'Izin diteruskan',
+                'message' => "Pengajuan izin Anda untuk {$kegiatan} disetujui Koordinator dan diteruskan ke Ranger.",
+                'url' => route('pengajuan-izin.index'),
+                'type' => 'izin',
+            ];
+        }
+
+        if ($this->decision === 'approved') {
+            return [
+                'title' => 'Izin disetujui',
+                'message' => "Pengajuan izin Anda untuk {$kegiatan} telah disetujui oleh {$aktor}.",
+                'url' => route('pengajuan-izin.index'),
+                'type' => 'izin',
+            ];
+        }
+
         return [
-            'absensi_id' => $this->absensi->id,
-            'message' => "Pengajuan izin Anda telah $status oleh {$this->validator}.",
-            'url' => route('dashboard'), // Staff check dashboard
+            'title' => 'Izin ditolak',
+            'message' => "Pengajuan izin Anda untuk {$kegiatan} ditolak oleh {$aktor}.",
+            'url' => route('pengajuan-izin.index'),
+            'type' => 'izin',
         ];
     }
 }

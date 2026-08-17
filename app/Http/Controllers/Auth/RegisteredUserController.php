@@ -30,7 +30,7 @@ class RegisteredUserController extends Controller
         // Role pilihan (semua role kecuali Admin)
         $roles = Role::where('name', '!=', 'Admin')->get();
 
-        return view('auth.register', compact('divisis', 'jabatans', 'roles'));
+        return view('auth.register', compact('divisis', 'jabatans', 'roles') + ['title' => 'Daftar']);
     }
 
     /**
@@ -40,23 +40,29 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'nim' => [
-                'required',
-                'string',
-                'max:20',
-                'unique:users,nim',
+        $validated = $request->validate(
+            [
+                'name' => ['required', 'string', 'max:255'],
+                'nim' => ['required', 'string', 'max:20', 'unique:users,nim'],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+                'divisi_id' => ['required', 'exists:divisis,id'],
+                'jabatan_id' => ['required', 'exists:jabatans,id'],
+                'role' => ['required', 'string', 'exists:roles,name'],
             ],
-            'password' => [
-                'required',
-                'confirmed',
-                Rules\Password::defaults(),
-            ],
-            'divisi_id' => ['required', 'exists:divisi,id'],
-            'jabatan_id' => ['required', 'exists:jabatan,id'],
-            'role' => ['required', 'string', 'exists:roles,name'],
-        ]);
+            [
+                'name.required' => 'Nama lengkap wajib diisi.',
+                'nim.required' => 'NIM wajib diisi.',
+                'nim.unique' => 'NIM ini sudah dipakai akun lain. Gunakan NIM yang berbeda.',
+                'password.required' => 'Password wajib diisi.',
+                'password.confirmed' => 'Ulangi password belum sama. Pastikan keduanya sama.',
+                'divisi_id.required' => 'Divisi wajib dipilih.',
+                'divisi_id.exists' => 'Divisi yang dipilih tidak valid.',
+                'jabatan_id.required' => 'Jabatan wajib dipilih.',
+                'jabatan_id.exists' => 'Jabatan yang dipilih tidak valid.',
+                'role.required' => 'Role wajib dipilih.',
+                'role.exists' => 'Role yang dipilih tidak valid.',
+            ]
+        );
 
         if ($validated['role'] === 'Admin') {
             throw ValidationException::withMessages([
@@ -115,7 +121,7 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         if ($needsApproval) {
-            session()->flash('info', 'Registrasi berhasil! Pendaftaran role/jabatan Anda (' . $validated['role'] . ' - ' . $jabatan->nama_jabatan . ') sedang menunggu persetujuan Admin.');
+            session()->flash('info', 'Registrasi berhasil! Pendaftaran role/jabatan Anda ('.$validated['role'].' - '.$jabatan->nama_jabatan.') sedang menunggu persetujuan Admin.');
         } else {
             session()->flash('success', 'Registrasi berhasil! Selamat datang di Metastro.');
         }

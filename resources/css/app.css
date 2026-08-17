@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @plugin "@iconify/tailwind4";
+@plugin "@tailwindcss/forms" {
+    strategy: class;
+}
 
 @variant dark (&:where(.dark, .dark *));
 
@@ -12,20 +15,23 @@
     --font-oswald: "Oswald", sans-serif;
     --font-poppins: "Poppins", sans-serif;
 
-    /* 1. Primary / Vibrant Orange #fe5a1d */
-    --color-primary-50: #fff7f2;
-    --color-primary-100: #ffebd9;
-    --color-primary-200: #ffd3b3;
-    --color-primary-300: #ffb280;
-    --color-primary-400: #ff8347;
-    --color-primary-500: #fe5a1d;
-    --color-primary-600: #e43e0a;
-    --color-primary-700: #be2e08;
-    --color-primary-800: #99270f;
-    --color-primary-900: #7c2310;
-    --color-primary-950: #430e06;
+    /*
+     * Brand / tema aplikasi — oranye untuk menu aktif.
+     * Tombol tambah = hijau, hapus = merah.
+     * Aksi sekunder (QR, scan, monitoring) memakai slate.
+     */
+    --color-brand-50: #fff7f2;
+    --color-brand-100: #ffebd9;
+    --color-brand-200: #ffd3b3;
+    --color-brand-300: #ffb280;
+    --color-brand-400: #ff8347;
+    --color-brand-500: #fe5a1d;
+    --color-brand-600: #e43e0a;
+    --color-brand-700: #be2e08;
+    --color-brand-800: #99270f;
+    --color-brand-900: #7c2310;
+    --color-brand-950: #430e06;
 
-    /* 2. Secondary / Amber Orange Tint */
     --color-secondary-50: #fffbeb;
     --color-secondary-100: #fef3c7;
     --color-secondary-200: #fde68a;
@@ -37,7 +43,6 @@
     --color-secondary-800: #92400e;
     --color-secondary-900: #78350f;
 
-    /* 3. Accent / Warm Yellow */
     --color-accent-50: #fffde8;
     --color-accent-100: #fffbc2;
     --color-accent-200: #fff787;
@@ -49,13 +54,94 @@
     --color-accent-800: #854d0e;
     --color-accent-900: #713f12;
 
-    /* 4. Base Surface */
     --color-surface: #ffffff;
-    --color-surface-border: #fe5a1d;
+}
+
+@theme inline {
+    --color-primary-50: var(--color-brand-50);
+    --color-primary-100: var(--color-brand-100);
+    --color-primary-200: var(--color-brand-200);
+    --color-primary-300: var(--color-brand-300);
+    --color-primary-400: var(--color-brand-400);
+    --color-primary-500: var(--color-brand-500);
+    --color-primary-600: var(--color-brand-600);
+    --color-primary-700: var(--color-brand-700);
+    --color-primary-800: var(--color-brand-800);
+    --color-primary-900: var(--color-brand-900);
+    --color-primary-950: var(--color-brand-950);
+
+    --color-surface-border: var(--color-brand-500);
 }
 
 body {
     @apply font-poppins bg-zinc-50 text-zinc-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-200;
 }
 
+select {
+    color-scheme: light;
+}
+
+.dark select {
+    color-scheme: dark;
+}
+
 [x-cloak] { display: none !important; }
+
+.page-shell {
+    @apply min-h-screen bg-slate-50 dark:bg-slate-900 pb-16 font-poppins transition-colors duration-200;
+}
+
+.page-wrap {
+    @apply max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-6 sm:pt-8;
+}
+
+.page-title {
+    @apply text-2xl font-bold text-slate-900 dark:text-white font-oswald tracking-tight;
+}
+
+.page-subtitle {
+    @apply text-xs text-slate-500 dark:text-slate-400 mt-1;
+}
+
+.filter-bar {
+    @apply mb-6 bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm flex flex-wrap items-center gap-3;
+}
+
+.form-control-app {
+    @apply bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500;
+}
+
+select.form-control-app {
+    color-scheme: light;
+    @apply pr-8 cursor-pointer;
+}
+
+.dark select.form-control-app {
+    color-scheme: dark;
+}
+
+select.form-control-app option {
+    background-color: #ffffff;
+    color: #0f172a;
+}
+
+.dark select.form-control-app option {
+    background-color: #334155;
+    color: #f1f5f9;
+}
+
+.btn-primary {
+    @apply px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-sm transition cursor-pointer;
+}
+
+.btn-add {
+    @apply px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-sm transition cursor-pointer;
+}
+
+.btn-filter {
+    @apply px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 text-white text-xs font-bold rounded-xl transition cursor-pointer;
+}
+
+.table-card {
+    @apply bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm overflow-hidden;
+}

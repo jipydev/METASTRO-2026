@@ -2,39 +2,46 @@
 
 namespace App\Notifications;
 
+use App\Models\PengajuanIzin;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\DatabaseMessage;
 
 class IzinSubmittedNotification extends Notification
 {
     use Queueable;
 
-    protected $absensi;
+    public function __construct(
+        public PengajuanIzin $izin,
+        public string $audience = 'koordinator',
+    ) {}
 
-    public function __construct($absensi)
-    {
-        $this->absensi = $absensi;
-    }
-
-    public function via($notifiable)
+    /**
+     * @return list<string>
+     */
+    public function via(object $notifiable): array
     {
         return ['database'];
     }
 
-    public function toDatabase($notifiable)
+    /**
+     * @return array<string, mixed>
+     */
+    public function toDatabase(object $notifiable): array
     {
-        $status_msg = '';
-        if ($this->absensi->status_validasi == 'menunggu_koordinator') {
-            $status_msg = 'Pengajuan izin baru dari ' . $this->absensi->user->name . ' menunggu validasi Anda.';
-        } elseif ($this->absensi->status_validasi == 'menunggu_ranger') {
-            $status_msg = 'Pengajuan izin dari ' . $this->absensi->user->name . ' telah disetujui Koordinator dan menunggu validasi Anda.';
-        }
+        $this->izin->loadMissing(['user', 'kegiatan']);
+
+        $nama = $this->izin->user?->nama ?? 'Seseorang';
+        $kegiatan = $this->izin->kegiatan?->nama ?? 'kegiatan';
+
+        $message = $this->audience === 'ranger'
+            ? "Pengajuan izin dari {$nama} untuk {$kegiatan} menunggu verifikasi Ranger."
+            : "Pengajuan izin baru dari {$nama} untuk {$kegiatan} menunggu verifikasi Anda.";
 
         return [
-            'absensi_id' => $this->absensi->id,
-            'message' => $status_msg,
-            'url' => $this->absensi->status_validasi == 'menunggu_koordinator' ? route('izin.koordinator') : route('izin.ranger'),
+            'title' => 'Pengajuan izin baru',
+            'message' => $message,
+            'url' => route('pengajuan-izin.review'),
+            'type' => 'izin',
         ];
     }
 }

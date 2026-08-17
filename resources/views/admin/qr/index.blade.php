@@ -1,4 +1,4 @@
-<x-app-layout :$title>
+﻿<x-app-layout :$title>
     <div class="py-8 font-poppins min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -76,7 +76,7 @@
                                             @php
                                                 $photoUrl = $user->foto
                                                     ? asset('storage/' . $user->foto)
-                                                    : 'https://ui-avatars.com/api/?size=80&background=6366f1&color=fff&name=' . urlencode($user->nama);
+                                                    : 'https://ui-avatars.com/api/?size=80&background=fe5a1d&color=fff&name=' . urlencode($user->nama);
                                             @endphp
                                             <img src="{{ $photoUrl }}"
                                                  alt="{{ $user->nama }}"
@@ -129,7 +129,7 @@
                                               onsubmit="return confirm('Re-generate QR Code untuk {{ $user->nama }}? QR lama akan tidak valid.')">
                                             @csrf
                                             <button type="submit"
-                                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm cursor-pointer">
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm cursor-pointer">
                                                 🔄 Re-generate QR
                                             </button>
                                         </form>

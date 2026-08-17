@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,11 +20,10 @@ class Kegiatan extends Model
         'deskripsi',
         'tipe',
         'tempat',
+        'tanggal',
         'waktu_mulai',
         'waktu_selesai',
-        'status_presensi',
         'presensi_mulai',
-        'presensi_toleransi',
         'presensi_selesai',
         'created_by',
     ];
@@ -30,9 +31,20 @@ class Kegiatan extends Model
     protected function casts(): array
     {
         return [
-            'waktu_mulai'   => 'datetime',
-            'waktu_selesai' => 'datetime',
+            'tanggal' => 'date',
+            'waktu_mulai' => 'string',
+            'waktu_selesai' => 'string',
+            'presensi_mulai' => 'datetime',
+            'presensi_selesai' => 'datetime',
         ];
+    }
+
+    /**
+     * Alias kolom lama `judul` agar pemanggilan $kegiatan->judul tetap menampilkan nama.
+     */
+    public function getJudulAttribute(): ?string
+    {
+        return $this->attributes['nama'] ?? null;
     }
 
     public function isPresensiOpen(): bool
@@ -53,5 +65,31 @@ class Kegiatan extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Jam tap default untuk input manual / impor tanpa kolom waktu: 15 menit sebelum mulai.
+     */
+    public function defaultJamTap(): CarbonInterface
+    {
+        if (! $this->waktu_mulai) {
+            return now();
+        }
+
+        return Carbon::parse($this->tanggal)
+            ->setTimeFromTimeString(substr((string) $this->waktu_mulai, 0, 8))
+            ->subMinutes(15);
+    }
+
+    /**
+     * Accessor untuk mendeteksi status presensi aktif berdasarkan waktu.
+     */
+    public function getStatusPresensiAktifAttribute(): string
+    {
+        if (! $this->presensi_mulai || ! $this->presensi_selesai) {
+            return 'dijadwalkan';
+        }
+
+        return now()->between($this->presensi_mulai, $this->presensi_selesai) ? 'buka' : 'tutup';
     }
 }

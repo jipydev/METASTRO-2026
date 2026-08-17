@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Builder;
 
 class Pengumuman extends Model
 {
@@ -17,54 +17,67 @@ class Pengumuman extends Model
         'judul',
         'isi',
         'lampiran',
-        'target',
         'tanggal_publish',
         'status',
         'pembuat_id',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'tanggal_publish' => 'datetime',
-        ];
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Relasi Eloquent
-    |--------------------------------------------------------------------------
-    */
+    protected $casts = [
+        'tanggal_publish' => 'datetime',
+    ];
 
     public function pembuat(): BelongsTo
     {
         return $this->belongsTo(User::class, 'pembuat_id');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Local Scopes (Memudahkan Query di Controller)
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Scope hanya pengumuman yang sudah terbit
-     */
-    public function scopePublished(Builder $query): Builder
+    public function isPublished(): bool
     {
-        return $query->where('status', 'published')
-            ->where('tanggal_publish', '<=', now());
+        return in_array(strtolower((string) $this->status), ['published', 'publish'], true);
     }
 
     /**
-     * Scope berdasarkan target pembaca user yang login
+     * @param  Builder<Pengumuman>  $query
+     * @return Builder<Pengumuman>
      */
-    public function scopeForUser(Builder $query, User $user): Builder
+    public function scopeVisibleTo($query, ?User $user)
     {
-        if ($user->isAdmin() || $user->isPanitia()) {
-            return $query->whereIn('target', ['semua', 'panitia']);
+        if ($user && $user->isAdmin()) {
+            return $query;
         }
 
-        return $query->whereIn('target', ['semua', 'peserta']);
+        return $query->where(function ($q) use ($user) {
+            $q->whereIn('status', ['published', 'Publish']);
+
+            if ($user) {
+                $q->orWhere(function ($draft) use ($user) {
+                    $draft->whereIn('status', ['draft', 'Draft'])
+                        ->where(function ($sub) use ($user) {
+                            $sub->where('pembuat_id', $user->id);
+                            if ($user->divisi_id) {
+                                $sub->orWhereHas('pembuat', function ($pembuatQ) use ($user) {
+                                    $pembuatQ->where('divisi_id', $user->divisi_id);
+                                });
+                            }
+                        });
+                });
+            }
+        });
+    }
+
+    /**
+     * Edit/hapus pengumuman:
+     * Admin selalu bisa. Selain itu hanya ketua, wakil, dan anggota
+     * satu divisi dengan pembuat.
+     */
+    public function canBeManagedBy(?User $user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        $this->loadMissing('pembuat');
+
+        return $user->canManagePengumumanDivisi($this->pembuat?->divisi_id);
     }
 }

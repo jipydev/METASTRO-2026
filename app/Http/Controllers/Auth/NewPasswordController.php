@@ -21,7 +21,10 @@ class NewPasswordController extends Controller
      */
     public function create(Request $request): View
     {
-        return view('auth.reset-password', ['request' => $request]);
+        return view('auth.reset-password', [
+            'request' => $request,
+            'title' => 'Reset Password',
+        ]);
     }
 
     /**
@@ -31,11 +34,20 @@ class NewPasswordController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'token' => ['required'],
-            'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        $request->validate(
+            [
+                'token' => ['required'],
+                'email' => ['required', 'email'],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ],
+            [
+                'email.required' => 'Alamat email wajib diisi.',
+                'email.email' => 'Format email tidak valid. Contoh: nama@email.com',
+                'password.required' => 'Password baru wajib diisi.',
+                'password.confirmed' => 'Ulangi password belum sama. Pastikan keduanya sama.',
+                'password.min' => 'Password baru minimal :min karakter.',
+            ]
+        );
 
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the

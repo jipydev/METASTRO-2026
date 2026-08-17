@@ -1,5 +1,4 @@
-<x-guest-layout>
-    <x-slot name="title">{{ $title ?? 'Lengkapi Profil' }}</x-slot>
+﻿<x-guest-layout :$title>
 
     <!-- Cropper.js CDN Assets -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
@@ -87,7 +86,7 @@
             
             {{-- Header --}}
             <div class="text-center mb-6">
-                <div class="inline-flex items-center justify-center w-12 h-12 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-2.5 text-2xl">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 rounded-2xl mb-2.5 text-2xl">
                     👤
                 </div>
                 <h1 class="text-xl font-bold text-gray-900 dark:text-white">Lengkapi Profil Anda</h1>
@@ -104,7 +103,7 @@
                 <div class="flex flex-col items-center">
                     <div class="relative group">
                         <template x-if="photoPreview">
-                            <img :src="photoPreview" class="w-24 h-24 rounded-full object-cover border-4 border-indigo-500 shadow-md">
+                            <img :src="photoPreview" class="w-24 h-24 rounded-full object-cover border-4 border-brand-500 shadow-md">
                         </template>
                         <template x-if="!photoPreview">
                             <div class="w-24 h-24 rounded-full bg-slate-100 dark:bg-slate-700 flex flex-col items-center justify-center border-4 border-dashed border-slate-300 dark:border-slate-600 text-slate-400">
@@ -116,8 +115,8 @@
                             Ubah
                         </label>
                     </div>
-                    <input type="file" id="foto" name="foto" accept="image/*" required class="hidden" @change="previewPhoto($event)">
-                    <span class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 mt-2 cursor-pointer" onclick="document.getElementById('foto').click()">
+                    <input type="file" id="foto" name="foto" accept="image/*" required class="hidden" data-skip-compress="true" @change="previewPhoto($event)">
+                    <span class="text-xs font-semibold text-slate-600 dark:text-slate-400 mt-2 cursor-pointer" onclick="document.getElementById('foto').click()">
                         + Unggah Foto Profil (Wajib)
                     </span>
                     <x-input-error :messages="$errors->get('foto')" class="mt-1" />
@@ -133,16 +132,16 @@
                 {{-- Nama Lengkap --}}
                 <div>
                     <label for="nama" class="block font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider mb-1">Nama Lengkap *</label>
-                    <input id="nama" type="text" name="nama" value="{{ old('nama', $user->nama) }}" required autocomplete="name" placeholder="Nama Lengkap Anda"
-                           class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input id="nama" type="text" name="nama" value="{{ old('nama', $user->nama) }}" required maxlength="255" autocomplete="name" placeholder="Nama Lengkap Anda"
+                           class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
                     <x-input-error :messages="$errors->get('nama')" class="mt-1" />
                 </div>
 
                 {{-- Email --}}
                 <div>
                     <label for="email" class="block font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider mb-1">Alamat Email *</label>
-                    <input id="email" type="email" name="email" value="{{ old('email', $user->email) }}" required autocomplete="email" placeholder="contoh@email.com"
-                           class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input id="email" type="email" name="email" value="{{ old('email', $user->email) }}" required maxlength="255" autocomplete="email" placeholder="contoh@email.com"
+                           class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
                     <x-input-error :messages="$errors->get('email')" class="mt-1" />
                 </div>
 
@@ -150,22 +149,22 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <div>
                         <label for="password" class="block font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider mb-1">Password Baru *</label>
-                        <input id="password" type="password" name="password" required autocomplete="new-password" placeholder="Min. 8 karakter"
-                               class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500">
+                        <input id="password" type="password" name="password" required minlength="8" autocomplete="new-password" placeholder="Min. 8 karakter"
+                               class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
                         <x-input-error :messages="$errors->get('password')" class="mt-1" />
                     </div>
 
                     <div>
                         <label for="password_confirmation" class="block font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider mb-1">Ulangi Password *</label>
-                        <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Ulangi password"
-                               class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500">
+                        <input id="password_confirmation" type="password" name="password_confirmation" required minlength="8" autocomplete="new-password" placeholder="Ulangi password"
+                               class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
                         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1" />
                     </div>
                 </div>
 
                 {{-- Submit Button --}}
                 <div class="pt-3">
-                    <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-sm transition cursor-pointer text-xs">
+                    <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-sm transition cursor-pointer text-xs">
                         Simpan & Masuk ke Dashboard
                     </button>
                 </div>
@@ -188,7 +187,7 @@
                         Batal
                     </button>
                     <button type="button" @click="saveCrop()"
-                            class="px-5 py-2 text-xs rounded-xl font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm">
+                            class="px-5 py-2 text-xs rounded-xl font-semibold text-white bg-brand-600 hover:bg-brand-700 transition shadow-sm">
                         Terapkan Foto
                     </button>
                 </div>

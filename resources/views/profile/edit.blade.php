@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout :$title>
     <div class="py-8 font-poppins min-h-screen bg-gray-100 dark:bg-slate-900 transition-colors duration-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
@@ -29,19 +29,19 @@
                             @php
                                 $photoUrl = $user->foto
                                     ? asset('storage/' . $user->foto)
-                                    : 'https://ui-avatars.com/api/?size=256&background=fe5a1d&color=fff&name=' . urlencode($user->name);
+                                    : 'https://ui-avatars.com/api/?size=256&background=fe5a1d&color=fff&name=' . urlencode($user->nama);
                             @endphp
-                            <img src="{{ $photoUrl }}" alt="{{ $user->name }}" class="w-28 h-28 rounded-full border-4 border-white dark:border-slate-800 object-cover shadow-md mx-auto">
+                            <img src="{{ $photoUrl }}" alt="{{ $user->nama }}" class="w-28 h-28 rounded-full border-4 border-white dark:border-slate-800 object-cover shadow-md mx-auto">
                             <span class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full" title="Aktif"></span>
                         </div>
 
-                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">{{ $user->name }}</h2>
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">{{ $user->nama }}</h2>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ $user->email }}</p>
 
                         <!-- Badges -->
                         <div class="flex flex-wrap justify-center gap-2 mt-4">
                             <span class="px-3 py-1 bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400 rounded-full text-xs font-bold border border-primary-200 dark:border-primary-900">
-                                {{ $user->divisi?->nama_divisi ?? 'Panitia' }}
+                                {{ $user->divisi ? $user->formatted_divisi_jabatan : ($user->getRoleNames()->first() ?? 'Peserta') }}
                             </span>
                             @if($user->roles->count() > 0)
                                 <span class="px-3 py-1 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 rounded-full text-xs font-bold border border-amber-200 dark:border-amber-900">

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\InitialSetupRequest;
 use App\Models\User;
+use App\Services\FileCompressionService;
 use App\Services\QrCodeService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 class InitialSetupController extends Controller
@@ -28,24 +28,19 @@ class InitialSetupController extends Controller
 
         return view('auth.initial-setup', [
             'title' => 'Lengkapi Profil Anda',
-            'user'  => $user,
+            'user' => $user,
         ]);
     }
 
     /**
      * Simpan data onboarding (Nama, Email, Foto, Password Baru) & generate QR.
      */
-    public function store(Request $request, QrCodeService $qrService): RedirectResponse
+    public function store(InitialSetupRequest $request, QrCodeService $qrService, FileCompressionService $files): RedirectResponse
     {
         /** @var User $user */
         $user = Auth::user();
 
-        $validated = $request->validate([
-            'nama'     => ['required', 'string', 'max:100'],
-            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'foto'     => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
-            'password' => ['required', 'confirmed', Password::min(8)],
-        ]);
+        $validated = $request->validated();
 
         // Hapus foto lama jika ada
         if ($user->foto && Storage::disk('public')->exists($user->foto)) {
@@ -53,14 +48,14 @@ class InitialSetupController extends Controller
         }
 
         // Upload foto baru ke storage/app/public/foto_profil
-        $fotoPath = $request->file('foto')->store('foto_profil', 'public');
+        $fotoPath = $files->store($request->file('foto'), 'foto_profil');
 
         // Update data user
         $user->update([
-            'nama'                       => $validated['nama'],
-            'email'                      => $validated['email'],
-            'foto'                       => $fotoPath,
-            'password'                   => Hash::make($validated['password']),
+            'nama' => $validated['nama'],
+            'email' => $validated['email'],
+            'foto' => $fotoPath,
+            'password' => Hash::make($validated['password']),
             'is_initial_setup_completed' => true,
         ]);
 

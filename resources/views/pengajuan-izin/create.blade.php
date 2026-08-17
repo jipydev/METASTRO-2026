@@ -1,4 +1,4 @@
-<x-app-layout :$title>
+﻿<x-app-layout :$title>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight">
             {{ __('Form Pengajuan Izin') }}
@@ -67,9 +67,8 @@
 
         {{-- Flash Error Alert --}}
         @if(session('error'))
-            <div class="mb-5 p-4 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-2xl text-red-600 dark:text-red-400 text-xs font-semibold flex items-center gap-2.5">
-                <span>❌</span>
-                <span>{{ session('error') }}</span>
+            <div class="mb-5 p-4 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-2xl text-red-600 dark:text-red-400 text-xs font-semibold">
+                {{ session('error') }}
             </div>
         @endif
 
@@ -77,9 +76,6 @@
             
             {{-- Form Header --}}
             <div class="flex items-center gap-3.5 border-b border-gray-100 dark:border-slate-700 pb-5 mb-6">
-                <div class="p-3 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 rounded-2xl text-2xl">
-                    📝
-                </div>
                 <div>
                     <h3 class="text-lg font-bold text-gray-900 dark:text-white">Pengajuan Izin Tidak Hadir</h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">Silakan lengkapi formulir pengajuan izin ketidakhadiran kegiatan.</p>
@@ -96,11 +92,11 @@
                         Pilih Kegiatan / Jadwal *
                     </label>
                     <select id="kegiatan_id" name="kegiatan_id" required 
-                            class="block w-full border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-indigo-500 focus:ring-indigo-500 rounded-xl shadow-sm py-2.5 px-3 text-xs outline-none">
+                            class="block w-full border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-brand-500 focus:ring-brand-500 rounded-xl shadow-sm py-2.5 px-3 text-xs outline-none">
                         <option value="">-- Pilih Jadwal Kegiatan --</option>
                         @foreach($kegiatans as $kegiatan)
                             <option value="{{ $kegiatan->id }}" {{ old('kegiatan_id') == $kegiatan->id ? 'selected' : '' }}>
-                                {{ $kegiatan->judul }} — {{ \Carbon\Carbon::parse($kegiatan->tanggal)->locale('id')->isoFormat('D MMMM YYYY') }} ({{ $kegiatan->waktu_mulai ? substr($kegiatan->waktu_mulai, 0, 5) . ' WIB' : 'Waktu menyusul' }})
+                                {{ $kegiatan->nama }} ({{ \Carbon\Carbon::parse($kegiatan->tanggal)->locale('id')->translatedFormat('d F Y') }}, {{ $kegiatan->waktu_mulai ? substr((string) $kegiatan->waktu_mulai, 0, 5) : '—' }} WIB)
                             </option>
                         @endforeach
                     </select>
@@ -113,9 +109,9 @@
                         Jenis / Alasan Izin *
                     </label>
                     <select id="jenis_izin" name="jenis_izin" required 
-                            class="block w-full border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-indigo-500 focus:ring-indigo-500 rounded-xl shadow-sm py-2.5 px-3 text-xs outline-none">
-                        <option value="Sakit" {{ old('jenis_izin') === 'Sakit' ? 'selected' : '' }}>Sakit</option>
-                        <option value="Izin" {{ old('jenis_izin') === 'Izin' ? 'selected' : '' }}>Izin (Kepentingan Akademik / Mendesak)</option>
+                            class="block w-full border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-brand-500 focus:ring-brand-500 rounded-xl shadow-sm py-2.5 px-3 text-xs outline-none">
+                        <option value="sakit" {{ old('jenis_izin') === 'sakit' ? 'selected' : '' }}>Sakit</option>
+                        <option value="izin" {{ old('jenis_izin') === 'izin' ? 'selected' : '' }}>Izin (Kepentingan Akademik / Mendesak)</option>
                     </select>
                     <x-input-error :messages="$errors->get('jenis_izin')" class="mt-1" />
                 </div>
@@ -125,24 +121,26 @@
                     <label for="alasan" class="block font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                         Detail Penjelasan Alasan *
                     </label>
-                    <textarea id="alasan" name="alasan" rows="4" required placeholder="Jelaskan alasan ketidakhadiran Anda secara terperinci..." 
-                              class="block w-full border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-indigo-500 focus:ring-indigo-500 rounded-xl shadow-sm py-2.5 px-3 text-xs outline-none">{{ old('alasan') }}</textarea>
+                    <textarea id="alasan" name="alasan" rows="4" required maxlength="1000" placeholder="Jelaskan alasan ketidakhadiran Anda secara terperinci..." 
+                              class="block w-full border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-brand-500 focus:ring-brand-500 rounded-xl shadow-sm py-2.5 px-3 text-xs outline-none">{{ old('alasan') }}</textarea>
                     <x-input-error :messages="$errors->get('alasan')" class="mt-1" />
                 </div>
 
                 {{-- Upload Surat Izin PDF --}}
                 <div>
                     <label for="surat_izin" class="block font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider mb-1">
-                        Upload Surat Izin (PDF, Maks. 5MB)
+                        Upload Surat Izin (PDF, Maks. 5MB) *
                     </label>
-                    <input type="file" id="surat_izin" name="surat_izin" accept="application/pdf" @change="handleSurat($event)" 
-                           class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 dark:file:bg-slate-700 dark:file:text-indigo-400 cursor-pointer" />
+                    <input type="file" id="surat_izin" name="surat_izin" required accept="application/pdf" @change="handleSurat($event)" 
+                           class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 dark:file:bg-slate-700 dark:file:text-slate-300 cursor-pointer" />
                     <x-input-error :messages="$errors->get('surat_izin')" class="mt-1" />
 
                     {{-- Preview File Surat --}}
                     <div x-show="suratFileName" x-transition class="mt-2.5 flex items-center justify-between bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl px-3.5 py-2.5">
                         <div class="flex items-center gap-2.5 min-w-0">
-                            <span class="text-lg">📄</span>
+                            <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
                             <div class="truncate">
                                 <p class="font-semibold text-gray-900 dark:text-slate-100 truncate" x-text="suratFileName"></p>
                                 <p class="text-[10px] text-gray-500"><span x-text="suratFileSize"></span> • Siap diunggah</p>
@@ -159,8 +157,9 @@
                     <label for="bukti" class="block font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                         Upload Bukti Dokumentasi (JPG/PNG, Maks. 5MB)
                     </label>
+                    <p class="text-[11px] text-slate-400 mb-1">Opsional, jika ada foto pendukung.</p>
                     <input type="file" id="bukti" name="bukti" accept="image/*" @change="handleBukti($event)" 
-                           class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 dark:file:bg-slate-700 dark:file:text-indigo-400 cursor-pointer" />
+                           class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 dark:file:bg-slate-700 dark:file:text-slate-300 cursor-pointer" />
                     <x-input-error :messages="$errors->get('bukti')" class="mt-1" />
 
                     {{-- Preview Gambar Bukti --}}
@@ -187,7 +186,7 @@
                         Batal
                     </a>
                     <button type="submit" :disabled="isSubmitting" 
-                            class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition shadow-sm disabled:opacity-60 cursor-pointer">
+                            class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold transition shadow-sm disabled:opacity-60 cursor-pointer">
                         <span x-show="!isSubmitting">Kirim Pengajuan</span>
                         <span x-show="isSubmitting" class="animate-pulse">Mengirim...</span>
                     </button>

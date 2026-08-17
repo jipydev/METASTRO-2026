@@ -5,11 +5,13 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
@@ -31,6 +33,7 @@ use Spatie\Permission\Traits\HasRoles;
     'qr_token',
     'status',
     'is_initial_setup_completed',
+    'qr_updated_at',
 ])]
 #[Hidden([
     'password',
@@ -50,24 +53,13 @@ class User extends Authenticatable implements PasskeyUser
     protected function casts(): array
     {
         return [
-            'password'                   => 'hashed',
-            'email_verified_at'          => 'datetime',
-            'tanggal_lahir'              => 'date',
-            'status'                     => 'boolean',
+            'password' => 'hashed',
+            'email_verified_at' => 'datetime',
+            'tanggal_lahir' => 'date',
+            'status' => 'boolean',
             'is_initial_setup_completed' => 'boolean',
+            'qr_updated_at' => 'datetime',
         ];
-    }
-
-    /**
-     * Auto-generate UUID qr_token saat pembuatan user baru
-     */
-    protected static function booted(): void
-    {
-        static::creating(function (User $user) {
-            if (empty($user->qr_token)) {
-                $user->qr_token = (string) Str::uuid();
-            }
-        });
     }
 
     /*
@@ -91,19 +83,67 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(Presensi::class);
     }
 
-    public function notulensi(): HasMany
+    public function notulensis(): HasMany
     {
         return $this->hasMany(Notulensi::class, 'pembuat_id');
     }
 
-    public function pengumuman(): HasMany
+    public function pengumumans(): HasMany
     {
         return $this->hasMany(Pengumuman::class, 'pembuat_id');
     }
 
-    public function pengajuanIzin(): HasMany
+    public function pengajuanIzins(): HasMany
     {
         return $this->hasMany(PengajuanIzin::class);
+    }
+
+    /**
+     * Panitia aktif (punya divisi atau jabatan).
+     *
+     * @return Collection<int, self>
+     */
+    public static function activePanitia(?int $exceptUserId = null): Collection
+    {
+        return static::query()
+            ->where('status', true)
+            ->where(function (Builder $q) {
+                $q->whereNotNull('divisi_id')->orWhereNotNull('jabatan_id');
+            })
+            ->when($exceptUserId, fn (Builder $q) => $q->where('id', '!=', $exceptUserId))
+            ->get();
+    }
+
+    /**
+     * Anggota aktif Divisi Ranger.
+     *
+     * @return Collection<int, self>
+     */
+    public static function activeRangers(): Collection
+    {
+        return static::query()
+            ->where('status', true)
+            ->whereHas('divisi', fn (Builder $q) => $q->whereRaw('LOWER(nama) = ?', ['ranger']))
+            ->get();
+    }
+
+    /**
+     * Ketua/wakil aktif di suatu divisi (koordinator izin).
+     *
+     * @return Collection<int, self>
+     */
+    public static function koordinatorsOf(?int $divisiId, ?int $exceptUserId = null): Collection
+    {
+        if (! $divisiId) {
+            return collect();
+        }
+
+        return static::query()
+            ->where('status', true)
+            ->where('divisi_id', $divisiId)
+            ->when($exceptUserId, fn (Builder $q) => $q->where('id', '!=', $exceptUserId))
+            ->whereHas('jabatan', fn (Builder $q) => $q->whereRaw('LOWER(nama) in (?, ?)', ['ketua', 'wakil']))
+            ->get();
     }
 
     /*
@@ -130,27 +170,6 @@ class User extends Authenticatable implements PasskeyUser
 
     /*
     |--------------------------------------------------------------------------
-    | Spatie Roles (RBAC)
-    |--------------------------------------------------------------------------
-    */
-
-    public function isAdmin(): bool
-    {
-        return $this->hasRole('admin') || $this->isChiper();
-    }
-
-    public function isPanitia(): bool
-    {
-        return $this->hasRole('panitia');
-    }
-
-    public function isPeserta(): bool
-    {
-        return $this->hasRole('peserta');
-    }
-
-    /*
-    |--------------------------------------------------------------------------
     | Shortcut Divisi (Alphabetical A-Z)
     |--------------------------------------------------------------------------
     */
@@ -159,54 +178,67 @@ class User extends Authenticatable implements PasskeyUser
     {
         return $this->isDivisi('archivist');
     }
+
     public function isChef(): bool
     {
         return $this->isDivisi('chef');
     }
+
     public function isChiper(): bool
     {
         return $this->isDivisi('chiper');
     }
+
     public function isDocumenter(): bool
     {
         return $this->isDivisi('documenter');
     }
+
     public function isFundkeeper(): bool
     {
         return $this->isDivisi('fundkeeper');
     }
+
     public function isGearmaster(): bool
     {
         return $this->isDivisi('gearmaster');
     }
+
     public function isGuardian(): bool
     {
         return $this->isDivisi('guardian');
     }
+
     public function isGuider(): bool
     {
         return $this->isDivisi('guider');
     }
+
     public function isInformer(): bool
     {
         return $this->isDivisi('informer');
     }
+
     public function isPathfinder(): bool
     {
         return $this->isDivisi('pathfinder');
     }
+
     public function isRanger(): bool
     {
         return $this->isDivisi('ranger');
     }
+
     public function isRescuer(): bool
     {
         return $this->isDivisi('rescuer');
     }
+
     public function isScribe(): bool
     {
         return $this->isDivisi('scribe');
     }
+
     public function isStakeholder(): bool
     {
         return $this->isDivisi('stakeholder');
@@ -222,22 +254,27 @@ class User extends Authenticatable implements PasskeyUser
     {
         return $this->isJabatan('ketua');
     }
+
     public function isWakil(): bool
     {
         return $this->isJabatan('wakil');
     }
+
     public function isKetuaOrWakil(): bool
     {
         return $this->isJabatan(['ketua', 'wakil']);
     }
+
     public function isPengawas(): bool
     {
         return $this->isJabatan('pengawas');
     }
+
     public function isKetuaPengawas(): bool
     {
         return $this->isPengawas() && $this->isStakeholder();
     }
+
     public function isAnggota(): bool
     {
         return $this->isJabatan('anggota');
@@ -245,15 +282,46 @@ class User extends Authenticatable implements PasskeyUser
 
     /*
     |--------------------------------------------------------------------------
-    | Hak Akses Fitur Khusus & Utilitas
+    | Hak Akses Fitur Khusus & Utilitas (ABAC Rules)
     |--------------------------------------------------------------------------
     */
 
-    /*
-    |--------------------------------------------------------------------------
-    | Hak Akses Fitur Khusus & Utilitas
-    |--------------------------------------------------------------------------
-    */
+    public function isAdmin(): bool
+    {
+        return $this->isChiper();
+    }
+
+    public function isPanitia(): bool
+    {
+        return (bool) ($this->divisi_id || $this->jabatan_id);
+    }
+
+    /**
+     * Ketua / wakil divisi yang mereview izin anggota divisinya.
+     * Stakeholder tidak mereview tahap koordinator — izin mereka langsung ke Ranger.
+     */
+    public function isKoordinatorDivisi(): bool
+    {
+        return $this->isKetuaOrWakil() && ! $this->isStakeholder();
+    }
+
+    public function canCreatePengumuman(): bool
+    {
+        return $this->isAdmin() || $this->isPanitia();
+    }
+
+    public function canManagePengumumanDivisi(?int $divisiId): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if (! $divisiId || $this->divisi_id !== $divisiId) {
+            return false;
+        }
+
+        return $this->isJabatan(['ketua', 'wakil', 'anggota']);
+    }
 
     public function canScanPresensi(): bool
     {
@@ -265,12 +333,128 @@ class User extends Authenticatable implements PasskeyUser
         return $this->isAdmin() || $this->isArchivist();
     }
 
+    public function canManageKegiatan(): bool
+    {
+        return $this->isAdmin() || $this->isArchivist() || $this->isStakeholder() || $this->isPathfinder();
+    }
+
+    public function canTogglePresensi(): bool
+    {
+        return $this->canManageKegiatan() || $this->isRanger();
+    }
+
+    public function canViewAllIzinReviews(): bool
+    {
+        return $this->isAdmin() || $this->isRanger() || $this->isArchivist() || $this->isStakeholder();
+    }
+
+    public function canReviewIzin(): bool
+    {
+        return $this->canViewAllIzinReviews() || $this->isKoordinatorDivisi();
+    }
+
+    public function canApproveKoordinatorIzin(?PengajuanIzin $izin = null): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if (! $this->isKoordinatorDivisi() || ! $izin?->user) {
+            return false;
+        }
+
+        $applicant = $izin->user;
+
+        return $applicant->divisi_id
+            && $applicant->divisi_id === $this->divisi_id
+            && $applicant->id !== $this->id;
+    }
+
+    public function canApproveRangerIzin(): bool
+    {
+        return $this->isAdmin() || $this->isRanger();
+    }
+
+    public function skipsKoordinatorIzinReview(): bool
+    {
+        return $this->isKetua() || $this->isStakeholder();
+    }
+
+    public function canViewPanitiaList(): bool
+    {
+        return $this->isAdmin() || $this->isArchivist() || $this->isRanger() || $this->isStakeholder();
+    }
+
     public function initials(): string
     {
         $initials = Str::initials($this->nama, true);
 
         return Str::length($initials) > 1
-            ? Str::substr($initials, 0, 1) . Str::substr($initials, -1)
+            ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
             : $initials;
+    }
+
+    /**
+     * Mengembalikan role utama pengguna (Admin, Panitia, atau Peserta).
+     *
+     * @return Collection<int, string>
+     */
+    public function getRoleNames(): Collection
+    {
+        // 1. Admin (Jika Chiper / Admin)
+        if ($this->isAdmin()) {
+            return collect(['Admin']);
+        }
+
+        // 2. Panitia (Jika memiliki divisi atau jabatan kepanitiaan)
+        if ($this->divisi_id || $this->jabatan_id) {
+            return collect(['Panitia']);
+        }
+
+        // 3. Peserta (Default)
+        return collect(['Peserta']);
+    }
+
+    /**
+     * Mendapatkan format label jabatan & divisi yang dinamis sesuai aturan kepanitiaan.
+     */
+    public function getFormattedDivisiJabatanAttribute(): string
+    {
+        if (! $this->divisi) {
+            return '— / —';
+        }
+
+        $divisiName = strtolower($this->divisi->nama);
+        $jabatanName = strtolower($this->jabatan?->nama ?? 'anggota');
+
+        // Aturan Khusus Divisi Stakeholder
+        if ($divisiName === 'stakeholder') {
+            if ($jabatanName === 'ketua') {
+                return 'Ketua Pelaksana';
+            }
+            if ($jabatanName === 'wakil') {
+                return 'Wakil Ketua Pelaksana';
+            }
+            if ($jabatanName === 'anggota') {
+                return 'Steering Committee';
+            }
+            if ($jabatanName === 'pengawas' || str_contains($jabatanName, 'ketua pengawas')) {
+                return 'Ketua Pengawas';
+            }
+        }
+
+        // Aturan untuk Divisi Lain (Chiper, Ranger, Archivist, dll)
+        $prefix = '';
+        if ($jabatanName === 'ketua') {
+            $prefix = 'Koordinator ';
+        } elseif ($jabatanName === 'wakil') {
+            $prefix = 'Wakil Koordinator ';
+        } elseif ($jabatanName === 'pengawas') {
+            $prefix = 'Pengawas ';
+        } else {
+            $prefix = 'Anggota ';
+        }
+
+        return $prefix.$this->divisi->nama;
     }
 }

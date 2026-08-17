@@ -28,9 +28,20 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // 'email' => ['required', 'string', 'email'],
-            'nim' => ['required', 'string'],
+            'nim' => ['required', 'string', 'max:20'],
             'password' => ['required', 'string'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'nim.required' => 'NIM wajib diisi.',
+            'nim.max' => 'NIM terlalu panjang.',
+            'password.required' => 'Password wajib diisi.',
         ];
     }
 

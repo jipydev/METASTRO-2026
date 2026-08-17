@@ -18,7 +18,7 @@ class QrCodeService
     public function generateForUser(User $user): string
     {
         if (empty($user->qr_token)) {
-            $user->update(['qr_token' => Str::uuid()->toString()]);
+            $user->update(['qr_token' => Str::uuid()->toString(), 'qr_updated_at' => now()]);
         }
 
         return $this->generateQrImage($user);
@@ -31,7 +31,7 @@ class QrCodeService
     {
         $this->deleteQrImage($user);
 
-        $user->update(['qr_token' => Str::uuid()->toString()]);
+        $user->update(['qr_token' => Str::uuid()->toString(), 'qr_updated_at' => now()]);
 
         return $this->generateQrImage($user);
     }
@@ -43,7 +43,7 @@ class QrCodeService
     {
         $qrData = json_encode([
             'user_id' => $user->id,
-            'token'   => $user->qr_token,
+            'token' => $user->qr_token,
         ]);
 
         $renderer = new ImageRenderer(

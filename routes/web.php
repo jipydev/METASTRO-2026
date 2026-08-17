@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\Admin\QrCodeController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Api\ScanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InitialSetupController;
 use App\Http\Controllers\KegiatanController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NotulensiController;
 use App\Http\Controllers\PengajuanIzinController;
 use App\Http\Controllers\PengumumanController;
@@ -40,47 +40,44 @@ Route::middleware(['auth', 'verified'])->group(function () {
 */
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // 1. Dashboard Utama
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // 2. Profile Management
+    Route::post('/notifikasi/baca-semua', [NotificationController::class, 'readAll'])->name('notifications.read-all');
+    Route::resource('notifikasi', NotificationController::class)
+        ->only(['show'])
+        ->names(['show' => 'notifications.show']);
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    // 3. QR Absensi & Presensi Pribadi
-    Route::get('/qr-saya', [PresensiController::class, 'index'])->name('qr.show');
+    Route::redirect('/presensi/qr', '/presensi');
+    Route::get('/presensi/template', [PresensiController::class, 'template'])->name('presensi.template');
+    Route::post('/presensi/import', [PresensiController::class, 'import'])->name('presensi.import');
+    Route::resource('presensi', PresensiController::class)->only(['index', 'store']);
     Route::get('/presensi/riwayat', [PresensiController::class, 'history'])->name('presensi.history');
-
-    // 4. Scanner Kamera, Toggle Sesi, & Monitoring Kehadiran
     Route::get('/presensi/scan', [PresensiController::class, 'scan'])->name('presensi.scan');
     Route::get('/presensi/monitoring', [PresensiController::class, 'monitoring'])->name('presensi.monitoring');
     Route::patch('/kegiatan/{kegiatan}/toggle-absen', [PresensiController::class, 'toggleAbsen'])->name('presensi.toggle');
 
-    // 5. Alur Pengajuan Izin
-    Route::prefix('izin')->name('pengajuan-izin.')->group(function () {
-        Route::get('/', [PengajuanIzinController::class, 'index'])->name('index');
-        Route::get('/buat', [PengajuanIzinController::class, 'create'])->name('create');
-        Route::post('/', [PengajuanIzinController::class, 'store'])->name('store');
-        Route::get('/review', [PengajuanIzinController::class, 'reviewIndex'])->name('review');
-        Route::post('/{pengajuanIzin}/approve', [PengajuanIzinController::class, 'approve'])->name('approve');
-        Route::post('/{pengajuanIzin}/reject', [PengajuanIzinController::class, 'reject'])->name('reject');
-    });
+    Route::redirect('/izin/riwayat', '/izin');
+    Route::redirect('/izin/buat', '/izin/create');
+    Route::get('/izin/review', [PengajuanIzinController::class, 'review'])->name('pengajuan-izin.review');
+    Route::post('/izin/{pengajuanIzin}/approve', [PengajuanIzinController::class, 'approve'])->name('pengajuan-izin.approve');
+    Route::post('/izin/{pengajuanIzin}/reject', [PengajuanIzinController::class, 'reject'])->name('pengajuan-izin.reject');
+    Route::resource('izin', PengajuanIzinController::class)
+        ->parameters(['izin' => 'pengajuanIzin'])
+        ->names('pengajuan-izin')
+        ->only(['index', 'create', 'store', 'destroy']);
 
-    // 6. Timeline & Jadwal Kegiatan
     Route::resource('kegiatan', KegiatanController::class)->except(['create', 'show', 'edit']);
 
-    // 7. Pengumuman
-    Route::resource('pengumuman', PengumumanController::class)->only(['store', 'update', 'destroy', 'show']);
+    Route::resource('pengumuman', PengumumanController::class)->except(['create', 'edit']);
 
-    // 8. Notulensi Rapat
-    Route::post('/notulensi', [NotulensiController::class, 'store'])->name('notulensi.store');
-    Route::delete('/notulensi/{notulensi}', [NotulensiController::class, 'destroy'])->name('notulensi.destroy');
-    Route::get('/notulensi/{notulensi}/view', [NotulensiController::class, 'viewPdf'])->name('notulensi.view');
+    Route::resource('notulensi', NotulensiController::class)->except(['create', 'edit']);
 
-    // 9. Endpoint Internal Ajax Scanner
     Route::prefix('api/scan')->name('api.scan.')->group(function () {
         Route::post('/lookup', [ScanController::class, 'lookup'])->name('lookup');
-        Route::post('/record', [ScanController::class, 'recordAttendance'])->name('record');
+        Route::post('/', [ScanController::class, 'store'])->name('store');
     });
 });
 
@@ -89,15 +86,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 | Admin Area
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
-    // Kelola Pengguna (Users CRUD murni)
-    Route::resource('users', UserController::class);
-
-    // QR Code Management
-    Route::get('/qr', [QrCodeController::class, 'index'])->name('qr.index');
-    Route::get('/qr/{user}', [QrCodeController::class, 'show'])->name('qr.show');
-    Route::post('/qr/{user}/regenerate', [QrCodeController::class, 'regenerate'])->name('qr.regenerate');
-    Route::post('/qr/regenerate-all', [QrCodeController::class, 'regenerateAll'])->name('qr.regenerate-all');
+Route::middleware(['auth', 'verified', 'can:admin-access'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('users', UserController::class)->except(['show']);
+    Route::patch('users/{user}/reset-qr', [UserController::class, 'resetQr'])->name('users.reset-qr');
+    Route::patch('users-reset-all-qr', [UserController::class, 'resetAllQr'])->name('users.reset-all-qr');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

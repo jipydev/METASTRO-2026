@@ -1,35 +1,41 @@
-<x-app-layout :$title>
+﻿<x-app-layout :$title>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
                 <h2 class="font-bold text-xl text-gray-900 dark:text-white leading-tight">
-                    {{ __('Riwayat Pengajuan Izin') }}
+                    {{ __('Izin') }}
                 </h2>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    Pantau status verifikasi pengajuan izin ketidakhadiran kegiatan Anda
+                    Ajukan izin dan pantau status pengajuan Anda
                 </p>
             </div>
             
-            <a href="{{ route('pengajuan-izin.create') }}" 
-               class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs shadow-sm transition self-start sm:self-auto">
-                <span>+</span> Ajukan Izin Baru
-            </a>
+            <div class="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+                @if (auth()->user()->canReviewIzin())
+                    <a href="{{ route('pengajuan-izin.review') }}"
+                       class="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs transition">
+                        Review
+                    </a>
+                @endif
+                <a href="{{ route('pengajuan-izin.create') }}"
+                   class="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs shadow-sm transition">
+                    + Ajukan Izin
+                </a>
+            </div>
         </div>
     </x-slot>
 
-    <div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 font-poppins">
+    <div x-data="{ detail: null }" class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 font-poppins">
         
         {{-- Flash Notification --}}
         @if(session('success'))
             <div class="mb-5 p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-2xl text-emerald-700 dark:text-emerald-300 text-xs font-semibold flex items-center gap-2.5">
-                <span>✅</span>
                 <span>{{ session('success') }}</span>
             </div>
         @endif
 
         @if(session('error'))
             <div class="mb-5 p-4 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-2xl text-red-600 dark:text-red-400 text-xs font-semibold flex items-center gap-2.5">
-                <span>❌</span>
                 <span>{{ session('error') }}</span>
             </div>
         @endif
@@ -37,7 +43,7 @@
         {{-- Tabel Card --}}
         <div class="bg-white dark:bg-slate-800 shadow-sm rounded-3xl p-6 sm:p-7 border border-gray-100 dark:border-slate-700">
             <h3 class="text-base font-bold text-gray-900 dark:text-white mb-5 flex items-center gap-2">
-                <span>📋</span> Status Pengajuan Izin
+                Status Pengajuan Izin
             </h3>
 
             @if($pengajuanList->isEmpty())
@@ -53,11 +59,10 @@
                                 <th class="py-3 px-4 rounded-l-xl">Tanggal Pengajuan</th>
                                 <th class="py-3 px-4">Kegiatan / Agenda</th>
                                 <th class="py-3 px-4 text-center">Jenis</th>
-                                <th class="py-3 px-4">Alasan</th>
-                                <th class="py-3 px-4">Berkas</th>
                                 <th class="py-3 px-4 text-center">Approval Koordinator</th>
                                 <th class="py-3 px-4 text-center">Approval Ranger</th>
-                                <th class="py-3 px-4 text-center rounded-r-xl">Status Akhir</th>
+                                <th class="py-3 px-4 text-center">Status Akhir</th>
+                                <th class="py-3 px-4 text-center rounded-r-xl">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-slate-700">
@@ -71,7 +76,7 @@
                                     {{-- Info Kegiatan --}}
                                     <td class="py-3.5 px-4">
                                         <div class="font-bold text-gray-900 dark:text-white truncate max-w-xs">
-                                            {{ $p->kegiatan?->judul ?? 'Kegiatan Telah Dihapus' }}
+                                            {{ $p->kegiatan?->nama ?? 'Kegiatan Telah Dihapus' }}
                                         </div>
                                         <div class="text-[11px] text-slate-400 font-normal">
                                             {{ $p->tanggal_izin ? \Carbon\Carbon::parse($p->tanggal_izin)->translatedFormat('d M Y') : '-' }}
@@ -80,94 +85,48 @@
 
                                     {{-- Jenis Izin --}}
                                     <td class="py-3.5 px-4 text-center">
-                                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold border {{ $p->jenis_izin === 'Sakit' ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 border-amber-200 dark:border-amber-800' : 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border-blue-200 dark:border-blue-800' }}">
-                                            {{ $p->jenis_izin }}
+                                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold border {{ strtolower((string) $p->jenis_izin) === 'sakit' ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 border-amber-200 dark:border-amber-800' : 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border-blue-200 dark:border-blue-800' }}">
+                                            {{ strtolower((string) $p->jenis_izin) === 'sakit' ? 'Sakit' : 'Izin' }}
                                         </span>
                                     </td>
 
-                                    {{-- Alasan --}}
-                                    <td class="py-3.5 px-4 max-w-xs truncate" title="{{ $p->alasan }}">
-                                        {{ $p->alasan }}
+                                    <td class="py-3.5 px-4 text-center">
+                                        @include('pengajuan-izin.partials.status-pill', ['status' => $p->status_koordinator])
+                                        @if($p->reviewerKoordinator)
+                                            <div class="text-[10px] text-slate-400 mt-1 font-normal">{{ $p->reviewerKoordinator->nama }}</div>
+                                        @endif
                                     </td>
 
-                                    {{-- Berkas Lampiran --}}
-                                    <td class="py-3.5 px-4 whitespace-nowrap">
-                                        <div class="flex items-center gap-1.5">
-                                            @if($p->surat_izin)
-                                                <a href="{{ asset('storage/' . $p->surat_izin) }}" target="_blank"
-                                                   class="px-2 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 rounded text-[11px] font-medium text-slate-700 dark:text-slate-300 transition"
-                                                   title="Lihat Surat PDF">
-                                                    📄 Surat
-                                                </a>
-                                            @endif
+                                    <td class="py-3.5 px-4 text-center">
+                                        @include('pengajuan-izin.partials.status-pill', ['status' => $p->status_ranger])
+                                        @if($p->reviewerRanger)
+                                            <div class="text-[10px] text-slate-400 mt-1 font-normal">{{ $p->reviewerRanger->nama }}</div>
+                                        @endif
+                                    </td>
 
-                                            @if($p->bukti)
-                                                <a href="{{ asset('storage/' . $p->bukti) }}" target="_blank"
-                                                   class="px-2 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 rounded text-[11px] font-medium text-slate-700 dark:text-slate-300 transition"
-                                                   title="Lihat Bukti Gambar">
-                                                    🖼️ Bukti
-                                                </a>
-                                            @endif
+                                    <td class="py-3.5 px-4 text-center whitespace-nowrap">
+                                        @include('pengajuan-izin.partials.status-pill', ['status' => $p->status, 'final' => true])
+                                    </td>
 
-                                            @if(!$p->surat_izin && !$p->bukti)
-                                                <span class="text-gray-400 text-[11px]">—</span>
+                                    <td class="py-3.5 px-4 text-center whitespace-nowrap">
+                                        <div class="flex items-center justify-center gap-1.5">
+                                            <button type="button"
+                                                    @click="detail = {{ \Illuminate\Support\Js::from($p->modalPayload(false)) }}"
+                                                    class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/40 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-300 text-[11px] font-semibold">
+                                                Detail
+                                            </button>
+                                            @if($p->canBeDeletedBy(auth()->user()))
+                                                <form action="{{ route('pengajuan-izin.destroy', $p) }}" method="POST"
+                                                      onsubmit="return confirm('Hapus pengajuan izin ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                            class="px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 dark:bg-red-950/40 dark:hover:bg-red-900/50 dark:text-red-300 text-[11px] font-semibold">
+                                                        Hapus
+                                                    </button>
+                                                </form>
                                             @endif
                                         </div>
-                                    </td>
-
-                                    {{-- Status Koordinator --}}
-                                    <td class="py-3.5 px-4 text-center whitespace-nowrap">
-                                        @if($p->status_koordinator === 'Pending')
-                                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-                                                Pending
-                                            </span>
-                                        @elseif($p->status_koordinator === 'Approved')
-                                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                                                Disetujui
-                                            </span>
-                                        @else
-                                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300 border border-red-200 dark:border-red-800">
-                                                Ditolak
-                                            </span>
-                                        @endif
-                                    </td>
-
-                                    {{-- Status Ranger --}}
-                                    <td class="py-3.5 px-4 text-center whitespace-nowrap">
-                                        @if($p->status_ranger === 'Pending')
-                                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-                                                Pending
-                                            </span>
-                                        @elseif($p->status_ranger === 'Approved')
-                                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                                                Disetujui
-                                            </span>
-                                        @else
-                                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300 border border-red-200 dark:border-red-800">
-                                                Ditolak
-                                            </span>
-                                        @endif
-                                    </td>
-
-                                    {{-- Status Akhir --}}
-                                    <td class="py-3.5 px-4 text-center whitespace-nowrap">
-                                        @if($p->status === 'Pending')
-                                            <span class="px-3 py-1 rounded-xl text-xs font-bold bg-amber-500 text-white shadow-sm">
-                                                Menunggu Review
-                                            </span>
-                                        @elseif($p->status === 'Diproses')
-                                            <span class="px-3 py-1 rounded-xl text-xs font-bold bg-indigo-500 text-white shadow-sm">
-                                                Proses Ranger
-                                            </span>
-                                        @elseif($p->status === 'Approved')
-                                            <span class="px-3 py-1 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-sm">
-                                                Disetujui ✅
-                                            </span>
-                                        @else
-                                            <span class="px-3 py-1 rounded-xl text-xs font-bold bg-red-600 text-white shadow-sm">
-                                                Ditolak ❌
-                                            </span>
-                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
@@ -183,5 +142,7 @@
                 @endif
             @endif
         </div>
+
+        @include('pengajuan-izin.partials.detail-modal')
     </div>
 </x-app-layout>

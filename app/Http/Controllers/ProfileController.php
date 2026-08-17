@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
+use App\Services\FileCompressionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -22,14 +23,14 @@ class ProfileController extends Controller
 
         return view('profile.edit', [
             'title' => 'Pengaturan Profil',
-            'user'  => $user->load(['divisi', 'jabatan']),
+            'user' => $user->load(['divisi', 'jabatan']),
         ]);
     }
 
     /**
-     * Memperbarui informasi profil (Nama, Email, dan Foto).
+     * Memperbarui informasi profil (Nama, NIM, Email, dan Foto).
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request, FileCompressionService $files): RedirectResponse
     {
         /** @var User $user */
         $user = $request->user();
@@ -40,12 +41,11 @@ class ProfileController extends Controller
                 Storage::disk('public')->delete($user->foto);
             }
 
-            $path = $request->file('foto')->store('foto_profil', 'public');
+            $path = $files->store($request->file('foto'), 'foto_profil');
             $user->foto = $path;
         }
 
-        // Update data nama & email
-        $user->fill($request->safe()->only(['nama', 'email']));
+        $user->fill($request->safe()->only(['nama', 'nim', 'email']));
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;

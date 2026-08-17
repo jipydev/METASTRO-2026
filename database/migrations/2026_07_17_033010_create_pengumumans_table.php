@@ -24,7 +24,7 @@ return new class extends Migration
 
             // Publikasi & Status
             $table->dateTime('tanggal_publish')->nullable()->index();
-            $table->enum('status', ['draft', 'published', 'archived'])->default('draft')->index();
+            $table->enum('status', ['draft', 'published'])->default('draft')->index();
 
             // Pembuat (Informer / Sekretaris / Admin)
             $table->foreignId('pembuat_id')
