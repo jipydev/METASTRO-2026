@@ -162,6 +162,45 @@
             </a>
         @endif
 
+        {{-- Group: Divisi Acara — Manajemen Tugas --}}
+        @php
+            $isAcara = auth()->user()->divisi?->nama && str_contains(strtolower(auth()->user()->divisi->nama), 'acara');
+        @endphp
+        @if ($isAcara || auth()->user()->isAdmin())
+            <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Divisi Acara</p>
+            <hr class="border-slate-100 dark:border-slate-700/60 !my-1" x-show="sidebarCollapsed && !sidebarOpen" x-cloak>
+
+            <a href="{{ route('tugas.index') }}" title="Manajemen Tugas"
+                class="{{ $navItem(request()->routeIs('tugas.*')) }}"
+                :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Manajemen Tugas</span>
+            </a>
+        @endif
+
+        {{-- Group: Divisi Guider — Tim & Review --}}
+        @php
+            $isGuider = auth()->user()->divisi?->nama && str_contains(strtolower(auth()->user()->divisi->nama), 'guider');
+        @endphp
+        @if ($isGuider || auth()->user()->isAdmin())
+            <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Divisi Guider</p>
+            <hr class="border-slate-100 dark:border-slate-700/60 !my-1" x-show="sidebarCollapsed && !sidebarOpen" x-cloak>
+
+            <a href="{{ route('tim-guider.index') }}" title="Manajemen Tim"
+                class="{{ $navItem(request()->routeIs('tim-guider.*')) }}"
+                :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Manajemen Tim</span>
+            </a>
+
+            <a href="{{ route('review-tugas.index') }}" title="Review Tugas"
+                class="{{ $navItem(request()->routeIs('review-tugas.*')) }}"
+                :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Review Tugas</span>
+            </a>
+        @endif
+
         @if (auth()->user()->isAdmin())
             {{-- Group: Admin --}}
             <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Admin</p>

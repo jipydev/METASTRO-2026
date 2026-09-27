@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\HukumanController;
+use App\Http\Controllers\TimController;
+use App\Http\Controllers\TugasController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Api\ScanController;
 use App\Http\Controllers\DashboardController;
@@ -88,6 +90,26 @@ Route::middleware(['auth', 'verified', 'initial.setup'])->group(function () {
         Route::post('/{hukuman}/pembelaan', [HukumanController::class, 'submitPembelaan'])->whereNumber('hukuman')->name('pembelaan');
         Route::post('/{hukuman}/tugas', [HukumanController::class, 'submitTugas'])->whereNumber('hukuman')->name('tugas');
         Route::post('/{hukuman}/selesai', [HukumanController::class, 'complete'])->whereNumber('hukuman')->name('selesai');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tugas & Tim Panitia (Divisi Acara & Divisi Guider)
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('tugas', TugasController::class)->except(['show']);
+
+    Route::prefix('tim-guider')->name('tim-guider.')->group(function () {
+        Route::get('/', [TimController::class, 'index'])->name('index');
+        Route::post('/', [TimController::class, 'store'])->name('store');
+        Route::get('/{tim}', [TimController::class, 'show'])->name('show');
+        Route::put('/{tim}', [TimController::class, 'update'])->name('update');
+        Route::delete('/{tim}', [TimController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('review-tugas')->name('review-tugas.')->group(function () {
+        Route::get('/', [TimController::class, 'reviewIndex'])->name('index');
+        Route::put('/{pengumpulan}', [TimController::class, 'reviewUpdate'])->name('update');
     });
 
     Route::prefix('api/scan')->name('api.scan.')->group(function () {
