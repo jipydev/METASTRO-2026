@@ -66,7 +66,7 @@
 
         <div class="flex min-h-dvh flex-col min-w-0 transition-[margin] duration-200 lg:ml-64"
             :class="sidebarCollapsed && !sidebarOpen ? 'lg:!ml-[4.75rem]' : ''">
-            <header class="sticky top-0 z-30 h-14 flex items-center gap-3 px-4 lg:px-6 bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700/80">
+            <header class="fixed top-0 right-0 lg:left-64 left-0 z-30 h-14 lg:h-16 flex items-center gap-3 px-4 lg:px-6 bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700/80">
                 <button type="button" @click="toggleSidebar()"
                     class="lg:hidden p-2 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,7 +89,7 @@
                 </header>
             @endisset
 
-            <main class="flex-1">
+            <main class="flex-1 pt-20 md:pt-20 px-4 pb-4 md:px-8 md:pb-8">
                 {{ $slot }}
             </main>
 

@@ -24,7 +24,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
                     <h1 class="page-title">Pengumuman</h1>
-                    <p class="page-subtitle">Arsip lengkap informasi untuk panitia dan peserta</p>
+                    <p class="page-subtitle">Arsip lengkap informasi untuk panitia</p>
                 </div>
                 @if (auth()->user()->canCreatePengumuman())
                     <button type="button"
