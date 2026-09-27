@@ -101,18 +101,18 @@
                 <div class="flex items-center justify-center gap-3">
                     @auth
                         <a href="{{ route('dashboard') }}"
-                           class="inline-flex items-center justify-center px-6 py-2 rounded-lg bg-black/60 hover:bg-black/80 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition transform active:scale-95">
+                           class="inline-flex items-center justify-center px-6 py-2 rounded-lg bg-black/35 hover:bg-black/50 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
                             DASHBOARD
                         </a>
                     @else
                         <a href="{{ route('login') }}"
-                           class="inline-flex items-center justify-center px-7 py-2 rounded-lg bg-black/60 hover:bg-black/80 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition transform active:scale-95">
+                           class="inline-flex items-center justify-center px-7 py-2 rounded-lg bg-black/15 hover:bg-black/50 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
                             LOGIN
                         </a>
                     @endauth
 
                     <a href="#tim"
-                       class="inline-flex items-center justify-center px-5 py-2 rounded-lg bg-black/60 hover:bg-black/80 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition transform active:scale-95">
+                       class="inline-flex items-center justify-center px-5 py-2 rounded-lg bg-black/15 hover:bg-black/50 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
                         LIHAT TIM
                     </a>
                 </div>
@@ -125,65 +125,12 @@
             </div>
         </section>
 
-        <!-- 3. MASCOT / 3D STAR & INTRO SECTION -->
-        <section class="relative px-6 pt-6 pb-2 text-center">
-            <!-- 3D Star Icon Atas Kanan -->
-            <div class="flex justify-end pr-4 -mb-1">
-                @php
-                    $starImg = file_exists(public_path('images/peserta/star-3d.webp'))
-                        ? asset('images/peserta/star-3d.webp')
-                        : (file_exists(public_path('images/peserta/star-3d.png')) ? asset('images/peserta/star-3d.png') : null);
-                @endphp
-
-                @if($starImg)
-                    <img src="{{ $starImg }}" alt="Star 3D" class="w-10 h-10 object-contain drop-shadow-md animate-bounce">
-                @else
-                    <!-- High-quality 3D Clay Star Render SVG Fallback -->
-                    <div class="w-10 h-10 drop-shadow-md animate-pulse">
-                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <radialGradient id="starGradTop" cx="35%" cy="35%" r="65%">
-                                    <stop offset="0%" stop-color="#ffa266"/>
-                                    <stop offset="55%" stop-color="#fe5a1d"/>
-                                    <stop offset="100%" stop-color="#b43202"/>
-                                </radialGradient>
-                            </defs>
-                            <path d="M50 5 L58 35 L88 20 L72 48 L98 62 L68 68 L72 98 L50 78 L28 98 L32 68 L2 62 L28 48 L12 20 L42 35 Z" fill="url(#starGradTop)" />
-                        </svg>
-                    </div>
-                @endif
-            </div>
-
+        <!-- 3. INTRO SECTION -->
+        <section class="relative px-6 py-6 text-center">
             <!-- Teks Intro METASTRO -->
-            <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-[13px] leading-relaxed font-normal text-justify sm:text-center px-1">
+            <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-[13px] leading-relaxed font-normal text-center px-1">
                 <strong class="font-bold text-[#fe5a1d]">METASTRO</strong> merupakan program kaderisasi bagi mahasiswa baru yang berfokus pada pembentukan identitas, pengembangan kapasitas, serta penanaman nilai Spirit of HIRO, Heart of SOLDER.
             </p>
-
-            <!-- Pita Gelombang Oranye (Kiri) & Bintang 3D (Kanan) -->
-            <div class="flex justify-between items-center px-1 mt-4 pointer-events-none">
-                <!-- Squiggly Orange Line -->
-                <svg class="w-20 h-8 text-amber-400 opacity-90" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" viewBox="0 0 120 40">
-                    <path d="M5 25 Q 25 5, 45 25 T 85 25 T 115 15"/>
-                </svg>
-
-                <!-- 3D Star Icon Kanan -->
-                @if($starImg)
-                    <img src="{{ $starImg }}" alt="Star 3D" class="w-12 h-12 object-contain drop-shadow-lg -mr-1">
-                @else
-                    <div class="w-12 h-12 drop-shadow-lg -mr-1">
-                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <radialGradient id="starGradBottom" cx="30%" cy="30%" r="70%">
-                                    <stop offset="0%" stop-color="#ffb87a"/>
-                                    <stop offset="50%" stop-color="#fe5a1d"/>
-                                    <stop offset="100%" stop-color="#9a2504"/>
-                                </radialGradient>
-                            </defs>
-                            <path d="M50 0 L59 32 L92 18 L76 49 L100 66 L68 70 L72 100 L48 80 L24 100 L28 70 L0 66 L24 49 L8 18 L41 32 Z" fill="url(#starGradBottom)" />
-                        </svg>
-                    </div>
-                @endif
-            </div>
         </section>
 
         <!-- 4. CORE VALUES CARDS -->
