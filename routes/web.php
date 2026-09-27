@@ -26,6 +26,21 @@ Route::get('/', function () {
     return view('index');
 })->name('home');
 
+Route::get('/peserta', function () {
+    $kegiatans = collect();
+    try {
+        if (\Illuminate\Support\Facades\Schema::hasTable('kegiatans')) {
+            $kegiatans = \App\Models\Kegiatan::orderBy('tanggal', 'asc')
+                ->orderBy('waktu_mulai', 'asc')
+                ->get();
+        }
+    } catch (\Throwable $e) {
+        $kegiatans = collect();
+    }
+
+    return view('peserta.index', compact('kegiatans'));
+})->name('peserta.landing');
+
 /*
 |--------------------------------------------------------------------------
 | Onboarding / First Time Setup
