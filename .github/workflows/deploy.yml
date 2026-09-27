@@ -14,12 +14,6 @@ jobs:
       - name: 📦 Checkout Code
         uses: actions/checkout@v4
 
-      - name: 🐘 Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-          extensions: mbstring, xml, ctype, json, bcmath, curl
-
       - name: 📥 Install Composer Dependencies
         run: composer install --no-dev --optimize-autoloader --no-interaction
 
