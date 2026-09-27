@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+<<<<<<< HEAD
 use Illuminate\Routing\Controller;
 
 class TimController extends Controller
@@ -207,4 +208,3 @@ class TimController extends Controller
     {
         return redirect()->route('review-tugas.index')->with('success', 'Hasil reviu tugas dan komentar anonim berhasil disimpan (dummy).');
     }
-}

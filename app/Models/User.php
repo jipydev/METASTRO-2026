@@ -108,6 +108,11 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(Hukuman::class, 'issued_by');
     }
 
+    public function tugasDibuat(): HasMany
+    {
+        return $this->hasMany(Tugas::class, 'pembuat_id');
+    }
+
     /**
      * Panitia aktif (punya divisi atau jabatan).
      *
@@ -329,7 +334,7 @@ class User extends Authenticatable implements PasskeyUser
 
     public function canCreatePengumuman(): bool
     {
-        return $this->isAdmin() || $this->isPanitia();
+        return $this->isAdmin() || $this->isArchivist();
     }
 
     public function canManagePengumumanDivisi(?int $divisiId): bool

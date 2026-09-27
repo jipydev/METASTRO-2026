@@ -42,7 +42,7 @@
         selectedNotulensi: { id: null, judul: '', isi: '', kegiatan_id: '', hasLampiran: false },
     }" class="bg-brand-50 dark:bg-slate-900 pb-8 font-poppins transition-colors duration-200">
 
-        <div class="max-w-7xl mx-auto px-3 py-4 sm:p-6 lg:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
 
             {{-- 1. PENGUMUMAN SECTION --}}
             <section class="md:col-span-2 lg:col-span-3 bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700 shadow-sm min-w-0">

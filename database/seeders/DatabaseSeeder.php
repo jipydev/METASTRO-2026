@@ -16,6 +16,11 @@ class DatabaseSeeder extends Seeder
             JabatanSeeder::class,
             DivisiSeeder::class,
             UserSeeder::class,
+            TimSeeder::class,
+            TugasSeeder::class,
+            PengumpulanTugasSeeder::class,
+            GuiderSeeder::class,
+            AnggotaTimSeeder::class,
         ]);
     }
 }
