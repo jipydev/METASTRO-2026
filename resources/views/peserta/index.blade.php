@@ -126,11 +126,25 @@
         </section>
 
         <!-- 3. INTRO SECTION -->
-        <section class="relative px-6 py-6 text-center">
+        <section class="relative px-6 pt-6 pb-10 text-center overflow-visible">
+            <!-- Bintang Kecil Atas Tengah -->
+            <div class="flex justify-center mb-3">
+                <img src="{{ asset('images/peserta/bintang2.png') }}" alt="Bintang" class="w-10 h-10 object-contain">
+            </div>
+
             <!-- Teks Intro METASTRO -->
-            <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-[13px] leading-relaxed font-normal text-center px-1">
+            <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-[13px] leading-relaxed font-normal text-center px-1 relative z-10">
                 <strong class="font-bold text-[#fe5a1d]">METASTRO</strong> merupakan program kaderisasi bagi mahasiswa baru yang berfokus pada pembentukan identitas, pengembangan kapasitas, serta penanaman nilai Spirit of HIRO, Heart of SOLDER.
             </p>
+
+            <!-- Tali Gelombang Kiri Bawah -->
+            <img src="{{ asset('images/peserta/tali.png') }}" alt="Tali" class="absolute -bottom-2 left-2 w-16 sm:w-20 h-auto object-contain pointer-events-none z-0">
+
+            <!-- Gradient Glow Kanan Bawah -->
+            <img src="{{ asset('images/peserta/gradient.png') }}" alt="" class="absolute -bottom-6 -right-4 w-32 sm:w-36 h-auto object-contain pointer-events-none opacity-70 z-20">
+            <img src="{{ asset('images/peserta/gradient.png') }}" alt="" style="bottom: -900px;" class="absolute -right-4 w-56 sm:w-64 h-auto object-contain pointer-events-none opacity-70 z-20">
+            <!-- Bintang Besar Kanan Bawah -->
+            <img src="{{ asset('images/peserta/bintang.png') }}" alt="Bintang" class="absolute -bottom-6 -right-2 w-16 sm:w-20 h-auto object-contain pointer-events-none z-[1]">
         </section>
 
         <!-- 4. CORE VALUES CARDS -->
@@ -201,7 +215,7 @@
                 <!-- Timeline List -->
                 <div class="relative pl-6 space-y-6">
                     <!-- Garis Konektor Vertikal Oranye -->
-                    <div class="absolute left-2.5 top-2.5 bottom-3 w-[2px] bg-gradient-to-b from-amber-500 via-orange-400 to-orange-300"></div>
+                    <div class="absolute left-1.5 top-2.5 bottom-3 w-[2px] bg-gradient-to-b from-amber-500 via-orange-400 to-orange-300"></div>
 
                     @if(isset($kegiatans) && $kegiatans->count() > 0)
                         @foreach($kegiatans as $index => $kegiatan)
