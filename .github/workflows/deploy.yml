@@ -14,11 +14,11 @@ jobs:
       - name: 📦 Checkout Code
         uses: actions/checkout@v4
 
-      - name: 🐘 Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-          extensions: mbstring, xml, ctype, json, bcmath, curl
+      - name: 🐘 Verify preinstalled PHP runtime
+        run: |
+          php -v
+          php -r "if (version_compare(PHP_VERSION, '8.3.0', '<')) { fwrite(STDERR, 'PHP 8.3+ is required. Found: ' . PHP_VERSION . PHP_EOL); exit(1); }"
+          composer --version
 
       - name: 📥 Install Composer Dependencies
         run: composer install --no-dev --optimize-autoloader --no-interaction
