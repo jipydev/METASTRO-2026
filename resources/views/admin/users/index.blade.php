@@ -342,8 +342,10 @@
                     <div
                         class="bg-white p-4 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 inline-block my-2 shadow-inner">
                         <template x-if="selectedUser.qr_token">
-                            <img :src="'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(
-                                selectedUser.qr_token)"
+                            <img :src="'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(JSON.stringify({
+                                user_id: selectedUser.id,
+                                token: selectedUser.qr_token
+                            }))"
                                 alt="QR Code Presensi" class="w-44 h-44 object-contain mx-auto rounded-lg" />
                         </template>
                         <template x-if="!selectedUser.qr_token">

@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\Divisi;
 use App\Models\Jabatan;
 use App\Models\User;
+use App\Services\QrCodeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -238,12 +239,9 @@ class UserController extends Controller
     /**
      * Reset QR Code untuk 1 user
      */
-    public function resetQr(User $user)
+    public function resetQr(User $user, QrCodeService $qrService)
     {
-        $user->update([
-            'qr_token' => (string) Str::uuid(),
-            'qr_updated_at' => now(), // <-- Diperbarui agar waktu "Terakhir Update QR" ikut ter-refresh
-        ]);
+        $qrService->regenerateForUser($user);
 
         return back()->with('success', "QR Code untuk {$user->nama} berhasil di-generate ulang.");
     }
@@ -251,13 +249,10 @@ class UserController extends Controller
     /**
      * Reset QR Code untuk semua user sekaligus
      */
-    public function resetAllQr()
+    public function resetAllQr(QrCodeService $qrService)
     {
-        User::query()->each(function (User $user) {
-            $user->update([
-                'qr_token' => (string) Str::uuid(),
-                'qr_updated_at' => now(), // <-- Diperbarui untuk semua user
-            ]);
+        User::query()->each(function (User $user) use ($qrService) {
+            $qrService->regenerateForUser($user);
         });
 
         return back()->with('success', 'Seluruh token QR Code pengguna berhasil di-generate ulang.');
