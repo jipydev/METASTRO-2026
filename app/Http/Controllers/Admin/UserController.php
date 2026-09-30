@@ -47,10 +47,10 @@ class UserController extends Controller
         // Filter role virtual
         if ($request->filled('role')) {
             if ($request->role === 'admin') {
-                $query->whereHas('divisi', fn ($q) => $q->where('nama', 'like', '%chiper%'));
+                $query->whereHas('divisi', fn($q) => $q->where('nama', 'like', '%chiper%'));
             } elseif ($request->role === 'panitia') {
                 $query->whereNotNull('divisi_id')
-                    ->whereDoesntHave('divisi', fn ($q) => $q->where('nama', 'like', '%chiper%'));
+                    ->whereDoesntHave('divisi', fn($q) => $q->where('nama', 'like', '%chiper%'));
             } elseif ($request->role === 'peserta') {
                 $query->whereNull('divisi_id');
             }
@@ -74,9 +74,9 @@ class UserController extends Controller
             })
             ->when($request->filled('role'), function ($q) use ($request) {
                 if ($request->role === 'admin') {
-                    $q->whereHas('divisi', fn ($sub) => $sub->where('nama', 'like', '%chiper%'));
+                    $q->whereHas('divisi', fn($sub) => $sub->where('nama', 'like', '%chiper%'));
                 } elseif ($request->role === 'panitia') {
-                    $q->whereNotNull('divisi_id')->whereDoesntHave('divisi', fn ($sub) => $sub->where('nama', 'like', '%chiper%'));
+                    $q->whereNotNull('divisi_id')->whereDoesntHave('divisi', fn($sub) => $sub->where('nama', 'like', '%chiper%'));
                 } elseif ($request->role === 'peserta') {
                     $q->whereNull('divisi_id');
                 }

@@ -44,8 +44,7 @@
             this.selectedUser = { ...user };
             this.openViewQrModal = true;
         }
-    }"
-        class="page-shell">
+    }" class="page-shell">
 
         <div class="page-wrap">
 
@@ -81,12 +80,10 @@
             </div>
 
             {{-- Filter & Pencarian --}}
-            <form method="GET" action="{{ route('admin.users.index') }}"
-                class="filter-bar">
+            <form method="GET" action="{{ route('admin.users.index') }}" class="filter-bar">
                 <div class="flex-1 min-w-[200px]">
                     <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Cari nama atau NIM..."
-                        class="form-control-app w-full">
+                        placeholder="Cari nama atau NIM..." class="form-control-app w-full">
                 </div>
 
                 <div>
@@ -156,7 +153,8 @@
                                     <td class="px-5 py-3.5">
                                         <div class="flex items-center gap-3">
                                             @if ($user->foto)
-                                                <img src="{{ asset('storage/' . $user->foto) }}" alt="{{ $user->nama }}"
+                                                <img src="{{ asset('storage/' . $user->foto) }}"
+                                                    alt="{{ $user->nama }}"
                                                     class="w-8 h-8 rounded-xl object-cover shrink-0 shadow-sm border border-slate-200 dark:border-slate-600">
                                             @else
                                                 <div
@@ -332,9 +330,9 @@
                         </h3>
                         <p class="text-slate-400 text-[11px] font-mono mt-0.5">NIM: <span
                                 x-text="selectedUser.nim"></span></p>
-                        <span
-                            class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border"
-                            :class="selectedUser.divisi_badge || 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'"
+                        <span class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border"
+                            :class="selectedUser.divisi_badge ||
+                                'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'"
                             x-text="selectedUser.divisi"></span>
                     </div>
 
@@ -342,10 +340,11 @@
                     <div
                         class="bg-white p-4 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 inline-block my-2 shadow-inner">
                         <template x-if="selectedUser.qr_token">
-                            <img :src="'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(JSON.stringify({
-                                user_id: selectedUser.id,
-                                token: selectedUser.qr_token
-                            }))"
+                            <img :src="'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(JSON
+                                .stringify({
+                                    user_id: selectedUser.id,
+                                    token: selectedUser.qr_token
+                                }))"
                                 alt="QR Code Presensi" class="w-44 h-44 object-contain mx-auto rounded-lg" />
                         </template>
                         <template x-if="!selectedUser.qr_token">
