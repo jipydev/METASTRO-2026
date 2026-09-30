@@ -1,5 +1,4 @@
 <x-app-layout :$title>
-    <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
                 <h2 class="font-bold text-xl text-gray-900 dark:text-white leading-tight">
@@ -12,7 +11,6 @@
                 ← Kembali
             </a>
         </div>
-    </x-slot>
 
     @php
         $isEdit = isset($hukuman);

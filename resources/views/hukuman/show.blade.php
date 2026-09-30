@@ -1,5 +1,4 @@
 <x-app-layout :$title>
-    <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
                 <h2 class="font-bold text-xl text-gray-900 dark:text-white leading-tight">
@@ -31,7 +30,6 @@
                 </a>
             @endif
         </div>
-    </x-slot>
 
     <div class="py-8 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 font-poppins space-y-5">
         @if (session('success'))

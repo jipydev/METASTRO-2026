@@ -1,9 +1,8 @@
 ﻿<x-app-layout :$title>
-    <x-slot name="header">
+    
         <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight">
             {{ __('Form Pengajuan Izin') }}
         </h2>
-    </x-slot>
 
     <div x-data="{
         isSubmitting: false,
