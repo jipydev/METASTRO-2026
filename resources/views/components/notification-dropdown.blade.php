@@ -29,7 +29,7 @@
         <div class="flex items-center justify-between gap-2 px-4 py-3 border-b border-slate-100 dark:border-slate-700">
             <p class="text-xs font-bold text-slate-900 dark:text-white">Notifikasi</p>
             @if ($appUnreadNotificationCount > 0)
-                <form method="POST" action="{{ route('notifications.read-all') }}">
+                <form method="POST" action="{{ route('dashboard.notifications.read-all') }}">
                     @csrf
                     <button type="submit" class="text-[11px] font-semibold text-brand-600 dark:text-brand-400 hover:underline">
                         Tandai semua dibaca
@@ -44,7 +44,7 @@
                     $data = $notification->data;
                     $unread = is_null($notification->read_at);
                 @endphp
-                <a href="{{ route('notifications.show', $notification->id) }}"
+                <a href="{{ route('dashboard.notifications.show', $notification->id) }}"
                     class="block px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition {{ $unread ? 'bg-brand-50/60 dark:bg-brand-950/30' : '' }}">
                     <div class="flex items-start gap-2.5">
                         @if ($unread)

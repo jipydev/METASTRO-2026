@@ -6,7 +6,7 @@
                 </h2>
             </div>
 
-            <a href="{{ route('hukuman.kelola', $mode) }}"
+            <a href="{{ route('dashboard.hukuman.kelola', $mode) }}"
                class="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs transition self-start sm:self-auto">
                 ← Kembali
             </a>
@@ -29,7 +29,7 @@
     <div class="py-8 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 font-poppins">
         <div class="bg-white dark:bg-slate-800 shadow-sm rounded-3xl border border-gray-100 dark:border-slate-700 overflow-hidden">
             {{-- Form header --}}
-            <div class="px-6 sm:px-8 pt-6 sm:pt-8 pb-5 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-brand-50/80 to-transparent dark:from-brand-950/20">
+            <div class="px-6 sm:px-8 pt-6 sm:pt-8 pb-5 border-b border-gray-100 dark:border-slate-700 bg-linear-to-r from-brand-50/80 to-transparent dark:from-brand-950/20">
                 <div class="flex items-start gap-3">
                     <div class="shrink-0 w-10 h-10 rounded-2xl bg-brand-100 dark:bg-brand-950/50 flex items-center justify-center text-brand-600 dark:text-brand-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -47,7 +47,7 @@
 
             <form
                 method="POST"
-                action="{{ $isEdit ? route('hukuman.update', $hukuman) : route('hukuman.store', $mode) }}"
+                action="{{ $isEdit ? route('dashboard.hukuman.update', $hukuman) : route('dashboard.hukuman.store', $mode) }}"
                 class="p-6 sm:p-8 space-y-6 text-xs"
                 x-data="{
                     targets: {{ \Illuminate\Support\Js::from($targetOptions) }},
@@ -191,7 +191,7 @@
                                     @checked($selectedKategori === $kategori)
                                     @if ($loop->first) required @endif
                                 >
-                                <span class="flex items-center justify-center min-h-[2.75rem] px-3 py-2 rounded-xl text-[11px] font-bold border text-center transition
+                                <span class="flex items-center justify-center min-h-11 px-3 py-2 rounded-xl text-[11px] font-bold border text-center transition
                                     bg-slate-50 text-slate-500 border-slate-200
                                     dark:bg-slate-700/40 dark:text-slate-400 dark:border-slate-600
                                     peer-checked:ring-2 peer-checked:ring-offset-1 peer-checked:ring-brand-400/40
@@ -226,7 +226,7 @@
                         required
                         maxlength="2000"
                         placeholder="Jelaskan pelanggaran atau alasan hukuman secara jelas..."
-                        class="form-control-app w-full resize-y min-h-[120px]"
+                        class="form-control-app w-full resize-y min-h-30"
                     >{{ $alasanValue }}</textarea>
                     @error('alasan')
                         <p class="text-xs text-red-600 dark:text-red-400 font-semibold">{{ $message }}</p>
@@ -249,7 +249,7 @@
 
                 {{-- Actions --}}
                 <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5 pt-4 border-t border-gray-100 dark:border-slate-700">
-                    <a href="{{ route('hukuman.kelola', $mode) }}"
+                    <a href="{{ route('dashboard.hukuman.kelola', $mode) }}"
                        class="inline-flex justify-center px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 transition">
                         Batal
                     </a>

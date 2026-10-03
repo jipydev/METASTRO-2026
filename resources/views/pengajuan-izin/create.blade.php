@@ -82,7 +82,7 @@
             </div>
 
             {{-- Form Body --}}
-            <form action="{{ route('pengajuan-izin.store') }}" method="POST" enctype="multipart/form-data" @submit="isSubmitting = true" class="space-y-5 text-xs">
+            <form action="{{ route('dashboard.pengajuan-izin.store') }}" method="POST" enctype="multipart/form-data" @submit="isSubmitting = true" class="space-y-5 text-xs">
                 @csrf
 
                 {{-- Pilih Kegiatan --}}
@@ -180,7 +180,7 @@
 
                 {{-- Action Buttons --}}
                 <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-gray-100 dark:border-slate-700">
-                    <a href="{{ route('pengajuan-izin.index') }}" 
+                    <a href="{{ route('dashboard.pengajuan-izin.index') }}" 
                        class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 font-semibold transition">
                         Batal
                     </a>

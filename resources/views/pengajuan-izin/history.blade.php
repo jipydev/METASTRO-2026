@@ -11,12 +11,12 @@
 
         <div class="flex flex-wrap items-center gap-2 self-start sm:self-auto">
             @if (auth()->user()->canReviewIzin())
-                <a href="{{ route('pengajuan-izin.review') }}"
+                <a href="{{ route('dashboard.pengajuan-izin.review') }}"
                     class="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs transition">
                     Review
                 </a>
             @endif
-            <a href="{{ route('pengajuan-izin.create') }}"
+            <a href="{{ route('dashboard.pengajuan-izin.create') }}"
                 class="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl text-xs shadow-sm transition">
                 + Ajukan Izin
             </a>
@@ -128,7 +128,7 @@
                                                 Detail
                                             </button>
                                             @if ($p->canBeDeletedBy(auth()->user()))
-                                                <form action="{{ route('pengajuan-izin.destroy', $p) }}" method="POST"
+                                                <form action="{{ route('dashboard.pengajuan-izin.destroy', $p) }}" method="POST"
                                                     onsubmit="return confirm('Hapus pengajuan izin ini?')">
                                                     @csrf
                                                     @method('DELETE')

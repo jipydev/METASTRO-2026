@@ -35,7 +35,7 @@
         showModal: false,
         showDeleteModal: false,
         isEdit: false,
-        formAction: '{{ route('kegiatan.store') }}',
+        formAction: '{{ route('dashboard.kegiatan.store') }}',
         form: {
             id: null,
             nama: '',
@@ -87,7 +87,7 @@
     
         openCreate() {
             this.isEdit = false;
-            this.formAction = '{{ route('kegiatan.store') }}';
+            this.formAction = '{{ route('dashboard.kegiatan.store') }}';
             let today = new Date().toISOString().split('T')[0];
             this.form = {
                 id: null,
@@ -107,7 +107,7 @@
     
         openEdit(item) {
             this.isEdit = true;
-            this.formAction = '/kegiatan/' + item.id;
+            this.formAction = '/dashboard/kegiatan/' + item.id;
             this.form = Object.assign({}, item);
             this.showModal = true;
         },
@@ -135,14 +135,14 @@
                 @endif
             </div>
 
-            <form method="GET" action="{{ route('kegiatan.index') }}" class="filter-bar">
+            <form method="GET" action="{{ route('dashboard.kegiatan.index') }}" class="filter-bar">
                 <div class="flex-1 min-w-0 w-full">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, tempat, atau deskripsi..."
                         class="form-control-app w-full">
                 </div>
                 <button type="submit" class="btn-filter">Filter</button>
                 @if (request()->filled('search'))
-                    <a href="{{ route('kegiatan.index') }}" class="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400">Reset</a>
+                    <a href="{{ route('dashboard.kegiatan.index') }}" class="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400">Reset</a>
                 @endif
             </form>
 
@@ -241,7 +241,7 @@
                             <div
                                 class="pl-2 mt-4 pt-3 border-t border-gray-100 dark:border-slate-700 flex items-center justify-between gap-2">
                                 @if (auth()->user()->canTogglePresensi())
-                                <form action="{{ route('presensi.toggle', $item) }}" method="POST">
+                                <form action="{{ route('dashboard.presensi.toggle', $item) }}" method="POST">
                                     @csrf @method('PATCH')
                                     <input type="hidden" name="status_presensi"
                                         value="{{ $item->status_presensi_aktif === 'buka' ? 'tutup' : 'buka' }}">
@@ -390,7 +390,7 @@
                 <div x-show="showDeleteModal" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm"
                     @click="showDeleteModal = false"></div>
 
-                <form :action="'/kegiatan/' + form.id" method="POST" x-show="showDeleteModal" x-transition
+                <form :action="'/dashboard/kegiatan/' + form.id" method="POST" x-show="showDeleteModal" x-transition
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-5 w-full max-w-sm shadow-xl text-center text-xs">
                     @csrf @method('DELETE')
                     <span class="text-3xl block mb-2">🗑️</span>

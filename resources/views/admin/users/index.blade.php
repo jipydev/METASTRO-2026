@@ -81,7 +81,7 @@
 
             {{-- Filter & Pencarian --}}
             <form method="GET" action="{{ route('admin.users.index') }}" class="filter-bar">
-                <div class="flex-1 min-w-[200px]">
+                <div class="flex-1 min-w-50">
                     <input type="text" name="search" value="{{ request('search') }}"
                         placeholder="Cari nama atau NIM..." class="form-control-app w-full">
                 </div>
@@ -439,7 +439,7 @@
                 <div x-show="openDeleteModal" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm"
                     @click="openDeleteModal = false"></div>
 
-                <form :action="'{{ url('admin/users') }}/' + selectedUser.id" method="POST" x-show="openDeleteModal"
+                <form :action="'{{ url('dashboard/users') }}/' + selectedUser.id" method="POST" x-show="openDeleteModal"
                     x-transition
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-sm shadow-xl text-xs">
                     @csrf

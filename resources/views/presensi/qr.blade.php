@@ -7,7 +7,7 @@
 
                 {{-- Header Tombol Kembali & Judul --}}
                 <div class="mb-6 flex flex-col items-start">
-                    <a href="{{ route('dashboard') }}"
+                    <a href="{{ route('dashboard.index') }}"
                         class="mb-3 inline-flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition font-semibold text-xs">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
                             stroke="currentColor" class="w-4 h-4">
@@ -49,7 +49,7 @@
                 </div>
 
                 {{-- Kartu QR Code --}}
-                <div class="bg-gradient-to-b from-slate-50 to-slate-50/50 dark:from-slate-700/60 dark:to-slate-800/60 rounded-3xl p-6 sm:p-7 flex flex-col justify-center items-center border border-slate-200/60 dark:border-slate-600/60">
+                <div class="bg-linear-to-b from-slate-50 to-slate-50/50 dark:from-slate-700/60 dark:to-slate-800/60 rounded-3xl p-6 sm:p-7 flex flex-col justify-center items-center border border-slate-200/60 dark:border-slate-600/60">
                     @if (isset($qrUrl) && $qrUrl)
                         <div class="p-4 bg-white dark:bg-white rounded-2xl shadow-sm border border-slate-200/80 transition transform hover:scale-[1.02]">
                             <img src="{{ $qrUrl }}" alt="QR Code Absensi"

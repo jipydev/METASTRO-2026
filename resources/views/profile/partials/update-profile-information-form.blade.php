@@ -17,7 +17,7 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-6" x-data="{
+    <form method="post" action="{{ route('dashboard.profile.update') }}" enctype="multipart/form-data" class="space-y-6" x-data="{
         photoPreview: null,
         cropper: null,
         showCropModal: false,

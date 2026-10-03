@@ -114,7 +114,7 @@
                     :belum-label="$belumLabel" />
             @endif
 
-            <form method="GET" action="{{ route('presensi.monitoring') }}" class="filter-bar">
+            <form method="GET" action="{{ route('dashboard.presensi.monitoring') }}" class="filter-bar">
                 <div class="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-12 gap-3 items-end">
                     <div class="sm:col-span-2 xl:col-span-4">
                         <label for="filter-search" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Pencarian</label>
@@ -158,7 +158,7 @@
                     <div class="flex items-center gap-3 xl:col-span-1 xl:pb-0.5">
                         <button type="submit" class="btn-filter">Cari</button>
                         @if ($search !== '' || $statusFilter || $sort !== 'waktu')
-                            <a href="{{ route('presensi.monitoring', array_filter(['kegiatan_id' => $selectedKegiatan?->id])) }}"
+                            <a href="{{ route('dashboard.presensi.monitoring', array_filter(['kegiatan_id' => $selectedKegiatan?->id])) }}"
                                 class="text-xs font-semibold text-slate-500 hover:text-brand-600 dark:text-slate-400 whitespace-nowrap">
                                 Reset
                             </a>
@@ -255,7 +255,7 @@
             <div x-show="openTambah" x-cloak class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
                 <div class="flex items-center justify-center min-h-screen px-4">
                     <div x-show="openTambah" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="openTambah = false"></div>
-                    <form action="{{ route('presensi.store') }}" method="POST"
+                    <form action="{{ route('dashboard.presensi.store') }}" method="POST"
                         x-show="openTambah" x-transition @submit="confirmPanitia($event)"
                         class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-lg shadow-xl text-xs">
                         @csrf
@@ -324,7 +324,7 @@
             <div x-show="openImport" x-cloak class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
                 <div class="flex items-center justify-center min-h-screen px-4">
                     <div x-show="openImport" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="openImport = false"></div>
-                    <form action="{{ route('presensi.import') }}" method="POST" enctype="multipart/form-data"
+                    <form action="{{ route('dashboard.presensi.import') }}" method="POST" enctype="multipart/form-data"
                         x-show="openImport" x-transition
                         class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-lg shadow-xl text-xs">
                         @csrf
@@ -349,7 +349,7 @@
                                 <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Berkas CSV / Excel *</label>
                                 <input type="file" name="file" required accept=".csv,.txt,.xlsx,.xls" class="{{ $fileClass }}">
                             </div>
-                            <a href="{{ route('presensi.template') }}" class="inline-flex text-[11px] font-semibold text-brand-600 hover:text-brand-700">
+                            <a href="{{ route('dashboard.presensi.template') }}" class="inline-flex text-[11px] font-semibold text-brand-600 hover:text-brand-700">
                                 Unduh template CSV
                             </a>
                         </div>

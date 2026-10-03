@@ -50,7 +50,7 @@ class NotificationDispatcher
         Notification::send($rangers, new ReminderNotification(
             'Impor presensi',
             "{$count} kehadiran diimpor untuk {$kegiatan->nama}.",
-            route('presensi.monitoring', ['kegiatan_id' => $kegiatan->id]),
+            route('dashboard.presensi.monitoring', ['kegiatan_id' => $kegiatan->id]),
             'presensi',
         ));
     }
@@ -99,7 +99,7 @@ class NotificationDispatcher
         $this->notifyPanitia(new ReminderNotification(
             'Pengumuman baru',
             $pengumuman->judul,
-            route('pengumuman.index'),
+            route('dashboard.pengumuman.index'),
             'pengumuman',
         ), $exceptUserId);
     }
@@ -115,7 +115,7 @@ class NotificationDispatcher
         $this->notifyPanitia(new ReminderNotification(
             'Notulensi baru',
             $message,
-            route('notulensi.index'),
+            route('dashboard.notulensi.index'),
             'notulensi',
         ), $exceptUserId);
     }
@@ -130,7 +130,7 @@ class NotificationDispatcher
         $this->notifyPanitia(new ReminderNotification(
             'Kegiatan baru',
             "{$kegiatan->nama} dijadwalkan {$jadwal}{$tempat}.",
-            route('kegiatan.index'),
+            route('dashboard.kegiatan.index'),
             'kegiatan',
         ), $exceptUserId);
     }
@@ -140,7 +140,7 @@ class NotificationDispatcher
         $this->notifyPanitia(new ReminderNotification(
             'Presensi dibuka',
             "Sesi presensi untuk {$kegiatan->nama} sudah dibuka. Jangan lupa absen.",
-            route('presensi.index'),
+            route('dashboard.presensi.index'),
             'presensi',
         ), $exceptUserId);
     }

@@ -10,7 +10,7 @@
             </p>
         </div>
 
-        <a href="{{ route('pengajuan-izin.index') }}"
+        <a href="{{ route('dashboard.pengajuan-izin.index') }}"
             class="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 text-xs font-semibold rounded-xl transition self-start sm:self-auto">
             &larr; Izin saya
         </a>
@@ -35,15 +35,15 @@
 
         {{-- Filter Tabs --}}
         <div class="mb-6 flex flex-wrap gap-2 border-b border-gray-200 dark:border-slate-700 pb-3">
-            <a href="{{ route('pengajuan-izin.review', ['filter' => 'pending']) }}"
+            <a href="{{ route('dashboard.pengajuan-izin.review', ['filter' => 'pending']) }}"
                 class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 {{ $filter === 'pending' ? 'bg-brand-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }}">
                 Menunggu Review
             </a>
-            <a href="{{ route('pengajuan-izin.review', ['filter' => 'approved']) }}"
+            <a href="{{ route('dashboard.pengajuan-izin.review', ['filter' => 'approved']) }}"
                 class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 {{ $filter === 'approved' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }}">
                 Disetujui
             </a>
-            <a href="{{ route('pengajuan-izin.review', ['filter' => 'rejected']) }}"
+            <a href="{{ route('dashboard.pengajuan-izin.review', ['filter' => 'rejected']) }}"
                 class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 {{ $filter === 'rejected' ? 'bg-red-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }}">
                 Ditolak
             </a>
@@ -157,7 +157,7 @@
                                                 {{ $canAct ? 'Review' : 'Detail' }}
                                             </button>
                                             @if ($p->canBeDeletedBy($user))
-                                                <form action="{{ route('pengajuan-izin.destroy', $p) }}" method="POST"
+                                                <form action="{{ route('dashboard.pengajuan-izin.destroy', $p) }}" method="POST"
                                                     onsubmit="return confirm('Hapus pengajuan izin ini?')">
                                                     @csrf
                                                     @method('DELETE')

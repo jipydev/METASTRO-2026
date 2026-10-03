@@ -56,7 +56,7 @@
         </div>
 
         {{-- Tombol Navigasi Kembali --}}
-        <a href="{{ route('dashboard') }}" @click="stopCamera()"
+        <a href="{{ route('dashboard.index') }}" @click="stopCamera()"
             class="absolute top-6 left-6 z-20 px-4 py-2 bg-slate-900/80 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl border border-slate-700 backdrop-blur-md shadow-lg transition">
             &larr; Dashboard
         </a>
@@ -241,7 +241,7 @@
                     this.isLoading = true;
 
                     try {
-                        const response = await fetch("{{ route('api.scan.lookup') }}", {
+                        const response = await fetch("{{ route('dashboard.api.scan.lookup') }}", {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -288,7 +288,7 @@
                     this.isSaving = true;
 
                     try {
-                        const response = await fetch("{{ route('api.scan.store') }}", {
+                        const response = await fetch("{{ route('dashboard.api.scan.store') }}", {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

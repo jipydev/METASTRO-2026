@@ -32,7 +32,7 @@
                 @endif
             </div>
 
-            <form method="GET" action="{{ route('notulensi.index') }}" class="filter-bar">
+            <form method="GET" action="{{ route('dashboard.notulensi.index') }}" class="filter-bar">
                 <div class="flex-1 min-w-0 w-full">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul atau isi..."
                         class="form-control-app w-full">
@@ -49,7 +49,7 @@
                 </div>
                 <button type="submit" class="btn-filter">Filter</button>
                 @if (request()->hasAny(['search', 'kegiatan_id']))
-                    <a href="{{ route('notulensi.index') }}" class="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400">Reset</a>
+                    <a href="{{ route('dashboard.notulensi.index') }}" class="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400">Reset</a>
                 @endif
             </form>
 
@@ -103,7 +103,7 @@
                                         <button type="button" data-item="{{ $jsonNotulensi }}"
                                             @click="selectedNotulensi = JSON.parse($el.dataset.item); openEditNotulensi = true;"
                                             class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold rounded-xl">Edit</button>
-                                        <form action="{{ route('notulensi.destroy', $notulensi) }}" method="POST" onsubmit="return confirm('Hapus arsip notulensi ini?')">
+                                        <form action="{{ route('dashboard.notulensi.destroy', $notulensi) }}" method="POST" onsubmit="return confirm('Hapus arsip notulensi ini?')">
                                             @csrf @method('DELETE')
                                             <button type="submit" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-xl">Hapus</button>
                                         </form>
@@ -130,7 +130,7 @@
         <div x-show="openAddNotulensi" x-cloak class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4">
                 <div x-show="openAddNotulensi" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="openAddNotulensi = false"></div>
-                <form action="{{ route('notulensi.store') }}" method="POST" enctype="multipart/form-data"
+                <form action="{{ route('dashboard.notulensi.store') }}" method="POST" enctype="multipart/form-data"
                     x-show="openAddNotulensi" x-transition
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-md shadow-xl text-xs">
                     @csrf
@@ -171,7 +171,7 @@
         <div x-show="openEditNotulensi" x-cloak class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4">
                 <div x-show="openEditNotulensi" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="openEditNotulensi = false"></div>
-                <form :action="'{{ url('notulensi') }}/' + selectedNotulensi.id" method="POST" enctype="multipart/form-data"
+                <form :action="'{{ url('/dashboard/notulensi') }}/' + selectedNotulensi.id" method="POST" enctype="multipart/form-data"
                     x-show="openEditNotulensi" x-transition
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-md shadow-xl text-xs">
                     @csrf @method('PUT')
@@ -192,7 +192,7 @@
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Isi</label>
-                            <textarea name="isi" rows="4" x-model="selectedNotulensi.isi" class="{{ $fieldClass }} min-h-[96px] resize-y"></textarea>
+                            <textarea name="isi" rows="4" x-model="selectedNotulensi.isi" class="{{ $fieldClass }} min-h-24 resize-y"></textarea>
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Ganti Lampiran PDF</label>

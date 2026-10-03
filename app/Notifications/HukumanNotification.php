@@ -38,37 +38,37 @@ class HukumanNotification extends Notification
             'updated' => [
                 'title' => 'Hukuman diperbarui',
                 'message' => "Detail hukuman kategori {$kategori} telah diperbarui. Periksa kembali alasan dan tugasnya.",
-                'url' => route('hukuman.show', $this->hukuman),
+                'url' => route('dashboard.hukuman.show', $this->hukuman),
                 'type' => 'hukuman',
             ],
             'dibatalkan' => [
                 'title' => 'Hukuman dibatalkan',
                 'message' => "Hukuman kategori {$kategori} yang diberikan kepada Anda telah dibatalkan.",
-                'url' => route('hukuman.index'),
+                'url' => route('dashboard.hukuman.index'),
                 'type' => 'hukuman',
             ],
             'pembelaan' => [
                 'title' => 'Pembelaan hukuman',
                 'message' => "{$target} mengajukan pembelaan untuk hukuman kategori {$kategori}.",
-                'url' => route('hukuman.show', $this->hukuman),
+                'url' => route('dashboard.hukuman.show', $this->hukuman),
                 'type' => 'hukuman',
             ],
             'tugas' => [
                 'title' => 'Tugas hukuman dikirim',
                 'message' => "{$target} mengirim link tugas hukuman kategori {$kategori}.",
-                'url' => route('hukuman.show', $this->hukuman),
+                'url' => route('dashboard.hukuman.show', $this->hukuman),
                 'type' => 'hukuman',
             ],
             'selesai' => [
                 'title' => 'Hukuman selesai',
                 'message' => "{$target} menandai hukuman kategori {$kategori} sebagai selesai.",
-                'url' => route('hukuman.show', $this->hukuman),
+                'url' => route('dashboard.hukuman.show', $this->hukuman),
                 'type' => 'hukuman',
             ],
             default => [
                 'title' => 'Hukuman diterbitkan',
                 'message' => "Anda menerima hukuman kategori {$kategori}. Segera ajukan pembelaan dan kerjakan tugas dalam 2×24 jam.",
-                'url' => route('hukuman.show', $this->hukuman),
+                'url' => route('dashboard.hukuman.show', $this->hukuman),
                 'type' => 'hukuman',
             ],
         };

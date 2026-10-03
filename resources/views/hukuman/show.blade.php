@@ -14,17 +14,17 @@
             </div>
 
             @if ($isTarget)
-                <a href="{{ route('hukuman.index') }}"
+                <a href="{{ route('dashboard.hukuman.index') }}"
                    class="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs transition self-start sm:self-auto">
                     ← Riwayat Saya
                 </a>
             @elseif (auth()->user()->canIssueHukumanRanger() && $hukuman->issuer_mode === 'ranger')
-                <a href="{{ route('hukuman.kelola', 'ranger') }}"
+                <a href="{{ route('dashboard.hukuman.kelola', 'ranger') }}"
                    class="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs transition self-start sm:self-auto">
                     ← Kelola
                 </a>
             @elseif (auth()->user()->canIssueHukumanPengawas() && $hukuman->issuer_mode === 'pengawas')
-                <a href="{{ route('hukuman.kelola', 'pengawas') }}"
+                <a href="{{ route('dashboard.hukuman.kelola', 'pengawas') }}"
                    class="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs transition self-start sm:self-auto">
                     ← Kelola
                 </a>
@@ -91,11 +91,11 @@
 
             @if ($canManage ?? false)
                 <div class="flex flex-wrap gap-2 pt-2 border-t border-gray-100 dark:border-slate-700">
-                    <a href="{{ route('hukuman.edit', $hukuman) }}"
+                    <a href="{{ route('dashboard.hukuman.edit', $hukuman) }}"
                        class="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs transition">
                         Edit Hukuman
                     </a>
-                    <form method="POST" action="{{ route('hukuman.destroy', $hukuman) }}"
+                    <form method="POST" action="{{ route('dashboard.hukuman.destroy', $hukuman) }}"
                           onsubmit="return confirm('Hapus hukuman ini? Target akan mendapat notifikasi pembatalan.')">
                         @csrf
                         @method('DELETE')
@@ -121,11 +121,11 @@
                 <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
                     Ajukan pembelaan atau klarifikasi terlebih dahulu. Proses ini tidak membatalkan hukuman, namun wajib dilakukan sebelum mengerjakan tugas.
                 </p>
-                <form method="POST" action="{{ route('hukuman.pembelaan', $hukuman) }}" class="space-y-3">
+                <form method="POST" action="{{ route('dashboard.hukuman.pembelaan', $hukuman) }}" class="space-y-3">
                     @csrf
                     <textarea name="pembelaan" rows="4" required maxlength="2000"
                               placeholder="Tuliskan pembelaan atau klarifikasi Anda..."
-                              class="w-full rounded-xl border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm focus:border-brand-500 focus:ring-brand-500">{{ old('pembelaan') }}</textarea>
+                              class="p-2 border w-full rounded-xl border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm focus:border-brand-500 focus:ring-brand-500">{{ old('pembelaan') }}</textarea>
                     @error('pembelaan')
                         <p class="text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
@@ -144,11 +144,11 @@
                 <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
                     Unggah link Google Drive atau dokumen tugas jika diminta. Kolom ini opsional.
                 </p>
-                <form method="POST" action="{{ route('hukuman.tugas', $hukuman) }}" class="space-y-3">
+                <form method="POST" action="{{ route('dashboard.hukuman.tugas', $hukuman) }}" class="space-y-3">
                     @csrf
                     <input type="url" name="tugas_link" value="{{ old('tugas_link', $hukuman->tugas_link) }}"
                            placeholder="https://drive.google.com/..."
-                           class="w-full rounded-xl border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm focus:border-brand-500 focus:ring-brand-500">
+                           class="border p-2 w-full rounded-xl border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm focus:border-brand-500 focus:ring-brand-500">
                     @error('tugas_link')
                         <p class="text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
@@ -176,7 +176,7 @@
                 <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
                     Tandai hukuman selesai setelah Anda mengerjakan tugas sesuai kategori (2×24 jam).
                 </p>
-                <form method="POST" action="{{ route('hukuman.selesai', $hukuman) }}"
+                <form method="POST" action="{{ route('dashboard.hukuman.selesai', $hukuman) }}"
                       onsubmit="return confirm('Yakin hukuman sudah selesai dikerjakan?')">
                     @csrf
                     <button type="submit"

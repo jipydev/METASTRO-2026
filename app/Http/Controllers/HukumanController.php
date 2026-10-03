@@ -106,7 +106,7 @@ class HukumanController extends Controller
         $this->notifications->hukumanIssued($hukuman);
 
         return redirect()
-            ->route('hukuman.kelola', ['mode' => $mode])
+            ->route('dashboard.hukuman.kelola', ['mode' => $mode])
             ->with('success', 'Hukuman berhasil diterbitkan.');
     }
 
@@ -186,7 +186,7 @@ class HukumanController extends Controller
         }
 
         return redirect()
-            ->route('hukuman.show', $hukuman)
+            ->route('dashboard.hukuman.show', $hukuman)
             ->with('success', 'Hukuman berhasil diperbarui.');
     }
 
@@ -209,7 +209,7 @@ class HukumanController extends Controller
         $hukuman->delete();
 
         return redirect()
-            ->route('hukuman.kelola', ['mode' => $mode])
+            ->route('dashboard.hukuman.kelola', ['mode' => $mode])
             ->with('success', 'Hukuman berhasil dihapus.');
     }
 
@@ -242,7 +242,7 @@ class HukumanController extends Controller
         $this->notifications->hukumanPembelaanSubmitted($hukuman->fresh());
 
         return redirect()
-            ->route('hukuman.show', $hukuman)
+            ->route('dashboard.hukuman.show', $hukuman)
             ->with('success', 'Pembelaan berhasil dikirim. Silakan kerjakan tugas hukuman Anda.');
     }
 
@@ -260,7 +260,7 @@ class HukumanController extends Controller
         }
 
         return redirect()
-            ->route('hukuman.show', $hukuman)
+            ->route('dashboard.hukuman.show', $hukuman)
             ->with('success', $link ? 'Link tugas berhasil disimpan.' : 'Link tugas dihapus.');
     }
 
@@ -278,7 +278,7 @@ class HukumanController extends Controller
         $this->notifications->hukumanCompleted($hukuman->fresh());
 
         return redirect()
-            ->route('hukuman.index')
+            ->route('dashboard.hukuman.index')
             ->with('success', 'Hukuman ditandai selesai. Terima kasih sudah menyelesaikan tugas.');
     }
 

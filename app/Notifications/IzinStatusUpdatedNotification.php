@@ -38,7 +38,7 @@ class IzinStatusUpdatedNotification extends Notification
             return [
                 'title' => 'Izin diteruskan',
                 'message' => "Pengajuan izin Anda untuk {$kegiatan} disetujui Koordinator dan diteruskan ke Ranger.",
-                'url' => route('pengajuan-izin.index'),
+                'url' => route('dashboard.pengajuan-izin.index'),
                 'type' => 'izin',
             ];
         }
@@ -47,7 +47,7 @@ class IzinStatusUpdatedNotification extends Notification
             return [
                 'title' => 'Izin disetujui',
                 'message' => "Pengajuan izin Anda untuk {$kegiatan} telah disetujui oleh {$aktor}.",
-                'url' => route('pengajuan-izin.index'),
+                'url' => route('dashboard.pengajuan-izin.index'),
                 'type' => 'izin',
             ];
         }
@@ -55,7 +55,7 @@ class IzinStatusUpdatedNotification extends Notification
         return [
             'title' => 'Izin ditolak',
             'message' => "Pengajuan izin Anda untuk {$kegiatan} ditolak oleh {$aktor}.",
-            'url' => route('pengajuan-izin.index'),
+            'url' => route('dashboard.pengajuan-izin.index'),
             'type' => 'izin',
         ];
     }

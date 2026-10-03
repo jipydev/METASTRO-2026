@@ -35,7 +35,7 @@
                 @endif
             </div>
 
-            <form method="GET" action="{{ route('pengumuman.index') }}" class="filter-bar">
+            <form method="GET" action="{{ route('dashboard.pengumuman.index') }}" class="filter-bar">
                 <div class="flex-1 min-w-0 w-full">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul atau isi..."
                         class="form-control-app w-full">
@@ -49,7 +49,7 @@
                 </div>
                 <button type="submit" class="btn-filter">Filter</button>
                 @if (request()->hasAny(['search', 'status']))
-                    <a href="{{ route('pengumuman.index') }}" class="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400">Reset</a>
+                    <a href="{{ route('dashboard.pengumuman.index') }}" class="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400">Reset</a>
                 @endif
             </form>
 
@@ -125,7 +125,7 @@
         <div x-show="openTambahPengumuman" x-cloak class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4">
                 <div x-show="openTambahPengumuman" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="openTambahPengumuman = false"></div>
-                <form action="{{ route('pengumuman.store') }}" method="POST" enctype="multipart/form-data"
+                <form action="{{ route('dashboard.pengumuman.store') }}" method="POST" enctype="multipart/form-data"
                     x-show="openTambahPengumuman" x-transition
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-lg shadow-xl text-xs">
                     @csrf
@@ -137,7 +137,7 @@
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Isi *</label>
-                            <textarea name="isi" rows="4" required placeholder="Tuliskan isi pengumuman secara detail..." class="{{ $fieldClass }} min-h-[96px] resize-y"></textarea>
+                            <textarea name="isi" rows="4" required placeholder="Tuliskan isi pengumuman secara detail..." class="{{ $fieldClass }} min-h-24 resize-y"></textarea>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
@@ -168,7 +168,7 @@
         <div x-show="openEditPengumuman" x-cloak class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4">
                 <div x-show="openEditPengumuman" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="openEditPengumuman = false"></div>
-                <form :action="'{{ url('pengumuman') }}/' + selectedPengumuman.id" method="POST" enctype="multipart/form-data"
+                <form :action="'{{ url('dashboard/pengumuman') }}/' + selectedPengumuman.id" method="POST" enctype="multipart/form-data"
                     x-show="openEditPengumuman" x-transition
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-lg shadow-xl text-xs">
                     @csrf @method('PUT')
@@ -180,7 +180,7 @@
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Isi *</label>
-                            <textarea name="isi" rows="4" x-model="selectedPengumuman.isi" required class="{{ $fieldClass }} min-h-[96px] resize-y"></textarea>
+                            <textarea name="isi" rows="4" x-model="selectedPengumuman.isi" required class="{{ $fieldClass }} min-h-24 resize-y"></textarea>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
@@ -211,7 +211,7 @@
         <div x-show="openDeletePengumuman" x-cloak class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4">
                 <div x-show="openDeletePengumuman" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="openDeletePengumuman = false"></div>
-                <form :action="'{{ url('pengumuman') }}/' + selectedPengumuman.id" method="POST"
+                <form :action="'{{ url('dashboard/pengumuman') }}/' + selectedPengumuman.id" method="POST"
                     x-show="openDeletePengumuman" x-transition
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-sm shadow-xl text-xs">
                     @csrf @method('DELETE')

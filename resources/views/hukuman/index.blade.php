@@ -59,7 +59,7 @@
                                         </span>
                                     </td>
                                     <td class="py-3.5 px-4 text-center">
-                                        <a href="{{ route('hukuman.show', $h) }}"
+                                        <a href="{{ route('dashboard.hukuman.show', $h) }}"
                                            class="inline-flex items-center px-3 py-1.5 bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/40 dark:hover:bg-brand-950/60 text-brand-600 dark:text-brand-300 font-semibold rounded-lg transition">
                                             Detail
                                         </a>

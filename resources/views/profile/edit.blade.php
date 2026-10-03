@@ -8,7 +8,7 @@
                     <h1 class="text-2xl sm:text-3xl font-bold text-primary-600 dark:text-primary-400">Pengaturan Profil</h1>
                     <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Kelola informasi pribadi, keamanan akun, dan preferensi Anda</p>
                 </div>
-                <a href="{{ route('dashboard') }}"
+                <a href="{{ route('dashboard.index') }}"
                    class="inline-flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 font-semibold text-sm transition">
                     &larr; Kembali ke Dashboard
                 </a>
@@ -21,7 +21,7 @@
                 <div class="lg:col-span-1 space-y-6">
                     <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-slate-700 text-center relative overflow-hidden">
                         <!-- Top Accent Banner -->
-                        <div class="h-20 bg-gradient-to-r from-primary-500 to-amber-500 -mx-6 -mt-6 mb-12 relative">
+                        <div class="h-20 bg-linear-to-r from-primary-500 to-amber-500 -mx-6 -mt-6 mb-12 relative">
                         </div>
 
                         <!-- User Avatar -->

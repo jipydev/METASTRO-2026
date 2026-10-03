@@ -156,9 +156,9 @@ class PengajuanIzin extends Model
             'reviewerRanger' => $this->reviewerRanger?->nama,
             'reviewedAtKoor' => $this->reviewed_at_koordinator?->translatedFormat('d M Y H:i'),
             'reviewedAtRanger' => $this->reviewed_at_ranger?->translatedFormat('d M Y H:i'),
-            'approveUrl' => route('pengajuan-izin.approve', $this),
-            'rejectUrl' => route('pengajuan-izin.reject', $this),
-            'deleteUrl' => route('pengajuan-izin.destroy', $this),
+            'approveUrl' => route('dashboard.pengajuan-izin.approve', $this),
+            'rejectUrl' => route('dashboard.pengajuan-izin.reject', $this),
+            'deleteUrl' => route('dashboard.pengajuan-izin.destroy', $this),
             'canAct' => $canAct,
             'canDelete' => $this->canBeDeletedBy($auth instanceof User ? $auth : null),
             'approveLabel' => $this->currentReviewStep($auth instanceof User ? $auth : null) === 'ranger'

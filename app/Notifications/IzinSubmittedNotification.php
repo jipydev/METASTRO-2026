@@ -40,7 +40,7 @@ class IzinSubmittedNotification extends Notification
         return [
             'title' => 'Pengajuan izin baru',
             'message' => $message,
-            'url' => route('pengajuan-izin.review'),
+            'url' => route('dashboard.pengajuan-izin.review'),
             'type' => 'izin',
         ];
     }

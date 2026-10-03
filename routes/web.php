@@ -39,9 +39,8 @@ Route::middleware(['auth', 'verified', 'initial.setup'])->group(function () {
 | Authenticated User Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified', 'initial.setup'])->group(function () {
-
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::prefix('/dashboard')->name('dashboard.')->middleware(['auth', 'verified', 'initial.setup'])->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('index');
 
     Route::post('/notifikasi/baca-semua', [NotificationController::class, 'readAll'])->name('notifications.read-all');
     Route::resource('notifikasi', NotificationController::class)
@@ -121,8 +120,8 @@ Route::middleware(['auth', 'verified', 'initial.setup'])->group(function () {
 | Admin Area
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified', 'initial.setup', 'can:admin-access'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('users', UserController::class)->except(['show']);
+Route::prefix('/dashboard')->name('admin.')->middleware(['auth', 'verified', 'initial.setup', 'can:admin-access'])->group(function () {
+    Route::resource('users', UserController::class)->except(['show'])->names('users');
     Route::patch('users/{user}/reset-qr', [UserController::class, 'resetQr'])->name('users.reset-qr');
     Route::patch('users-reset-all-qr', [UserController::class, 'resetAllQr'])->name('users.reset-all-qr');
 });

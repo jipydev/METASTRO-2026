@@ -9,7 +9,7 @@
                 </div>
             </div>
 
-            <form method="GET" action="{{ route('presensi.history') }}" class="filter-bar">
+            <form method="GET" action="{{ route('dashboard.presensi.history') }}" class="filter-bar">
                 <div class="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-12 gap-3 items-end">
                     <div class="sm:col-span-2 xl:col-span-7">
                         <label for="filter-search" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Pencarian</label>
@@ -30,7 +30,7 @@
                     <div class="flex items-center gap-3 xl:col-span-2 xl:pb-0.5">
                         <button type="submit" class="btn-filter">Cari</button>
                         @if ($search !== '' || $statusFilter !== '')
-                            <a href="{{ route('presensi.history') }}"
+                            <a href="{{ route('dashboard.presensi.history') }}"
                                 class="text-xs font-semibold text-slate-500 hover:text-brand-600 dark:text-slate-400 whitespace-nowrap">
                                 Reset
                             </a>

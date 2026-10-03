@@ -56,7 +56,7 @@
                     </div>
 
                     <div class="flex items-center gap-2 shrink-0">
-                        <a href="{{ route('pengumuman.index') }}" class="px-2.5 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 whitespace-nowrap">Lihat semua</a>
+                        <a href="{{ route('dashboard.pengumuman.index') }}" class="px-2.5 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 whitespace-nowrap">Lihat semua</a>
                         @if (auth()->user()->canCreatePengumuman())
                             <button type="button"
                                 @click="selectedPengumuman = { id: null, judul: '', isi: '', status: 'draft', tanggal_publish: '' }; openTambahPengumuman = true;"
@@ -172,25 +172,25 @@
                 </div>
 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-4 border-t border-slate-100 dark:border-slate-700/80">
-                    <a href="{{ route('presensi.index') }}"
+                    <a href="{{ route('dashboard.presensi.index') }}"
                         class="px-2 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center justify-center text-center transition">
                         <span>QR Saya</span>
                     </a>
 
-                    <a href="{{ route('pengajuan-izin.create') }}"
+                    <a href="{{ route('dashboard.pengajuan-izin.create') }}"
                         class="px-2 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center justify-center text-center transition">
                         <span>Ajukan Izin</span>
                     </a>
 
                     @if (auth()->user()->canScanPresensi())
-                        <a href="{{ route('presensi.scan') }}"
+                        <a href="{{ route('dashboard.presensi.scan') }}"
                             class="px-2 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center justify-center text-center transition">
                             <span>Scan QR</span>
                         </a>
                     @endif
 
                     @if (auth()->user()->canViewPanitiaList())
-                        <a href="{{ route('presensi.monitoring') }}"
+                        <a href="{{ route('dashboard.presensi.monitoring') }}"
                             class="px-2 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center justify-center text-center transition">
                             <span>Monitoring</span>
                         </a>
@@ -226,7 +226,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('kegiatan.index') }}"
+                <a href="{{ route('dashboard.kegiatan.index') }}"
                     class="mt-4 inline-flex items-center justify-between text-xs font-bold text-slate-600 hover:text-brand-600 dark:text-slate-400">
                     <span>Lihat Semua Jadwal</span>
                     <span>&rarr;</span>
@@ -245,7 +245,7 @@
                     </div>
 
                     <div class="flex items-center gap-2 shrink-0">
-                        <a href="{{ route('notulensi.index') }}" class="px-2.5 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 whitespace-nowrap">Lihat semua</a>
+                        <a href="{{ route('dashboard.notulensi.index') }}" class="px-2.5 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 whitespace-nowrap">Lihat semua</a>
                         @if (auth()->user()->canManageSekretariat())
                             <button type="button"
                                 @click="openAddNotulensi = true"
@@ -317,7 +317,7 @@
                                                 class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold rounded-xl transition">
                                                 Edit
                                             </button>
-                                            <form action="{{ route('notulensi.destroy', $notulensi) }}" method="POST"
+                                            <form action="{{ route('dashboard.notulensi.destroy', $notulensi) }}" method="POST"
                                                 onsubmit="return confirm('Hapus arsip notulensi ini?')">
                                                 @csrf
                                                 @method('DELETE')
@@ -346,7 +346,7 @@
             <div class="flex items-center justify-center min-h-screen px-4">
                 <div x-show="openTambahPengumuman" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="openTambahPengumuman = false"></div>
 
-                <form action="{{ route('pengumuman.store') }}" method="POST" enctype="multipart/form-data"
+                <form action="{{ route('dashboard.pengumuman.store') }}" method="POST" enctype="multipart/form-data"
                     x-show="openTambahPengumuman" x-transition
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-lg shadow-xl text-xs">
                     @csrf
@@ -502,7 +502,7 @@
             <div class="flex items-center justify-center min-h-screen px-4">
                 <div x-show="openAddNotulensi" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="openAddNotulensi = false"></div>
 
-                <form action="{{ route('notulensi.store') }}" method="POST" enctype="multipart/form-data"
+                <form action="{{ route('dashboard.notulensi.store') }}" method="POST" enctype="multipart/form-data"
                     x-show="openAddNotulensi" x-transition
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-md shadow-xl text-xs">
                     @csrf

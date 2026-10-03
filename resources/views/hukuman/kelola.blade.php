@@ -16,7 +16,7 @@
                 </p>
             </div>
 
-            <a href="{{ route('hukuman.create', $mode) }}"
+            <a href="{{ route('dashboard.hukuman.create', $mode) }}"
                class="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl text-xs shadow-sm transition self-start sm:self-auto">
                 + Berikan Hukuman
             </a>
@@ -32,7 +32,7 @@
 
         @if ($mode === 'pengawas' && auth()->user()->canIssueHukumanRanger())
             <div class="mb-5 flex flex-wrap gap-2">
-                <a href="{{ route('hukuman.kelola', 'ranger') }}"
+                <a href="{{ route('dashboard.hukuman.kelola', 'ranger') }}"
                    class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition">
                     Mode Ranger
                 </a>
@@ -45,7 +45,7 @@
                 <span class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-100 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300">
                     Mode Ranger
                 </span>
-                <a href="{{ route('hukuman.kelola', 'pengawas') }}"
+                <a href="{{ route('dashboard.hukuman.kelola', 'pengawas') }}"
                    class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition">
                     Mode Pengawas
                 </a>
@@ -95,15 +95,15 @@
                                     </td>
                                     <td class="py-3.5 px-4 text-center">
                                         <div class="inline-flex items-center justify-center gap-1.5">
-                                            <a href="{{ route('hukuman.show', $h) }}"
+                                            <a href="{{ route('dashboard.hukuman.show', $h) }}"
                                                class="inline-flex items-center px-3 py-1.5 bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/40 dark:hover:bg-brand-950/60 text-brand-600 dark:text-brand-300 font-semibold rounded-lg transition">
                                                 Detail
                                             </a>
-                                            <a href="{{ route('hukuman.edit', $h) }}"
+                                            <a href="{{ route('dashboard.hukuman.edit', $h) }}"
                                                class="inline-flex items-center px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold rounded-lg transition">
                                                 Edit
                                             </a>
-                                            <form method="POST" action="{{ route('hukuman.destroy', $h) }}"
+                                            <form method="POST" action="{{ route('dashboard.hukuman.destroy', $h) }}"
                                                   onsubmit="return confirm('Hapus hukuman ini? Target akan mendapat notifikasi pembatalan.')">
                                                 @csrf
                                                 @method('DELETE')
