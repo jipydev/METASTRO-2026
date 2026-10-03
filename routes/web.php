@@ -6,6 +6,7 @@ use App\Http\Controllers\TugasController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Api\ScanController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InitialSetupController;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\NotificationController;
@@ -21,25 +22,7 @@ use Illuminate\Support\Facades\Route;
 | Landing Page
 |--------------------------------------------------------------------------
 */
-
-Route::get('/', function () {
-    return view('index');
-})->name('home');
-
-Route::get('/peserta', function () {
-    $kegiatans = collect();
-    try {
-        if (\Illuminate\Support\Facades\Schema::hasTable('kegiatans')) {
-            $kegiatans = \App\Models\Kegiatan::orderBy('tanggal', 'asc')
-                ->orderBy('waktu_mulai', 'asc')
-                ->get();
-        }
-    } catch (\Throwable $e) {
-        $kegiatans = collect();
-    }
-
-    return view('peserta.index', compact('kegiatans'));
-})->name('peserta.landing');
+Route::get('/', [HomeController::class, 'index'])->name('landing-page');
 
 /*
 |--------------------------------------------------------------------------
