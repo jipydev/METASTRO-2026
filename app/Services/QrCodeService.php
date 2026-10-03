@@ -17,7 +17,7 @@ class QrCodeService
      */
     public function generateForUser(User $user): string
     {
-        if (empty($user->qr_token)) {
+        if (empty($user->qr_token) || ! $user->qr_updated_at) {
             $user->update(['qr_token' => Str::uuid()->toString(), 'qr_updated_at' => now()]);
         }
 
@@ -80,7 +80,10 @@ class QrCodeService
         $filename = "qrcodes/user_{$user->id}.svg";
 
         if (Storage::disk('public')->exists($filename)) {
-            return Storage::url($filename);
+            $version = $user->qr_updated_at?->timestamp
+                ?? Storage::disk('public')->lastModified($filename);
+
+            return Storage::url($filename).'?v='.$version;
         }
 
         return null;
