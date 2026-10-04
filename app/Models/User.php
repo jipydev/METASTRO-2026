@@ -323,6 +323,11 @@ class User extends Authenticatable implements PasskeyUser
         return (bool) ($this->divisi_id || $this->jabatan_id);
     }
 
+    public function isPeserta(): bool
+    {
+        return ! $this->isAdmin() && ! $this->isPanitia();
+    }
+
     /**
      * Ketua / wakil divisi yang mereview izin anggota divisinya.
      * Stakeholder tidak mereview tahap koordinator — izin mereka langsung ke Ranger.

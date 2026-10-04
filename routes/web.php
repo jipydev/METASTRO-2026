@@ -41,6 +41,22 @@ Route::get('/peserta', function () {
     return view('peserta.index', compact('kegiatans'));
 })->name('peserta.landing');
 
+Route::middleware(['auth'])->prefix('peserta')->name('peserta.')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'pesertaDashboard'])->name('dashboard');
+    Route::get('/tugas-hari', function () {
+        return view('peserta.tugas-hari');
+    })->name('tugas-hari');
+    Route::get('/tugas-list', function () {
+        return view('peserta.tugas-list');
+    })->name('tugas-list');
+    Route::get('/tugas-kumpulkan', function () {
+        return view('peserta.tugas-kumpulkan');
+    })->name('tugas-kumpulkan');
+    Route::get('/arsip', function () {
+        return view('peserta.arsip');
+    })->name('arsip');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Onboarding / First Time Setup
