@@ -80,41 +80,11 @@
     <div class="max-w-md mx-auto sm:max-w-xl md:max-w-2xl px-4 py-5 min-h-screen flex flex-col justify-between">
 
         <div>
-            <!-- 1. TOP HEADER APP BAR -->
-            <header class="sticky top-0 z-40 bg-white dark:bg-slate-900 flex items-center justify-between py-4 px-4 mb-4 -mx-4 -mt-5 shadow-sm rounded-b-xl">
-                <!-- Brand Title -->
-                <a href="{{ route('peserta.dashboard') }}" class="inline-block group">
-                    <h1 class="font-oswald-header text-xl sm:text-2xl font-bold uppercase tracking-[0.14em] text-slate-900 dark:text-white transition group-hover:text-[#FF5B00]">
-                        METASTRO 2026
-                    </h1>
-                </a>
-
-                <!-- Action Icons: Notifikasi & Hamburger Menu -->
-                <div class="flex items-center gap-2">
-                    <!-- Notification Bell -->
-                    <button type="button" @click="notifOpen = !notifOpen"
-                        class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 relative transition cursor-pointer"
-                        title="Notifikasi">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                        </svg>
-                        <!-- Red Dot Notification Badge -->
-                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-slate-900"></span>
-                    </button>
-
-                    <!-- Hamburger Menu Button -->
-                    <button type="button" @click="mobileMenu = true"
-                        class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 transition cursor-pointer"
-                        title="Buka Menu">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
-                        </svg>
-                    </button>
-                </div>
-            </header>
+            <!-- 1. TOP HEADER APP BAR (NAVBAR) -->
+            @include('peserta.partials.navbar')
 
             <!-- 2. WELCOME / DEADLINE CARD -->
-            <div class="bg-[#FFF9F2] dark:bg-amber-950/20 border-l-4 border-[#FF5B00] rounded-2xl p-4 sm:p-5 shadow-xs border border-orange-100/60 dark:border-amber-900/40 relative overflow-hidden mb-5">
+            <div class="bg-[#FFF9F2] dark:bg-amber-950/20 border border-orange-100/60 dark:border-amber-900/40 border-l-4 !border-l-[#F97316] rounded-2xl p-4 sm:p-5 shadow-xs relative overflow-hidden mb-5">
                 <div class="flex items-start justify-between gap-3">
                     <!-- Left: Greetings & Deadline info -->
                     <div class="min-w-0 pr-2">
@@ -137,29 +107,31 @@
                             12:45
                         </span>
                         
-                        <button type="button"
-                            class="bg-[#FFF0B3] dark:bg-amber-400 hover:bg-[#FFE685] dark:hover:bg-amber-300 text-slate-800 font-bold text-xs sm:text-[13px] px-3.5 py-1.5 rounded-lg shadow-2xs transition active:scale-95 cursor-pointer">
+                        <a href="{{ route('peserta.arsip') }}"
+                            class="inline-block bg-[#FFF0B3] dark:bg-amber-400 hover:bg-[#FFE685] dark:hover:bg-amber-300 text-slate-800 font-bold text-xs sm:text-[13px] px-3.5 py-1.5 rounded-lg shadow-2xs transition active:scale-95 cursor-pointer text-center">
                             Kumpulkan
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
 
             <!-- 3. LIST PENUGASAN SECTION -->
             <section class="mb-6">
-                <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-3">
-                    List Penugasan:
-                </h3>
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white">
+                        List Penugasan:
+                    </h3>
+                </div>
 
                 <div class="space-y-3">
                     <!-- DAY 1 Card -->
-                    <div class="bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-5 border border-slate-100 dark:border-slate-700/60 shadow-xs hover:border-slate-200 dark:hover:border-slate-600 transition">
-                        <div class="flex items-center justify-between cursor-pointer" @click="expandedDay1 = !expandedDay1">
-                            <span class="font-bold text-base sm:text-lg text-slate-900 dark:text-white tracking-wide">
+                    <a href="{{ route('peserta.tugas-list') }}"
+                        class="block bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-5 border border-slate-100 dark:border-slate-700/60 shadow-xs hover:border-[#FF5B00]/40 dark:hover:border-orange-500/40 hover:shadow-md transition active:scale-[0.99] group cursor-pointer">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-base sm:text-lg text-slate-900 dark:text-white tracking-wide group-hover:text-[#FF5B00] transition-colors">
                                 DAY 1
                             </span>
-                            <span class="text-slate-700 dark:text-slate-300 font-bold text-sm tracking-tighter transition-transform duration-200"
-                                :class="expandedDay1 ? 'rotate-90 text-[#FF5B00]' : ''">
+                            <span class="text-slate-700 dark:text-slate-300 font-bold text-sm tracking-tighter group-hover:translate-x-1 group-hover:text-[#FF5B00] transition-all duration-200">
                                 &gt;&gt;
                             </span>
                         </div>
@@ -168,23 +140,22 @@
                         <div class="mt-2.5">
                             <div class="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1.5 flex justify-between">
                                 <span>Progres:</span>
-                                <span class="text-emerald-600 dark:text-emerald-400 font-semibold" x-show="expandedDay1">68%</span>
+                                <span class="text-emerald-600 dark:text-emerald-400 font-semibold">68%</span>
                             </div>
                             <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                                 <div class="h-full bg-[#00A82D] rounded-full transition-all duration-500" style="width: 68%;"></div>
                             </div>
                         </div>
-
-                    </div>
+                    </a>
 
                     <!-- DAY 2 Card -->
-                    <div class="bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-5 border border-slate-100 dark:border-slate-700/60 shadow-xs hover:border-slate-200 dark:hover:border-slate-600 transition">
-                        <div class="flex items-center justify-between cursor-pointer" @click="expandedDay2 = !expandedDay2">
-                            <span class="font-bold text-base sm:text-lg text-slate-900 dark:text-white tracking-wide">
+                    <a href="{{ route('peserta.tugas-list') }}"
+                        class="block bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-5 border border-slate-100 dark:border-slate-700/60 shadow-xs hover:border-[#FF5B00]/40 dark:hover:border-orange-500/40 hover:shadow-md transition active:scale-[0.99] group cursor-pointer">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-base sm:text-lg text-slate-900 dark:text-white tracking-wide group-hover:text-[#FF5B00] transition-colors">
                                 DAY 2
                             </span>
-                            <span class="text-slate-700 dark:text-slate-300 font-bold text-sm tracking-tighter transition-transform duration-200"
-                                :class="expandedDay2 ? 'rotate-90 text-[#FF5B00]' : ''">
+                            <span class="text-slate-700 dark:text-slate-300 font-bold text-sm tracking-tighter group-hover:translate-x-1 group-hover:text-[#FF5B00] transition-all duration-200">
                                 &gt;&gt;
                             </span>
                         </div>
@@ -193,14 +164,13 @@
                         <div class="mt-2.5">
                             <div class="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1.5 flex justify-between">
                                 <span>Progres:</span>
-                                <span class="text-emerald-600 dark:text-emerald-400 font-semibold" x-show="expandedDay2">32%</span>
+                                <span class="text-emerald-600 dark:text-emerald-400 font-semibold">32%</span>
                             </div>
                             <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                                 <div class="h-full bg-[#00A82D] rounded-full transition-all duration-500" style="width: 32%;"></div>
                             </div>
                         </div>
-
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Footnote / Note -->
@@ -384,117 +354,6 @@
         <footer class="text-center py-4 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-400">
             &copy; 2026 METASTRO &bull; Spirit of HIRO, Heart of SOLDER
         </footer>
-    </div>
-
-
-
-    <!-- 7. NOTIFIKASI MODAL / POPOVER -->
-    <div x-show="notifOpen" x-cloak class="fixed inset-0 z-50 flex items-start justify-end p-4 bg-black/30"
-        @click.self="notifOpen = false">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-xs mt-12 p-4 shadow-xl border border-slate-100 dark:border-slate-700">
-            <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 dark:border-slate-700">
-                <span class="font-bold text-xs text-slate-900 dark:text-white">Pemberitahuan</span>
-                <button type="button" @click="notifOpen = false" class="text-xs text-slate-400 hover:text-slate-600">Tutup</button>
-            </div>
-            <div class="space-y-2.5 text-xs">
-                <div class="p-2.5 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-100 dark:border-orange-900/40">
-                    <p class="font-semibold text-[#FF5B00]">Deadline Terdekat!</p>
-                    <p class="text-slate-600 dark:text-slate-300 mt-0.5 text-[11px]">Video perkenalan singkat berakhir dalam waktu 12 menit lagi.</p>
-                </div>
-                <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-700/50">
-                    <p class="font-semibold text-slate-800 dark:text-slate-200">Pengingat Perlengkapan</p>
-                    <p class="text-slate-500 dark:text-slate-400 mt-0.5 text-[11px]">Jangan lupa periksa buku angkatan dan nametag Anda untuk Day 1.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 8. SLIDE-OVER NAVIGATION DRAWER -->
-    <div x-show="mobileMenu" x-cloak class="fixed inset-0 z-50 flex justify-end"
-        @keydown.escape.window="mobileMenu = false">
-        <!-- Backdrop -->
-        <div x-show="mobileMenu" x-transition.opacity class="fixed inset-0 bg-black/50" @click="mobileMenu = false"></div>
-
-        <!-- Drawer Content -->
-        <div x-show="mobileMenu" x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
-            x-transition:leave="transition ease-in duration-150" x-transition:leave-start="translate-x-0"
-            x-transition:leave-end="translate-x-full"
-            class="relative w-72 max-w-[80vw] bg-white dark:bg-slate-800 h-full p-5 shadow-2xl flex flex-col justify-between z-10">
-            
-            <div>
-                <!-- Header Drawer -->
-                <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-700">
-                    <div>
-                        <h4 class="font-oswald-header text-base font-bold uppercase tracking-wider text-slate-900 dark:text-white">
-                            METASTRO 2026
-                        </h4>
-                        <p class="text-[11px] text-slate-400">Portal Peserta</p>
-                    </div>
-                    <button type="button" @click="mobileMenu = false" class="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-                </div>
-
-                <!-- User Info (Card Style as per Image 4) -->
-                <div class="flex gap-3 mb-6 mt-4 p-2">
-                    <div class="text-slate-700 mt-1">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/></svg>
-                    </div>
-                    <div>
-                        <p class="text-[13px] font-medium text-slate-800">Nama Lengkap: Siti Aisyah</p>
-                        <p class="text-[13px] font-medium text-slate-800">NIM: 2601829</p>
-                        <p class="text-[13px] font-medium text-slate-800">Regu: 8 Syntax</p>
-                    </div>
-                </div>
-
-                <!-- Menu Links -->
-                <nav class="space-y-4 mt-2">
-                    <div>
-                        <h5 class="text-[10px] text-slate-500 font-medium uppercase tracking-wider mb-2 px-3">NAVIGASI UTAMA</h5>
-                        <div class="space-y-0.5">
-                            <a href="{{ route('peserta.dashboard') }}" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:text-slate-900 border-b-2 border-orange-200">
-                                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                                <span>Beranda</span>
-                            </a>
-                            <a href="{{ route('peserta.arsip') }}" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:text-slate-900 border-b border-transparent">
-                                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
-                                <span>Arsip tugas</span>
-                            </a>
-                            <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:text-slate-900 border-b border-transparent">
-                                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
-                                <span>Izin</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h5 class="text-[10px] text-slate-500 font-medium uppercase tracking-wider mb-2 px-3 mt-4">INFORMASI & MEDIA SOSIAL</h5>
-                        <div class="space-y-0.5">
-                            <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:text-slate-900 border-b border-transparent">
-                                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                                <span>Booklet</span>
-                            </a>
-                            <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:text-slate-900 border-b border-transparent">
-                                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8a5 5 0 015-5h8a5 5 0 015 5v8a5 5 0 01-5 5H8a5 5 0 01-5-5V8zm5-3a3 3 0 00-3 3v8a3 3 0 003 3h8a3 3 0 003-3V8a3 3 0 00-3-3H8zm7.5 9.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm-2.5-4a4 4 0 100 8 4 4 0 000-8zm4.5-1.5a1 1 0 11-2 0 1 1 0 012 0z"/></svg>
-                                <span>Instagram</span>
-                            </a>
-                        </div>
-                    </div>
-                </nav>
-            </div>
-
-            <!-- Bottom of Drawer: Logout -->
-            <div class="pt-4 flex justify-end px-3">
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="flex items-center gap-2 text-[13px] font-medium text-slate-600 hover:text-slate-800 transition cursor-pointer">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                        <span>Logout</span>
-                    </button>
-                </form>
-            </div>
-        </div>
     </div>
 </body>
 </html>
