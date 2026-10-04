@@ -104,29 +104,29 @@
                     <div class="space-y-1 text-sm">
                         <!-- Beranda -->
                         <a href="{{ route('peserta.dashboard') }}"
-                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition {{ request()->routeIs('peserta.dashboard') ? 'bg-orange-50 dark:bg-orange-950/40 text-[#FF5B00] font-semibold' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
-                            <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('peserta.dashboard') ? 'text-[#FF5B00]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                            class="flex items-center gap-3 px-3 py-2 font-medium transition border-b-2 {{ request()->routeIs('peserta.dashboard') ? 'border-[#FF5B00] text-slate-900 dark:text-white font-semibold' : 'border-transparent text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-200 dark:hover:border-slate-700' }}">
+                            <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('peserta.dashboard') ? 'text-[#FF5B00]' : 'text-slate-500 dark:text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                             <span>Beranda</span>
                         </a>
 
                         <!-- List Penugasan -->
                         <a href="{{ route('peserta.tugas-list') }}"
-                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition {{ request()->routeIs('peserta.tugas-list') || request()->routeIs('peserta.tugas-hari') || request()->routeIs('peserta.tugas-kumpulkan') ? 'bg-orange-50 dark:bg-orange-950/40 text-[#FF5B00] font-semibold' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
-                            <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('peserta.tugas-list') || request()->routeIs('peserta.tugas-hari') || request()->routeIs('peserta.tugas-kumpulkan') ? 'text-[#FF5B00]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                            class="flex items-center gap-3 px-3 py-2 font-medium transition border-b-2 {{ request()->routeIs('peserta.tugas-list') || request()->routeIs('peserta.tugas-hari') || request()->routeIs('peserta.tugas-kumpulkan') ? 'border-[#FF5B00] text-slate-900 dark:text-white font-semibold' : 'border-transparent text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-200 dark:hover:border-slate-700' }}">
+                            <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('peserta.tugas-list') || request()->routeIs('peserta.tugas-hari') || request()->routeIs('peserta.tugas-kumpulkan') ? 'text-[#FF5B00]' : 'text-slate-500 dark:text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                             <span>List Penugasan</span>
                         </a>
 
                         <!-- Arsip Tugas -->
                         <a href="{{ route('peserta.arsip') }}"
-                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition {{ request()->routeIs('peserta.arsip') ? 'bg-orange-50 dark:bg-orange-950/40 text-[#FF5B00] font-semibold' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
-                            <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('peserta.arsip') ? 'text-[#FF5B00]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+                            class="flex items-center gap-3 px-3 py-2 font-medium transition border-b-2 {{ request()->routeIs('peserta.arsip') ? 'border-[#FF5B00] text-slate-900 dark:text-white font-semibold' : 'border-transparent text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-200 dark:hover:border-slate-700' }}">
+                            <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('peserta.arsip') ? 'text-[#FF5B00]' : 'text-slate-500 dark:text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
                             <span>Arsip Tugas</span>
                         </a>
 
                         <!-- Izin -->
                         <a href="{{ route('pengajuan-izin.index') }}"
-                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition {{ request()->routeIs('pengajuan-izin.*') ? 'bg-orange-50 dark:bg-orange-950/40 text-[#FF5B00] font-semibold' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
-                            <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('pengajuan-izin.*') ? 'text-[#FF5B00]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            class="flex items-center gap-3 px-3 py-2 font-medium transition border-b-2 {{ request()->routeIs('pengajuan-izin.*') ? 'border-[#FF5B00] text-slate-900 dark:text-white font-semibold' : 'border-transparent text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-200 dark:hover:border-slate-700' }}">
+                            <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('pengajuan-izin.*') ? 'text-[#FF5B00]' : 'text-slate-500 dark:text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             <span>Pengajuan Izin</span>
                         </a>
                     </div>
@@ -135,9 +135,23 @@
                 <div>
                     <h5 class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-2 px-3 mt-4">INFORMASI & MEDIA SOSIAL</h5>
                     <div class="space-y-1 text-sm">
+                        <!-- Booklet -->
+                        <a href="#" target="_blank" rel="noopener noreferrer"
+                            class="flex items-center gap-3 px-3 py-2 font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-b-2 border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition">
+                            <svg class="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            <span>Booklet</span>
+                        </a>
+
+                        <!-- Instagram -->
+                        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer"
+                            class="flex items-center gap-3 px-3 py-2 font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-b-2 border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition">
+                            <svg class="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8a5 5 0 015-5h8a5 5 0 015 5v8a5 5 0 01-5 5H8a5 5 0 01-5-5V8zm5-3a3 3 0 00-3 3v8a3 3 0 003 3h8a3 3 0 003-3V8a3 3 0 00-3-3H8zm7.5 9.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm-2.5-4a4 4 0 100 8 4 4 0 000-8zm4.5-1.5a1 1 0 11-2 0 1 1 0 012 0z"/></svg>
+                            <span>Instagram</span>
+                        </a>
+
                         <!-- Dark Mode Toggle -->
                         <button type="button" @click="toggleTheme()"
-                            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition cursor-pointer">
+                            class="w-full flex items-center gap-3 px-3 py-2 font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-b-2 border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition cursor-pointer">
                             <svg x-show="darkMode" x-cloak class="w-5 h-5 text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                             </svg>
@@ -146,12 +160,6 @@
                             </svg>
                             <span x-text="darkMode ? 'Mode Terang' : 'Mode Gelap'"></span>
                         </button>
-
-                        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer"
-                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition">
-                            <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8a5 5 0 015-5h8a5 5 0 015 5v8a5 5 0 01-5 5H8a5 5 0 01-5-5V8zm5-3a3 3 0 00-3 3v8a3 3 0 003 3h8a3 3 0 003-3V8a3 3 0 00-3-3H8zm7.5 9.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm-2.5-4a4 4 0 100 8 4 4 0 000-8zm4.5-1.5a1 1 0 11-2 0 1 1 0 012 0z"/></svg>
-                            <span>Instagram</span>
-                        </a>
                     </div>
                 </div>
             </nav>
