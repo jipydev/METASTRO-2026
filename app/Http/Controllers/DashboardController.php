@@ -27,7 +27,7 @@ class DashboardController extends Controller
         // 1. Prioritaskan mencari kegiatan yang presensinya sedang BUKA saat ini berdasarkan waktu
         $kegiatanTerbaru = Kegiatan::where('presensi_mulai', '<=', Carbon::now())
             ->where('presensi_selesai', '>=', Carbon::now())
-            ->orderBy('tanggal', 'asc')
+            ->orderBy('tanggal_mulai', 'asc')
             ->first();
 
         // Hanya menghitung user aktif yang memiliki role 'admin' atau 'panitia'
@@ -44,11 +44,11 @@ class DashboardController extends Controller
         $belumAbsenCount = $totalUserCount;
 
         if (! $kegiatanTerbaru) {
-            $kegiatanTerbaru = Kegiatan::where('tanggal', '>=', Carbon::today())
-                ->orderBy('tanggal', 'asc')
+            $kegiatanTerbaru = Kegiatan::where('tanggal_mulai', '>=', Carbon::today())
+                ->orderBy('tanggal_mulai', 'asc')
                 ->orderBy('waktu_mulai', 'asc')
                 ->first()
-                ?? Kegiatan::orderBy('tanggal', 'desc')
+                ?? Kegiatan::orderBy('tanggal_mulai', 'desc')
                     ->orderBy('waktu_mulai', 'desc')
                     ->first();
         }
@@ -74,7 +74,7 @@ class DashboardController extends Controller
             'sakitCount' => $sakitCount,
             'belumAbsenCount' => $belumAbsenCount,
             'notulensiList' => Notulensi::with(['kegiatan', 'pembuat.divisi'])->latest()->limit(3)->get(),
-            'kegiatanOptions' => Kegiatan::orderBy('tanggal', 'desc')->limit(50)->get(['id', 'nama', 'tanggal']),
+            'kegiatanOptions' => Kegiatan::orderBy('tanggal_mulai', 'desc')->limit(50)->get(['id', 'nama', 'tanggal_mulai', 'tanggal_selesai']),
         ]);
     }
 }

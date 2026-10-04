@@ -87,7 +87,7 @@ class Presensi extends Model
         }
 
         $jadwalMulai = Carbon::parse(
-            Carbon::parse($kegiatan->tanggal)->format('Y-m-d').' '.$kegiatan->waktu_mulai
+            Carbon::parse($kegiatan->tanggal_mulai ?? $kegiatan->tanggal)->format('Y-m-d').' '.$kegiatan->waktu_mulai
         );
 
         if ($this->jam_tap->lessThanOrEqualTo($jadwalMulai)) {

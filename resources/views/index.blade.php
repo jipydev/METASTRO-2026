@@ -220,7 +220,7 @@
                             @foreach ($kegiatans as $index => $kegiatan)
                                 @php
                                     $today = \Carbon\Carbon::today();
-                                    $kegiatanDate = \Carbon\Carbon::parse($kegiatan->tanggal);
+                                    $kegiatanDate = \Carbon\Carbon::parse($kegiatan->tanggal_mulai);
 
                                     if ($kegiatanDate->lt($today)) {
                                         $badgeText = 'selesai';
@@ -258,9 +258,13 @@
                                     <div class="text-xs text-slate-600 dark:text-slate-300 mt-1">
                                         <span
                                             class="font-medium text-slate-800 dark:text-slate-100">{{ $kegiatanDate->translatedFormat('d F') }}</span>
+                                        @if ($kegiatan->tanggal_selesai && $kegiatan->tanggal_selesai->ne($kegiatan->tanggal_mulai))
+                                            <span> - {{ $kegiatan->tanggal_selesai->translatedFormat('d F') }}</span>
+                                        @endif
                                         @if ($kegiatan->waktu_mulai)
                                             <span class="text-slate-400 mx-1">&bull;</span>
                                             <span>{{ \Carbon\Carbon::parse($kegiatan->waktu_mulai)->format('H.i') }}
+                                                @if ($kegiatan->waktu_selesai) - {{ \Carbon\Carbon::parse($kegiatan->waktu_selesai)->format('H.i') }} @endif
                                                 -
                                                 {{ $kegiatan->tempat ?? 'Kampus' }}</span>
                                         @endif

@@ -41,7 +41,8 @@
             nama: '',
             deskripsi: '',
             jenis: 'rapat',
-            tanggal: '',
+            tanggal_mulai: '',
+            tanggal_selesai: '',
             waktu_mulai: '',
             waktu_selesai: '',
             tempat: '',
@@ -57,11 +58,11 @@
         },
     
         updateDefaultPresensi() {
-            if (!this.form.tanggal || !this.form.waktu_mulai) return;
+            if (!this.form.tanggal_mulai || !this.form.waktu_mulai) return;
     
             // Buat objek Date dari tanggal dan waktu mulai kegiatan
             let [jamMulai, menitMulai] = this.form.waktu_mulai.split(':');
-            let mulaiDateTime = new Date(this.form.tanggal);
+            let mulaiDateTime = new Date(this.form.tanggal_mulai);
             mulaiDateTime.setHours(parseInt(jamMulai), parseInt(menitMulai), 0);
     
             // 1. Kurangi 45 menit untuk Presensi Mulai (Dibuka)
@@ -71,7 +72,7 @@
             let selesaiDateTime;
             if (this.form.waktu_selesai) {
                 let [jamSelesai, menitSelesai] = this.form.waktu_selesai.split(':');
-                selesaiDateTime = new Date(this.form.tanggal);
+                selesaiDateTime = new Date(this.form.tanggal_selesai || this.form.tanggal_mulai);
                 selesaiDateTime.setHours(parseInt(jamSelesai), parseInt(menitSelesai), 0);
             } else {
                 selesaiDateTime = new Date(mulaiDateTime.getTime() + (120 * 60000));
@@ -95,7 +96,8 @@
                 nama: '',
                 deskripsi: '',
                 jenis: 'rapat',
-                tanggal: today,
+                tanggal_mulai: today,
+                tanggal_selesai: today,
                 waktu_mulai: '08:00',
                 waktu_selesai: '10:00',
                 tempat: '',
@@ -158,7 +160,8 @@
                             'nama' => $item->nama,
                             'deskripsi' => $item->deskripsi ?? '',
                             'jenis' => $item->jenis,
-                            'tanggal' => \Carbon\Carbon::parse($item->tanggal)->format('Y-m-d'),
+                            'tanggal_mulai' => \Carbon\Carbon::parse($item->tanggal_mulai)->format('Y-m-d'),
+                            'tanggal_selesai' => \Carbon\Carbon::parse($item->tanggal_selesai)->format('Y-m-d'),
                             'waktu_mulai' => $item->waktu_mulai ? substr($item->waktu_mulai, 0, 5) : '',
                             'waktu_selesai' => $item->waktu_selesai ? substr($item->waktu_selesai, 0, 5) : '',
                             'tempat' => $item->tempat,
@@ -205,7 +208,12 @@
                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                                         </path>
                                     </svg>
-                                    <span>{{ \Carbon\Carbon::parse($item->tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</span>
+                                    <span>
+                                        {{ \Carbon\Carbon::parse($item->tanggal_mulai)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+                                        @if ($item->tanggal_selesai && $item->tanggal_selesai->ne($item->tanggal_mulai))
+                                            - {{ $item->tanggal_selesai->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+                                        @endif
+                                    </span>
                                 </p>
                                 <p class="flex items-center gap-1.5 font-medium">
                                     <svg class="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none"
@@ -351,9 +359,16 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                         <div>
-                            <label class="block font-semibold mb-1 text-gray-700 dark:text-slate-300">Tanggal
+                            <label class="block font-semibold mb-1 text-gray-700 dark:text-slate-300">Tanggal Mulai
                                 *</label>
-                            <input type="date" name="tanggal" x-model="form.tanggal"
+                            <input type="date" name="tanggal_mulai" x-model="form.tanggal_mulai"
+                                @change="updateDefaultPresensi()" required
+                                class="w-full bg-slate-50 dark:bg-slate-700 rounded-xl border-gray-300 dark:border-slate-600 p-2.5 text-xs text-gray-900 dark:text-white outline-none">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-gray-700 dark:text-slate-300">Tanggal Selesai
+                                *</label>
+                            <input type="date" name="tanggal_selesai" x-model="form.tanggal_selesai"
                                 @change="updateDefaultPresensi()" required
                                 class="w-full bg-slate-50 dark:bg-slate-700 rounded-xl border-gray-300 dark:border-slate-600 p-2.5 text-xs text-gray-900 dark:text-white outline-none">
                         </div>

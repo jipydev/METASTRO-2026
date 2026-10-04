@@ -11,7 +11,7 @@ class HomeController extends Controller
     {
         $data = [
             'kegiatans' => Kegiatan::where('jenis', 'pelaksanaan')
-                ->orderBy('tanggal', 'asc')
+                ->orderBy('tanggal_mulai', 'asc')
                 ->orderBy('waktu_mulai', 'asc')
                 ->get(),
             'title' => 'Home',

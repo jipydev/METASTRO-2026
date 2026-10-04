@@ -30,7 +30,7 @@ class KegiatanController extends Controller
                         ->orWhere('deskripsi', 'like', "%{$search}%");
                 });
             })
-            ->orderBy('tanggal', 'asc')
+            ->orderBy('tanggal_mulai', 'asc')
             ->orderBy('waktu_mulai', 'asc')
             ->get();
 
@@ -46,6 +46,7 @@ class KegiatanController extends Controller
     public function store(KegiatanRequest $request): RedirectResponse
     {
         $validated = $request->validated();
+        $validated['tanggal'] = $validated['tanggal_mulai'];
 
         // Format ulang datetime-local agar sesuai dengan format DATETIME MySQL
         if (! empty($validated['presensi_mulai'])) {
@@ -65,6 +66,7 @@ class KegiatanController extends Controller
     public function update(KegiatanRequest $request, Kegiatan $kegiatan): RedirectResponse
     {
         $validated = $request->validated();
+        $validated['tanggal'] = $validated['tanggal_mulai'];
 
         // Format ulang datetime-local agar sesuai dengan format DATETIME MySQL
         if (! empty($validated['presensi_mulai'])) {

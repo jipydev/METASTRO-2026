@@ -22,6 +22,8 @@ class Kegiatan extends Model
         'tipe',
         'tempat',
         'tanggal',
+        'tanggal_mulai',
+        'tanggal_selesai',
         'waktu_mulai',
         'waktu_selesai',
         'presensi_mulai',
@@ -33,6 +35,8 @@ class Kegiatan extends Model
     {
         return [
             'tanggal' => 'date',
+            'tanggal_mulai' => 'date',
+            'tanggal_selesai' => 'date',
             'waktu_mulai' => 'string',
             'waktu_selesai' => 'string',
             'presensi_mulai' => 'datetime',

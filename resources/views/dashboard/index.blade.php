@@ -213,11 +213,18 @@
                         </p>
                         <p class="text-slate-600 dark:text-slate-300 font-medium flex items-center gap-1.5">
                             <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            {{ $kegiatanTerbaru ? \Carbon\Carbon::parse($kegiatanTerbaru->tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') : '-' }}
+                            {{ $kegiatanTerbaru ? \Carbon\Carbon::parse($kegiatanTerbaru->tanggal_mulai)->locale('id')->isoFormat('dddd, D MMMM YYYY') : '-' }}
+                            @if ($kegiatanTerbaru?->tanggal_selesai && $kegiatanTerbaru->tanggal_selesai->ne($kegiatanTerbaru->tanggal_mulai))
+                                - {{ $kegiatanTerbaru->tanggal_selesai->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+                            @endif
                         </p>
                         <p class="text-slate-600 dark:text-slate-300 font-medium flex items-center gap-1.5">
                             <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            Pukul {{ $kegiatanTerbaru?->waktu_mulai ? substr($kegiatanTerbaru->waktu_mulai, 0, 5) . ' WIB' : '-' }}
+                            Pukul {{ $kegiatanTerbaru?->waktu_mulai ? substr($kegiatanTerbaru->waktu_mulai, 0, 5) : '-' }}
+                            @if ($kegiatanTerbaru?->waktu_selesai)
+                                - {{ substr($kegiatanTerbaru->waktu_selesai, 0, 5) }}
+                            @endif
+                            WIB
                         </p>
                         <p class="text-slate-600 dark:text-slate-300 font-medium flex items-center gap-1.5">
                             <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>

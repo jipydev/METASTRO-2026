@@ -42,7 +42,7 @@ class PresensiController extends Controller
             abort(403, 'Anda tidak memiliki hak akses untuk melihat rekap kehadiran.');
         }
 
-        $kegiatans = Kegiatan::orderBy('tanggal', 'desc')->limit(25)->get();
+        $kegiatans = Kegiatan::orderBy('tanggal_mulai', 'desc')->limit(25)->get();
         $selectedKegiatanId = $request->query('kegiatan_id', $kegiatans->first()?->id);
         $selectedKegiatan = $kegiatans->firstWhere('id', $selectedKegiatanId);
 
@@ -79,7 +79,7 @@ class PresensiController extends Controller
                 ->get()
                 ->keyBy('user_id');
 
-            $tanggalStr = Carbon::parse($selectedKegiatan->tanggal)->format('Y-m-d');
+            $tanggalStr = Carbon::parse($selectedKegiatan->tanggal_selesai ?? $selectedKegiatan->tanggal)->format('Y-m-d');
             $waktuSelesaiKegiatan = $selectedKegiatan->waktu_selesai
                 ? Carbon::parse($tanggalStr.' '.$selectedKegiatan->waktu_selesai)
                 : Carbon::parse($tanggalStr.' '.$selectedKegiatan->waktu_mulai)->addHours(3);
@@ -296,7 +296,7 @@ class PresensiController extends Controller
         }
 
         $jamTap = $request->filled('jam_tap')
-            ? Carbon::parse($kegiatan->tanggal)->setTimeFromTimeString($request->string('jam_tap')->toString())
+            ? Carbon::parse($kegiatan->tanggal_mulai ?? $kegiatan->tanggal)->setTimeFromTimeString($request->string('jam_tap')->toString())
             : $kegiatan->defaultJamTap();
 
         try {
@@ -448,7 +448,7 @@ class PresensiController extends Controller
 
         if ($validated['status_presensi'] === 'buka') {
             // Tentukan waktu selesai presensi berdasarkan waktu selesai kegiatan
-            $tanggalStr = Carbon::parse($kegiatan->tanggal)->format('Y-m-d');
+            $tanggalStr = Carbon::parse($kegiatan->tanggal_mulai ?? $kegiatan->tanggal)->format('Y-m-d');
 
             if ($kegiatan->waktu_selesai) {
                 $waktuSelesaiPresensi = Carbon::parse($tanggalStr.' '.$kegiatan->waktu_selesai);
