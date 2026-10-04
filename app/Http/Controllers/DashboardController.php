@@ -17,6 +17,11 @@ class DashboardController extends Controller
         /** @var User $user */
         $user = $request->user();
 
+        // Jika user adalah Peserta, tampilkan Dashboard khusus Peserta
+        if ($user && $user->isPeserta()) {
+            return $this->pesertaDashboard($request);
+        }
+
         $pengumumanList = Pengumuman::with('pembuat.divisi')
             ->visibleTo($user)
             ->latest('tanggal_publish')
@@ -75,6 +80,37 @@ class DashboardController extends Controller
             'belumAbsenCount' => $belumAbsenCount,
             'notulensiList' => Notulensi::with(['kegiatan', 'pembuat.divisi'])->latest()->limit(3)->get(),
             'kegiatanOptions' => Kegiatan::orderBy('tanggal_mulai', 'desc')->limit(50)->get(['id', 'nama', 'tanggal_mulai', 'tanggal_selesai']),
+        ]);
+    }
+
+    public function pesertaDashboard(Request $request): View
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        $kegiatans = collect();
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('kegiatans')) {
+                $kegiatans = Kegiatan::orderBy('tanggal', 'asc')->get();
+            }
+        } catch (\Throwable $e) {
+            $kegiatans = collect();
+        }
+
+        $tugases = collect();
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('tugases')) {
+                $tugases = \App\Models\Tugas::orderBy('tenggat_waktu', 'asc')->get();
+            }
+        } catch (\Throwable $e) {
+            $tugases = collect();
+        }
+
+        return view('peserta.dashboard', [
+            'title' => 'Dashboard Peserta',
+            'user' => $user,
+            'kegiatans' => $kegiatans,
+            'tugases' => $tugases,
         ]);
     }
 }
