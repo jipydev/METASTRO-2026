@@ -10,7 +10,7 @@ use App\Models\Jabatan;
 use App\Models\User;
 use App\Services\QrCodeService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
@@ -25,6 +25,7 @@ class UserController extends Controller
             'stakeholderJabatan' => Jabatan::orderedStakeholder(),
         ];
     }
+
     public function index(Request $request)
     {
         $query = User::with(['divisi', 'jabatan']);
@@ -47,10 +48,10 @@ class UserController extends Controller
         // Filter role virtual
         if ($request->filled('role')) {
             if ($request->role === 'admin') {
-                $query->whereHas('divisi', fn($q) => $q->where('nama', 'like', '%chiper%'));
+                $query->whereHas('divisi', fn ($q) => $q->where('nama', 'like', '%chiper%'));
             } elseif ($request->role === 'panitia') {
                 $query->whereNotNull('divisi_id')
-                    ->whereDoesntHave('divisi', fn($q) => $q->where('nama', 'like', '%chiper%'));
+                    ->whereDoesntHave('divisi', fn ($q) => $q->where('nama', 'like', '%chiper%'));
             } elseif ($request->role === 'peserta') {
                 $query->whereNull('divisi_id');
             }
@@ -74,9 +75,9 @@ class UserController extends Controller
             })
             ->when($request->filled('role'), function ($q) use ($request) {
                 if ($request->role === 'admin') {
-                    $q->whereHas('divisi', fn($sub) => $sub->where('nama', 'like', '%chiper%'));
+                    $q->whereHas('divisi', fn ($sub) => $sub->where('nama', 'like', '%chiper%'));
                 } elseif ($request->role === 'panitia') {
-                    $q->whereNotNull('divisi_id')->whereDoesntHave('divisi', fn($sub) => $sub->where('nama', 'like', '%chiper%'));
+                    $q->whereNotNull('divisi_id')->whereDoesntHave('divisi', fn ($sub) => $sub->where('nama', 'like', '%chiper%'));
                 } elseif ($request->role === 'peserta') {
                     $q->whereNull('divisi_id');
                 }
@@ -151,6 +152,9 @@ class UserController extends Controller
             'nama' => $validated['nama'],
             'nim' => $validated['nim'],
             'email' => $validated['email'] ?? null,
+            'nomor_hp' => $validated['nomor_hp'] ?? null,
+            'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
+            'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
             'password' => $validated['password'], // Pastikan model User Anda punya casts password => 'hashed'
             'divisi_id' => $divisiId,
             'jabatan_id' => $validated['jabatan_id'] ?: null,
@@ -210,6 +214,9 @@ class UserController extends Controller
             'nama' => $validated['nama'],
             'nim' => $validated['nim'],
             'email' => $validated['email'] ?? null,
+            'nomor_hp' => $validated['nomor_hp'] ?? null,
+            'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
+            'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
             'divisi_id' => $divisiId,
             'jabatan_id' => $validated['jabatan_id'] ?: null,
             'status' => (bool) $validated['status'], // Update status aktif/non-aktif
@@ -220,6 +227,18 @@ class UserController extends Controller
 
         // Ganti back() menjadi redirect()
         return redirect()->route('admin.users.index')->with('success', "Data pengguna {$user->nama} berhasil diperbarui.");
+    }
+
+    /**
+     * Mengembalikan password pengguna ke password default.
+     */
+    public function resetPassword(User $user)
+    {
+        $user->update([
+            'password' => Hash::make('metastro2026'),
+        ]);
+
+        return back()->with('success', "Password {$user->nama} berhasil direset ke password default.");
     }
 
     /**

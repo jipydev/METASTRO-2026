@@ -27,7 +27,7 @@ class EnsureInitialSetupCompleted
 
             // Kasus 2: User SUDAH selesai setup, tapi mencoba akses kembali halaman onboarding
             if ($user->is_initial_setup_completed && $request->routeIs('initial-setup.*')) {
-                return redirect()->route('dashboard');
+                return redirect()->route('dashboard.index');
             }
         }
 

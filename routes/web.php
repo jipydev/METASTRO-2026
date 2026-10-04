@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\HukumanController;
-use App\Http\Controllers\TimController;
-use App\Http\Controllers\TugasController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AnggotaTimController;
 use App\Http\Controllers\Api\ScanController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GuiderController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HukumanController;
 use App\Http\Controllers\InitialSetupController;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\NotificationController;
@@ -15,6 +15,8 @@ use App\Http\Controllers\PengajuanIzinController;
 use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TimController;
+use App\Http\Controllers\TugasController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 | Landing Page
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', [HomeController::class, 'index'])->name('landing-page');
 
 /*
@@ -91,20 +94,17 @@ Route::prefix('/dashboard')->name('dashboard.')->middleware(['auth', 'verified',
 
     /*
     |--------------------------------------------------------------------------
-    | Tugas & Tim Panitia (Divisi Acara & Divisi Guider)
+    | Tugas & Tim Guider (Divisi Acara & Divisi Guider)
     |--------------------------------------------------------------------------
     */
+    Route::resource('tim', TimController::class)->parameters(['tim' => 'slug']);
+    Route::resource('guider', GuiderController::class);
+    Route::post('tim/{tim}/anggota', [AnggotaTimController::class, 'store'])->name('anggota-tim.store');
+    Route::delete('tim/{tim}/anggota/{anggota}', [AnggotaTimController::class, 'destroy'])->name('anggota-tim.destroy');
+
     Route::resource('tugas', TugasController::class)->except(['show']);
 
-    Route::prefix('tim-guider')->name('tim-guider.')->group(function () {
-        Route::get('/', [TimController::class, 'index'])->name('index');
-        Route::post('/', [TimController::class, 'store'])->name('store');
-        Route::get('/{tim}', [TimController::class, 'show'])->name('show');
-        Route::put('/{tim}', [TimController::class, 'update'])->name('update');
-        Route::delete('/{tim}', [TimController::class, 'destroy'])->name('destroy');
-    });
-
-    Route::prefix('review-tugas')->name('review-tugas.')->group(function () {
+    Route::prefix('pengumpulan-tugas')->name('pengumpulan-tugas.')->group(function () {
         Route::get('/', [TimController::class, 'reviewIndex'])->name('index');
         Route::put('/{pengumpulan}', [TimController::class, 'reviewUpdate'])->name('update');
     });
@@ -122,6 +122,7 @@ Route::prefix('/dashboard')->name('dashboard.')->middleware(['auth', 'verified',
 */
 Route::prefix('/dashboard')->name('admin.')->middleware(['auth', 'verified', 'initial.setup', 'can:admin-access'])->group(function () {
     Route::resource('users', UserController::class)->except(['show'])->names('users');
+    Route::patch('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
     Route::patch('users/{user}/reset-qr', [UserController::class, 'resetQr'])->name('users.reset-qr');
     Route::patch('users-reset-all-qr', [UserController::class, 'resetAllQr'])->name('users.reset-all-qr');
 });

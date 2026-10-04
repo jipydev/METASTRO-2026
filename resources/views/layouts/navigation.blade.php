@@ -218,14 +218,29 @@
             </a>
         @endif
 
+        {{-- Group: Divisi Guider — Manajemen Tim --}}
+        @if (auth()->user()->canManageTim() || auth()->user()->isAdmin())
+            <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Tim</p>
+            <hr class="border-slate-100 dark:border-slate-700/60 my-1!" x-show="sidebarCollapsed && !sidebarOpen"
+                x-cloak>
+
+            <a href="{{ route('dashboard.tim.index') }}" title="Manajemen Tim"
+                class="{{ $navItem(request()->routeIs('dashboard.tim.*')) }}"
+                :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' :
+                    'gap-2.5 px-3 py-2'">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Manajemen Tim</span>
+            </a>
+        @endif
+
         {{-- Group: Divisi Acara — Manajemen Tugas --}}
-        @php
-            $isAcara = auth()->user()->divisi?->nama && str_contains(strtolower(auth()->user()->divisi->nama), 'acara');
-        @endphp
-        @if ($isAcara || auth()->user()->isAdmin())
+        @if (auth()->user()->canManageTugas() || auth()->user()->isAdmin())
             <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Divisi
                 Acara</p>
-            <hr class="border-slate-100 dark:border-slate-700/60 !my-1" x-show="sidebarCollapsed && !sidebarOpen"
+            <hr class="border-slate-100 dark:border-slate-700/60 my-1!" x-show="sidebarCollapsed && !sidebarOpen"
                 x-cloak>
 
             <a href="{{ route('dashboard.tugas.index') }}" title="Manajemen Tugas"
@@ -239,32 +254,9 @@
                 <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Manajemen
                     Tugas</span>
             </a>
-        @endif
 
-        {{-- Group: Divisi Guider — Tim & Review --}}
-        @php
-            $isGuider =
-                auth()->user()->divisi?->nama && str_contains(strtolower(auth()->user()->divisi->nama), 'guider');
-        @endphp
-        @if ($isGuider || auth()->user()->isAdmin())
-            <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Divisi
-                Guider</p>
-            <hr class="border-slate-100 dark:border-slate-700/60 my-1!" x-show="sidebarCollapsed && !sidebarOpen"
-                x-cloak>
-
-            <a href="{{ route('dashboard.tim-guider.index') }}" title="Manajemen Tim"
-                class="{{ $navItem(request()->routeIs('dashboard.tim-guider.*')) }}"
-                :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' :
-                    'gap-2.5 px-3 py-2'">
-                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Manajemen Tim</span>
-            </a>
-
-            <a href="{{ route('dashboard.review-tugas.index') }}" title="Review Tugas"
-                class="{{ $navItem(request()->routeIs('dashboard.review-tugas.*')) }}"
+            <a href="{{ route('dashboard.pengumpulan-tugas.index') }}" title="Review Tugas"
+                class="{{ $navItem(request()->routeIs('dashboard.review.*')) }}"
                 :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d=" M11

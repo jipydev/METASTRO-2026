@@ -23,7 +23,7 @@
         </div>
     
 
-    <div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 font-poppins">
+    <div class="py-8 max-w-7xl mx-auto font-poppins">
         @if (session('success'))
             <div class="mb-5 p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-2xl text-emerald-700 dark:text-emerald-300 text-xs font-semibold">
                 {{ session('success') }}

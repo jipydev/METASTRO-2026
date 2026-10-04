@@ -45,6 +45,34 @@
                         </div>
                     </div>
 
+                    {{-- Data Pribadi --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label for="jenis_kelamin" class="block font-bold text-gray-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Jenis Kelamin</label>
+                            <select id="jenis_kelamin" name="jenis_kelamin" class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="">-- Pilih --</option>
+                                <option value="laki-laki" {{ old('jenis_kelamin', $user->jenis_kelamin) === 'laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="perempuan" {{ old('jenis_kelamin', $user->jenis_kelamin) === 'perempuan' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                            <x-input-error :messages="$errors->get('jenis_kelamin')" class="mt-1" />
+                        </div>
+
+                        <div>
+                            <label for="tanggal_lahir" class="block font-bold text-gray-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Tanggal Lahir</label>
+                            <input type="date" id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir', optional($user->tanggal_lahir)->format('Y-m-d')) }}" max="{{ now()->toDateString() }}"
+                                   class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
+                            <x-input-error :messages="$errors->get('tanggal_lahir')" class="mt-1" />
+                        </div>
+
+                        <div>
+                            <label for="nomor_hp" class="block font-bold text-gray-700 dark:text-slate-300 mb-1 uppercase tracking-wider">No. HP</label>
+                            <input type="tel" id="nomor_hp" name="nomor_hp" value="{{ old('nomor_hp', $user->nomor_hp) }}" maxlength="20"
+                                   placeholder="Contoh: 081234567890"
+                                   class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
+                            <x-input-error :messages="$errors->get('nomor_hp')" class="mt-1" />
+                        </div>
+                    </div>
+
                     {{-- Grid Role, Divisi, Jabatan --}}
                     <div
                         x-data="{
@@ -109,6 +137,20 @@
                         <x-input-error :messages="$errors->get('status')" class="mt-1" />
                     </div>
 
+                    {{-- Reset Password --}}
+                    <div class="pt-4 border-t border-gray-100 dark:border-slate-700">
+                        <h2 class="font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">Reset Password</h2>
+                        <p class="mt-1 text-[11px] text-gray-500 dark:text-slate-400">
+                            Password akun akan dikembalikan ke <span class="font-mono font-semibold">metastro2026</span>.
+                        </p>
+                        <button type="submit"
+                                form="reset-password-form"
+                                onclick="return confirm('Reset password akun ini ke metastro2026?')"
+                                class="mt-3 cursor-pointer px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl shadow-sm transition">
+                            Reset ke Password Default
+                        </button>
+                    </div>
+
                     {{-- Actions --}}
                     <div class="pt-4 flex items-center justify-end gap-2.5 border-t border-gray-100 dark:border-slate-700">
                         <a href="{{ route('admin.users.index') }}"
@@ -120,6 +162,11 @@
                         </button>
                     </div>
 
+                </form>
+
+                <form id="reset-password-form" method="POST" action="{{ route('admin.users.reset-password', $user) }}" class="hidden">
+                    @csrf
+                    @method('PATCH')
                 </form>
             </div>
 

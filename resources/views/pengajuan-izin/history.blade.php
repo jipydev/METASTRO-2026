@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <div x-data="{ detail: null }" class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 font-poppins">
+    <div x-data="{ detail: null }" class="py-8 max-w-7xl mx-auto font-poppins">
 
         {{-- Flash Notification --}}
         @if (session('success'))

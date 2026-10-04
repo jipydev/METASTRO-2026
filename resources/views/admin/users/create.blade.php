@@ -39,11 +39,39 @@
                         </div>
 
                         <div>
-                            <label for="email" class="block font-bold text-gray-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Email (Opsional)</label>
+                            <label for="email" class="block font-bold text-gray-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Email</label>
                             <input type="email" id="email" name="email" value="{{ old('email') }}" maxlength="255"
                                    placeholder="user@example.com"
                                    class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
                             <x-input-error :messages="$errors->get('email')" class="mt-1" />
+                        </div>
+                    </div>
+
+                    {{-- Data Pribadi --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label for="jenis_kelamin" class="block font-bold text-gray-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Jenis Kelamin</label>
+                            <select id="jenis_kelamin" name="jenis_kelamin" class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="">-- Pilih --</option>
+                                <option value="laki-laki" {{ old('jenis_kelamin') === 'laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="perempuan" {{ old('jenis_kelamin') === 'perempuan' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                            <x-input-error :messages="$errors->get('jenis_kelamin')" class="mt-1" />
+                        </div>
+
+                        <div>
+                            <label for="tanggal_lahir" class="block font-bold text-gray-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Tanggal Lahir</label>
+                            <input type="date" id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}" max="{{ now()->toDateString() }}"
+                                   class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
+                            <x-input-error :messages="$errors->get('tanggal_lahir')" class="mt-1" />
+                        </div>
+
+                        <div>
+                            <label for="nomor_hp" class="block font-bold text-gray-700 dark:text-slate-300 mb-1 uppercase tracking-wider">No. HP</label>
+                            <input type="tel" id="nomor_hp" name="nomor_hp" value="{{ old('nomor_hp') }}" maxlength="20"
+                                   placeholder="Contoh: 081234567890"
+                                   class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
+                            <x-input-error :messages="$errors->get('nomor_hp')" class="mt-1" />
                         </div>
                     </div>
 

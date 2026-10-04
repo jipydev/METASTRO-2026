@@ -23,7 +23,7 @@ class InitialSetupController extends Controller
         $user = Auth::user();
 
         if ($user->is_initial_setup_completed) {
-            return redirect()->route('dashboard');
+            return redirect()->route('dashboard.index');
         }
 
         return view('auth.initial-setup', [
@@ -62,7 +62,7 @@ class InitialSetupController extends Controller
         // Generate QR code token & SVG image
         $qrService->generateForUser($user);
 
-        return redirect()->route('dashboard')
+        return redirect()->route('dashboard.index')
             ->with('success', 'Profil dan password berhasil diperbarui! Selamat datang di Portal Metastro.');
     }
 }
