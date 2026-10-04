@@ -69,7 +69,7 @@
             <div class="relative z-10 mt-6 sm:mt-7 w-full flex flex-col items-center">
                 <div class="flex items-center justify-center gap-3">
                     @auth
-                        <a href="{{ route('dashboard') }}"
+                        <a href="{{ route('dashboard.index') }}"
                             class="inline-flex items-center justify-center px-6 py-2 rounded-lg bg-black/35 hover:bg-black/50 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
                             DASHBOARD
                         </a>
