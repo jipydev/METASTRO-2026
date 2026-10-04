@@ -40,6 +40,7 @@
             id: null,
             nama: '',
             deskripsi: '',
+            jenis: 'rapat',
             tanggal: '',
             waktu_mulai: '',
             waktu_selesai: '',
@@ -93,6 +94,7 @@
                 id: null,
                 nama: '',
                 deskripsi: '',
+                jenis: 'rapat',
                 tanggal: today,
                 waktu_mulai: '08:00',
                 waktu_selesai: '10:00',
@@ -155,6 +157,7 @@
                             'id' => $item->id,
                             'nama' => $item->nama,
                             'deskripsi' => $item->deskripsi ?? '',
+                            'jenis' => $item->jenis,
                             'tanggal' => \Carbon\Carbon::parse($item->tanggal)->format('Y-m-d'),
                             'waktu_mulai' => $item->waktu_mulai ? substr($item->waktu_mulai, 0, 5) : '',
                             'waktu_selesai' => $item->waktu_selesai ? substr($item->waktu_selesai, 0, 5) : '',
@@ -178,8 +181,14 @@
 
                         <div class="pl-2 space-y-3">
                             <div class="flex items-start justify-between gap-2">
-                                <h3 class="text-sm font-bold text-gray-900 dark:text-white leading-tight">
-                                    {{ $item->nama }}</h3>
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-900 dark:text-white leading-tight">
+                                        {{ $item->nama }}</h3>
+                                    <span
+                                        class="inline-flex mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider {{ $item->jenis === 'pelaksanaan' ? 'bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300' : 'bg-violet-100 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300' }}">
+                                        {{ ucfirst($item->jenis) }}
+                                    </span>
+                                </div>
                                 <span
                                     class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0
                                     {{ $item->status_presensi_aktif === 'buka' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300' : ($item->status_presensi_aktif === 'tutup' ? 'bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300') }}">
@@ -312,6 +321,16 @@
                         <input type="text" name="nama" x-model="form.nama" required maxlength="255"
                             placeholder="Contoh: Rapat Besar 1"
                             class="w-full bg-slate-50 dark:bg-slate-700 rounded-xl border-gray-300 dark:border-slate-600 p-2.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold mb-1 text-gray-700 dark:text-slate-300">Jenis Kegiatan
+                            *</label>
+                        <select name="jenis" x-model="form.jenis" required
+                            class="w-full bg-slate-50 dark:bg-slate-700 rounded-xl border-gray-300 dark:border-slate-600 p-2.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="rapat">Rapat</option>
+                            <option value="pelaksanaan">Pelaksanaan</option>
+                        </select>
                     </div>
 
                     <div>

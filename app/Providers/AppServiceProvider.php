@@ -72,6 +72,26 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('view-panitia-list', function (User $user) {
             return $user->canViewPanitiaList();
         });
+
+        Gate::define('view-tim', function (User $user) {
+            return $user->canViewTim();
+        });
+
+        Gate::define('manage-tim', function (User $user) {
+            return $user->canManageTim();
+        });
+
+        Gate::define('view-tugas', function (User $user) {
+            return $user->canViewTugas();
+        });
+
+        Gate::define('manage-tugas', function (User $user) {
+            return $user->canManageTugas();
+        });
+
+        Gate::define('review-tugas', function (User $user) {
+            return $user->canReviewTugas();
+        });
     }
 
     /**

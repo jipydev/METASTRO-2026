@@ -30,6 +30,7 @@ class KegiatanRequest extends FormRequest
         return [
             'nama' => ['required', 'string', 'max:255'],
             'deskripsi' => ['nullable', 'string', 'max:2000'],
+            'jenis' => ['required', 'in:rapat,pelaksanaan'],
             'tanggal' => ['required', 'date'],
             'waktu_mulai' => ['required', 'date_format:H:i'],
             'waktu_selesai' => ['nullable', 'date_format:H:i', 'after_or_equal:waktu_mulai'],
@@ -48,6 +49,8 @@ class KegiatanRequest extends FormRequest
             'nama.required' => 'Nama kegiatan wajib diisi.',
             'nama.max' => 'Nama kegiatan maksimal 255 karakter.',
             'deskripsi.max' => 'Deskripsi terlalu panjang. Maksimal 2000 karakter.',
+            'jenis.required' => 'Jenis kegiatan wajib dipilih.',
+            'jenis.in' => 'Jenis kegiatan tidak valid.',
             'tanggal.required' => 'Tanggal kegiatan wajib diisi.',
             'tanggal.date' => 'Tanggal kegiatan tidak valid.',
             'waktu_mulai.required' => 'Waktu mulai wajib diisi.',

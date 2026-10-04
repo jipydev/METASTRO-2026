@@ -14,7 +14,8 @@
                     {{ __('Manajemen Tim & Guider') }}
                 </h2>
             </div>
-            <div>
+            @can('manage-tim')
+                <div>
                 <button type="button" @click="openCreateModal = true"
                     class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-sm transition cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -22,7 +23,8 @@
                     </svg>
                     <span>Tambah Tim Baru</span>
                 </button>
-            </div>
+                </div>
+            @endcan
         </div>
 
         <div class="py-6 max-w-7xl mx-auto px-0 font-poppins">
@@ -61,7 +63,8 @@
             {{-- Top Summary Stats --}}
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 items-start">
                 {{-- Search Bar --}}
-                <form method="GET" action="{{ route('dashboard.tim.index') }}" class="filter-bar col-span-2 flex-nowrap!">
+                <form method="GET" action="{{ route('dashboard.tim.index') }}"
+                    class="filter-bar col-span-2 flex-nowrap!">
                     <div class="flex-1">
                         <div class="relative">
                             <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none"
@@ -127,7 +130,12 @@
                                                 $guiders = $tim->guiders ?? [];
                                             @endphp
 
-                                            @if (count($guiders) === 1)
+                                            @if (count($guiders) === 0)
+                                                <span
+                                                    class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300">
+                                                    Belum Ada Guider
+                                                </span>
+                                            @elseif (count($guiders) === 1)
                                                 <span
                                                     class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300">
                                                     Kurang 1 Guider Lagi
@@ -159,17 +167,19 @@
                                                 <span>Detail</span>
                                             </a>
 
-                                            <button type="button"
+                                            @can('manage-tim')
+                                                <button type="button"
                                                 @click="selectedTim = @js(['id' => $tim['id'], 'slug' => $tim['slug'], 'nama' => $tim['nama']]); openEditModal = true;"
                                                 class="cursor-pointer px-2.5 py-1.5 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold rounded-lg transition text-xs">
                                                 Ubah Nama
-                                            </button>
+                                                </button>
 
-                                            <button type="button"
+                                                <button type="button"
                                                 @click="selectedTim = @js(['id' => $tim['id'], 'slug' => $tim['slug'], 'nama' => $tim['nama']]); openDeleteModal = true;"
                                                 class="px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition text-xs">
                                                 Hapus
-                                            </button>
+                                                </button>
+                                            @endcan
                                         </div>
                                     </td>
                                 </tr>
@@ -188,6 +198,7 @@
                                     {{ $tims->links('pagination::tailwind') }}
                                 </td>
                             </tr>
+                            </tfoot>
                     </table>
                 </div>
             </div>

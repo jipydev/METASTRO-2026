@@ -12,6 +12,7 @@ use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NotulensiController;
 use App\Http\Controllers\PengajuanIzinController;
+use App\Http\Controllers\PengumpulanTugasController;
 use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\ProfileController;
@@ -97,16 +98,32 @@ Route::prefix('/dashboard')->name('dashboard.')->middleware(['auth', 'verified',
     | Tugas & Tim Guider (Divisi Acara & Divisi Guider)
     |--------------------------------------------------------------------------
     */
-    Route::resource('tim', TimController::class)->parameters(['tim' => 'slug']);
-    Route::resource('guider', GuiderController::class);
-    Route::post('tim/{tim}/anggota', [AnggotaTimController::class, 'store'])->name('anggota-tim.store');
-    Route::delete('tim/{tim}/anggota/{anggota}', [AnggotaTimController::class, 'destroy'])->name('anggota-tim.destroy');
+    Route::middleware('can:view-tim')->group(function () {
+        Route::resource('tim', TimController::class)
+            ->parameters(['tim' => 'slug'])
+            ->only(['index', 'show']);
+    });
 
-    Route::resource('tugas', TugasController::class)->except(['show']);
+    Route::middleware('can:manage-tim')->group(function () {
+        Route::resource('tim', TimController::class)
+            ->parameters(['tim' => 'slug'])
+            ->only(['store', 'update', 'destroy']);
+        Route::resource('guider', GuiderController::class)->only(['update']);
+        Route::post('tim/{tim}/anggota', [AnggotaTimController::class, 'store'])->name('anggota-tim.store');
+        Route::delete('tim/{tim}/anggota/{anggota}', [AnggotaTimController::class, 'destroy'])->name('anggota-tim.destroy');
+    });
 
-    Route::prefix('pengumpulan-tugas')->name('pengumpulan-tugas.')->group(function () {
-        Route::get('/', [TimController::class, 'reviewIndex'])->name('index');
-        Route::put('/{pengumpulan}', [TimController::class, 'reviewUpdate'])->name('update');
+    Route::middleware('can:view-tugas')->group(function () {
+        Route::resource('tugas', TugasController::class)->only(['index']);
+    });
+
+    Route::middleware('can:manage-tugas')->group(function () {
+        Route::resource('tugas', TugasController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
+    });
+
+    Route::prefix('pengumpulan-tugas')->name('pengumpulan-tugas.')->middleware('can:review-tugas')->group(function () {
+        Route::get('/', [PengumpulanTugasController::class, 'reviewIndex'])->name('index');
+        Route::put('/{pengumpulan}', [PengumpulanTugasController::class, 'reviewUpdate'])->name('update');
     });
 
     Route::prefix('api/scan')->name('api.scan.')->group(function () {

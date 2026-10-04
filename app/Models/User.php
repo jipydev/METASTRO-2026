@@ -407,9 +407,24 @@ class User extends Authenticatable implements PasskeyUser
         return $this->isAdmin() || $this->isPathfinder();
     }
 
+    public function canViewTim(): bool
+    {
+        return $this->canManageTim() || $this->isGuider();
+    }
+
     public function canManageTugas(): bool
     {
         return $this->isAdmin() || $this->isPathfinder();
+    }
+
+    public function canViewTugas(): bool
+    {
+        return $this->canManageTugas() || $this->isGuider();
+    }
+
+    public function canReviewTugas(): bool
+    {
+        return $this->isAdmin() || $this->isGuider();
     }
 
     public function canApproveRangerIzin(): bool

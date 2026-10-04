@@ -114,6 +114,25 @@ select {
     @apply focus:ring-brand-500 focus:border-brand-500 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:ring-2 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100;
 }
 
+.rich-text-editor ul,
+.rich-text-content ul {
+    list-style-type: disc;
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+.rich-text-editor ol,
+.rich-text-content ol {
+    list-style-type: decimal;
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+.rich-text-editor li,
+.rich-text-content li {
+    margin: 0.2rem 0;
+}
+
 select.form-control-app {
     color-scheme: light;
     @apply cursor-pointer pr-8;

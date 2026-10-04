@@ -10,7 +10,8 @@ class HomeController extends Controller
     public function index()
     {
         $data = [
-            'kegiatans' => Kegiatan::orderBy('tanggal', 'asc')
+            'kegiatans' => Kegiatan::where('jenis', 'pelaksanaan')
+                ->orderBy('tanggal', 'asc')
                 ->orderBy('waktu_mulai', 'asc')
                 ->get(),
             'title' => 'Home',

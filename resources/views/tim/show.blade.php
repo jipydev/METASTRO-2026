@@ -70,24 +70,26 @@
                 </div>
 
                 <!-- Perbaikan: Hitung jumlah guider yang terdaftar pada tim, bukan isi $guiders dari controller -->
-                @if (count($tim['guiders'] ?? []) < 2)
-                    <button type="button" @click="openAddGuiderModal = true"
+                @can('manage-tim')
+                    @if (count($tim['guiders'] ?? []) < 2)
+                        <button type="button" @click="openAddGuiderModal = true"
                         class="btn-primary flex items-center gap-1.5 self-start sm:self-auto">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
                         <span>Tugaskan Guider</span>
-                    </button>
-                @else
-                    <span
+                        </button>
+                    @else
+                        <span
                         class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 flex items-center gap-1.5">
                         <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
                         Formasi Pasangan Lengkap (2/2)
-                    </span>
-                @endif
+                        </span>
+                    @endif
+                @endcan
             </div>
 
 
@@ -113,7 +115,8 @@
                                 </div>
                             </div>
 
-                            <form action="{{ route('dashboard.guider.update', $tim->id) }}" method="POST"
+                            @can('manage-tim')
+                                <form action="{{ route('dashboard.guider.update', $tim->id) }}" method="POST"
                                 @submit="isProcessing = true">
                                 @csrf
                                 @method('PUT')
@@ -123,7 +126,8 @@
                                     class="px-2.5 py-1.5 bg-red-100 hover:bg-red-200 dark:bg-red-950/60 text-red-600 dark:text-red-400 text-xs font-semibold rounded-xl transition flex items-center gap-1 cursor-pointer">
                                     <span>Copot</span>
                                 </button>
-                            </form>
+                                </form>
+                            @endcan
                         </div>
                     @else
                         <div
@@ -141,10 +145,12 @@
                                 </div>
                             </div>
 
-                            <button type="button" @click="openAddGuiderModal = true"
+                            @can('manage-tim')
+                                <button type="button" @click="openAddGuiderModal = true"
                                 class="px-3 py-1.5 bg-brand-50 hover:bg-brand-100 dark:bg-slate-700 text-brand-600 dark:text-brand-300 font-bold text-xs rounded-xl transition cursor-pointer">
                                 + Pilih Guider
-                            </button>
+                                </button>
+                            @endcan
                         </div>
                     @endif
                 @endfor
@@ -167,14 +173,16 @@
                     </h3>
                 </div>
 
-                <button type="button" @click="openAddMemberModal = true"
+                @can('manage-tim')
+                    <button type="button" @click="openAddMemberModal = true"
                     class="btn-primary flex items-center gap-1.5 self-start sm:self-auto">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
                     <span>+ Tambah Anggota ke Tim</span>
-                </button>
+                    </button>
+                @endcan
             </div>
 
             {{-- Table Anggota --}}
@@ -211,7 +219,8 @@
                                         </span>
                                     </td>
                                     <td class="py-3.5 px-4 text-center">
-                                        <form action="{{ route('dashboard.anggota-tim.destroy', [$tim->id, $member->id]) }}" method="POST"
+                                        @can('manage-tim')
+                                            <form action="{{ route('dashboard.anggota-tim.destroy', [$tim->id, $member->id]) }}" method="POST"
                                             @submit="isProcessing = true">
                                             @csrf
                                             @method('DELETE')
@@ -219,7 +228,8 @@
                                                 class="px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition text-xs cursor-pointer">
                                                 Keluarkan
                                             </button>
-                                        </form>
+                                            </form>
+                                        @endcan
                                     </td>
                                 </tr>
                             @empty

@@ -219,7 +219,7 @@
         @endif
 
         {{-- Group: Divisi Guider — Manajemen Tim --}}
-        @if (auth()->user()->canManageTim() || auth()->user()->isAdmin())
+        @if (auth()->user()->canViewTim())
             <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Tim</p>
             <hr class="border-slate-100 dark:border-slate-700/60 my-1!" x-show="sidebarCollapsed && !sidebarOpen"
                 x-cloak>
@@ -237,9 +237,8 @@
         @endif
 
         {{-- Group: Divisi Acara — Manajemen Tugas --}}
-        @if (auth()->user()->canManageTugas() || auth()->user()->isAdmin())
-            <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Divisi
-                Acara</p>
+        @if (auth()->user()->canViewTugas())
+            <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Manajemen Tugas</p>
             <hr class="border-slate-100 dark:border-slate-700/60 my-1!" x-show="sidebarCollapsed && !sidebarOpen"
                 x-cloak>
 
@@ -255,16 +254,17 @@
                     Tugas</span>
             </a>
 
-            <a href="{{ route('dashboard.pengumpulan-tugas.index') }}" title="Review Tugas"
-                class="{{ $navItem(request()->routeIs('dashboard.review.*')) }}"
+            @if (auth()->user()->canReviewTugas())
+                <a href="{{ route('dashboard.pengumpulan-tugas.index') }}" title="Review Pengumpulan"
+                    class="{{ $navItem(request()->routeIs('dashboard.pengumpulan-tugas.*')) }}"
                 :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d=" M11
-                        5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828
-                        15H9v-2.828l8.586-8.586z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v11a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2m-6 4h6m-6 4h6m-6 4h4" />
                 </svg>
-                <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Review Tugas</span>
-            </a>
+                <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Review Pengumpulan</span>
+                </a>
+            @endif
         @endif
 
         @if (auth()->user()->isAdmin())
