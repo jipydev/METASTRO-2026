@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Selamat Datang - METASTRO 2026</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Schoolbell&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Schoolbell&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         .font-plus-jakarta { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-schoolbell { font-family: 'Schoolbell', cursive; }
@@ -19,82 +19,131 @@
         }
     </script>
 </head>
-<body class="font-plus-jakarta bg-[#FFFDF9] dark:bg-slate-900 text-[#334155] dark:text-slate-100 min-h-screen flex items-center justify-center p-4">
+<body class="font-inter bg-[#FFFDF9] dark:bg-slate-900 text-[#334155] dark:text-slate-100 min-h-screen pb-24">
 
-    <div class="max-w-3xl w-full bg-white dark:bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-slate-100 dark:border-slate-700">
-        <!-- Header -->
-        <div class="bg-[#FE9100] p-8 text-center relative overflow-hidden">
-            <h1 class="font-schoolbell text-4xl md:text-5xl text-white mb-2 relative z-10">Selamat Datang, {{ $user->nama }}!</h1>
-            <p class="font-inter text-white/90 relative z-10">Persiapkan dirimu untuk petualangan METASTRO 2026</p>
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        
+        <!-- Welcome Banner -->
+        <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700 rounded-2xl p-6 text-center shadow-sm mb-8">
+            <h1 class="font-schoolbell text-3xl md:text-4xl text-[#111827] dark:text-amber-400 font-bold mb-2">🎉 Selamat datang, {{ $user->nama }}!</h1>
+            <p class="text-slate-600 dark:text-slate-300 font-medium">Cari nama & tim kamu di bawah ini!</p>
         </div>
 
-        <!-- Body -->
-        <div class="p-8">
-            <h2 class="text-2xl font-bold mb-6 text-center">Informasi Tim Kamu</h2>
-            
-            @if($tim)
-                <div class="bg-slate-50 dark:bg-slate-700/50 rounded-2xl p-6 mb-8 border border-slate-100 dark:border-slate-600">
-                    <div class="flex items-center justify-center mb-6">
-                        <div class="w-16 h-16 bg-[#10B981]/10 rounded-full flex items-center justify-center border-2 border-[#10B981]">
-                            <svg class="w-8 h-8 text-[#10B981]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                        </div>
+        <!-- Team Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+            @foreach($tims as $tim)
+                @php $isUserTim = $tim->id === $userTimId; @endphp
+                <button type="button" 
+                    onclick="openModal({{ $tim->id }})"
+                    class="bg-white dark:bg-slate-800 rounded-xl p-4 md:p-5 text-left border shadow-sm transition-all hover:shadow-md hover:border-[#FE9100] focus:outline-none focus:ring-2 focus:ring-[#FE9100] {{ $isUserTim ? 'border-[#FE9100] ring-1 ring-[#FE9100]' : 'border-slate-200 dark:border-slate-700' }}">
+                    <h2 class="font-plus-jakarta font-bold text-[#111827] dark:text-white uppercase mb-2 line-clamp-1" title="{{ $tim->nama }}">{{ $tim->nama }}</h2>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed mb-3">
+                        @foreach($tim->members as $member)
+                            {{ $member->nama }}{{ !$loop->last ? ', ' : '' }}
+                        @endforeach
                     </div>
-                    <h3 class="text-3xl font-bold text-center mb-8 text-[#FE9100]">{{ $tim->nama }}</h3>
+                    @if($isUserTim)
+                        <span class="inline-block bg-[#FE9100] text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase">Tim Kamu</span>
+                    @else
+                        <span class="inline-block bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 text-[10px] font-bold px-2 py-1 rounded-full uppercase">Detail Tim</span>
+                    @endif
+                </button>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Guiders -->
-                        <div>
-                            <h4 class="font-bold text-lg mb-4 flex items-center gap-2">
-                                <span class="text-[#10B981]">●</span> Team Guiders
-                            </h4>
-                            <div class="space-y-3">
-                                @foreach($tim->guiders as $guider)
-                                    <div class="flex items-center gap-3 bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                                        <div class="w-10 h-10 rounded-full bg-[#10B981]/20 flex items-center justify-center text-[#10B981] font-bold">
-                                            {{ \Illuminate\Support\Str::substr($guider->pembimbing->nama, 0, 1) }}
-                                        </div>
-                                        <div class="font-medium font-inter">{{ $guider->pembimbing->nama }}</div>
-                                    </div>
-                                @endforeach
-                                @if($tim->guiders->isEmpty())
-                                    <p class="text-sm text-slate-500 italic">Belum ada Guider</p>
-                                @endif
+                <!-- Modal for this Team -->
+                <dialog id="modal-{{ $tim->id }}" class="bg-transparent m-0 p-0 w-full h-full max-w-none max-h-none backdrop:bg-black/50 backdrop:backdrop-blur-sm fixed inset-0 z-50 flex items-center justify-center hidden">
+                    <!-- Overlay click to close -->
+                    <div class="absolute inset-0 z-0" onclick="closeModal({{ $tim->id }})"></div>
+                    
+                    <!-- Modal Content -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-[90%] max-w-md max-h-[85vh] overflow-y-auto relative z-10 mx-auto mt-10 md:mt-0 flex flex-col font-inter border border-slate-100 dark:border-slate-700">
+                        <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center sticky top-0 bg-white dark:bg-slate-800 z-20">
+                            <h3 class="font-plus-jakarta font-bold text-lg text-[#111827] dark:text-white uppercase truncate pr-4">{{ $tim->nama }}</h3>
+                            <button onclick="closeModal({{ $tim->id }})" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1" title="Tutup">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                        
+                        <div class="p-5 space-y-6">
+                            <!-- Guiders -->
+                            <div>
+                                <h4 class="font-bold text-[#111827] dark:text-white mb-3">👥 Guider:</h4>
+                                <ul class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                                    @foreach($tim->guiders as $guider)
+                                        <li class="flex items-start">
+                                            <span class="mr-2 mt-0.5">•</span>
+                                            <span>
+                                                {{ $guider->pembimbing->nama }} 
+                                                @if($guider->pembimbing->nomor_hp)
+                                                    <span class="text-blue-600 dark:text-blue-400 font-medium whitespace-nowrap">({{ $guider->pembimbing->nomor_hp }})</span>
+                                                @endif
+                                            </span>
+                                        </li>
+                                    @endforeach
+                                    @if($tim->guiders->isEmpty())
+                                        <li class="text-slate-500 italic ml-4">Belum ada guider.</li>
+                                    @endif
+                                </ul>
+                            </div>
+
+                            <!-- Members -->
+                            <div>
+                                <h4 class="font-bold text-[#111827] dark:text-white mb-3">👥 Anggota:</h4>
+                                <ol class="list-decimal list-inside space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
+                                    @foreach($tim->members as $member)
+                                        <li class="{{ $member->id === $user->id ? 'font-bold text-[#FE9100] dark:text-amber-400' : '' }}">
+                                            {{ $member->nama }}
+                                            @if($member->id === $user->id)
+                                                <span class="text-xs bg-[#FE9100]/10 text-[#FE9100] ml-1 px-1.5 py-0.5 rounded font-bold uppercase">(Kamu)</span>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                    @if($tim->members->isEmpty())
+                                        <li class="text-slate-500 italic list-none">Belum ada anggota.</li>
+                                    @endif
+                                </ol>
+                            </div>
+
+                            <!-- Note Callout -->
+                            <div class="bg-[#FEFCE8] dark:bg-yellow-900/20 border border-[#F59E0B] rounded-xl p-4 text-center mt-6">
+                                <h4 class="font-bold text-[#111827] dark:text-amber-400 mb-2">Catatan 📝</h4>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">Setelah mengetahui tim kamu, jangan lupa hubungi kontak guider masing-masing untuk mendapatkan informasi lebih lanjut. Semangat dengan tim barunya!</p>
                             </div>
                         </div>
-
-                        <!-- Members -->
-                        <div>
-                            <h4 class="font-bold text-lg mb-4 flex items-center gap-2">
-                                <span class="text-[#FE9100]">●</span> Anggota Tim
-                            </h4>
-                            <div class="space-y-3 max-h-60 overflow-y-auto pr-2" style="scrollbar-width: thin;">
-                                @foreach($tim->members as $member)
-                                    <div class="flex items-center justify-between bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm {{ $member->id === $user->id ? 'ring-2 ring-[#FE9100]' : '' }}">
-                                        <div class="font-medium font-inter truncate pr-2">{{ $member->nama }}</div>
-                                        @if($member->id === $user->id)
-                                            <span class="text-xs bg-[#FE9100] text-white px-2 py-1 rounded-full font-bold">Kamu</span>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
                     </div>
-                </div>
-            @else
-                <div class="text-center p-8 bg-slate-50 dark:bg-slate-700/50 rounded-2xl border border-slate-100 dark:border-slate-600 mb-8">
-                    <svg class="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <p class="text-slate-500 font-inter">Kamu belum memiliki pembagian tim.</p>
-                </div>
-            @endif
+                </dialog>
+            @endforeach
+        </div>
 
-            <div class="text-center">
-                <a href="{{ route('peserta.dashboard') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#10B981] hover:bg-[#10B981]/90 transition-colors text-white font-bold rounded-xl shadow-lg hover:shadow-xl font-inter group">
-                    Lanjut ke Dashboard
-                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                </a>
-            </div>
+    </div>
+
+    <!-- Sticky Bottom Action Button -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 p-4 z-40 flex justify-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div class="w-full max-w-4xl px-4 flex justify-center">
+            <a href="{{ route('peserta.dashboard') }}" class="w-full md:w-auto min-w-[280px] flex items-center justify-center gap-2 px-6 py-3.5 bg-[#15803D] hover:bg-[#166534] transition-colors text-white font-bold rounded-xl shadow-lg hover:shadow-xl font-plus-jakarta text-center">
+                Lanjut ke Dashboard
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
         </div>
     </div>
 
+    <!-- Modal Logic -->
+    <script>
+        function openModal(id) {
+            const dialog = document.getElementById('modal-' + id);
+            if(dialog) {
+                dialog.showModal();
+                dialog.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        function closeModal(id) {
+            const dialog = document.getElementById('modal-' + id);
+            if(dialog) {
+                dialog.close();
+                dialog.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+    </script>
 </body>
 </html>
