@@ -32,6 +32,7 @@ use Spatie\Permission\Traits\HasRoles;
     'jabatan_id',
     'qr_token',
     'status',
+    'must_change_password',
     'is_initial_setup_completed',
     'qr_updated_at',
 ])]
@@ -57,6 +58,7 @@ class User extends Authenticatable implements PasskeyUser
             'email_verified_at' => 'datetime',
             'tanggal_lahir' => 'date',
             'status' => 'boolean',
+            'must_change_password' => 'boolean',
             'is_initial_setup_completed' => 'boolean',
             'qr_updated_at' => 'datetime',
         ];

@@ -27,6 +27,10 @@ class PengumpulanTugasController extends Controller
                         ->orWhereHas('tim', fn ($team) => $team->where('nama', 'like', "%{$search}%"));
                 });
             })
+            ->when(auth()->user()->isGuider() && !auth()->user()->isAdmin(), function ($query) {
+                $timIds = \App\Models\Guider::where('pembimbing_id', auth()->id())->pluck('tim_id');
+                $query->whereIn('tim_id', $timIds);
+            })
             ->when(in_array($status, ['pending', 'reviewed', 'rejected'], true), fn ($query) => $query->where('status', $status))
             ->when(in_array($jenis, ['individu', 'tim', 'angkatan'], true), fn ($query) => $query->whereHas('tugas', fn ($task) => $task->where('jenis', $jenis)))
             ->latest('tanggal_pengumpulan')

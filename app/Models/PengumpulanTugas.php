@@ -13,6 +13,7 @@ class PengumpulanTugas extends Model
     protected $fillable = [
         'tugas_id',
         'user_id',
+        'original_participant_name',
         'tim_id',
         'file_path',
         'catatan_peserta',

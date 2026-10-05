@@ -230,19 +230,32 @@ class UserController extends Controller
     }
 
     /**
-     * Mengembalikan password pengguna ke password default.
+     * Mengembalikan password pengguna ke password acak (Regenerate).
      */
     public function resetPassword(User $user)
     {
+        $newPassword = Str::random(10);
+        
         $user->update([
-            'password' => Hash::make('metastro2026'),
+            'password' => Hash::make($newPassword),
+            'must_change_password' => true,
+        ]);
+        
+        \Illuminate\Support\Facades\DB::table('audit_logs')->insert([
+            'user_id' => auth()->id(),
+            'action_type' => 'regenerate_password',
+            'description' => 'Mereset password pengguna: ' . $user->nama,
+            'target_id' => $user->id,
+            'ip_address' => request()->ip(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        return back()->with('success', "Password {$user->nama} berhasil direset ke password default.");
+        return back()->with('success', "Password {$user->nama} berhasil direset. Password baru: <strong>{$newPassword}</strong>");
     }
 
     /**
-     * Menghapus pengguna.
+     * Menghapus pengguna (Hard Delete dengan Retention).
      */
     public function destroy(User $user)
     {
@@ -250,9 +263,27 @@ class UserController extends Controller
             return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
-        $user->delete();
+        \Illuminate\Support\Facades\DB::transaction(function() use ($user) {
+            \App\Models\PengumpulanTugas::where('user_id', $user->id)
+                ->update([
+                    'original_participant_name' => $user->nama,
+                    'user_id' => null,
+                ]);
+            
+            \Illuminate\Support\Facades\DB::table('audit_logs')->insert([
+                'user_id' => auth()->id(),
+                'action_type' => 'hard_delete_user',
+                'description' => 'Menghapus permanen pengguna: ' . $user->nama,
+                'target_id' => $user->id,
+                'ip_address' => request()->ip(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+                
+            $user->delete();
+        });
 
-        return back()->with('success', 'Pengguna berhasil dihapus.');
+        return back()->with('success', 'Pengguna berhasil dihapus secara permanen. Data tugas terkait tetap dipertahankan.');
     }
 
     /**

@@ -26,10 +26,14 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        //   dd('Masuk Controller');
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        $user = $request->user();
+        if ($user && $user->isPeserta()) {
+            return redirect()->route('peserta.welcome');
+        }
 
         return redirect()->intended(route('dashboard.index'));
     }
