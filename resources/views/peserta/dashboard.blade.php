@@ -84,7 +84,7 @@
             @include('peserta.partials.navbar')
 
             <!-- 2. WELCOME / DEADLINE CARD -->
-            <div class="bg-[#FFF9F2] dark:bg-amber-950/20 border border-orange-100/60 dark:border-amber-900/40 border-l-4 !border-l-[#F97316] rounded-2xl p-4 sm:p-5 shadow-xs relative overflow-hidden mb-5">
+            <div class="bg-[#FDF6E9] dark:bg-amber-950/20 border border-orange-100/60 dark:border-amber-900/40 border-l-4 !border-l-[#F97316] rounded-2xl p-4 sm:p-5 shadow-xs relative overflow-hidden mb-5">
                 <div class="flex items-start justify-between gap-3">
                     <!-- Left: Greetings & Deadline info -->
                     <div class="min-w-0 pr-2">
