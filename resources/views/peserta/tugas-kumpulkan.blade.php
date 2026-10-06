@@ -26,7 +26,7 @@
         .font-oswald-header { font-family: 'Oswald', sans-serif; letter-spacing: 0.12em; }
     </style>
 </head>
-<body class="font-poppins antialiased bg-[#FFFDF9] dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-dvh transition-colors duration-200"
+<body class="font-poppins antialiased bg-[#FFFDF9] dark:bg-slate-900 text-[#1E293B] dark:text-slate-100 min-h-dvh transition-colors duration-200"
     x-data="{
         agreed: false,
         mobileMenu: false,
@@ -56,7 +56,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                     </svg>
                 </a>
-                <h2 class="font-bold text-lg text-slate-900 dark:text-white">Kumpulkan Tugas</h2>
+                <h2 class="font-bold text-lg text-[#1E293B] dark:text-white">Kumpulkan Tugas</h2>
             </div>
 
             <!-- CONTENT CARD -->
@@ -67,7 +67,7 @@
 
                 <div class="flex items-center gap-2 mb-4">
                     <span class="bg-[#FF1A1A] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">Individu</span>
-                    <h3 class="font-bold text-base text-slate-800 dark:text-white">Membuat esai</h3>
+                    <h3 class="font-bold text-base text-[#1E293B] dark:text-white">Membuat esai</h3>
                 </div>
 
                 <div class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-6 space-y-3">

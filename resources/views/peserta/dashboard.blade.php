@@ -45,7 +45,7 @@
     </style>
 </head>
 
-<body class="font-poppins antialiased bg-[#FFFDF9] dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-dvh transition-colors duration-200"
+<body class="font-poppins antialiased bg-[#FFFDF9] dark:bg-slate-900 text-[#1E293B] dark:text-slate-100 min-h-dvh transition-colors duration-200"
     x-data="{
         mobileMenu: false,
         notifOpen: false,
@@ -84,19 +84,19 @@
             @include('peserta.partials.navbar')
 
             <!-- 2. WELCOME / DEADLINE CARD -->
-            <div class="bg-[#FDF6E9] dark:bg-amber-950/20 border border-orange-100/60 dark:border-amber-900/40 border-l-4 !border-l-[#F97316] rounded-2xl p-4 sm:p-5 shadow-xs relative overflow-hidden mb-5">
-                <div class="flex items-start justify-between gap-3">
+            <div class="bg-[#FDF6E9] dark:bg-amber-950/20 border border-orange-100/60 dark:border-amber-900/40 border-l-4 !border-l-[#F97316] rounded-2xl p-4 sm:p-5 shadow-xs relative overflow-hidden mb-5 h-[122px] flex flex-col justify-center">
+                <div class="flex items-center justify-between gap-3">
                     <!-- Left: Greetings & Deadline info -->
                     <div class="min-w-0 pr-2">
-                        <h2 class="font-kalam text-lg sm:text-xl font-bold text-slate-800 dark:text-amber-100 tracking-wide leading-tight">
+                        <h2 class="font-kalam text-lg sm:text-xl font-bold text-[#1E293B] dark:text-amber-100 tracking-wide leading-tight">
                             Hallo, Jingga muda!
                         </h2>
                         
                         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1.5">
                             Deadline terdekat:
                         </p>
-                        <div class="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
-                            <span class="text-slate-700 dark:text-slate-300">•</span>
+                        <div class="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#1E293B] dark:text-slate-200 mt-0.5">
+                            <span class="text-[#1E293B] dark:text-slate-300">•</span>
                             <span class="truncate">Video perkenalan singkat</span>
                         </div>
                     </div>
@@ -108,7 +108,7 @@
                         </span>
                         
                         <a href="{{ route('peserta.arsip') }}"
-                            class="inline-block bg-[#FFF0B3] dark:bg-amber-400 hover:bg-[#FFE685] dark:hover:bg-amber-300 text-slate-800 font-bold text-xs sm:text-[13px] px-3.5 py-1.5 rounded-lg shadow-2xs transition active:scale-95 cursor-pointer text-center">
+                            class="inline-block bg-[#FFF0B3] dark:bg-amber-400 hover:bg-[#FFE685] dark:hover:bg-amber-300 text-[#1E293B] font-bold text-xs sm:text-[13px] px-3.5 py-1.5 rounded-lg shadow-2xs transition active:scale-95 cursor-pointer text-center">
                             Kumpulkan
                         </a>
                     </div>
@@ -118,7 +118,7 @@
             <!-- 3. LIST PENUGASAN SECTION -->
             <section class="mb-6">
                 <div class="flex items-center justify-between mb-3">
-                    <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white">
+                    <h3 class="font-bold text-base sm:text-lg text-[#1E293B] dark:text-white">
                         List Penugasan:
                     </h3>
                 </div>
@@ -128,10 +128,10 @@
                     <a href="{{ route('peserta.tugas-list') }}"
                         class="block bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-5 border border-slate-100 dark:border-slate-700/60 shadow-xs hover:border-[#FF5B00]/40 dark:hover:border-orange-500/40 hover:shadow-md transition active:scale-[0.99] group cursor-pointer">
                         <div class="flex items-center justify-between">
-                            <span class="font-bold text-base sm:text-lg text-slate-900 dark:text-white tracking-wide group-hover:text-[#FF5B00] transition-colors">
+                            <span class="font-bold text-base sm:text-lg text-[#1E293B] dark:text-white tracking-wide group-hover:text-[#FF5B00] transition-colors">
                                 DAY 1
                             </span>
-                            <span class="text-slate-700 dark:text-slate-300 font-bold text-sm tracking-tighter group-hover:translate-x-1 group-hover:text-[#FF5B00] transition-all duration-200">
+                            <span class="text-[#1E293B] dark:text-slate-300 font-bold text-sm tracking-tighter group-hover:translate-x-1 group-hover:text-[#FF5B00] transition-all duration-200">
                                 &gt;&gt;
                             </span>
                         </div>
@@ -152,10 +152,10 @@
                     <a href="{{ route('peserta.tugas-list') }}"
                         class="block bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-5 border border-slate-100 dark:border-slate-700/60 shadow-xs hover:border-[#FF5B00]/40 dark:hover:border-orange-500/40 hover:shadow-md transition active:scale-[0.99] group cursor-pointer">
                         <div class="flex items-center justify-between">
-                            <span class="font-bold text-base sm:text-lg text-slate-900 dark:text-white tracking-wide group-hover:text-[#FF5B00] transition-colors">
+                            <span class="font-bold text-base sm:text-lg text-[#1E293B] dark:text-white tracking-wide group-hover:text-[#FF5B00] transition-colors">
                                 DAY 2
                             </span>
-                            <span class="text-slate-700 dark:text-slate-300 font-bold text-sm tracking-tighter group-hover:translate-x-1 group-hover:text-[#FF5B00] transition-all duration-200">
+                            <span class="text-[#1E293B] dark:text-slate-300 font-bold text-sm tracking-tighter group-hover:translate-x-1 group-hover:text-[#FF5B00] transition-all duration-200">
                                 &gt;&gt;
                             </span>
                         </div>
@@ -181,7 +181,7 @@
 
             <!-- 4. TIMELINE SECTION -->
             <section class="mb-6">
-                <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-3">
+                <h3 class="font-bold text-base sm:text-lg text-[#1E293B] dark:text-white mb-3">
                     Timeline:
                 </h3>
 
@@ -190,8 +190,8 @@
                     <div class="flex flex-col space-y-4 py-2">
                         <!-- Step 1: DAY 1 (Top Left) -->
                         <div class="self-start pl-2">
-                            <div class="flex items-center gap-1.5 font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                                <span class="text-slate-900 dark:text-white text-base leading-none">•</span>
+                            <div class="flex items-center gap-1.5 font-bold text-sm sm:text-base text-[#1E293B] dark:text-white">
+                                <span class="text-[#1E293B] dark:text-white text-base leading-none">•</span>
                                 <span>DAY 1</span>
                             </div>
                             <div class="text-xs sm:text-[13px] text-slate-600 dark:text-slate-400 pl-3.5 font-normal">
@@ -201,8 +201,8 @@
 
                         <!-- Step 2: DAY 2 (Center) -->
                         <div class="self-center">
-                            <div class="flex items-center gap-1.5 font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                                <span class="text-slate-900 dark:text-white text-base leading-none">•</span>
+                            <div class="flex items-center gap-1.5 font-bold text-sm sm:text-base text-[#1E293B] dark:text-white">
+                                <span class="text-[#1E293B] dark:text-white text-base leading-none">•</span>
                                 <span>DAY 2</span>
                             </div>
                             <div class="text-xs sm:text-[13px] text-slate-600 dark:text-slate-400 pl-3.5 font-normal">
@@ -212,8 +212,8 @@
 
                         <!-- Step 3: DAY 3 (Bottom Right) -->
                         <div class="self-end pr-2">
-                            <div class="flex items-center gap-1.5 font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                                <span class="text-slate-900 dark:text-white text-base leading-none">•</span>
+                            <div class="flex items-center gap-1.5 font-bold text-sm sm:text-base text-[#1E293B] dark:text-white">
+                                <span class="text-[#1E293B] dark:text-white text-base leading-none">•</span>
                                 <span>DAY 3</span>
                             </div>
                             <div class="text-xs sm:text-[13px] text-slate-600 dark:text-slate-400 pl-3.5 font-normal">
@@ -227,7 +227,7 @@
             <!-- 5. CEK BARANG BAWAAN PRIBADI SECTION -->
             <section class="mb-8">
                 <div class="bg-white dark:bg-slate-800/90 rounded-2xl p-5 sm:p-6 border border-slate-100 dark:border-slate-700/60 shadow-xs">
-                    <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white leading-tight">
+                    <h3 class="font-bold text-base sm:text-lg text-[#1E293B] dark:text-white leading-tight">
                         Cek barang bawaan pribadi
                     </h3>
                     <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 mb-3.5 font-normal">
@@ -280,12 +280,12 @@
                         @foreach ($itemsDay1 as $key => $label)
                             <label class="flex items-center gap-3 cursor-pointer select-none group" @click="toggleItem('{{ $key }}')">
                                 <div class="w-4 h-4 rounded border-2 flex items-center justify-center transition-colors"
-                                    :class="isItemChecked('{{ $key }}') ? 'bg-[#FF5B00] border-[#FF5B00]' : 'border-slate-800 dark:border-slate-400 group-hover:border-[#FF5B00]'">
+                                    :class="isItemChecked('{{ $key }}') ? 'bg-[#FF5B00] border-[#FF5B00]' : 'border-[#1E293B] dark:border-slate-400 group-hover:border-[#FF5B00]'">
                                     <svg x-show="isItemChecked('{{ $key }}')" class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                                     </svg>
                                 </div>
-                                <span class="text-xs sm:text-sm font-normal text-slate-800 dark:text-slate-200 transition"
+                                <span class="text-xs sm:text-sm font-normal text-[#1E293B] dark:text-slate-200 transition"
                                     :class="isItemChecked('{{ $key }}') ? 'line-through text-slate-400 dark:text-slate-500' : ''">
                                     {{ $label }}
                                 </span>
@@ -307,12 +307,12 @@
                         @foreach ($itemsDay2 as $key => $label)
                             <label class="flex items-center gap-3 cursor-pointer select-none group" @click="toggleItem('{{ $key }}')">
                                 <div class="w-4 h-4 rounded border-2 flex items-center justify-center transition-colors"
-                                    :class="isItemChecked('{{ $key }}') ? 'bg-[#FF5B00] border-[#FF5B00]' : 'border-slate-800 dark:border-slate-400 group-hover:border-[#FF5B00]'">
+                                    :class="isItemChecked('{{ $key }}') ? 'bg-[#FF5B00] border-[#FF5B00]' : 'border-[#1E293B] dark:border-slate-400 group-hover:border-[#FF5B00]'">
                                     <svg x-show="isItemChecked('{{ $key }}')" class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                                     </svg>
                                 </div>
-                                <span class="text-xs sm:text-sm font-normal text-slate-800 dark:text-slate-200 transition"
+                                <span class="text-xs sm:text-sm font-normal text-[#1E293B] dark:text-slate-200 transition"
                                     :class="isItemChecked('{{ $key }}') ? 'line-through text-slate-400 dark:text-slate-500' : ''">
                                     {{ $label }}
                                 </span>
@@ -334,12 +334,12 @@
                         @foreach ($itemsDay3 as $key => $label)
                             <label class="flex items-center gap-3 cursor-pointer select-none group" @click="toggleItem('{{ $key }}')">
                                 <div class="w-4 h-4 rounded border-2 flex items-center justify-center transition-colors"
-                                    :class="isItemChecked('{{ $key }}') ? 'bg-[#FF5B00] border-[#FF5B00]' : 'border-slate-800 dark:border-slate-400 group-hover:border-[#FF5B00]'">
+                                    :class="isItemChecked('{{ $key }}') ? 'bg-[#FF5B00] border-[#FF5B00]' : 'border-[#1E293B] dark:border-slate-400 group-hover:border-[#FF5B00]'">
                                     <svg x-show="isItemChecked('{{ $key }}')" class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                                     </svg>
                                 </div>
-                                <span class="text-xs sm:text-sm font-normal text-slate-800 dark:text-slate-200 transition"
+                                <span class="text-xs sm:text-sm font-normal text-[#1E293B] dark:text-slate-200 transition"
                                     :class="isItemChecked('{{ $key }}') ? 'line-through text-slate-400 dark:text-slate-500' : ''">
                                     {{ $label }}
                                 </span>

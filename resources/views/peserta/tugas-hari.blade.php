@@ -26,7 +26,7 @@
         .font-oswald-header { font-family: 'Oswald', sans-serif; letter-spacing: 0.12em; }
     </style>
 </head>
-<body class="font-poppins antialiased bg-[#FFFDF9] dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-dvh transition-colors duration-200"
+<body class="font-poppins antialiased bg-[#FFFDF9] dark:bg-slate-900 text-[#1E293B] dark:text-slate-100 min-h-dvh transition-colors duration-200"
     x-data="{
         mobileMenu: false,
         notifOpen: false,
@@ -55,7 +55,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                     </svg>
                 </a>
-                <h2 class="font-bold text-lg text-slate-900 dark:text-white">Pilih Hari Penugasan:</h2>
+                <h2 class="font-bold text-lg text-[#1E293B] dark:text-white">Pilih Hari Penugasan:</h2>
             </div>
 
             <!-- CONTENT -->
@@ -72,7 +72,7 @@
                 @foreach($days as $item)
                 <a href="{{ route('peserta.tugas-list') }}" class="block bg-white dark:bg-slate-800/90 rounded-2xl p-5 shadow-xs border border-slate-100 dark:border-slate-700/60 hover:border-[#FF5B00]/40 dark:hover:border-orange-500/40 hover:shadow-md transition active:scale-[0.99] group">
                     <div class="flex items-center justify-between mb-2">
-                        <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white group-hover:text-[#FF5B00] transition-colors">
+                        <h3 class="font-bold text-base sm:text-lg text-[#1E293B] dark:text-white group-hover:text-[#FF5B00] transition-colors">
                             DAY {{ $item['day'] }}
                         </h3>
                         <svg class="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:translate-x-1 group-hover:text-[#FF5B00] transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
