@@ -1,112 +1,164 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="min-h-dvh">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Selamat Datang - METASTRO 2026</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Schoolbell&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Schoolbell&display=swap"
+        rel="stylesheet">
     <style>
-        .font-plus-jakarta { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .font-schoolbell { font-family: 'Schoolbell', cursive; }
-        .font-inter { font-family: 'Inter', sans-serif; }
-    </style>
-    <script>
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
+        .font-plus-jakarta {
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
-    </script>
-</head>
-<body class="font-inter bg-[#FFFDF9] dark:bg-slate-900 text-[#334155] dark:text-slate-100 min-h-screen pb-24">
 
-    <div class="max-w-4xl mx-auto px-4 py-8">
-        
+        .font-schoolbell {
+            font-family: 'Schoolbell', cursive;
+        }
+
+        .font-inter {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f7f3ee;
+            background-image: url('{{ asset('images/peserta/welcome-bg.png') }}');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+
+<body class="font-inter text-[#334155] min-h-screen min-h-dvh pb-28 antialiased selection:bg-[#FE9100]/20 selection:text-[#FE9100]">
+
+    <div class="max-w-md md:max-w-xl mx-auto px-4 py-6 md:py-8">
+
         <!-- Welcome Banner -->
-        <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700 rounded-2xl p-6 text-center shadow-sm mb-8">
-            <h1 class="font-schoolbell text-3xl md:text-4xl text-[#111827] dark:text-amber-400 font-bold mb-2">🎉 Selamat datang, {{ $user->nama }}!</h1>
-            <p class="text-slate-600 dark:text-slate-300 font-medium">Cari nama & tim kamu di bawah ini!</p>
+        <div class="bg-white/95 backdrop-blur-md rounded-2xl md:rounded-3xl p-5 md:p-6 text-center shadow-sm border border-white/80 mb-5">
+            <h1 class="font-plus-jakarta text-xl md:text-2xl text-[#111827] font-bold mb-1 flex items-center justify-center gap-1.5">
+                <span>🎉</span> Selamat datang
+            </h1>
+            <p class="font-inter text-xs md:text-sm text-[#334155]">Cari nama &amp; tim kamu di bawah ini!</p>
         </div>
 
         <!-- Team Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        <div class="grid grid-cols-2 gap-3 md:gap-4">
             @foreach($tims as $tim)
                 @php $isUserTim = $tim->id === $userTimId; @endphp
-                <button type="button" 
-                    onclick="openModal({{ $tim->id }})"
-                    class="bg-white dark:bg-slate-800 rounded-xl p-4 md:p-5 text-left border shadow-sm transition-all hover:shadow-md hover:border-[#FE9100] focus:outline-none focus:ring-2 focus:ring-[#FE9100] {{ $isUserTim ? 'border-[#FE9100] ring-1 ring-[#FE9100]' : 'border-slate-200 dark:border-slate-700' }}">
-                    <h2 class="font-plus-jakarta font-bold text-[#111827] dark:text-white uppercase mb-2 line-clamp-1" title="{{ $tim->nama }}">{{ $tim->nama }}</h2>
-                    <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed mb-3">
-                        @foreach($tim->members as $member)
-                            {{ $member->nama }}{{ !$loop->last ? ', ' : '' }}
-                        @endforeach
+                <button type="button" onclick="openModal({{ $tim->id }})"
+                    class="group text-left bg-white/95 backdrop-blur-sm rounded-2xl p-4 md:p-5 flex flex-col justify-between shadow-sm transition-all duration-200 hover:shadow-md focus:outline-none {{ $isUserTim ? 'border-2 border-[#FE9100] ring-2 ring-[#FE9100]/20' : 'border border-white/80 hover:border-[#FE9100]/40' }}">
+                    <div>
+                        <div class="flex items-start justify-between gap-1 mb-2">
+                            <h2 class="font-plus-jakarta font-bold text-xs sm:text-sm md:text-base text-[#111827] uppercase leading-tight truncate w-full"
+                                title="{{ $tim->nama }}">
+                                {{ $tim->nama }}
+                            </h2>
+                        </div>
+
+                        <div class="mb-3">
+                            <span class="text-[11px] md:text-xs text-slate-400 font-medium block mb-1">Guider:</span>
+                            <ul class="space-y-0.5 text-[11px] md:text-xs text-[#334155]">
+                                @forelse($tim->guiders as $guider)
+                                    <li class="truncate">• {{ $guider->pembimbing->nama }}</li>
+                                @empty
+                                    <li class="text-slate-400 italic">• Belum ada</li>
+                                @endforelse
+                            </ul>
+                        </div>
                     </div>
-                    @if($isUserTim)
-                        <span class="inline-block bg-[#FE9100] text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase">Tim Kamu</span>
-                    @else
-                        <span class="inline-block bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 text-[10px] font-bold px-2 py-1 rounded-full uppercase">Detail Tim</span>
-                    @endif
+
+                    <div class="pt-2 flex items-center justify-between">
+                        <span class="text-[11px] md:text-xs font-semibold text-[#10B981] group-hover:text-emerald-600 transition-colors flex items-center gap-1">
+                            Lihat anggota &rarr;
+                        </span>
+                        @if($isUserTim)
+                            <span class="bg-[#FE9100] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider">Kamu</span>
+                        @endif
+                    </div>
                 </button>
 
                 <!-- Modal for this Team -->
-                <dialog id="modal-{{ $tim->id }}" class="bg-transparent m-0 p-0 w-full h-full max-w-none max-h-none backdrop:bg-black/50 backdrop:backdrop-blur-sm fixed inset-0 z-50 flex items-center justify-center hidden">
+                <dialog id="modal-{{ $tim->id }}"
+                    class="bg-transparent m-0 p-0 w-full h-full max-w-none max-h-none backdrop:bg-black/40 backdrop:backdrop-blur-sm fixed inset-0 z-50 flex items-center justify-center hidden">
                     <!-- Overlay click to close -->
                     <div class="absolute inset-0 z-0" onclick="closeModal({{ $tim->id }})"></div>
-                    
+
                     <!-- Modal Content -->
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-[90%] max-w-md max-h-[85vh] overflow-y-auto relative z-10 mx-auto mt-10 md:mt-0 flex flex-col font-inter border border-slate-100 dark:border-slate-700">
-                        <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center sticky top-0 bg-white dark:bg-slate-800 z-20">
-                            <h3 class="font-plus-jakarta font-bold text-lg text-[#111827] dark:text-white uppercase truncate pr-4">{{ $tim->nama }}</h3>
-                            <button onclick="closeModal({{ $tim->id }})" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1" title="Tutup">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <div class="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-[92%] max-w-sm max-h-[85vh] overflow-y-auto relative z-10 mx-auto flex flex-col font-inter border border-white">
+                        <!-- Modal Header -->
+                        <div class="p-4 md:p-5 pb-2 flex justify-between items-center sticky top-0 bg-white z-20">
+                            <h3 class="font-plus-jakarta font-bold text-base md:text-lg text-[#111827] uppercase truncate pr-3">
+                                {{ $tim->nama }}
+                            </h3>
+                            <button type="button" onclick="closeModal({{ $tim->id }})"
+                                class="text-slate-400 hover:text-slate-700 transition-colors p-1"
+                                title="Tutup">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
                             </button>
                         </div>
-                        
-                        <div class="p-5 space-y-6">
+
+                        <!-- Modal Body -->
+                        <div class="px-4 md:px-5 space-y-3 pb-4">
                             <!-- Guiders -->
                             <div>
-                                <h4 class="font-bold text-[#111827] dark:text-white mb-3">👥 Guider:</h4>
-                                <ul class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
-                                    @foreach($tim->guiders as $guider)
-                                        <li class="flex items-start">
-                                            <span class="mr-2 mt-0.5">•</span>
-                                            <span>
-                                                {{ $guider->pembimbing->nama }} 
-                                                @if($guider->pembimbing->nomor_hp)
-                                                    <span class="text-blue-600 dark:text-blue-400 font-medium whitespace-nowrap">({{ $guider->pembimbing->nomor_hp }})</span>
-                                                @endif
-                                            </span>
+                                <h4 class="font-bold text-[#111827] text-xs md:text-sm mb-2 flex items-center gap-1.5">
+                                    👥 Guider:
+                                </h4>
+                                <ul class="space-y-1 text-xs text-[#334155]">
+                                    @forelse($tim->guiders as $guider)
+                                        <li class="flex items-center gap-1.5 flex-wrap">
+                                            <span>• {{ $guider->pembimbing->nama }}</span>
+                                            @if($guider->pembimbing->nomor_hp)
+                                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $guider->pembimbing->nomor_hp) }}"
+                                                    target="_blank"
+                                                    class="text-blue-600 hover:text-blue-700 hover:underline font-medium">
+                                                    ({{ $guider->pembimbing->nomor_hp }})
+                                                </a>
+                                            @endif
                                         </li>
-                                    @endforeach
-                                    @if($tim->guiders->isEmpty())
-                                        <li class="text-slate-500 italic ml-4">Belum ada guider.</li>
-                                    @endif
+                                    @empty
+                                        <li class="text-slate-400 italic ml-2">• Belum ada guider.</li>
+                                    @endforelse
                                 </ul>
                             </div>
 
+                            <!-- Orange Divider -->
+                            <div class="border-b border-[#FE9100]/80 my-2"></div>
+
                             <!-- Members -->
                             <div>
-                                <h4 class="font-bold text-[#111827] dark:text-white mb-3">👥 Anggota:</h4>
-                                <ol class="list-decimal list-inside space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
-                                    @foreach($tim->members as $member)
-                                        <li class="{{ $member->id === $user->id ? 'font-bold text-[#FE9100] dark:text-amber-400' : '' }}">
-                                            {{ $member->nama }}
+                                <h4 class="font-bold text-[#111827] text-xs md:text-sm mb-2 flex items-center gap-1.5">
+                                    👥 Anggota:
+                                </h4>
+                                <ol class="space-y-1 text-xs text-[#334155]">
+                                    @forelse($tim->members as $index => $member)
+                                        <li class="flex items-center gap-1.5 {{ $member->id === $user->id ? 'font-bold text-[#FE9100]' : '' }}">
+                                            <span class="w-4 text-slate-400 text-right">{{ $index + 1 }}.</span>
+                                            <span>{{ $member->nama }}</span>
                                             @if($member->id === $user->id)
-                                                <span class="text-xs bg-[#FE9100]/10 text-[#FE9100] ml-1 px-1.5 py-0.5 rounded font-bold uppercase">(Kamu)</span>
+                                                <span class="text-[10px] bg-[#FE9100]/10 text-[#FE9100] px-1.5 py-0.5 rounded font-bold uppercase ml-1">(Kamu)</span>
                                             @endif
                                         </li>
-                                    @endforeach
-                                    @if($tim->members->isEmpty())
-                                        <li class="text-slate-500 italic list-none">Belum ada anggota.</li>
-                                    @endif
+                                    @empty
+                                        <li class="text-slate-400 italic ml-2">Belum ada anggota.</li>
+                                    @endforelse
                                 </ol>
                             </div>
 
                             <!-- Note Callout -->
-                            <div class="bg-[#FEFCE8] dark:bg-yellow-900/20 border border-[#F59E0B] rounded-xl p-4 text-center mt-6">
-                                <h4 class="font-bold text-[#111827] dark:text-amber-400 mb-2">Catatan 📝</h4>
-                                <p class="text-sm text-slate-700 dark:text-slate-300">Setelah mengetahui tim kamu, jangan lupa hubungi kontak guider masing-masing untuk mendapatkan informasi lebih lanjut. Semangat dengan tim barunya!</p>
+                            <div class="bg-[#FEFCE8] border border-[#F59E0B] rounded-xl p-3 text-center mt-3">
+                                <h5 class="font-bold text-[#111827] text-xs mb-1">Catatan 📝</h5>
+                                <p class="text-[11px] leading-relaxed text-slate-700">
+                                    Setelah mengetahui tim kamu, jangan lupa hubungi kontak guider masing-masing untuk mendapatkan informasi lebih lanjut. Semangat dengan tim barunya!
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -117,11 +169,11 @@
     </div>
 
     <!-- Sticky Bottom Action Button -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 p-4 z-40 flex justify-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-        <div class="w-full max-w-4xl px-4 flex justify-center">
-            <a href="{{ route('peserta.dashboard') }}" class="w-full md:w-auto min-w-[280px] flex items-center justify-center gap-2 px-6 py-3.5 bg-[#15803D] hover:bg-[#166534] transition-colors text-white font-bold rounded-xl shadow-lg hover:shadow-xl font-plus-jakarta text-center">
+    <div class="fixed bottom-0 left-0 right-0 z-40 p-4 pb-6 flex justify-center pointer-events-none">
+        <div class="w-full max-w-sm px-2 pointer-events-auto">
+            <a href="{{ route('peserta.dashboard') }}"
+                class="w-full flex items-center justify-center py-3.5 px-6 bg-white/95 backdrop-blur hover:bg-white transition-all duration-200 border border-[#FE9100] text-[#10B981] hover:text-[#059669] font-bold rounded-2xl shadow-lg hover:shadow-xl font-plus-jakarta text-center text-sm md:text-base">
                 Lanjut ke Dashboard
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             </a>
         </div>
     </div>
@@ -130,7 +182,7 @@
     <script>
         function openModal(id) {
             const dialog = document.getElementById('modal-' + id);
-            if(dialog) {
+            if (dialog) {
                 dialog.showModal();
                 dialog.classList.remove('hidden');
                 document.body.style.overflow = 'hidden';
@@ -138,7 +190,7 @@
         }
         function closeModal(id) {
             const dialog = document.getElementById('modal-' + id);
-            if(dialog) {
+            if (dialog) {
                 dialog.close();
                 dialog.classList.add('hidden');
                 document.body.style.overflow = '';
@@ -146,4 +198,5 @@
         }
     </script>
 </body>
+
 </html>
