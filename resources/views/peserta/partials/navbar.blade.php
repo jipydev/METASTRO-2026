@@ -109,6 +109,13 @@
                             <span>Beranda</span>
                         </a>
 
+                        <!-- List Tim -->
+                        <a href="{{ route('peserta.welcome') }}"
+                            class="flex items-center gap-3 px-3 py-2 font-medium transition border-b-2 {{ request()->routeIs('peserta.welcome') ? 'border-[#FF5B00] text-[#1E293B] dark:text-white font-semibold' : 'border-transparent text-slate-700 dark:text-slate-300 hover:text-[#1E293B] dark:hover:text-white hover:border-slate-200 dark:hover:border-slate-700' }}">
+                            <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('peserta.welcome') ? 'text-[#FF5B00]' : 'text-slate-500 dark:text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                            <span>List Tim</span>
+                        </a>
+
                         <!-- List Penugasan -->
                         <a href="{{ route('peserta.tugas-list') }}"
                             class="flex items-center gap-3 px-3 py-2 font-medium transition border-b-2 {{ request()->routeIs('peserta.tugas-list') || request()->routeIs('peserta.tugas-hari') || request()->routeIs('peserta.tugas-kumpulkan') ? 'border-[#FF5B00] text-[#1E293B] dark:text-white font-semibold' : 'border-transparent text-slate-700 dark:text-slate-300 hover:text-[#1E293B] dark:hover:text-white hover:border-slate-200 dark:hover:border-slate-700' }}">

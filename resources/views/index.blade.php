@@ -65,7 +65,7 @@
                 </p>
             </div>
 
-            <!-- Tombol Aksi: LOGIN -->
+            <!-- Tombol Aksi: LOGIN & LIHAT TIM -->
             <div class="relative z-10 mt-6 sm:mt-7 w-full flex flex-col items-center">
                 <div class="flex items-center justify-center gap-4">
                     @auth
