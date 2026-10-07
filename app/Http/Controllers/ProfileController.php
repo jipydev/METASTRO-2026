@@ -23,7 +23,7 @@ class ProfileController extends Controller
 
         return view('profile.edit', [
             'title' => 'Pengaturan Profil',
-            'user' => $user->load(['divisi', 'jabatan']),
+            'user' => $user->load(['divisi', 'jabatan', 'tims.tim']),
         ]);
     }
 
@@ -45,7 +45,14 @@ class ProfileController extends Controller
             $user->foto = $path;
         }
 
-        $user->fill($request->safe()->only(['nama', 'nim', 'email']));
+        $user->fill($request->safe()->only([
+            'nama',
+            'nim',
+            'email',
+            'nomor_hp',
+            'jenis_kelamin',
+            'tanggal_lahir',
+        ]));
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;

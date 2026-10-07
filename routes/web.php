@@ -28,16 +28,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('landing-page');
 
+Route::get('/tim', [TimController::class, 'peserta'])->name('tim.index');
+
 Route::middleware(['auth'])->prefix('peserta')->name('peserta.')->group(function () {
-    Route::get('/welcome', function () {
-        $user = auth()->user();
-        $anggotaTim = \App\Models\AnggotaTim::where('anggota_id', $user->id)->first();
-        $userTimId = $anggotaTim ? $anggotaTim->tim_id : null;
-        $tims = \App\Models\Tim::with(['guiders.pembimbing', 'members'])->get();
-
-        return view('peserta.welcome', compact('user', 'userTimId', 'tims'));
-    })->name('welcome');
-
     Route::get('/dashboard', [DashboardController::class, 'pesertaDashboard'])->name('dashboard');
     Route::get('/tugas-hari', function () {
         return view('peserta.tugas-hari');

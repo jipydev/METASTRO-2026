@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Tim;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class TimSeeder extends Seeder
 {
@@ -12,6 +14,22 @@ class TimSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Tim::factory(10)->create();
+        foreach ([
+            'Axis',
+            'Vector',
+            'Torque',
+            'Momentum',
+            'Force',
+            'Impulse',
+            'Inertia',
+            'Flux',
+            'Accel',
+            'Radius',
+        ] as $nama) {
+            Tim::updateOrCreate(
+                ['slug' => Str::slug($nama)],
+                ['nama' => $nama],
+            );
+        }
     }
 }
