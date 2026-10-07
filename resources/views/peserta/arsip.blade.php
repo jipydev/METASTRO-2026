@@ -26,7 +26,7 @@
         .font-oswald-header { font-family: 'Oswald', sans-serif; letter-spacing: 0.12em; }
     </style>
 </head>
-<body class="font-poppins antialiased bg-[#FFFDF9] dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-dvh transition-colors duration-200"
+<body class="font-poppins antialiased bg-[#FFFDF9] dark:bg-slate-900 text-[#1E293B] dark:text-slate-100 min-h-dvh transition-colors duration-200"
     x-data="{
         mobileMenu: false,
         notifOpen: false,
@@ -55,12 +55,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                     </svg>
                 </a>
-                <h2 class="font-bold text-lg text-slate-900 dark:text-white">Arsip Tugas</h2>
+                <h2 class="font-bold text-lg text-[#1E293B] dark:text-white">Arsip Tugas</h2>
             </div>
 
             <!-- CONTENT -->
             <div>
-                <h3 class="font-bold text-base text-slate-900 dark:text-white mb-4">
+                <h3 class="font-bold text-base text-[#1E293B] dark:text-white mb-4">
                     Day 1 telah terkumpul: <span class="text-[#00A82D]">25%</span>
                 </h3>
 
@@ -68,7 +68,7 @@
                     <div class="bg-white dark:bg-slate-800/90 border border-slate-100 dark:border-slate-700/60 rounded-2xl p-5 shadow-xs">
                         <div class="flex items-center gap-2 mb-3">
                             <span class="bg-[#FF1A1A] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">Individu</span>
-                            <h4 class="font-bold text-sm text-slate-800 dark:text-white">Membuat esai</h4>
+                            <h4 class="font-bold text-sm text-[#1E293B] dark:text-white">Membuat esai</h4>
                         </div>
                         
                         <div class="text-xs text-slate-600 dark:text-slate-400 space-y-1 mb-4">
@@ -77,7 +77,7 @@
                         </div>
 
                         <div class="flex justify-center">
-                            <a href="{{ route('peserta.tugas-kumpulkan') }}" class="bg-[#FFF2CC] dark:bg-amber-400 hover:bg-[#FFE599] dark:hover:bg-amber-300 text-slate-800 font-bold text-xs px-8 py-2 rounded-xl transition shadow-2xs">
+                            <a href="{{ route('peserta.tugas-kumpulkan') }}" class="bg-[#FFF2CC] dark:bg-amber-400 hover:bg-[#FFE599] dark:hover:bg-amber-300 text-[#1E293B] font-bold text-xs px-8 py-2 rounded-xl transition shadow-2xs">
                                 Lihat file
                             </a>
                         </div>

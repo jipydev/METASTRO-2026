@@ -26,7 +26,7 @@
         .font-oswald-header { font-family: 'Oswald', sans-serif; letter-spacing: 0.12em; }
     </style>
 </head>
-<body class="font-poppins antialiased bg-[#FFFDF9] dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-dvh transition-colors duration-200"
+<body class="font-poppins antialiased bg-[#FFFDF9] dark:bg-slate-900 text-[#1E293B] dark:text-slate-100 min-h-dvh transition-colors duration-200"
     x-data="{
         tab: 'semua',
         mobileMenu: false,
@@ -56,7 +56,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                     </svg>
                 </a>
-                <h2 class="font-bold text-lg text-slate-900 dark:text-white">List Penugasan:</h2>
+                <h2 class="font-bold text-lg text-[#1E293B] dark:text-white">List Penugasan:</h2>
             </div>
 
             <!-- SORTING & FILTERS -->
@@ -84,13 +84,13 @@
                 <div x-show="tab == 'semua' || tab == 'individu'" class="bg-white dark:bg-slate-800/90 border border-slate-100 dark:border-slate-700/60 rounded-2xl p-5 shadow-xs">
                     <div class="flex items-center gap-2 mb-2">
                         <span class="bg-[#FF1A1A] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">Individu</span>
-                        <h3 class="font-bold text-sm text-slate-800 dark:text-white">Membuat esai</h3>
+                        <h3 class="font-bold text-sm text-[#1E293B] dark:text-white">Membuat esai</h3>
                     </div>
                     <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
                         Setelah mendengarkan pemateri di hari pertama, peserta menulis esai terkait seluruh materi dengan ketentuan: maksimal 600 kata, tidak boleh AI...... &gt;&gt;
                     </p>
                     <div class="flex justify-center">
-                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="bg-[#FFF2CC] dark:bg-amber-400 hover:bg-[#FFE599] dark:hover:bg-amber-300 text-slate-800 font-bold text-xs px-8 py-2 rounded-xl transition shadow-2xs inline-block">Kumpulkan</a>
+                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="bg-[#FFF2CC] dark:bg-amber-400 hover:bg-[#FFE599] dark:hover:bg-amber-300 text-[#1E293B] font-bold text-xs px-8 py-2 rounded-xl transition shadow-2xs inline-block">Kumpulkan</a>
                     </div>
                 </div>
 
@@ -98,13 +98,13 @@
                 <div x-show="tab == 'semua' || tab == 'regu'" class="bg-white dark:bg-slate-800/90 border border-slate-100 dark:border-slate-700/60 rounded-2xl p-5 shadow-xs">
                     <div class="flex items-center gap-2 mb-2">
                         <span class="bg-[#4299E1] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">Regu</span>
-                        <h3 class="font-bold text-sm text-slate-800 dark:text-white">Video yel-yel regu</h3>
+                        <h3 class="font-bold text-sm text-[#1E293B] dark:text-white">Video yel-yel regu</h3>
                     </div>
                     <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
                         Setiap regu wajib membuat rekaman video yel-yel kekompakan regu masing-masing berdurasi maksimal 2 menit dengan semangat tinggi...... &gt;&gt;
                     </p>
                     <div class="flex justify-center">
-                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="bg-[#FFF2CC] dark:bg-amber-400 hover:bg-[#FFE599] dark:hover:bg-amber-300 text-slate-800 font-bold text-xs px-8 py-2 rounded-xl transition shadow-2xs inline-block">Kumpulkan</a>
+                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="bg-[#FFF2CC] dark:bg-amber-400 hover:bg-[#FFE599] dark:hover:bg-amber-300 text-[#1E293B] font-bold text-xs px-8 py-2 rounded-xl transition shadow-2xs inline-block">Kumpulkan</a>
                     </div>
                 </div>
 
@@ -112,13 +112,13 @@
                 <div x-show="tab == 'semua' || tab == 'regu'" class="bg-white dark:bg-slate-800/90 border border-slate-100 dark:border-slate-700/60 rounded-2xl p-5 shadow-xs">
                     <div class="flex items-center gap-2 mb-2">
                         <span class="bg-[#4299E1] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">Regu</span>
-                        <h3 class="font-bold text-sm text-slate-800 dark:text-white">Bendera dengan tiang</h3>
+                        <h3 class="font-bold text-sm text-[#1E293B] dark:text-white">Bendera dengan tiang</h3>
                     </div>
                     <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
                         Membuat identitas bendera regu berukuran 60x40 cm dengan tiang bambu/kayu yang rapi dan kuat untuk dibawa selama kegiatan...... &gt;&gt;
                     </p>
                     <div class="flex justify-center">
-                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="bg-[#FFF2CC] dark:bg-amber-400 hover:bg-[#FFE599] dark:hover:bg-amber-300 text-slate-800 font-bold text-xs px-8 py-2 rounded-xl transition shadow-2xs inline-block">Kumpulkan</a>
+                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="bg-[#FFF2CC] dark:bg-amber-400 hover:bg-[#FFE599] dark:hover:bg-amber-300 text-[#1E293B] font-bold text-xs px-8 py-2 rounded-xl transition shadow-2xs inline-block">Kumpulkan</a>
                     </div>
                 </div>
 
@@ -126,13 +126,13 @@
                 <div x-show="tab == 'semua' || tab == 'angkatan'" class="bg-white dark:bg-slate-800/90 border border-slate-100 dark:border-slate-700/60 rounded-2xl p-5 shadow-xs">
                     <div class="flex items-center gap-2 mb-2">
                         <span class="bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">Angkatan</span>
-                        <h3 class="font-bold text-sm text-slate-800 dark:text-white">Video jargon MKB</h3>
+                        <h3 class="font-bold text-sm text-[#1E293B] dark:text-white">Video jargon MKB</h3>
                     </div>
                     <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
                         Video kolaboratif seluruh angkatan menampilkan jargon kebersamaan dan kekeluargaan METASTRO 2026...... &gt;&gt;
                     </p>
                     <div class="flex justify-center">
-                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="bg-[#FFF2CC] dark:bg-amber-400 hover:bg-[#FFE599] dark:hover:bg-amber-300 text-slate-800 font-bold text-xs px-8 py-2 rounded-xl transition shadow-2xs inline-block">Kumpulkan</a>
+                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="bg-[#FFF2CC] dark:bg-amber-400 hover:bg-[#FFE599] dark:hover:bg-amber-300 text-[#1E293B] font-bold text-xs px-8 py-2 rounded-xl transition shadow-2xs inline-block">Kumpulkan</a>
                     </div>
                 </div>
                 
@@ -140,13 +140,13 @@
                 <div x-show="tab == 'semua' || tab == 'individu'" class="bg-white dark:bg-slate-800/90 border border-slate-100 dark:border-slate-700/60 rounded-2xl p-5 shadow-xs">
                     <div class="flex items-center gap-2 mb-2">
                         <span class="bg-[#FF1A1A] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">Individu</span>
-                        <h3 class="font-bold text-sm text-slate-800 dark:text-white">Koneksi LinkedIn 150+</h3>
+                        <h3 class="font-bold text-sm text-[#1E293B] dark:text-white">Koneksi LinkedIn 150+</h3>
                     </div>
                     <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
                         Mengembangkan jejaring profesional dengan menambahkan koneksi LinkedIn minimal 150 koneksi aktif dan follow page himpunan...... &gt;&gt;
                     </p>
                     <div class="flex justify-center">
-                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="bg-[#FFF2CC] dark:bg-amber-400 hover:bg-[#FFE599] dark:hover:bg-amber-300 text-slate-800 font-bold text-xs px-8 py-2 rounded-xl transition shadow-2xs inline-block">Kumpulkan</a>
+                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="bg-[#FFF2CC] dark:bg-amber-400 hover:bg-[#FFE599] dark:hover:bg-amber-300 text-[#1E293B] font-bold text-xs px-8 py-2 rounded-xl transition shadow-2xs inline-block">Kumpulkan</a>
                     </div>
                 </div>
             </div>
