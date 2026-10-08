@@ -9,9 +9,11 @@ use App\Models\Divisi;
 use App\Models\Jabatan;
 use App\Models\Tim;
 use App\Models\User;
+use App\Services\FileCompressionService;
 use App\Services\QrCodeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
@@ -138,7 +140,7 @@ class UserController extends Controller
     /**
      * Menyimpan pengguna baru.
      */
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request, FileCompressionService $files)
     {
         $validated = $request->validated();
 
@@ -153,11 +155,16 @@ class UserController extends Controller
             $divisiId = null;
         } 
 
+        $fotoPath = $request->hasFile('foto')
+            ? $files->store($request->file('foto'), 'foto_profil')
+            : null;
+
         $user = User::create([
             'nama' => $validated['nama'],
             'nim' => $validated['nim'],
             'email' => $validated['email'] ?? null,
             'nomor_hp' => $validated['nomor_hp'] ?? null,
+            'foto' => $fotoPath,
             'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
             'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
             'password' => $validated['password'], // Pastikan model User Anda punya casts password => 'hashed'
@@ -206,7 +213,7 @@ class UserController extends Controller
     /**
      * Memperbarui data pengguna.
      */
-    public function update(UpdateUserRequest $request, User $user)
+    public function update(UpdateUserRequest $request, User $user, FileCompressionService $files)
     {
         $validated = $request->validated();
 
@@ -221,11 +228,21 @@ class UserController extends Controller
             $divisiId = null;
         }
 
+        $fotoPath = $user->foto;
+        if ($request->hasFile('foto')) {
+            $fotoPath = $files->store($request->file('foto'), 'foto_profil');
+
+            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+                Storage::disk('public')->delete($user->foto);
+            }
+        }
+
         $user->update([
             'nama' => $validated['nama'],
             'nim' => $validated['nim'],
             'email' => $validated['email'] ?? null,
             'nomor_hp' => $validated['nomor_hp'] ?? null,
+            'foto' => $fotoPath,
             'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
             'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
             'divisi_id' => $divisiId,
@@ -296,7 +313,11 @@ class UserController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-                
+
+            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+                Storage::disk('public')->delete($user->foto);
+            }
+
             $user->delete();
         });
 

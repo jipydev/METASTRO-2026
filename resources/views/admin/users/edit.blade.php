@@ -38,7 +38,7 @@
 
             {{-- Form Card --}}
             <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 sm:p-8">
-                <form method="POST" action="{{ route('admin.users.update', $user) }}" class="space-y-5 text-xs">
+                <form method="POST" action="{{ route('admin.users.update', $user) }}" enctype="multipart/form-data" class="space-y-5 text-xs">
                     @csrf
                     @method('PUT')
 
@@ -94,6 +94,8 @@
                             <x-input-error :messages="$errors->get('nomor_hp')" class="mt-1" />
                         </div>
                     </div>
+
+                    @include('admin.users.partials.photo-input', ['user' => $user])
 
                     {{-- Grid Role, Divisi, Jabatan --}}
                     <div

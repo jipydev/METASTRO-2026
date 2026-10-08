@@ -35,6 +35,7 @@ class UpdateUserRequest extends UserFormRequest
             'nim' => ['required', 'string', 'max:20', Rule::unique(User::class, 'nim')->ignore($user->id)],
             'email' => ['nullable', 'email', 'max:255', Rule::unique(User::class, 'email')->ignore($user->id)],
             'nomor_hp' => ['nullable', 'string', 'max:20'],
+            'foto' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'tanggal_lahir' => ['nullable', 'date', 'before_or_equal:today'],
             'jenis_kelamin' => ['required', Rule::in(['laki-laki', 'perempuan'])],
             'tim_id' => ['nullable', 'exists:tims,id'],
