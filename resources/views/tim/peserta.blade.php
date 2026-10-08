@@ -111,10 +111,23 @@
                                                             </span>
                                                         </span>
                                                         @if ($pembimbing?->nomor_hp)
-                                                            <a href="tel:{{ $pembimbing->nomor_hp }}"
-                                                                class="mt-1 block truncate text-xs text-slate-500 transition-colors hover:text-[#FF7300] dark:text-slate-300"
-                                                                title="Hubungi guider">
-                                                                {{ $pembimbing->nomor_hp }}
+                                                            @php
+                                                                $whatsappNumber = preg_replace('/\D+/', '', $pembimbing->nomor_hp);
+                                                                $whatsappNumber = str_starts_with($whatsappNumber, '0')
+                                                                    ? '62' . substr($whatsappNumber, 1)
+                                                                    : $whatsappNumber;
+                                                            @endphp
+                                                            <a href="https://wa.me/{{ $whatsappNumber }}" target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                class="mt-1 flex items-center gap-1 truncate text-xs text-slate-500 transition-colors hover:text-[#FF7300] dark:text-slate-300"
+                                                                title="Hubungi guider via WhatsApp">
+                                                                <span class="truncate">{{ $pembimbing->nomor_hp }}</span>
+                                                                <svg class="h-3.5 w-3.5 shrink-0" fill="none"
+                                                                    stroke="currentColor" viewBox="0 0 24 24"
+                                                                    aria-hidden="true">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                                        stroke-width="2" d="M7 17L17 7M7 7h10v10" />
+                                                                </svg>
                                                             </a>
                                                         @else
                                                             <p class="mt-1 text-xs italic text-slate-400">Nomor belum
