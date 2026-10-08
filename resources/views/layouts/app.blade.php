@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description"
-        content="Portal Resmi METASTRO 2026 - Spirit of Hiro, Heart of Solder. Platform Manajemen & Absensi Panitia.">
+        content="Portal Resmi METASTRO 2026 - Spirit of Hiro, Heart of Solder.">
 
     <title>{{ $title ? $title . ' - ' . config('app.name', 'Laravel') : config('app.name', 'Laravel') }}</title>
 
