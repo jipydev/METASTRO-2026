@@ -39,7 +39,7 @@
                 </div>
             </section>
 
-            <section class=" py-8">
+            <section class="px-4 lg:px-0 py-8">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
                     @foreach ($tims as $tim)
                         <button type="button" onclick="openModal({{ $tim->id }})"
