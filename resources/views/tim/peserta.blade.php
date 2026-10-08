@@ -39,10 +39,28 @@
                 </div>
             </section>
 
-            <section class="px-4 lg:px-0 py-8">
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
+            <section class="px-4 lg:px-0 pb-4">
+                <div class="mx-auto mb-6 max-w-xl">
+                    <label for="member-search" class="sr-only">Cari nama anggota</label>
+                    <div class="relative">
+                        <input id="member-search" type="search" autocomplete="off"
+                            placeholder="Cari nama anggota..."
+                            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 pl-11 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-[#FF7300] focus:ring-2 focus:ring-[#FF7300]/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white">
+                        <svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m21 21-4.35-4.35m1.35-5.15a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z" />
+                        </svg>
+                    </div>
+                    <p id="member-search-status" class="mt-2 text-center text-xs text-slate-500 dark:text-slate-400"
+                        aria-live="polite"></p>
+                </div>
+
+                <div id="team-list" class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-5">
                     @foreach ($tims as $tim)
-                        <button type="button" onclick="openModal({{ $tim->id }})"
+                        <button type="button" data-team-card
+                            data-search="{{ strtolower($tim->nama . ' ' . $tim->members->pluck('nama')->implode(' ')) }}"
+                            onclick="openModal({{ $tim->id }})"
                             class="group bg-white dark:bg-slate-800 rounded-xl p-5 text-left border border-slate-200 dark:border-slate-700 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:border-[#FF7300] focus:outline-none focus:ring-2 focus:ring-[#FF7300]">
                             <h2 class="font-oswald font-bold text-slate-900 dark:text-white uppercase tracking-wide mb-3 line-clamp-1 group-hover:text-[#FF7300] transition-colors"
                                 title="{{ $tim->nama }}">{{ $tim->nama }}</h2>
@@ -155,9 +173,8 @@
                                         <ol
                                             class="list-decimal list-inside space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
                                             @foreach ($tim->members as $member)
-                                                <li>
-                                                    {{ $member->nama }}
-
+                                                <li data-member-name="{{ $member->nama }}">
+                                                    <span class="member-name-text">{{ $member->nama }}</span>
                                                 </li>
                                             @endforeach
                                             @if ($tim->members->isEmpty())
@@ -181,6 +198,9 @@
                         </dialog>
                     @endforeach
                 </div>
+                <p id="no-team-results" class="hidden py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+                    Nama anggota tidak ditemukan.
+                </p>
             </section>
         </div>
 
@@ -222,6 +242,56 @@
                 dialog.classList.add('hidden');
                 document.body.style.overflow = '';
             });
+        });
+
+        const memberSearch = document.getElementById('member-search');
+        const teamCards = Array.from(document.querySelectorAll('[data-team-card]'));
+        const noTeamResults = document.getElementById('no-team-results');
+        const searchStatus = document.getElementById('member-search-status');
+        const memberNames = Array.from(document.querySelectorAll('[data-member-name]'));
+
+        function highlightMemberNames(query) {
+            memberNames.forEach((member) => {
+                const nameElement = member.querySelector('.member-name-text');
+                const name = member.dataset.memberName;
+
+                nameElement.replaceChildren();
+                if (!query) {
+                    nameElement.textContent = name;
+                    return;
+                }
+
+                const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const parts = name.split(new RegExp(`(${escapedQuery})`, 'ig'));
+
+                parts.forEach((part) => {
+                    if (part.toLowerCase() === query) {
+                        const highlight = document.createElement('mark');
+                        highlight.className = 'rounded bg-orange-200 px-0.5 text-orange-900 dark:bg-orange-500/40 dark:text-orange-100';
+                        highlight.textContent = part;
+                        nameElement.appendChild(highlight);
+                    } else {
+                        nameElement.appendChild(document.createTextNode(part));
+                    }
+                });
+            });
+        }
+
+        memberSearch?.addEventListener('input', (event) => {
+            const query = event.target.value.trim().toLowerCase();
+            let visibleCount = 0;
+
+            teamCards.forEach((card) => {
+                const matches = query === '' || card.dataset.search.includes(query);
+                card.classList.toggle('hidden', !matches);
+                visibleCount += matches ? 1 : 0;
+            });
+
+            noTeamResults?.classList.toggle('hidden', visibleCount !== 0);
+            searchStatus.textContent = query === ''
+                ? ''
+                : `${visibleCount} tim ditemukan`;
+            highlightMemberNames(query);
         });
     </script>
 </x-guest-layout>
