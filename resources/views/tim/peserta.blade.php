@@ -81,7 +81,9 @@
                                         <h4 class="font-bold text-[#111827] dark:text-white mb-3">👥 Guider:</h4>
                                         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                             @foreach ($tim->guiders as $guider)
-                                                @php($pembimbing = $guider->pembimbing)
+                                                @php
+                                                    $pembimbing = $guider->pembimbing;
+                                                @endphp
                                                 <article
                                                     class="flex min-w-0 items-center gap-3 rounded-2xl border border-orange-100 bg-orange-50/60 p-3 shadow-sm dark:border-slate-700 dark:bg-slate-700/40">
                                                     @if ($pembimbing?->foto && file_exists(public_path("storage/$pembimbing->foto")))
