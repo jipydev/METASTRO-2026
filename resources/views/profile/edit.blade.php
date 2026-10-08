@@ -41,7 +41,7 @@
                         <!-- Badges -->
                         <div class="flex flex-wrap justify-center gap-2 mt-4">
                             <span class="px-3 py-1 bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400 rounded-full text-xs font-bold border border-primary-200 dark:border-primary-900">
-                                {{ $user->divisi ? $user->formatted_divisi_jabatan : ($user->getRoleNames()->first() ?? 'Peserta') }}
+                                {{ $user->tims->first()?->tim?->nama ?? ($user->divisi ? $user->formatted_divisi_jabatan : ($user->getRoleNames()->first() ?? 'Peserta')) }}
                             </span>
                             @if($user->roles->count() > 0)
                                 <span class="px-3 py-1 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 rounded-full text-xs font-bold border border-amber-200 dark:border-amber-900">
@@ -53,7 +53,7 @@
                         <!-- Meta Info List -->
                         <div class="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700 text-left space-y-3 text-xs sm:text-sm">
                             <div class="flex justify-between items-center text-slate-600 dark:text-slate-400">
-                                <span>NIM / NIP</span>
+                                <span>NIM</span>
                                 <span class="font-bold text-slate-800 dark:text-slate-200 font-mono">{{ $user->nim ?? '-' }}</span>
                             </div>
                             <div class="flex justify-between items-center text-slate-600 dark:text-slate-400">

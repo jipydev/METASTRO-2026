@@ -35,6 +35,9 @@ class ProfileUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
+            'nomor_hp' => ['required', 'string', 'max:20'],
+            'jenis_kelamin' => ['required', Rule::in(['laki-laki', 'perempuan'])],
+            'tanggal_lahir' => ['nullable', 'date', 'before_or_equal:today'],
             'foto' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
@@ -53,6 +56,12 @@ class ProfileUpdateRequest extends FormRequest
             'email.required' => 'Alamat email wajib diisi.',
             'email.email' => 'Format email tidak valid. Contoh: nama@email.com',
             'email.unique' => 'Email ini sudah terdaftar. Gunakan email lain.',
+            'nomor_hp.required' => 'Nomor HP wajib diisi.',
+            'nomor_hp.max' => 'Nomor HP maksimal 20 karakter.',
+            'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
+            'jenis_kelamin.in' => 'Jenis kelamin yang dipilih tidak valid.',
+            'tanggal_lahir.date' => 'Format tanggal lahir tidak valid.',
+            'tanggal_lahir.before_or_equal' => 'Tanggal lahir tidak boleh di masa depan.',
             'foto.image' => 'Foto profil harus berupa gambar.',
             'foto.mimes' => 'Foto profil harus berformat JPG, JPEG, PNG, atau WEBP.',
             'foto.max' => 'Ukuran foto profil maksimal 2 MB.',

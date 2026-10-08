@@ -22,12 +22,18 @@ class InitialSetupRequest extends FormRequest
         /** @var User $user */
         $user = $this->user();
 
-        return [
+        $rules = [
             'nama' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
-            'foto' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'nomor_hp' => ['required', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Password::defaults()],
         ];
+
+        $rules['foto'] = $user->isPeserta()
+            ? ['nullable']
+            : ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'];
+
+        return $rules;
     }
 
     /**
@@ -41,6 +47,8 @@ class InitialSetupRequest extends FormRequest
             'email.required' => 'Alamat email wajib diisi.',
             'email.email' => 'Format email tidak valid. Contoh: nama@email.com',
             'email.unique' => 'Email ini sudah terdaftar. Gunakan email lain.',
+            'nomor_hp.required' => 'Nomor HP wajib diisi.',
+            'nomor_hp.max' => 'Nomor HP maksimal 20 karakter.',
             'foto.required' => 'Foto profil wajib diunggah.',
             'foto.image' => 'Foto profil harus berupa gambar.',
             'foto.mimes' => 'Foto profil harus berformat JPG, JPEG, PNG, atau WEBP.',

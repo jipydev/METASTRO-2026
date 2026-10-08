@@ -65,9 +65,9 @@
                 </p>
             </div>
 
-            <!-- Tombol Aksi: LOGIN -->
+            <!-- Tombol Aksi: LOGIN & LIHAT TIM -->
             <div class="relative z-10 mt-6 sm:mt-7 w-full flex flex-col items-center">
-                <div class="flex items-center justify-center">
+                <div class="flex items-center justify-center gap-4">
                     @auth
                         <a href="{{ route('dashboard.index') }}"
                             class="inline-flex items-center justify-center px-6 py-2 rounded-lg bg-black/35 hover:bg-black/50 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
@@ -79,6 +79,10 @@
                             LOGIN
                         </a>
                     @endauth
+                    <a href="{{ route('tim.index') }}"
+                        class="inline-flex items-center justify-center px-6 py-2 rounded-lg bg-black/35 hover:bg-black/50 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
+                        Lihat Tim
+                    </a>
                 </div>
 
                 @auth
@@ -259,9 +263,13 @@
                                         @if ($kegiatan->waktu_mulai)
                                             <span class="text-slate-400 mx-1">&bull;</span>
                                             <span>{{ \Carbon\Carbon::parse($kegiatan->waktu_mulai)->format('H.i') }}
-                                                @if ($kegiatan->waktu_selesai) - {{ \Carbon\Carbon::parse($kegiatan->waktu_selesai)->format('H.i') }} @endif
+                                                @if ($kegiatan->waktu_selesai)
+                                                    -
+                                                    {{ \Carbon\Carbon::parse($kegiatan->waktu_selesai)->format('H.i') }}
+                                                @endif
                                                 -
-                                                {{ $kegiatan->tempat ?? 'Kampus' }}</span>
+                                                {{ $kegiatan->tempat ?? 'Kampus' }}
+                                            </span>
                                         @endif
                                     </div>
                                 </div>

@@ -30,6 +30,91 @@ class TimController extends Controller
         return view('tim.index', $data);
     }
 
+    public function peserta(Request $request)
+    {
+        $teamData = [
+            ['nama' => 'Axis', 'members' => [
+                'Daniessa Aurelia Pentury', 'Alya Zalfa Khairunnisa', 'Syeirhan Rafsyadha Ghaizan',
+                'Abiyyu Rafa Ramadhan', 'Ukhtia Faudzil Iffah Assyifa', 'Muhammad Rifqi Fadhila',
+                'Rangga Darma Eka Saputra', 'Doni Rayhan Nugraha', 'Raihan Aprilian',
+                'Syazwina Izzati Aisyah', 'Noval Ghafa Alfarizi', 'Devlin Muzhaffar',
+            ]],
+            ['nama' => 'Vector', 'members' => [
+                'Mohamad Nur Ramadani', 'Syifa Amelia Oktafiani', 'Aditya Alamsah', 'Aldo Rafalino',
+                'Dena Assifa', 'Maulana Resta Apriliansyah', 'Haura Ziba Karniya',
+                'Ahmad Zahran Fiqih', 'Rian Permana', 'Kezia Olivia Siagian',
+                'Ibrahim Sahl Akbar Jarullah', 'Firmansah Hijriyah Alimudin',
+            ]],
+            ['nama' => 'Torque', 'members' => [
+                'Ahmad Robeth Jundan Furqoni', 'Hazel Dide Febrano', 'Denis Dwi Fratama',
+                'Siti Mutia', 'Maitsa Syams Al Baihaqi', 'Dhowy Harits Attarbanggi',
+                'Muhammad Dhafi Alytri', 'Fathir Muhammad Fauzi', "Fa'Iq Fadhlillah Saputra",
+                'Muhammad Abdullah Assajid', 'Radena Faustine Az-Zuhrah Jusin', 'Rasya Muhammad Fadhilah',
+            ]],
+            ['nama' => 'Momentum', 'members' => [
+                'Faqih Khairy Fathan', 'M Rajwa Sidqi Musali', 'Muhammad Zidan Fawwaz Alkhtabi',
+                'Zaskia Bentang Fitri Ramadani', 'Muhammad Alief Dhiaulhaq',
+                "Dyrlan Sultan Al'Aidin Ardhiyanto", 'Muhammad Labieb Al Amien',
+                'Raka Abdul Rais Al Rezi', 'Muhammad Azhar Fauzan', 'Rakha Sulaiman',
+                'Muh Nabil Najhan Masykur', 'Genta Cakrawala Kurniawan',
+            ]],
+            ['nama' => 'Force', 'members' => [
+                'Candra Aditiya', 'Muhammad Hilman Fauzy', 'Aril Alfazri', 'Danny Magalih Abielo Wudd',
+                'Fachry Andhika Purnomo', 'Ezra Ariq Athallah', 'Muhammad Hadin Aditya Utama',
+                'Ahmad Fakhri Fauzan', "Khoerunnisaa' Shofaa' Dzakiyyah", 'Dimy Awan Wicaksana',
+                'Farras Al Bari', 'Raihan Muhafiz Dewanto',
+            ]],
+            ['nama' => 'Impulse', 'members' => [
+                'Zalfaa Zahra Asyifa', 'Alfata Dzaky Ramadhan', 'Muhammad Andhika Pratama',
+                'Danendra Alif Raditya', 'Belina Zaskia Mulya', 'Farel Tristandio Saputro',
+                'Anju Alfrido Hutagaol', 'Daffa Dwi Putra', 'Muhammad Fakhri Abiyyu Earlyansyah',
+                'Indah Putri Ramadhani', 'Carissa Hananiah Khumaeroh',
+            ]],
+            ['nama' => 'Inertia', 'members' => [
+                'Fathurrohman Sidiq', 'Hafizh Atha Zulyomi', 'Khairu Fakhri Al Fatih',
+                'Muhammad Ibnu Rizky', 'Muhammad Fahmi Faturrahman', 'Muhammad Faqih Taqiudin',
+                'Khanza Aufa Althafunnisa', 'Hanif Huwaidi Maajid', 'Mochammad Rasya Keyzano',
+                'Hazimah Fathena', 'Moses Mahardika Nugroho',
+            ]],
+            ['nama' => 'Flux', 'members' => [
+                'Adrian Fatih Nur Muhammad', 'Muhammad Fauzi Arifin', 'Yunik Arika',
+                'Muhamad Alkausar Putra Surya', 'Muhammad Haidar Fadhilah', 'Sulthan Ahmadiningrat',
+                'Muhammad Rasya Fahri', 'Muhammad Irsyad', 'Citra Azzahra', 'Alman Fathin',
+                'Muhammad Miftah Al-Anshori',
+            ]],
+            ['nama' => 'Accel', 'members' => [
+                'Muhammad Rasya Antebing Mame', 'Muhammad Syahri Abdul Rouf', 'Natasya Atalia Labita',
+                'Muhammad Nanda Alfaridzi', 'Muhammad Rasheed Muhyiddien', 'Nabila Zifa Zulkarnain',
+                'Naila Munawaroh', 'Naisha Camila Shahnaz', 'Nayaka Fadhil Prasetyo',
+                'Zauja Ummu Aliyya. Hp', 'Owen Romega Perwira. S',
+            ]],
+            ['nama' => 'Radius', 'members' => [
+                'Muhammad Attar Purnama', 'Diaz Dwi Pamungkas', 'Ahmad Yusuf Salim', 'Raja Maulana',
+                'Muhammad Haikal Fadhilah', 'Yuki Detta Sabina', 'Banu Riyadi',
+                'Tristan Abdillah Rainaldi', 'Muhammad Jilan Adly Mufid', 'Zahida Zahira',
+                'Rafael Alexander Sitompul',
+            ]],
+        ];
+
+        $membersByTeam = collect($teamData)->keyBy('nama');
+        $tims = Tim::with('guiders')->get();
+
+        $tims->each(function (Tim $tim) use ($membersByTeam) {
+            $memberNames = $membersByTeam->get($tim->nama)['members'] ?? [];
+            $members = collect($memberNames)
+                ->map(fn (string $name) => new User(['nama' => $name]));
+
+            $tim->setRelation('members', $members);
+        });
+
+        $data = [
+            'title' => 'Daftar Tim',
+            'tims' => $tims,
+        ];
+
+        return view('tim.peserta', $data);
+    }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([

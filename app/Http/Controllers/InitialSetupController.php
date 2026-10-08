@@ -47,13 +47,17 @@ class InitialSetupController extends Controller
             Storage::disk('public')->delete($user->foto);
         }
 
-        // Upload foto baru ke storage/app/public/foto_profil
-        $fotoPath = $files->store($request->file('foto'), 'foto_profil');
+        // Peserta tidak menggunakan foto profil.
+        $fotoPath = null;
+        if (! $user->isPeserta()) {
+            $fotoPath = $files->store($request->file('foto'), 'foto_profil');
+        }
 
         // Update data user
         $user->update([
             'nama' => $validated['nama'],
             'email' => $validated['email'],
+            'nomor_hp' => $validated['nomor_hp'],
             'foto' => $fotoPath,
             'password' => Hash::make($validated['password']),
             'is_initial_setup_completed' => true,

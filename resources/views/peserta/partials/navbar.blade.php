@@ -103,10 +103,17 @@
                     <h5 class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-2 px-3">NAVIGASI UTAMA</h5>
                     <div class="space-y-1 text-sm">
                         <!-- Beranda -->
-                        <a href="{{ route('peserta.dashboard') }}"
+                        {{-- <a href="{{ route('peserta.dashboard') }}"
                             class="flex items-center gap-3 px-3 py-2 font-medium transition border-b-2 {{ request()->routeIs('peserta.dashboard') ? 'border-[#FF5B00] text-[#1E293B] dark:text-white font-semibold' : 'border-transparent text-slate-700 dark:text-slate-300 hover:text-[#1E293B] dark:hover:text-white hover:border-slate-200 dark:hover:border-slate-700' }}">
                             <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('peserta.dashboard') ? 'text-[#FF5B00]' : 'text-slate-500 dark:text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                             <span>Beranda</span>
+                        </a>
+
+                        <!-- List Tim -->
+                        <a href="{{ route('peserta.welcome') }}"
+                            class="flex items-center gap-3 px-3 py-2 font-medium transition border-b-2 {{ request()->routeIs('peserta.welcome') ? 'border-[#FF5B00] text-[#1E293B] dark:text-white font-semibold' : 'border-transparent text-slate-700 dark:text-slate-300 hover:text-[#1E293B] dark:hover:text-white hover:border-slate-200 dark:hover:border-slate-700' }}">
+                            <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('peserta.welcome') ? 'text-[#FF5B00]' : 'text-slate-500 dark:text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                            <span>List Tim</span>
                         </a>
 
                         <!-- List Penugasan -->
@@ -121,7 +128,7 @@
                             class="flex items-center gap-3 px-3 py-2 font-medium transition border-b-2 {{ request()->routeIs('peserta.arsip') ? 'border-[#FF5B00] text-[#1E293B] dark:text-white font-semibold' : 'border-transparent text-slate-700 dark:text-slate-300 hover:text-[#1E293B] dark:hover:text-white hover:border-slate-200 dark:hover:border-slate-700' }}">
                             <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('peserta.arsip') ? 'text-[#FF5B00]' : 'text-slate-500 dark:text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
                             <span>Arsip Tugas</span>
-                        </a>
+                        </a> --}}
 
                         <!-- Izin -->
                         <a href="{{ route('dashboard.pengajuan-izin.index') }}"

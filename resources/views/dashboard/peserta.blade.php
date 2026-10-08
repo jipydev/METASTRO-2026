@@ -1,51 +1,5 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="min-h-dvh">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Dashboard Peserta - METASTRO 2026</title>
-
-    <!-- Anti-FOUC Theme Script -->
-    <script>
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Oswald:wght@500;600;700;800&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-
-    <!-- Tailwind / App Assets -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <style>
-        .font-kalam {
-            font-family: 'Kalam', cursive;
-        }
-        .font-oswald-header {
-            font-family: 'Oswald', sans-serif;
-            letter-spacing: 0.12em;
-        }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(156, 163, 175, 0.4);
-            border-radius: 9999px;
-        }
-    </style>
-</head>
-
-<body class="font-poppins antialiased bg-[#FFFDF9] dark:bg-slate-900 text-[#1E293B] dark:text-slate-100 min-h-dvh transition-colors duration-200"
+<x-app-layout :$title>
+<div
     x-data="{
         mobileMenu: false,
         notifOpen: false,
@@ -74,17 +28,13 @@
                 localStorage.setItem('theme', 'light');
             }
         }
-    }">
+    }" class="bg-brand-50 dark:bg-slate-900 pb-8 font-poppins transition-colors duration-200">
 
-    <!-- CONTAINER MOBILE-FIRST -->
-    <div class="max-w-md mx-auto sm:max-w-xl md:max-w-2xl px-4 py-5 min-h-screen flex flex-col justify-between">
+    <div class="w-full max-w-7xl mx-auto">
 
         <div>
-            <!-- 1. TOP HEADER APP BAR (NAVBAR) -->
-            @include('peserta.partials.navbar')
-
             <!-- 2. WELCOME / DEADLINE CARD -->
-            <div class="bg-[#FDF6E9] dark:bg-amber-950/20 border border-orange-100/60 dark:border-amber-900/40 border-l-4 !border-l-[#F97316] rounded-2xl p-4 sm:p-5 shadow-xs relative overflow-hidden mb-5 h-[122px] flex flex-col justify-center">
+            <div class="bg-white dark:bg-slate-800 border border-orange-100/60 dark:border-amber-900/40 border-l-4 !border-l-[#F97316] rounded-2xl p-4 sm:p-5 shadow-sm relative overflow-hidden mb-5 min-h-[122px] flex flex-col justify-center">
                 <div class="flex items-center justify-between gap-3">
                     <!-- Left: Greetings & Deadline info -->
                     <div class="min-w-0 pr-2">
@@ -350,10 +300,6 @@
             </section>
         </div>
 
-        <!-- FOOTER BRANDING -->
-        <footer class="text-center py-4 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-400">
-            &copy; 2026 METASTRO &bull; Spirit of HIRO, Heart of SOLDER
-        </footer>
     </div>
-</body>
-</html>
+</div>
+</x-app-layout>

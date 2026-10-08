@@ -17,10 +17,10 @@ class DatabaseSeeder extends Seeder
             DivisiSeeder::class,
             UserSeeder::class,
             TimSeeder::class,
-            TugasSeeder::class,
-            PengumpulanTugasSeeder::class,
-            GuiderSeeder::class,
-            AnggotaTimSeeder::class,
+            // TugasSeeder::class,
+            // PengumpulanTugasSeeder::class,
+            // GuiderSeeder::class,
+            // AnggotaTimSeeder::class,
         ]);
     }
 }

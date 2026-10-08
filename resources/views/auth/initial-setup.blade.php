@@ -91,16 +91,29 @@
                 </div>
                 <h1 class="text-xl font-bold text-gray-900 dark:text-white">Lengkapi Profil Anda</h1>
                 <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">
-                    Selamat datang! Karena ini login pertama Anda, harap unggah foto profil, periksa nama & email, serta buat password baru.
+                    Selamat datang! Lengkapi data diri, periksa nama & email, serta buat password baru.
                 </p>
             </div>
+
+            @if ($errors->any())
+                <div role="alert"
+                    class="mb-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-xs text-red-700 dark:border-red-900/70 dark:bg-red-950/30 dark:text-red-300">
+                    <p class="font-bold">Data belum dapat disimpan.</p>
+                    <ul class="mt-1 list-disc space-y-0.5 pl-4">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             {{-- Form Onboarding --}}
             <form method="POST" action="{{ route('initial-setup.store') }}" enctype="multipart/form-data" class="space-y-4 text-xs">
                 @csrf
 
                 {{-- Photo Avatar Upload & Crop --}}
-                <div class="flex flex-col items-center">
+                @unless ($user->isPeserta())
+                    <div class="flex flex-col items-center">
                     <div class="relative group">
                         <template x-if="photoPreview">
                             <img :src="photoPreview" class="w-24 h-24 rounded-full object-cover border-4 border-brand-500 shadow-md">
@@ -120,7 +133,8 @@
                         + Unggah Foto Profil (Wajib)
                     </span>
                     <x-input-error :messages="$errors->get('foto')" class="mt-1" />
-                </div>
+                    </div>
+                @endunless
 
                 {{-- NIM (Readonly) --}}
                 <div>
@@ -143,6 +157,14 @@
                     <input id="email" type="email" name="email" value="{{ old('email', $user->email) }}" required maxlength="255" autocomplete="email" placeholder="contoh@email.com"
                            class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
                     <x-input-error :messages="$errors->get('email')" class="mt-1" />
+                </div>
+
+                {{-- Nomor HP --}}
+                <div>
+                    <label for="nomor_hp" class="block font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider mb-1">Nomor HP *</label>
+                    <input id="nomor_hp" type="tel" name="nomor_hp" value="{{ old('nomor_hp', $user->nomor_hp) }}" required maxlength="20" autocomplete="tel" placeholder="08xxxxxxxxxx"
+                           class="w-full bg-slate-50 dark:bg-slate-700/60 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 px-3.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
+                    <x-input-error :messages="$errors->get('nomor_hp')" class="mt-1" />
                 </div>
 
                 {{-- Password Baru --}}

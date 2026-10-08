@@ -123,7 +123,9 @@
         </div>
 
         <div>
-            <x-input-label for="nama" :value="__('Nama Lengkap')" class="font-semibold text-slate-700 dark:text-slate-300" />
+            <label for="nama" class="font-semibold text-slate-700 dark:text-slate-300">
+                {{ __('Nama Lengkap') }} <span class="text-red-500" aria-hidden="true">*</span>
+            </label>
             <div class="relative mt-1">
                 <input id="nama" name="nama" type="text"
                        class="form-control-app w-full"
@@ -133,7 +135,9 @@
         </div>
 
         <div>
-            <x-input-label for="nim" :value="__('NIM')" class="font-semibold text-slate-700 dark:text-slate-300" />
+            <label for="nim" class="font-semibold text-slate-700 dark:text-slate-300">
+                {{ __('NIM') }} <span class="text-red-500" aria-hidden="true">*</span>
+            </label>
             <div class="relative mt-1">
                 <input id="nim" name="nim" type="text"
                        class="form-control-app w-full font-mono"
@@ -143,19 +147,21 @@
             <x-input-error class="mt-2" :messages="$errors->get('nim')" />
         </div>
 
-        <div>
-            <x-input-label :value="__('Divisi & Jabatan')" class="font-semibold text-slate-700 dark:text-slate-300" />
-            <div class="relative mt-1">
-                <input type="text"
-                       class="form-control-app w-full bg-slate-100 dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 cursor-not-allowed"
-                       value="{{ $user->divisi ? $user->formatted_divisi_jabatan : ($user->getRoleNames()->first() ?? 'Peserta') }}"
-                       readonly disabled />
+        @if (strtolower((string) $user->role) === 'peserta')
+            <div>
+                <x-input-label for="tim" :value="__('Tim')" class="font-semibold text-slate-700 dark:text-slate-300" />
+                <input id="tim" type="text"
+                       class="form-control-app w-full mt-1 bg-slate-100 dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 cursor-not-allowed"
+                       value="{{ $user->tims->first()?->tim?->nama ?? '—' }}"
+                       readonly disabled aria-label="Tim" />
+                <p class="mt-1 text-xs text-slate-400">Hubungi admin jika tim perlu diubah.</p>
             </div>
-            <p class="mt-1 text-xs text-slate-400">Hubungi admin jika divisi atau jabatan perlu diubah.</p>
-        </div>
+        @endif
 
         <div>
-            <x-input-label for="email" :value="__('Alamat Email')" class="font-semibold text-slate-700 dark:text-slate-300" />
+            <label for="email" class="font-semibold text-slate-700 dark:text-slate-300">
+                {{ __('Alamat Email') }} <span class="text-red-500" aria-hidden="true">*</span>
+            </label>
             <div class="relative mt-1">
                 <input id="email" name="email" type="email"
                        class="form-control-app w-full"
@@ -180,6 +186,38 @@
                     @endif
                 </div>
             @endif
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+                <label for="nomor_hp" class="font-semibold text-slate-700 dark:text-slate-300">
+                    {{ __('No. HP') }} <span class="text-red-500" aria-hidden="true">*</span>
+                </label>
+                <input id="nomor_hp" name="nomor_hp" type="tel"
+                       class="form-control-app w-full mt-1"
+                       value="{{ old('nomor_hp', $user->nomor_hp) }}" required maxlength="20" autocomplete="tel" />
+                <x-input-error class="mt-2" :messages="$errors->get('nomor_hp')" />
+            </div>
+
+            <div>
+                <label for="jenis_kelamin" class="font-semibold text-slate-700 dark:text-slate-300">
+                    {{ __('Jenis Kelamin') }} <span class="text-red-500" aria-hidden="true">*</span>
+                </label>
+                <select id="jenis_kelamin" name="jenis_kelamin" required class="form-control-app w-full mt-1">
+                    <option value="">-- Pilih --</option>
+                    <option value="laki-laki" {{ old('jenis_kelamin', $user->jenis_kelamin) === 'laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                    <option value="perempuan" {{ old('jenis_kelamin', $user->jenis_kelamin) === 'perempuan' ? 'selected' : '' }}>Perempuan</option>
+                </select>
+                <x-input-error class="mt-2" :messages="$errors->get('jenis_kelamin')" />
+            </div>
+
+            <div>
+                <x-input-label for="tanggal_lahir" :value="__('Tanggal Lahir')" class="font-semibold text-slate-700 dark:text-slate-300" />
+                <input id="tanggal_lahir" name="tanggal_lahir" type="date"
+                       class="form-control-app w-full mt-1"
+                       value="{{ old('tanggal_lahir', optional($user->tanggal_lahir)->format('Y-m-d')) }}" max="{{ now()->toDateString() }}" />
+                <x-input-error class="mt-2" :messages="$errors->get('tanggal_lahir')" />
+            </div>
         </div>
 
         <div class="flex items-center gap-4 pt-2">

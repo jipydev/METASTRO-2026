@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\Divisi;
 use App\Models\Jabatan;
+use App\Models\Tim;
 use App\Models\User;
 use App\Services\QrCodeService;
 use Illuminate\Http\Request;
@@ -98,6 +99,7 @@ class UserController extends Controller
         $divisis = Divisi::orderBy('nama', 'asc')->get();
         $jabatans = Jabatan::orderBy('nama', 'asc')->get();
         $roles = Role::orderBy('name', 'asc')->get();
+        $tims = Tim::orderBy('nama', 'asc')->get();
 
         $data = [
             'title' => 'Kelola Pengguna & QR Code',
@@ -105,6 +107,7 @@ class UserController extends Controller
             'divisis' => $divisis,
             'jabatans' => $jabatans,
             'roles' => $roles,
+            'tims' => $tims,
         ];
 
         return view('admin.users.index', $data);
@@ -118,12 +121,14 @@ class UserController extends Controller
         $divisis = Divisi::orderBy('nama', 'asc')->get();
         $jabatans = Jabatan::orderBy('nama', 'asc')->get();
         $roles = Role::orderBy('name', 'asc')->get();
+        $tims = Tim::orderBy('nama', 'asc')->get();
 
         $data = [
             'title' => 'Tambah Pengguna Baru',
             'divisis' => $divisis,
             'jabatans' => $jabatans,
             'roles' => $roles,
+            'tims' => $tims,
             ...$this->jabatanFormData(),
         ];
 
@@ -146,7 +151,7 @@ class UserController extends Controller
             }
         } elseif (strtolower($validated['role']) === 'peserta') {
             $divisiId = null;
-        }
+        } 
 
         $user = User::create([
             'nama' => $validated['nama'],
@@ -157,7 +162,7 @@ class UserController extends Controller
             'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
             'password' => $validated['password'], // Pastikan model User Anda punya casts password => 'hashed'
             'divisi_id' => $divisiId,
-            'jabatan_id' => $validated['jabatan_id'] ?: null,
+            'jabatan_id' => strtolower($validated['role']) === 'peserta' ? null : ($validated['jabatan_id'] ?: null),
             'status' => true,
             'is_initial_setup_completed' => false,
             'qr_token' => (string) Str::uuid(),
@@ -166,6 +171,10 @@ class UserController extends Controller
 
         // Berikan role menggunakan Spatie
         $user->assignRole($validated['role']);
+
+        if (strtolower($validated['role']) === 'peserta' && ! empty($validated['tim_id'])) {
+            $user->tims()->create(['tim_id' => $validated['tim_id']]);
+        }
 
         // Ganti back() menjadi redirect()
         return redirect()->route('admin.users.index')->with('success', 'Pengguna baru berhasil ditambahkan.');
@@ -179,6 +188,7 @@ class UserController extends Controller
         $divisis = Divisi::orderBy('nama', 'asc')->get();
         $jabatans = Jabatan::orderBy('nama', 'asc')->get();
         $roles = Role::orderBy('name', 'asc')->get();
+        $tims = Tim::orderBy('nama', 'asc')->get();
 
         $data = [
             'title' => 'Edit Pengguna',
@@ -186,6 +196,7 @@ class UserController extends Controller
             'divisis' => $divisis,
             'jabatans' => $jabatans,
             'roles' => $roles,
+            'tims' => $tims,
             ...$this->jabatanFormData(),
         ];
 
@@ -218,23 +229,29 @@ class UserController extends Controller
             'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
             'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
             'divisi_id' => $divisiId,
-            'jabatan_id' => $validated['jabatan_id'] ?: null,
+            'jabatan_id' => strtolower($validated['role']) === 'peserta' ? null : ($validated['jabatan_id'] ?: null),
             'status' => (bool) $validated['status'], // Update status aktif/non-aktif
+            'is_initial_setup_completed' => false,
         ]);
 
         // Sinkronisasi/Update role menggunakan Spatie
         $user->syncRoles([$validated['role']]);
+        $user->tims()->delete();
+
+        if (strtolower($validated['role']) === 'peserta' && ! empty($validated['tim_id'])) {
+            $user->tims()->create(['tim_id' => $validated['tim_id']]);
+        }
 
         // Ganti back() menjadi redirect()
         return redirect()->route('admin.users.index')->with('success', "Data pengguna {$user->nama} berhasil diperbarui.");
     }
 
     /**
-     * Mengembalikan password pengguna ke password acak (Regenerate).
+     * Mengembalikan password pengguna ke password default.
      */
     public function resetPassword(User $user)
     {
-        $newPassword = Str::random(10);
+        $newPassword = 'metastro2026';
         
         $user->update([
             'password' => Hash::make($newPassword),
@@ -251,7 +268,7 @@ class UserController extends Controller
             'updated_at' => now(),
         ]);
 
-        return back()->with('success', "Password {$user->nama} berhasil direset. Password baru: <strong>{$newPassword}</strong>");
+        return back()->with('success', "Password {$user->nama} berhasil direset ke {$newPassword}.");
     }
 
     /**
