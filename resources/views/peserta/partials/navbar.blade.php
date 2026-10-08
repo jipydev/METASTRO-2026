@@ -103,7 +103,7 @@
                     <h5 class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-2 px-3">NAVIGASI UTAMA</h5>
                     <div class="space-y-1 text-sm">
                         <!-- Beranda -->
-                        <a href="{{ route('peserta.dashboard') }}"
+                        {{-- <a href="{{ route('peserta.dashboard') }}"
                             class="flex items-center gap-3 px-3 py-2 font-medium transition border-b-2 {{ request()->routeIs('peserta.dashboard') ? 'border-[#FF5B00] text-[#1E293B] dark:text-white font-semibold' : 'border-transparent text-slate-700 dark:text-slate-300 hover:text-[#1E293B] dark:hover:text-white hover:border-slate-200 dark:hover:border-slate-700' }}">
                             <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('peserta.dashboard') ? 'text-[#FF5B00]' : 'text-slate-500 dark:text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                             <span>Beranda</span>
@@ -128,7 +128,7 @@
                             class="flex items-center gap-3 px-3 py-2 font-medium transition border-b-2 {{ request()->routeIs('peserta.arsip') ? 'border-[#FF5B00] text-[#1E293B] dark:text-white font-semibold' : 'border-transparent text-slate-700 dark:text-slate-300 hover:text-[#1E293B] dark:hover:text-white hover:border-slate-200 dark:hover:border-slate-700' }}">
                             <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('peserta.arsip') ? 'text-[#FF5B00]' : 'text-slate-500 dark:text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
                             <span>Arsip Tugas</span>
-                        </a>
+                        </a> --}}
 
                         <!-- Izin -->
                         <a href="{{ route('dashboard.pengajuan-izin.index') }}"

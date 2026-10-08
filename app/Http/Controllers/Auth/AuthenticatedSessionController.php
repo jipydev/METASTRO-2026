@@ -30,9 +30,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $user = $request->user();
-        if ($user && $user->isPeserta()) {
-            return redirect()->route('peserta.welcome');
+        if ($request->user() && ! $request->user()->is_initial_setup_completed) {
+            return redirect()->route('initial-setup.index');
         }
 
         return redirect()->intended(route('dashboard.index'));

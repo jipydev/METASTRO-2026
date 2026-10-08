@@ -1,4 +1,26 @@
 ﻿<x-app-layout :$title>
+    @if (session('success') || session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                @if (session('success'))
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: @json(session('success')),
+                        confirmButtonColor: window.appBrandColor()
+                    });
+                @else
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: @json(session('error')),
+                        confirmButtonColor: '#dc2626'
+                    });
+                @endif
+            });
+        </script>
+    @endif
+
     <div class="py-8 font-poppins min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-200">
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
 

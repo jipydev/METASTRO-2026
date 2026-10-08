@@ -59,7 +59,7 @@
 
                             <!-- Modal Content -->
                             <div
-                                class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-[90%] max-w-xl max-h-[85vh] overflow-y-auto relative z-10 mx-auto mt-10 md:mt-0 flex flex-col font-poppins border border-slate-100 dark:border-slate-700">
+                                class="overflow-x-hidden bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-[90%] max-w-xl max-h-[85vh] overflow-y-auto relative z-10 mx-auto mt-10 md:mt-0 flex flex-col font-poppins border border-slate-100 dark:border-slate-700">
                                 <div
                                     class="p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center sticky top-0 bg-white dark:bg-slate-800 z-20">
                                     <h3
@@ -84,8 +84,8 @@
                                                 @php($pembimbing = $guider->pembimbing)
                                                 <article
                                                     class="flex min-w-0 items-center gap-3 rounded-2xl border border-orange-100 bg-orange-50/60 p-3 shadow-sm dark:border-slate-700 dark:bg-slate-700/40">
-                                                    @if ($pembimbing?->foto && file_exists(public_path("foto_profil/$pembimbing->foto")))
-                                                        <img src="{{ asset("foto_profil/$pembimbing->foto") }}"
+                                                    @if ($pembimbing?->foto && file_exists(public_path("storage/$pembimbing->foto")))
+                                                        <img src="{{ asset("storage/$pembimbing->foto") }}"
                                                             alt="{{ $pembimbing->nama }}"
                                                             class="h-14 w-14 shrink-0 rounded-2xl object-cover ring-2 ring-white dark:ring-slate-600">
                                                     @else

@@ -51,7 +51,7 @@ Route::middleware(['auth'])->prefix('peserta')->name('peserta.')->group(function
 | Onboarding / First Time Setup
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified', 'initial.setup'])->group(function () {
+Route::middleware(['auth', 'initial.setup'])->group(function () {
     Route::get('/initial-setup', [InitialSetupController::class, 'index'])->name('initial-setup.index');
     Route::post('/initial-setup', [InitialSetupController::class, 'store'])->name('initial-setup.store');
 });

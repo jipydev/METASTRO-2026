@@ -151,7 +151,7 @@ class UserController extends Controller
             }
         } elseif (strtolower($validated['role']) === 'peserta') {
             $divisiId = null;
-        }
+        } 
 
         $user = User::create([
             'nama' => $validated['nama'],
@@ -231,6 +231,7 @@ class UserController extends Controller
             'divisi_id' => $divisiId,
             'jabatan_id' => strtolower($validated['role']) === 'peserta' ? null : ($validated['jabatan_id'] ?: null),
             'status' => (bool) $validated['status'], // Update status aktif/non-aktif
+            'is_initial_setup_completed' => false,
         ]);
 
         // Sinkronisasi/Update role menggunakan Spatie
@@ -246,11 +247,11 @@ class UserController extends Controller
     }
 
     /**
-     * Mengembalikan password pengguna ke password acak (Regenerate).
+     * Mengembalikan password pengguna ke password default.
      */
     public function resetPassword(User $user)
     {
-        $newPassword = Str::random(10);
+        $newPassword = 'metastro2026';
         
         $user->update([
             'password' => Hash::make($newPassword),
@@ -267,7 +268,7 @@ class UserController extends Controller
             'updated_at' => now(),
         ]);
 
-        return back()->with('success', "Password {$user->nama} berhasil direset. Password baru: <strong>{$newPassword}</strong>");
+        return back()->with('success', "Password {$user->nama} berhasil direset ke {$newPassword}.");
     }
 
     /**

@@ -19,7 +19,7 @@ class DashboardController extends Controller
 
         // Jika user adalah Peserta, tampilkan Dashboard khusus Peserta
         if ($user && $user->isPeserta()) {
-            return $this->pesertaDashboard($request);
+            return $this->peserta($request);
         }
 
         $pengumumanList = Pengumuman::with('pembuat.divisi')
@@ -83,7 +83,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function pesertaDashboard(Request $request): View
+    public function peserta(Request $request): View
     {
         /** @var User $user */
         $user = $request->user();
@@ -106,8 +106,8 @@ class DashboardController extends Controller
             $tugases = collect();
         }
 
-        return view('peserta.dashboard', [
-            'title' => 'Dashboard Peserta',
+        return view('dashboard.peserta', [
+            'title' => 'Dashboard',
             'user' => $user,
             'kegiatans' => $kegiatans,
             'tugases' => $tugases,
