@@ -313,7 +313,11 @@ class UserController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-                
+
+            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+                Storage::disk('public')->delete($user->foto);
+            }
+
             $user->delete();
         });
 
