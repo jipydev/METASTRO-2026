@@ -46,21 +46,20 @@ class TimController extends Controller
                 'Firmansah Hijriyah Alimudin', 'Danny Magalih Abielo Wudd',
             ]],
             ['nama' => 'Torque', 'members' => [
-                'Ahmad Robeth Jundan Furqoni', 'Hazel Dide Febrano', 'Denis Dwi Pratama',
-                'Siti Mutia', 'MAITSA SYAMS AL BAIHAQI', 'Dhowy Harits Attarbanggi',
+                'Ahmad Robeth Jundan Furqoni', 'Hazel Dide Febrano', 'Denis Dwi Fratama',
+                'Siti Mutia', 'Maitsa Syams Al Baihaqi', 'Dhowy Harits Attarbanggi',
                 'Muhammad Dhafi Alytri', 'Fathir Muhammad Fauzi', "Fa'iq Fadhlillah Saputra",
-                'Muhammad Abdullah Assajid', 'Radena Faustine Az-Zuhrah Jusin',
-                'Rasya Muhammad Fadhilah',
+                'Muhammad Abdullah Assajid', 'Radena Faustine Az-Zuhrah Jusin', 'Wahyu Novianto',
             ]],
             ['nama' => 'Momentum', 'members' => [
                 'Faqih Khairy Fathan', 'M Rajwa Sidqi Musali', 'Muhammad Zidan Fawwaz Alkhtabi',
                 'Zaskia Bentang Fitri Ramadani', 'Muhammad Alief Dhiaulhaq',
-                "DYRLAN SULTAN AL'AIDIN ARDHIYANTO", 'Naila Munawaroh',
+                "Dyrlan Sultan Al'aidin Ardhiyanto", 'Naila Munawaroh',
                 'Raka Abdul Rais Al Rezi', 'Muhammad Azhar Fauzan', 'Naisha Camila Shahnaz',
                 'Muh Nabil Najhan Masykur', 'Genta Cakrawala Kurniawan',
             ]],
             ['nama' => 'Force', 'members' => [
-                'Candra Aditiya', 'Muhammad Hilman Fauzy', 'ARIL ALFAZRI', 'Syifa Amelia Oktafiani',
+                'Candra Aditiya', 'Muhammad Hilman Fauzy', 'Aril Alfazri', 'Syifa Amelia Oktafiani',
                 'Fachry Andhika Purnomo', 'Ezra Ariq Athallah', 'Syazwina Izzati Aisyah',
                 'Ahmad Fakhri Fauzan', "Khoerunnisaa' Shofaa' Dzakiyyah", 'Dimy Awan Wicaksana',
                 'Farras Al Bari', 'Raihan Muhafiz Dewanto',
@@ -75,7 +74,7 @@ class TimController extends Controller
                 'Fathurrohman Sidiq', 'Hafizh Atha Zulyomi', 'Khairu Fakhri Al Fatih',
                 'Muhammad Ibnu rizky', 'Muhammad Fahmi Faturrahman', 'Muhammad Faqih Taqiudin',
                 'Khanza Aufa Althafunnisa', 'Hanif Huwaidi Maajid', 'Mochammad Rasya Keyzano',
-                'Hazimah Fathena', 'Moses Mahardika Nugroho',
+                'Hazimah Fathena', 'Moses Mahardika Nugroho', 'Prinsa Nadifa Alma As Shofi',
             ]],
             ['nama' => 'Flux', 'members' => [
                 'Adrian Fatih Nur Muhammad', 'Muhammad Fauzi Arifin', 'Yunik Arika',
@@ -85,14 +84,14 @@ class TimController extends Controller
                 'Muhammad Miftah Al-Anshori' ,
             ]],
             ['nama' => 'Accel', 'members' => [
-                'Muhammad Rasya Antebing Mame', 'Muhammad Syahri Abdul Rouf', 'natasya atalia labita',
+                'Muhammad Rasya Antebing Mame', 'Muhammad Syahri Abdul Rouf', 'Natasya Atalia Labita',
                 'Muhammad Nanda Alfaridzi', 'Muhammad Rasheed Muhyiddien', 'NABILA ZIFA ZULKARNAIN',
                 'Muhammad Labieb Al Amien', 'Rakha Sulaiman', 'Nayaka Fadhil Prasetyo',
-                'Zauja Ummu Aliyya. HP', 'Owen Romega Perwira. S',
+                'Zauja Ummu Aliyya. HP', 'Owen Romega Perwira. S', 'Muhammad Hazmi Al Farizi'
             ]],
             ['nama' => 'Radius', 'members' => [
                 'Muhammad Attar Purnama', 'Ahmad Yusuf Salim', 'Raja Maulana',
-                'Muhammad Haikal Fadhilah', 'Yuki Detta Sabina', 'BANU RIYADI',
+                'Muhammad Haikal Fadhilah', 'Yuki Detta Sabina', 'Banu Riyadi',
                 'Tristan Abdillah Rainaldi', 'Muhammad Jilan Adly Mufid', 'Zahida Zahira',
                 'Rafael Alexander Sitompul', 'Belina Zaskia Mulya',
             ]],
