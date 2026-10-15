@@ -1,4 +1,4 @@
-﻿<x-app-layout :$title>
+<x-app-layout :$title>
     {{-- Notifikasi SweetAlert --}}
     @if (session('success') || session('error'))
         <script>
@@ -29,6 +29,7 @@
         openResetQrModal: false,
         openRegenAllModal: false,
         openViewQrModal: false,
+        openImportModal: false,
     
         selectedUser: { id: null, nama: '', nim: '', email: '', role_type: 'peserta', divisi_id: '', jabatan_id: '', qr_token: '', status: true },
     
@@ -59,16 +60,39 @@
                     </p>
                 </div>
 
-                <div class="flex items-center gap-2.5">
+                <div class="flex flex-wrap items-center gap-2.5">
+                    {{-- Unduh Template Excel --}}
+                    <a href="{{ route('admin.users.template') }}"
+                        class="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer"
+                        title="Unduh Format Spreadsheet Template Excel (.xlsx)">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        <span>Template Excel</span>
+                    </a>
+
+                    {{-- Tombol Import Excel --}}
+                    <button type="button" @click="openImportModal = true"
+                        class="px-3.5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
+                            </path>
+                        </svg>
+                        <span>Import Excel</span>
+                    </button>
+
                     {{-- Re-generate Semua QR --}}
                     <button type="button" @click="openRegenAllModal = true"
-                        class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+                        class="px-3.5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
                             </path>
                         </svg>
-                        <span>Re-generate Semua QR</span>
+                        <span>Re-generate QR</span>
                     </button>
 
                     {{-- Tambah Pengguna --}}
@@ -459,6 +483,86 @@
                         <button type="submit"
                             class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-sm transition cursor-pointer">
                             Ya, Hapus
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {{-- MODAL IMPORT PENGGUNA --}}
+        <div x-show="openImportModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto"
+            role="dialog" aria-modal="true">
+            <div class="flex items-center justify-center min-h-screen px-4">
+                <div x-show="openImportModal" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm"
+                    @click="openImportModal = false"></div>
+
+                <form action="{{ route('admin.users.import') }}" method="POST" enctype="multipart/form-data"
+                    x-show="openImportModal" x-transition
+                    class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-lg shadow-xl text-xs">
+                    @csrf
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/40 text-sky-600 flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Import Pengguna dari Excel</h3>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400">Buat akun secara massal dengan file spreadsheet</p>
+                            </div>
+                        </div>
+                        <button type="button" @click="openImportModal = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    {{-- Panduan Singkat --}}
+                    <div class="p-3.5 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-700/60 mb-4 space-y-2 text-slate-600 dark:text-slate-300">
+                        <div class="font-semibold text-slate-700 dark:text-slate-200 flex items-center justify-between">
+                            <span>Format Kolom Spreadsheet:</span>
+                            <a href="{{ route('admin.users.template') }}" class="text-brand-600 hover:underline flex items-center gap-1 font-bold">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                </svg>
+                                Unduh Template .xlsx
+                            </a>
+                        </div>
+                        <p class="leading-relaxed text-[11px]">
+                            Kolom wajib: <code class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono">nama</code>, 
+                            <code class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono">nim</code>, 
+                            <code class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono">email</code>, 
+                            <code class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono">role</code> (admin/panitia/peserta).
+                        </p>
+                        <p class="leading-relaxed text-[11px] text-slate-500 dark:text-slate-400">
+                            Kolom opsional: <code class="font-mono">password</code> (default: metastro2026), <code class="font-mono">divisi</code>, <code class="font-mono">jabatan</code>, <code class="font-mono">tim</code>, <code class="font-mono">nomor_hp</code>, <code class="font-mono">jenis_kelamin</code> (L/P), <code class="font-mono">tanggal_lahir</code>.
+                        </p>
+                    </div>
+
+                    {{-- File Input --}}
+                    <div class="mb-5">
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Pilih File Excel / CSV (.xlsx, .xls, .csv) <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="file" name="file" accept=".xlsx,.xls,.csv" required
+                            class="block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/40 dark:file:text-brand-300 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer bg-white dark:bg-slate-800 p-1">
+                    </div>
+
+                    <div class="flex justify-end gap-2">
+                        <button type="button" @click="openImportModal = false"
+                            class="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl transition">
+                            Batal
+                        </button>
+                        <button type="submit"
+                            class="px-5 py-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Mulai Import</span>
                         </button>
                     </div>
                 </form>

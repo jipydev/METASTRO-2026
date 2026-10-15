@@ -156,6 +156,8 @@ Route::prefix('/dashboard')->name('dashboard.')->middleware(['auth', 'verified',
 |--------------------------------------------------------------------------
 */
 Route::prefix('/dashboard')->name('admin.')->middleware(['auth', 'verified', 'initial.setup', 'can:admin-access'])->group(function () {
+    Route::get('users/template', [UserController::class, 'template'])->name('users.template');
+    Route::post('users/import', [UserController::class, 'import'])->name('users.import');
     Route::resource('users', UserController::class)->except(['show'])->names('users');
     Route::patch('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
     Route::patch('users/{user}/reset-qr', [UserController::class, 'resetQr'])->name('users.reset-qr');

@@ -7,15 +7,19 @@ use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\Divisi;
 use App\Models\Jabatan;
+use App\Models\PengumpulanTugas;
 use App\Models\Tim;
 use App\Models\User;
 use App\Services\FileCompressionService;
 use App\Services\QrCodeService;
+use App\Services\UserImportService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UserController extends Controller
 {
@@ -153,7 +157,7 @@ class UserController extends Controller
             }
         } elseif (strtolower($validated['role']) === 'peserta') {
             $divisiId = null;
-        } 
+        }
 
         $fotoPath = $request->hasFile('foto')
             ? $files->store($request->file('foto'), 'foto_profil')
@@ -269,16 +273,16 @@ class UserController extends Controller
     public function resetPassword(User $user)
     {
         $newPassword = 'metastro2026';
-        
+
         $user->update([
             'password' => Hash::make($newPassword),
             'must_change_password' => true,
         ]);
-        
-        \Illuminate\Support\Facades\DB::table('audit_logs')->insert([
+
+        DB::table('audit_logs')->insert([
             'user_id' => auth()->id(),
             'action_type' => 'regenerate_password',
-            'description' => 'Mereset password pengguna: ' . $user->nama,
+            'description' => 'Mereset password pengguna: '.$user->nama,
             'target_id' => $user->id,
             'ip_address' => request()->ip(),
             'created_at' => now(),
@@ -297,17 +301,17 @@ class UserController extends Controller
             return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
-        \Illuminate\Support\Facades\DB::transaction(function() use ($user) {
-            \App\Models\PengumpulanTugas::where('user_id', $user->id)
+        DB::transaction(function () use ($user) {
+            PengumpulanTugas::where('user_id', $user->id)
                 ->update([
                     'original_participant_name' => $user->nama,
                     'user_id' => null,
                 ]);
-            
-            \Illuminate\Support\Facades\DB::table('audit_logs')->insert([
+
+            DB::table('audit_logs')->insert([
                 'user_id' => auth()->id(),
                 'action_type' => 'hard_delete_user',
-                'description' => 'Menghapus permanen pengguna: ' . $user->nama,
+                'description' => 'Menghapus permanen pengguna: '.$user->nama,
                 'target_id' => $user->id,
                 'ip_address' => request()->ip(),
                 'created_at' => now(),
@@ -344,5 +348,40 @@ class UserController extends Controller
         });
 
         return back()->with('success', 'Seluruh token QR Code pengguna berhasil di-generate ulang.');
+    }
+
+    /**
+     * Download template XLSX untuk import user.
+     */
+    public function template(UserImportService $importService): StreamedResponse
+    {
+        return $importService->downloadTemplate();
+    }
+
+    /**
+     * Import data pengguna dari file XLSX/CSV.
+     */
+    public function import(Request $request, UserImportService $importService)
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:10240'],
+        ], [
+            'file.required' => 'Pilih file spreadsheet terlebih dahulu.',
+            'file.mimes' => 'File harus berformat .xlsx, .xls, atau .csv.',
+            'file.max' => 'Ukuran file maksimal adalah 10MB.',
+        ]);
+
+        $result = $importService->import($request->file('file'));
+
+        if (! empty($result['errors']) && $result['created_count'] === 0) {
+            return back()->with('error', 'Gagal mengimpor data: '.implode(' ', array_slice($result['errors'], 0, 3)));
+        }
+
+        $msg = "Berhasil mengimpor {$result['created_count']} pengguna baru.";
+        if ($result['skipped_count'] > 0) {
+            $msg .= " ({$result['skipped_count']} data dilewati karena kendala validasi).";
+        }
+
+        return redirect()->route('admin.users.index')->with('success', $msg);
     }
 }
