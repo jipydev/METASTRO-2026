@@ -17,24 +17,46 @@ class UserSeeder extends Seeder
             Role::firstOrCreate(['name' => $role, 'guard_name' => 'web']);
         }
 
-        $user = User::firstOrCreate(
-            ['email' => 'admin@metastro.id'],
+        $chiperDivisiId = Divisi::where('nama', 'Chiper')->value('id');
+        $anggotaJabatanId = Jabatan::where('nama', 'Anggota')->value('id');
+        $ketuaJabatanId = Jabatan::where('nama', 'Ketua')->value('id');
+
+        // 1. Akun Super Admin Utama
+        $adminUser = User::updateOrCreate(
+            ['email' => env('ADMIN_EMAIL', 'admin@metastro.id')],
             [
                 'nim' => '0000001',
-                'nama' => 'Administrator',
-                'password' => 'password',
-                'divisi_id' => Divisi::where('nama', '=', 'Chiper', 'and')->value('id'),
-                'jabatan_id' => Jabatan::where('nama', '=', 'Anggota', 'and')->value('id'),
+                'nama' => 'Administrator METASTRO',
+                'password' => bcrypt(env('ADMIN_PASSWORD', 'MetastroAdmin2026!')),
+                'divisi_id' => $chiperDivisiId,
+                'jabatan_id' => $ketuaJabatanId,
                 'qr_token' => Str::uuid(),
                 'qr_updated_at' => now(),
-            ],
+                'status' => true,
+                'is_initial_setup_completed' => true,
+                'email_verified_at' => now(),
+                'must_change_password' => false,
+            ]
         );
+        $adminUser->syncRoles(['admin']);
 
-        $user->update([
-            'status' => true,
-            'is_initial_setup_completed' => true,
-            'email_verified_at' => now(),
-        ]);
-        $user->syncRoles(['admin']);
+        // 2. Akun Admin Divisi Chiper (Web Development & Operations)
+        $chiperUser = User::updateOrCreate(
+            ['email' => env('CHIPER_ADMIN_EMAIL', 'chiper@metastro.id')],
+            [
+                'nim' => 'CHIPER01',
+                'nama' => 'Admin Chiper (Web)',
+                'password' => bcrypt(env('CHIPER_ADMIN_PASSWORD', 'ChiperMetastro2026!')),
+                'divisi_id' => $chiperDivisiId,
+                'jabatan_id' => $anggotaJabatanId,
+                'qr_token' => Str::uuid(),
+                'qr_updated_at' => now(),
+                'status' => true,
+                'is_initial_setup_completed' => true,
+                'email_verified_at' => now(),
+                'must_change_password' => false,
+            ]
+        );
+        $chiperUser->syncRoles(['admin', 'panitia']);
     }
 }
