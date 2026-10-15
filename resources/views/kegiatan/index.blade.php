@@ -58,7 +58,11 @@
         },
     
         updateDefaultPresensi() {
-            if (!this.form.tanggal_mulai || !this.form.waktu_mulai) return;
+            if (!this.form.tanggal_mulai || !this.form.waktu_mulai) {
+                this.form.presensi_mulai = '';
+                this.form.presensi_selesai = '';
+                return;
+            }
     
             // Buat objek Date dari tanggal dan waktu mulai kegiatan
             let [jamMulai, menitMulai] = this.form.waktu_mulai.split(':');
@@ -98,8 +102,8 @@
                 jenis: 'rapat',
                 tanggal_mulai: today,
                 tanggal_selesai: today,
-                waktu_mulai: '08:00',
-                waktu_selesai: '10:00',
+                waktu_mulai: '',
+                waktu_selesai: '',
                 tempat: '',
                 status_presensi: 'dijadwalkan',
                 presensi_mulai: '',
@@ -373,10 +377,9 @@
                                 class="w-full bg-slate-50 dark:bg-slate-700 rounded-xl border-gray-300 dark:border-slate-600 p-2.5 text-xs text-gray-900 dark:text-white outline-none">
                         </div>
                         <div>
-                            <label class="block font-semibold mb-1 text-gray-700 dark:text-slate-300">Mulai
-                                *</label>
+                            <label class="block font-semibold mb-1 text-gray-700 dark:text-slate-300">Mulai</label>
                             <input type="time" name="waktu_mulai" x-model="form.waktu_mulai"
-                                @change="updateDefaultPresensi()" required
+                                @change="updateDefaultPresensi()"
                                 class="w-full bg-slate-50 dark:bg-slate-700 rounded-xl border-gray-300 dark:border-slate-600 p-2.5 text-xs text-gray-900 dark:text-white outline-none">
                         </div>
                         <div>
