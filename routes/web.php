@@ -17,6 +17,7 @@ use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TimController;
+use App\Http\Controllers\PesertaTugasController;
 use App\Http\Controllers\TugasController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,19 +32,14 @@ Route::get('/', [HomeController::class, 'index'])->name('landing-page');
 Route::get('/tim', [TimController::class, 'peserta'])->name('tim.index');
 
 Route::middleware(['auth'])->prefix('peserta')->name('peserta.')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'pesertaDashboard'])->name('dashboard');
-    Route::get('/tugas-hari', function () {
-        return view('peserta.tugas-hari');
-    })->name('tugas-hari');
-    Route::get('/tugas-list', function () {
-        return view('peserta.tugas-list');
-    })->name('tugas-list');
-    Route::get('/tugas-kumpulkan', function () {
-        return view('peserta.tugas-kumpulkan');
-    })->name('tugas-kumpulkan');
-    Route::get('/arsip', function () {
-        return view('peserta.arsip');
-    })->name('arsip');
+    Route::get('/dashboard', [PesertaTugasController::class, 'dashboard'])->name('dashboard');
+    Route::get('/tugas-hari', [PesertaTugasController::class, 'hariIndex'])->name('tugas-hari');
+    Route::get('/tugas-list', [PesertaTugasController::class, 'listIndex'])->name('tugas-list');
+    Route::get('/tugas/{tugas}/kumpulkan', [PesertaTugasController::class, 'showKumpulkan'])->name('tugas.show-kumpulkan');
+    Route::post('/tugas/{tugas}/kumpulkan', [PesertaTugasController::class, 'storeKumpulkan'])->name('tugas.store-kumpulkan');
+    Route::get('/tugas-kumpulkan', [PesertaTugasController::class, 'showKumpulkan'])->name('tugas-kumpulkan');
+    Route::post('/tugas-kumpulkan/{tugas}', [PesertaTugasController::class, 'storeKumpulkan'])->name('tugas-kumpulkan.store');
+    Route::get('/arsip', [PesertaTugasController::class, 'arsipIndex'])->name('arsip');
 });
 
 /*

@@ -59,53 +59,169 @@
                 <h2 class="font-bold text-lg text-[#1E293B] dark:text-white">Kumpulkan Tugas</h2>
             </div>
 
+            <!-- FLASH NOTIFICATIONS -->
+            @if(session('success'))
+            <div class="mb-4 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-200 flex items-center gap-2">
+                <svg class="w-4 h-4 shrink-0 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span>{{ session('success') }}</span>
+            </div>
+            @endif
+
+            @if(session('error'))
+            <div class="mb-4 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-xs text-red-800 dark:text-red-200 flex items-center gap-2">
+                <svg class="w-4 h-4 shrink-0 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <span>{{ session('error') }}</span>
+            </div>
+            @endif
+
             <!-- CONTENT CARD -->
             <div class="bg-white dark:bg-slate-800/90 rounded-2xl p-5 sm:p-6 shadow-xs border border-slate-100 dark:border-slate-700/60">
-                <p class="text-right text-xs italic text-slate-500 dark:text-slate-400 mb-4">
-                    Deadline tugas: 21 Oktober pukul 23.59
-                </p>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        @if($tugas->jenis === 'individu')
+                            <span class="bg-[#FF1A1A] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">Individu</span>
+                        @elseif($tugas->jenis === 'tim')
+                            <span class="bg-[#4299E1] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">Regu</span>
+                        @else
+                            <span class="bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">Angkatan</span>
+                        @endif
 
-                <div class="flex items-center gap-2 mb-4">
-                    <span class="bg-[#FF1A1A] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">Individu</span>
-                    <h3 class="font-bold text-base text-[#1E293B] dark:text-white">Membuat esai</h3>
+                        @if($tugas->hari)
+                            <span class="bg-orange-100 dark:bg-orange-950/60 text-[#FF5B00] dark:text-orange-400 text-[10px] font-bold px-2 py-0.5 rounded-full">DAY {{ $tugas->hari }}</span>
+                        @endif
+                    </div>
+
+                    @if($tugas->tenggat_waktu)
+                    <p class="text-right text-xs italic text-slate-500 dark:text-slate-400">
+                        Deadline: {{ \Carbon\Carbon::parse($tugas->tenggat_waktu)->translatedFormat('d F Y, H:i') }} WIB
+                    </p>
+                    @endif
                 </div>
+
+                <h3 class="font-bold text-lg text-[#1E293B] dark:text-white mb-3">
+                    {{ $tugas->judul }}
+                </h3>
+
+                <!-- PREVIOUS SUBMISSION BANNER -->
+                @if($submission)
+                    @if($submission->status === 'rejected')
+                        <div class="mb-5 p-3.5 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 text-xs">
+                            <div class="flex items-center gap-1.5 font-bold text-red-700 dark:text-red-400 mb-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                <span>Pengumpulan Perlu Direvisi</span>
+                            </div>
+                            <p class="text-slate-600 dark:text-slate-300">
+                                Catatan Pemeriksa: <span class="font-medium italic text-red-800 dark:text-red-300">{{ $submission->catatan_pemeriksa ?: 'Tidak ada catatan khusus.' }}</span>
+                            </p>
+                            <div class="mt-2 text-[11px] text-slate-500">
+                                Berkas sebelumnya: <a href="{{ asset('storage/' . ltrim($submission->file_path, '/')) }}" target="_blank" class="text-[#FF5B00] underline font-semibold">Unduh Berkas Lama</a>
+                            </div>
+                        </div>
+                    @elseif($submission->status === 'reviewed')
+                        <div class="mb-5 p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 text-xs">
+                            <div class="flex items-center gap-1.5 font-bold text-emerald-700 dark:text-emerald-400 mb-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <span>Tugas Telah Disetujui</span>
+                            </div>
+                            @if($submission->catatan_pemeriksa)
+                            <p class="text-slate-600 dark:text-slate-300">
+                                Komentar Pemeriksa: <span class="font-medium">{{ $submission->catatan_pemeriksa }}</span>
+                            </p>
+                            @endif
+                            <div class="mt-2 text-[11px]">
+                                Berkas terunggah: <a href="{{ asset('storage/' . ltrim($submission->file_path, '/')) }}" target="_blank" class="text-emerald-600 dark:text-emerald-400 underline font-semibold">Buka File</a>
+                            </div>
+                        </div>
+                    @else
+                        <div class="mb-5 p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-xs">
+                            <div class="flex items-center gap-1.5 font-bold text-amber-800 dark:text-amber-400 mb-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span>Menunggu Review Panitia</span>
+                            </div>
+                            <p class="text-slate-600 dark:text-slate-300 text-[11px]">
+                                Terakhir dikumpulkan: {{ \Carbon\Carbon::parse($submission->tanggal_pengumpulan)->translatedFormat('d F Y, H:i') }} WIB. Anda dapat mengunggah revisi baru di bawah ini.
+                            </p>
+                            <div class="mt-1 text-[11px]">
+                                Berkas saat ini: <a href="{{ asset('storage/' . ltrim($submission->file_path, '/')) }}" target="_blank" class="text-[#FF5B00] underline font-semibold">Lihat Berkas Saya</a>
+                            </div>
+                        </div>
+                    @endif
+                @endif
 
                 <div class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-6 space-y-3">
                     <p class="font-semibold text-slate-700 dark:text-slate-200">
-                        Deskripsi:<br>
-                        <span class="font-normal text-slate-600 dark:text-slate-400">
-                            Setelah mendengarkan pemateri di hari pertama, peserta menulis esai terkait seluruh materi dengan ketentuan:
+                        Deskripsi Penugasan:<br>
+                        <span class="font-normal text-slate-600 dark:text-slate-400 whitespace-pre-line">
+                            {!! nl2br(e($tugas->deskripsi)) !!}
                         </span>
                     </p>
-                    
-                    <ol class="list-decimal pl-4 space-y-1 text-slate-600 dark:text-slate-400">
-                        <li>Maksimal 600 kata</li>
-                        <li>Tidak boleh AI generated (plagiarisme &lt; 15%)</li>
-                        <li>Font Times New Roman ukuran 12</li>
-                        <li>Spacing sebanyak 1,5 line</li>
-                    </ol>
 
-                    <p class="text-slate-500 dark:text-slate-400 pt-2">
+                    <p class="text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-700/40 text-[11px]">
                         Pastikan file sudah sesuai dengan format yang telah ditentukan sebelum mengunggah. File yang sudah dikumpulkan tidak dapat dibatalkan setelah tenggat waktu berakhir.
                     </p>
                 </div>
 
-                <!-- ACTION AREA -->
-                <div class="mt-8 flex flex-col items-center pt-4 border-t border-slate-100 dark:border-slate-700/60">
-                    <label class="flex items-start gap-2.5 cursor-pointer mb-5 max-w-[320px] select-none">
-                        <input type="checkbox" x-model="agreed" class="mt-0.5 w-4 h-4 rounded border-red-400 text-red-500 focus:ring-red-500 cursor-pointer">
-                        <span class="text-[10px] text-red-500 dark:text-red-400 leading-tight">
-                            Saya telah membaca deskripsi tugas dengan baik dan mengerjakan tugas sesuai dengan ketentuan.
-                        </span>
-                    </label>
+                <!-- SUBMISSION FORM -->
+                <form method="POST" action="{{ route('peserta.tugas.store-kumpulkan', $tugas) }}" enctype="multipart/form-data" class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700/60">
+                    @csrf
 
-                    <button type="button" :disabled="!agreed"
-                        :class="agreed ? 'bg-[#FF5B00] hover:bg-[#e05000] text-white cursor-pointer shadow-md' : 'bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed'"
-                        class="text-xs font-bold px-8 py-3 rounded-xl transition w-full sm:w-auto text-center">
-                        Kumpulkan Tugas Disini
-                    </button>
-                    <p class="text-[10px] italic text-slate-400 dark:text-slate-500 mt-2.5">Upload file didukung: PDF (Maks. 5MB).</p>
-                </div>
+                    <!-- FILE INPUT -->
+                    <div class="mb-4">
+                        <label class="block text-xs font-bold text-[#1E293B] dark:text-slate-200 mb-1.5">
+                            Unggah Berkas Tugas <span class="text-red-500">*</span>
+                        </label>
+                        <input type="file" name="file" required accept=".pdf,.doc,.docx,.zip,.jpg,.jpeg,.png"
+                            class="block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#FF5B00] file:text-white hover:file:bg-[#e05000] file:cursor-pointer border border-slate-200 dark:border-slate-700 rounded-xl p-1.5 dark:bg-slate-900 cursor-pointer">
+                        <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">
+                            Format didukung: PDF, DOC, DOCX, ZIP, JPG, PNG (Maksimal 10MB).
+                        </p>
+                        @error('file')
+                            <p class="text-[11px] text-red-500 font-medium mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- CATATAN PESERTA -->
+                    <div class="mb-5">
+                        <label for="catatan_peserta" class="block text-xs font-bold text-[#1E293B] dark:text-slate-200 mb-1.5">
+                            Catatan untuk Pemeriksa <span class="text-slate-400 font-normal">(Opsional)</span>
+                        </label>
+                        <textarea id="catatan_peserta" name="catatan_peserta" rows="3" placeholder="Tuliskan catatan tambahan jika ada..."
+                            class="w-full text-xs rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:border-[#FF5B00] focus:ring-[#FF5B00] transition">{{ old('catatan_peserta', $submission?->catatan_peserta !== '-' ? $submission?->catatan_peserta : '') }}</textarea>
+                        @error('catatan_peserta')
+                            <p class="text-[11px] text-red-500 font-medium mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- ACTION AREA -->
+                    <div class="flex flex-col items-center pt-2">
+                        <label class="flex items-start gap-2.5 cursor-pointer mb-5 max-w-[340px] select-none">
+                            <input type="checkbox" name="agreed" value="1" x-model="agreed" required class="mt-0.5 w-4 h-4 rounded border-red-400 text-red-500 focus:ring-red-500 cursor-pointer">
+                            <span class="text-[10px] text-red-500 dark:text-red-400 leading-tight">
+                                Saya telah membaca deskripsi tugas dengan baik dan mengerjakan tugas sesuai dengan ketentuan.
+                            </span>
+                        </label>
+                        @error('agreed')
+                            <p class="text-[11px] text-red-500 font-medium mb-3">{{ $message }}</p>
+                        @enderror
+
+                        @php
+                            $isPastDeadline = $tugas->tenggat_waktu && \Carbon\Carbon::parse($tugas->tenggat_waktu)->isPast();
+                            $isLocked = $isPastDeadline && (! $submission || $submission->status !== 'rejected');
+                        @endphp
+
+                        @if($isLocked)
+                            <div class="text-center p-3 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-500 text-xs font-semibold w-full sm:w-auto">
+                                Pengumpulan Ditutup (Melewati Batas Waktu)
+                            </div>
+                        @else
+                            <button type="submit" :disabled="!agreed"
+                                :class="agreed ? 'bg-[#FF5B00] hover:bg-[#e05000] text-white cursor-pointer shadow-md' : 'bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed'"
+                                class="text-xs font-bold px-8 py-3 rounded-xl transition w-full sm:w-auto text-center">
+                                {{ $submission ? 'Kumpulkan Pembaruan Berkas' : 'Kumpulkan Tugas Disini' }}
+                            </button>
+                        @endif
+                    </div>
+                </form>
             </div>
         </div>
 

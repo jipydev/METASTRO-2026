@@ -39,28 +39,41 @@
                     <!-- Left: Greetings & Deadline info -->
                     <div class="min-w-0 pr-2">
                         <h2 class="font-kalam text-lg sm:text-xl font-bold text-[#1E293B] dark:text-amber-100 tracking-wide leading-tight">
-                            Hallo, Jingga muda!
+                            Hallo, {{ $user?->nama ?? 'Jingga muda' }}!
                         </h2>
                         
+                        @if($deadlineTerdekat)
                         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1.5">
                             Deadline terdekat:
                         </p>
                         <div class="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#1E293B] dark:text-slate-200 mt-0.5">
-                            <span class="text-[#1E293B] dark:text-slate-300">•</span>
-                            <span class="truncate">Video perkenalan singkat</span>
+                            <span class="text-[#FF5B00]">•</span>
+                            <span class="truncate">{{ $deadlineTerdekat->judul }}</span>
                         </div>
+                        @else
+                        <p class="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 font-medium mt-1.5">
+                            Hebat! Semua tugas telah dikumpulkan.
+                        </p>
+                        @endif
                     </div>
 
-                    <!-- Right: Timer & Kumpulkan Button -->
+                    <!-- Right: Deadline & Kumpulkan Button -->
                     <div class="flex flex-col items-end shrink-0 gap-2">
-                        <span class="text-red-500 font-bold text-sm sm:text-base tracking-wide">
-                            12:45
+                        @if($deadlineTerdekat && $deadlineTerdekat->tenggat_waktu)
+                        <span class="text-red-500 font-bold text-xs sm:text-sm tracking-wide">
+                            {{ \Carbon\Carbon::parse($deadlineTerdekat->tenggat_waktu)->translatedFormat('d M, H:i') }}
                         </span>
                         
-                        <a href="{{ route('peserta.arsip') }}"
+                        <a href="{{ route('peserta.tugas.show-kumpulkan', $deadlineTerdekat) }}"
                             class="inline-block bg-[#FFF0B3] dark:bg-amber-400 hover:bg-[#FFE685] dark:hover:bg-amber-300 text-[#1E293B] font-bold text-xs sm:text-[13px] px-3.5 py-1.5 rounded-lg shadow-2xs transition active:scale-95 cursor-pointer text-center">
                             Kumpulkan
                         </a>
+                        @else
+                        <a href="{{ route('peserta.arsip') }}"
+                            class="inline-block bg-[#FFF0B3] dark:bg-amber-400 hover:bg-[#FFE685] dark:hover:bg-amber-300 text-[#1E293B] font-bold text-xs sm:text-[13px] px-3.5 py-1.5 rounded-lg shadow-2xs transition active:scale-95 cursor-pointer text-center">
+                            Lihat Arsip
+                        </a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -71,11 +84,14 @@
                     <h3 class="font-bold text-base sm:text-lg text-[#1E293B] dark:text-white">
                         List Penugasan:
                     </h3>
+                    <a href="{{ route('peserta.tugas-hari') }}" class="text-xs text-[#FF5B00] font-semibold hover:underline">
+                        Lihat Semua Hari &rarr;
+                    </a>
                 </div>
 
                 <div class="space-y-3">
                     <!-- DAY 1 Card -->
-                    <a href="{{ route('peserta.tugas-list') }}"
+                    <a href="{{ route('peserta.tugas-list', ['hari' => 1]) }}"
                         class="block bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-5 border border-slate-100 dark:border-slate-700/60 shadow-xs hover:border-[#FF5B00]/40 dark:hover:border-orange-500/40 hover:shadow-md transition active:scale-[0.99] group cursor-pointer">
                         <div class="flex items-center justify-between">
                             <span class="font-bold text-base sm:text-lg text-[#1E293B] dark:text-white tracking-wide group-hover:text-[#FF5B00] transition-colors">
@@ -89,17 +105,17 @@
                         <!-- Progress Bar -->
                         <div class="mt-2.5">
                             <div class="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1.5 flex justify-between">
-                                <span>Progres:</span>
-                                <span class="text-emerald-600 dark:text-emerald-400 font-semibold">68%</span>
+                                <span>Progres: ({{ $day1Done }}/{{ $day1Total }})</span>
+                                <span class="text-emerald-600 dark:text-emerald-400 font-semibold">{{ $day1Percent }}%</span>
                             </div>
                             <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                                <div class="h-full bg-[#00A82D] rounded-full transition-all duration-500" style="width: 68%;"></div>
+                                <div class="h-full bg-[#00A82D] rounded-full transition-all duration-500" style="width: {{ $day1Percent }}%;"></div>
                             </div>
                         </div>
                     </a>
 
                     <!-- DAY 2 Card -->
-                    <a href="{{ route('peserta.tugas-list') }}"
+                    <a href="{{ route('peserta.tugas-list', ['hari' => 2]) }}"
                         class="block bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-5 border border-slate-100 dark:border-slate-700/60 shadow-xs hover:border-[#FF5B00]/40 dark:hover:border-orange-500/40 hover:shadow-md transition active:scale-[0.99] group cursor-pointer">
                         <div class="flex items-center justify-between">
                             <span class="font-bold text-base sm:text-lg text-[#1E293B] dark:text-white tracking-wide group-hover:text-[#FF5B00] transition-colors">
@@ -113,11 +129,11 @@
                         <!-- Progress Bar -->
                         <div class="mt-2.5">
                             <div class="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1.5 flex justify-between">
-                                <span>Progres:</span>
-                                <span class="text-emerald-600 dark:text-emerald-400 font-semibold">32%</span>
+                                <span>Progres: ({{ $day2Done }}/{{ $day2Total }})</span>
+                                <span class="text-emerald-600 dark:text-emerald-400 font-semibold">{{ $day2Percent }}%</span>
                             </div>
                             <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                                <div class="h-full bg-[#00A82D] rounded-full transition-all duration-500" style="width: 32%;"></div>
+                                <div class="h-full bg-[#00A82D] rounded-full transition-all duration-500" style="width: {{ $day2Percent }}%;"></div>
                             </div>
                         </div>
                     </a>
@@ -125,7 +141,7 @@
 
                 <!-- Footnote / Note -->
                 <p class="text-xs italic text-slate-400 dark:text-slate-500 mt-2.5 pl-1 font-normal">
-                    *Penugasan day 3 akan muncul segera.
+                    *Kunjungi menu Pilihan Hari untuk mengakses penugasan Day 3 & Day 4.
                 </p>
             </section>
 

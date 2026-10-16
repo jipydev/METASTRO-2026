@@ -60,41 +60,34 @@
 
             <!-- CONTENT -->
             <div class="space-y-4">
-                @php
-                    $days = [
-                        ['day' => 1, 'progress' => 3, 'max' => 5],
-                        ['day' => 2, 'progress' => 2, 'max' => 5],
-                        ['day' => 3, 'progress' => 3, 'max' => 5],
-                        ['day' => 4, 'progress' => 4, 'max' => 5],
-                    ];
-                @endphp
-
-                @foreach($days as $item)
-                <a href="{{ route('peserta.tugas-list') }}" class="block bg-white dark:bg-slate-800/90 rounded-2xl p-5 shadow-xs border border-slate-100 dark:border-slate-700/60 hover:border-[#FF5B00]/40 dark:hover:border-orange-500/40 hover:shadow-md transition active:scale-[0.99] group">
+                @forelse($days as $item)
+                <a href="{{ route('peserta.tugas-list', ['hari' => $item['day']]) }}" class="block bg-white dark:bg-slate-800/90 rounded-2xl p-5 shadow-xs border border-slate-100 dark:border-slate-700/60 hover:border-[#FF5B00]/40 dark:hover:border-orange-500/40 hover:shadow-md transition active:scale-[0.99] group cursor-pointer">
                     <div class="flex items-center justify-between mb-2">
                         <h3 class="font-bold text-base sm:text-lg text-[#1E293B] dark:text-white group-hover:text-[#FF5B00] transition-colors">
                             DAY {{ $item['day'] }}
                         </h3>
-                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:translate-x-1 group-hover:text-[#FF5B00] transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
-                        </svg>
+                        <div class="flex items-center gap-1.5 text-xs font-semibold {{ $item['progress'] >= $item['total'] && $item['total'] > 0 ? 'text-emerald-500' : 'text-slate-400 dark:text-slate-500' }}">
+                            <span>{{ $item['percent'] }}%</span>
+                            <svg class="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:translate-x-1 group-hover:text-[#FF5B00] transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+                            </svg>
+                        </div>
                     </div>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-2 font-medium">Total tugas: {{ $item['progress'] }} / {{ $item['max'] }} selesai</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-2 font-medium">
+                        Total tugas: <span class="font-bold text-[#1E293B] dark:text-white">{{ $item['progress'] }}</span> / {{ $item['total'] }} selesai
+                    </p>
                     
                     <div class="relative w-full">
                         <div class="h-2.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full flex overflow-hidden">
-                            <div class="h-full bg-[#FF5B00] rounded-full transition-all duration-500" style="width: {{ ($item['progress'] / $item['max']) * 100 }}%"></div>
-                        </div>
-                        <div class="flex justify-between mt-1.5 px-1 text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                            <span>1</span>
-                            <span>2</span>
-                            <span>3</span>
-                            <span>4</span>
-                            <span>5</span>
+                            <div class="h-full bg-[#FF5B00] rounded-full transition-all duration-500" style="width: {{ $item['percent'] }}%"></div>
                         </div>
                     </div>
                 </a>
-                @endforeach
+                @empty
+                <div class="text-center py-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Belum ada penugasan hari yang dirilis.</p>
+                </div>
+                @endforelse
             </div>
         </div>
 

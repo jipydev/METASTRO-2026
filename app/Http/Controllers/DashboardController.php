@@ -85,32 +85,6 @@ class DashboardController extends Controller
 
     public function peserta(Request $request): View
     {
-        /** @var User $user */
-        $user = $request->user();
-
-        $kegiatans = collect();
-        try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('kegiatans')) {
-                $kegiatans = Kegiatan::orderBy('tanggal', 'asc')->get();
-            }
-        } catch (\Throwable $e) {
-            $kegiatans = collect();
-        }
-
-        $tugases = collect();
-        try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('tugases')) {
-                $tugases = \App\Models\Tugas::orderBy('tenggat_waktu', 'asc')->get();
-            }
-        } catch (\Throwable $e) {
-            $tugases = collect();
-        }
-
-        return view('dashboard.peserta', [
-            'title' => 'Dashboard',
-            'user' => $user,
-            'kegiatans' => $kegiatans,
-            'tugases' => $tugases,
-        ]);
+        return app(\App\Http\Controllers\PesertaTugasController::class)->dashboard($request);
     }
 }
