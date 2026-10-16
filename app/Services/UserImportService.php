@@ -205,7 +205,7 @@ class UserImportService
             }
         }
 
-        $requiredHeaders = ['nama', 'nim', 'email', 'role'];
+        $requiredHeaders = ['nama', 'nim', 'role'];
         foreach ($requiredHeaders as $req) {
             if (! isset($headerMap[$req])) {
                 return [
