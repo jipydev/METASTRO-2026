@@ -6,7 +6,7 @@
                 {{ __('Manajemen Tugas') }}
             </h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Kelola penugasan peserta Metastro 2026 (Individu, Tim, & Angkatan)
+                Kelola penugasan peserta Metastro 2026 (Individu, Tim, & Angkatan)123567
             </p>
             </div>
         @endcan
