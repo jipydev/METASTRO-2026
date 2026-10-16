@@ -1,6 +1,3 @@
-
-
-
 <x-app-layout :$title>
 <div
     x-data="{
