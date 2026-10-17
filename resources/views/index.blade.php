@@ -284,15 +284,11 @@
                                     <div class="flex items-center gap-2">
                                         <span
                                             class="font-bold text-slate-500 dark:text-slate-400 text-sm tracking-wide">
-                                            ✨ COMING SOON
-                                        </span>
-                                        <span
-                                            class="text-[10px] font-semibold px-2 py-0.5 rounded-full border border-dashed border-slate-300 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-                                            misteri
+                                            COMING SOON
                                         </span>
                                     </div>
                                     <div class="text-[11px] text-slate-400 dark:text-slate-500 italic mt-0.5">
-                                        Agenda keseruan berikutnya sedang dipersiapkan...
+                                        Agenda berikutnya sedang dipersiapkan...
                                     </div>
                                 </div>
                             @endif
