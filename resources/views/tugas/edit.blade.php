@@ -56,7 +56,7 @@
         }
     }" class="py-8 max-w-4xl mx-auto font-poppins">
 
-        <form action="{{ route('dashboard.tugas.update', $tugas['id'] ?? 1) }}" method="POST"
+        <form action="{{ route('dashboard.tugas.update', $tugas['id']) }}" method="POST"
             @submit="isSubmitting = true"
             class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-6 text-xs">
             @csrf
@@ -70,13 +70,31 @@
                     </label>
                     <input type="text" name="judul" required maxlength="255"
                         value="{{ old('judul', $tugas['judul'] ?? '') }}" class="form-control-app w-full">
+                    @error('judul')
+                        <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                <div class="flex items-center w-full gap-4 flex-wrap sm:flex-nowrap">
+                {{-- Jenis Tugas --}}
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                        Jenis Penugasan <span class="text-red-500">*</span>
+                    </label>
+                    <select name="jenis" required class="form-control-app w-full">
+                        <option value="individu" @selected(old('jenis', $tugas['jenis'] ?? '') === 'individu')>Individu (Dikerjakan & dikumpul per peserta)</option>
+                        <option value="tim" @selected(old('jenis', $tugas['jenis'] ?? '') === 'tim')>Tim / Kelompok (Perwakilan)</option>
+                        <option value="angkatan" @selected(old('jenis', $tugas['jenis'] ?? '') === 'angkatan')>Angkatan (Perwakilan)</option>
+                    </select>
+                    @error('jenis')
+                        <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex items-start w-full gap-4 flex-wrap sm:flex-nowrap">
                     {{-- Tenggat Waktu --}}
                     <div>
                         <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                            Tenggat Waktu Pengumpulan (Strict Deadline) <span class="text-red-500">*</span>
+                            Tenggat Waktu Pengumpulan <span class="text-red-500">*</span>
                         </label>
                         @php
                             $formattedDeadline = isset($tugas['tenggat_waktu'])
@@ -86,18 +104,30 @@
                         <input type="datetime-local" name="tenggat_waktu" required
                             value="{{ old('tenggat_waktu', $formattedDeadline) }}"
                             class="form-control-app w-full sm:w-80">
+                        @error('tenggat_waktu')
+                            <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    {{-- Jenis Tugas --}}
+                    {{-- Day Field (Sesuai dengan $days dari $this->dayOptions()) --}}
                     <div class="w-full">
-                        <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                            Jenis Penugasan <span class="text-red-500">*</span>
+                        <label for="day" class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Day
                         </label>
-                        <select name="jenis" required class="form-control-app w-full">
-                            <option value="individu" @selected(old('jenis', $tugas['jenis'] ?? '') === 'individu')>Individu</option>
-                            <option value="tim" @selected(old('jenis', $tugas['jenis'] ?? '') === 'tim')>Tim / Kelompok (Perwakilan)</option>
-                            <option value="angkatan" @selected(old('jenis', $tugas['jenis'] ?? '') === 'angkatan')>Angkatan (Perwakilan)</option>
-                        </select>
+                        <input type="text" id="day" name="day" list="day-options" maxlength="50"
+                            autocomplete="off" value="{{ old('day', $tugas['day'] ?? '') }}" placeholder="Pilih atau ketik, mis. Day 1"
+                            class="form-control-app w-full">
+                        <datalist id="day-options">
+                            @if(isset($days) && is_iterable($days))
+                                @foreach ($days as $d)
+                                    <option value="{{ $d }}"></option>
+                                @endforeach
+                            @endif
+                        </datalist>
+                        <p class="text-[10px] text-slate-400 mt-1">Pilih dari daftar atau ketik Day baru.</p>
+                        @error('day')
+                            <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
@@ -156,7 +186,7 @@
                 </div>
             </div>
 
-            {{-- Action Buttons with Loading Indicator --}}
+            {{-- Action Buttons --}}
             <div class="pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-end gap-3">
                 <a href="{{ route('dashboard.tugas.index') }}"
                     class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold rounded-xl transition">

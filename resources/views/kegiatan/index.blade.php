@@ -41,6 +41,7 @@
             nama: '',
             deskripsi: '',
             jenis: 'rapat',
+            is_published: false,
             tanggal_mulai: '',
             tanggal_selesai: '',
             waktu_mulai: '',
@@ -64,15 +65,12 @@
                 return;
             }
     
-            // Buat objek Date dari tanggal dan waktu mulai kegiatan
             let [jamMulai, menitMulai] = this.form.waktu_mulai.split(':');
             let mulaiDateTime = new Date(this.form.tanggal_mulai);
             mulaiDateTime.setHours(parseInt(jamMulai), parseInt(menitMulai), 0);
     
-            // 1. Kurangi 45 menit untuk Presensi Mulai (Dibuka)
             let bukaOtomatis = new Date(mulaiDateTime.getTime() - (45 * 60000));
     
-            // 2. Presensi Selesai: Samakan dengan Waktu Selesai jika ada, jika kosong default +2 jam dari mulai
             let selesaiDateTime;
             if (this.form.waktu_selesai) {
                 let [jamSelesai, menitSelesai] = this.form.waktu_selesai.split(':');
@@ -100,6 +98,7 @@
                 nama: '',
                 deskripsi: '',
                 jenis: 'rapat',
+                is_published: false,
                 tanggal_mulai: today,
                 tanggal_selesai: today,
                 waktu_mulai: '',
@@ -156,20 +155,18 @@
 
             {{-- Grid Kartu Kegiatan --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                @forelse($kegiatans as $item)
-                    {{-- Di dalam loop @forelse($kegiatans as $item) --}}
+                @forelse($kegiatans as$item)
                     @php
                         $jsonItem = json_encode([
                             'id' => $item->id,
                             'nama' => $item->nama,
                             'deskripsi' => $item->deskripsi ?? '',
                             'jenis' => $item->jenis,
+                            'is_published' => (bool) $item->is_published,
                             'tanggal_mulai' => \Carbon\Carbon::parse($item->tanggal_mulai)->format('Y-m-d'),
                             'tanggal_selesai' => \Carbon\Carbon::parse($item->tanggal_selesai)->format('Y-m-d'),
-                            'waktu_mulai' => $item->waktu_mulai ? substr($item->waktu_mulai, 0, 5) : '',
-                            'waktu_selesai' => $item->waktu_selesai ? substr($item->waktu_selesai, 0, 5) : '',
-                            'tempat' => $item->tempat,
-                            'status_presensi' => $item->status_presensi_aktif ?? 'dijadwalkan', // Diperbaiki dari status_presensi_aktif_aktif
+                            'waktu_mulai' => $item->waktu_mulai ? substr($item->waktu_mulai, 0, 5) : '', 'waktu_selesai' =>$item->waktu_selesai ? substr($item->waktu_selesai, 0, 5) : '', 'tempat' =>$item->tempat,
+                            'status_presensi' => $item->status_presensi_aktif ?? 'dijadwalkan',
                             'presensi_mulai' => $item->presensi_mulai
                                 ? \Carbon\Carbon::parse($item->presensi_mulai)->format('Y-m-d\TH:i')
                                 : '',
@@ -191,10 +188,15 @@
                                 <div>
                                     <h3 class="text-sm font-bold text-gray-900 dark:text-white leading-tight">
                                         {{ $item->nama }}</h3>
-                                    <span
-                                        class="inline-flex mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider {{ $item->jenis === 'pelaksanaan' ? 'bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300' : 'bg-violet-100 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300' }}">
-                                        {{ ucfirst($item->jenis) }}
-                                    </span>
+                                    <div class="flex items-center gap-1.5 mt-1">
+                                        <span
+                                            class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider {{ $item->jenis === 'pelaksanaan' ? 'bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300' : 'bg-violet-100 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300' }}">
+                                            {{ ucfirst($item->jenis) }}
+                                        </span>
+                                        <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider {{ $item->is_published ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' }}">
+                                            {{ $item->is_published ? 'Published' : 'Draft' }}
+                                        </span>
+                                    </div>
                                 </div>
                                 <span
                                     class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0
@@ -335,14 +337,26 @@
                             class="w-full bg-slate-50 dark:bg-slate-700 rounded-xl border-gray-300 dark:border-slate-600 p-2.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
                     </div>
 
-                    <div>
-                        <label class="block font-semibold mb-1 text-gray-700 dark:text-slate-300">Jenis Kegiatan
-                            *</label>
-                        <select name="jenis" x-model="form.jenis" required
-                            class="w-full bg-slate-50 dark:bg-slate-700 rounded-xl border-gray-300 dark:border-slate-600 p-2.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
-                            <option value="rapat">Rapat</option>
-                            <option value="pelaksanaan">Pelaksanaan</option>
-                        </select>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block font-semibold mb-1 text-gray-700 dark:text-slate-300">Jenis Kegiatan
+                                *</label>
+                            <select name="jenis" x-model="form.jenis" required
+                                class="w-full bg-slate-50 dark:bg-slate-700 rounded-xl border-gray-300 dark:border-slate-600 p-2.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="rapat">Rapat</option>
+                                <option value="pelaksanaan">Pelaksanaan</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-gray-700 dark:text-slate-300">Status Publikasi</label>
+                            <div class="flex items-center h-10 px-3 bg-slate-50 dark:bg-slate-700 rounded-xl border border-gray-300 dark:border-slate-600">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="is_published" value="1" x-model="form.is_published" class="sr-only peer">
+                                    <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-600"></div>
+                                    <span class="ml-3 text-xs font-semibold text-gray-700 dark:text-slate-300" x-text="form.is_published ? 'Published (Publik)' : 'Draft (Disembunyikan)'"></span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
                     <div>
@@ -361,7 +375,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
                         <div>
                             <label class="block font-semibold mb-1 text-gray-700 dark:text-slate-300">Tanggal Mulai
                                 *</label>

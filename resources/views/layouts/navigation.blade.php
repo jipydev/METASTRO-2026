@@ -73,15 +73,20 @@
             <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Kegiatan</span>
         </a>
 
-        <a href="{{ route('dashboard.notulensi.index') }}" title="Notulensi"
-            class="{{ $navItem(request()->routeIs('dashboard.notulensi.*')) }}"
-            :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
-            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1" />
-            </svg>
-            <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Notulensi</span>
-        </a>
+        <div class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Notulensi</div>
+        <hr class="border-slate-100 dark:border-slate-700/60 !my-1" x-show="sidebarCollapsed && !sidebarOpen" x-cloak>
+
+        @if (auth()->user()->ispanitia())
+            <a href="{{ route('dashboard.notulensi.index') }}" title="Notulensi"
+                class="{{ $navItem(request()->routeIs('dashboard.notulensi.*')) }}"
+                :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1" />
+                </svg>
+                <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Notulensi</span>
+            </a>
+        @endif
 
         {{-- Group: Presensi --}}
         <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Presensi</p>
@@ -257,12 +262,12 @@
             @if (auth()->user()->canReviewTugas())
                 <a href="{{ route('dashboard.pengumpulan-tugas.index') }}" title="Review Pengumpulan"
                     class="{{ $navItem(request()->routeIs('dashboard.pengumpulan-tugas.*')) }}"
-                :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
-                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 5H7a2 2 0 00-2 2v11a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2m-6 4h6m-6 4h6m-6 4h4" />
-                </svg>
-                <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Review Pengumpulan</span>
+                    :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v11a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2m-6 4h6m-6 4h6m-6 4h4" />
+                    </svg>
+                    <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Review Pengumpulan</span>
                 </a>
             @endif
         @endif

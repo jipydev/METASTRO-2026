@@ -24,6 +24,10 @@ class NotulensiController extends Controller
      */
     public function index(Request $request): View
     {
+        if (!Auth::user()->isPanitia()) {
+            abort(404);
+        }
+
         $notulensis = Notulensi::with(['kegiatan', 'pembuat.divisi'])
             ->when($request->filled('search'), function ($q) use ($request) {
                 $search = $request->string('search')->toString();
@@ -51,6 +55,10 @@ class NotulensiController extends Controller
      */
     public function store(NotulensiRequest $request, FileCompressionService $files): RedirectResponse
     {
+        if (!Auth::user()->isPanitia()) {
+            abort(404);
+        }
+
         /** @var User $user */
         $user = Auth::user();
 
@@ -79,6 +87,10 @@ class NotulensiController extends Controller
      */
     public function update(NotulensiRequest $request, Notulensi $notulensi, FileCompressionService $files): RedirectResponse
     {
+        if (!Auth::user()->isPanitia()) {
+            abort(404);
+        }
+
         $validated = $request->validated();
 
         $data = [
@@ -105,6 +117,11 @@ class NotulensiController extends Controller
      */
     public function destroy(Notulensi $notulensi): RedirectResponse
     {
+
+        if (!Auth::user()->isPanitia()) {
+            abort(404);
+        }
+
         /** @var User $user */
         $user = Auth::user();
 
@@ -126,11 +143,16 @@ class NotulensiController extends Controller
      */
     public function show(Notulensi $notulensi): BinaryFileResponse
     {
+
+        if (!Auth::user()->isPanitia()) {
+            abort(404);
+        }
+
         if (! $notulensi->lampiran) {
             abort(404, 'File lampiran tidak ditemukan.');
         }
 
-        $path = storage_path('app/public/'.$notulensi->lampiran);
+        $path = storage_path('app/public/' . $notulensi->lampiran);
 
         if (! file_exists($path)) {
             abort(404, 'File fisik tidak ditemukan di server.');
@@ -138,7 +160,7 @@ class NotulensiController extends Controller
 
         return response()->file($path, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.basename($path).'"',
+            'Content-Disposition' => 'inline; filename="' . basename($path) . '"',
         ]);
     }
 }

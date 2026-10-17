@@ -33,7 +33,6 @@ class UserImportService
         $headers = [
             'A1' => 'nama',
             'B1' => 'nim',
-            'C1' => 'email',
             'D1' => 'role',
             'E1' => 'password',
             'F1' => 'divisi',
@@ -139,7 +138,6 @@ class UserImportService
         $guide = [
             ['nama', 'Wajib', 'Nama lengkap pengguna.'],
             ['nim', 'Wajib', 'NIM pengguna, harus unik. Format teks.'],
-            ['email', 'Wajib', 'Alamat email aktif, harus unik.'],
             ['role', 'Wajib', 'Pilihan: admin, panitia, peserta.'],
             ['password', 'Opsional', 'Jika kosong, default adalah metastro2026.'],
             ['divisi', 'Opsional', 'Nama divisi untuk panitia/admin (misal: Chiper, Ranger, Archivist, Stakeholder, Guider, Pathfinder, dll).'],
@@ -205,7 +203,7 @@ class UserImportService
             }
         }
 
-        $requiredHeaders = ['nama', 'nim', 'email', 'role'];
+        $requiredHeaders = ['nama', 'nim', 'role'];
         foreach ($requiredHeaders as $req) {
             if (! isset($headerMap[$req])) {
                 return [
@@ -233,16 +231,15 @@ class UserImportService
 
                 $nama = trim((string) ($row[$headerMap['nama']] ?? ''));
                 $nim = trim((string) ($row[$headerMap['nim']] ?? ''));
-                $email = trim((string) ($row[$headerMap['email']] ?? ''));
                 $role = strtolower(trim((string) ($row[$headerMap['role']] ?? '')));
 
                 // Lewati baris kosong total
-                if ($nama === '' && $nim === '' && $email === '') {
+                if ($nama === '' && $nim === '') {
                     continue;
                 }
 
-                if ($nama === '' || $nim === '' || $email === '' || $role === '') {
-                    $errors[] = "Baris {$rowNumber}: Data tidak lengkap (Nama, NIM, Email, dan Role wajib diisi).";
+                if ($nama === '' || $nim === '' || $role === '') {
+                    $errors[] = "Baris {$rowNumber}: Data tidak lengkap (Nama, NIM, dan Role wajib diisi).";
                     $skippedCount++;
 
                     continue;
@@ -258,13 +255,6 @@ class UserImportService
                 // Cek duplikasi NIM atau Email
                 if (User::where('nim', $nim)->exists()) {
                     $errors[] = "Baris {$rowNumber}: Pengguna dengan NIM '{$nim}' sudah terdaftar di sistem.";
-                    $skippedCount++;
-
-                    continue;
-                }
-
-                if (User::where('email', $email)->exists()) {
-                    $errors[] = "Baris {$rowNumber}: Pengguna dengan Email '{$email}' sudah terdaftar di sistem.";
                     $skippedCount++;
 
                     continue;
@@ -317,7 +307,6 @@ class UserImportService
                 $user = User::create([
                     'nama' => $nama,
                     'nim' => $nim,
-                    'email' => $email,
                     'password' => $password,
                     'nomor_hp' => $nomorHp ?: null,
                     'jenis_kelamin' => $jk,
