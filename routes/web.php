@@ -31,7 +31,6 @@ Route::get('/', [HomeController::class, 'index'])->name('landing-page');
 Route::get('/tim', [TimController::class, 'peserta'])->name('tim.index');
 
 Route::middleware(['auth'])->prefix('peserta')->name('peserta.')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'pesertaDashboard'])->name('dashboard');
     Route::get('/tugas-hari', function () {
         return view('peserta.tugas-hari');
     })->name('tugas-hari');
