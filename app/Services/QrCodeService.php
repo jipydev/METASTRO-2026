@@ -13,25 +13,33 @@ use Illuminate\Support\Str;
 class QrCodeService
 {
     /**
+     * Generate unique attendance code for user.
+     */
+    public function generateUniqueCode(): string
+    {
+        do {
+            $code = 'MTR-'.strtoupper(Str::random(4));
+        } while (User::where('kode_unik', $code)->exists());
+
+        return $code;
+    }
+
+    /**
      * Generate QR token and QR code image for a user.
      */
     public function generateForUser(User $user): string
     {
-        if (empty($user->qr_token) || ! $user->qr_updated_at) {
-            $user->update(['qr_token' => Str::uuid()->toString(), 'qr_updated_at' => now()]);
+        $updates = [];
+        if (empty($user->qr_token)) {
+            $updates['qr_token'] = Str::uuid()->toString();
         }
-
-        return $this->generateQrImage($user);
-    }
-
-    /**
-     * Re-generate QR token and QR code image (invalidates old QR).
-     */
-    public function regenerateForUser(User $user): string
-    {
-        $this->deleteQrImage($user);
-
-        $user->update(['qr_token' => Str::uuid()->toString(), 'qr_updated_at' => now()]);
+        if (empty($user->kode_unik)) {
+            $updates['kode_unik'] = $this->generateUniqueCode();
+        }
+        if (! empty($updates) || ! $user->qr_updated_at) {
+            $updates['qr_updated_at'] = now();
+            $user->update($updates);
+        }
 
         return $this->generateQrImage($user);
     }
@@ -44,6 +52,7 @@ class QrCodeService
         $qrData = json_encode([
             'user_id' => $user->id,
             'token' => $user->qr_token,
+            'kode_unik' => $user->kode_unik,
         ]);
 
         $renderer = new ImageRenderer(
@@ -96,6 +105,34 @@ class QrCodeService
     {
         return User::where('qr_token', $token)
             ->where('status', true)
+            ->with(['divisi', 'jabatan'])
+            ->first();
+    }
+
+    /**
+     * Lookup user by unique attendance code or NIM (used for manual entry).
+     */
+    public function lookupByKodeUnik(string $code): ?User
+    {
+        $cleaned = strtoupper(trim($code));
+
+        if (empty($cleaned)) {
+            return null;
+        }
+
+        $variations = [$cleaned];
+        if (! str_starts_with($cleaned, 'MTR-')) {
+            $variations[] = 'MTR-'.$cleaned;
+        }
+        if (str_starts_with($cleaned, 'MTR') && ! str_starts_with($cleaned, 'MTR-')) {
+            $variations[] = 'MTR-'.substr($cleaned, 3);
+        }
+
+        return User::where('status', true)
+            ->where(function ($query) use ($cleaned, $variations) {
+                $query->whereIn('kode_unik', $variations)
+                    ->orWhere('nim', $cleaned);
+            })
             ->with(['divisi', 'jabatan'])
             ->first();
     }

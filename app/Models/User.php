@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\QrCodeService;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -31,6 +32,7 @@ use Spatie\Permission\Traits\HasRoles;
     'divisi_id',
     'jabatan_id',
     'qr_token',
+    'kode_unik',
     'status',
     'must_change_password',
     'is_initial_setup_completed',
@@ -62,6 +64,21 @@ class User extends Authenticatable implements PasskeyUser
             'is_initial_setup_completed' => 'boolean',
             'qr_updated_at' => 'datetime',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
+            if (empty($user->qr_token)) {
+                $user->qr_token = (string) Str::uuid();
+            }
+            if (empty($user->kode_unik)) {
+                $user->kode_unik = app(QrCodeService::class)->generateUniqueCode();
+            }
+            if (empty($user->qr_updated_at)) {
+                $user->qr_updated_at = now();
+            }
+        });
     }
 
     /*

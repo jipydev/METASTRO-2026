@@ -366,8 +366,8 @@ class PresensiController extends Controller
     }
 
     /**
-     * Menampilkan halaman QR Code Absensi milik user yang sedang login
-     * dengan regenerasi otomatis jika token kedaluwarsa atau belum ada.
+     * Menampilkan halaman QR Code Absensi milik user yang sedang login.
+     * Token dan Kode Unik bersifat permanen.
      */
     public function index(QrCodeService $qrService): View
     {
@@ -375,16 +375,10 @@ class PresensiController extends Controller
         $user = Auth::user();
         $user->load(['divisi', 'jabatan']);
 
-        // OTOMATIS GENERATE DI BELAKANG LAYAR
-        // Jika token tidak ada atau bukan dibuat hari ini, buat baru
-        if (! $user->qr_token || ! $user->qr_updated_at?->isToday()) {
-            $user->update([
-                'qr_token' => (string) Str::uuid(),
-                'qr_updated_at' => now(),
-            ]);
-
-            // Generate ulang file fisik
+        // Generate hanya jika belum ada token atau kode unik
+        if (! $user->qr_token || ! $user->kode_unik) {
             $qrService->generateForUser($user);
+            $user->refresh();
         }
 
         $qrUrl = $qrService->getQrUrl($user);
@@ -397,6 +391,7 @@ class PresensiController extends Controller
             'title' => 'QR Absensi Saya',
             'user' => $user,
             'qrUrl' => $qrUrl,
+            'kodeUnik' => $user->kode_unik,
             'qrGeneratedAt' => $user->qr_updated_at,
         ]);
     }

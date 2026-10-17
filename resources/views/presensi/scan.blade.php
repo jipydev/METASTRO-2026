@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id" class="h-full bg-black">
 
 <head>
@@ -61,12 +61,67 @@
             &larr; Dashboard
         </a>
 
-        {{-- Tombol Manual Snapshot --}}
-        <button @click="takeSnapshot()" :disabled="isLoading"
-            class="absolute bottom-10 z-20 px-8 py-3.5 bg-white hover:bg-slate-100 text-slate-900 font-bold text-sm rounded-full shadow-lg active:scale-95 transition flex items-center gap-2 disabled:opacity-60 cursor-pointer">
-            <span x-show="!isLoading">📷 Scan Manual</span>
-            <span x-show="isLoading" class="animate-pulse">⏳ Memproses Data...</span>
-        </button>
+        {{-- Action Buttons: Snapshot & Input Kode Unik --}}
+        <div class="absolute bottom-8 z-20 flex items-center justify-center gap-3 w-full max-w-md px-4">
+            <button @click="takeSnapshot()" :disabled="isLoading"
+                class="flex-1 py-3 px-4 bg-white/90 hover:bg-white text-slate-900 font-bold text-xs sm:text-sm rounded-2xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer backdrop-blur-xs">
+                <span>📷 Snapshot</span>
+            </button>
+
+            <button @click="openManualModal()" :disabled="isLoading"
+                class="flex-1 py-3 px-4 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                <span>Input Kode Unik</span>
+            </button>
+        </div>
+
+        {{-- ============================================================= --}}
+        {{-- MODAL INPUT MANUAL KODE UNIK (LUPA HP / KAMERA ERROR)         --}}
+        {{-- ============================================================= --}}
+        <div x-show="showManualModal" style="display: none;"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+            <div @click.away="closeManualModal()" x-show="showManualModal"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                class="bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl max-w-sm w-full p-6 sm:p-7 text-center relative font-poppins">
+
+                <div
+                    class="w-12 h-12 mx-auto mb-3 bg-brand-500/20 text-brand-400 rounded-2xl flex items-center justify-center border border-brand-500/30">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                    </svg>
+                </div>
+
+                <h3 class="text-base sm:text-lg font-bold text-white mb-1">Presensi Kode Unik</h3>
+                <p class="text-xs text-slate-400 mb-5 leading-relaxed">
+                    Masukkan <strong>Kode Unik</strong> atau <strong>NIM</strong> user yang lupa bawa HP atau rusak.
+                </p>
+
+                <form @submit.prevent="submitManualCode()">
+                    <input type="text" x-model="manualInputCode" x-ref="manualInput"
+                        placeholder="Contoh: MTR-7A3B / NIM"
+                        class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-center text-white font-mono text-base font-bold placeholder-slate-500 focus:outline-hidden focus:border-brand-500 uppercase tracking-widest mb-4 transition"
+                        autofocus />
+
+                    <div class="flex gap-2.5">
+                        <button type="button" @click="closeManualModal()"
+                            class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl transition cursor-pointer">
+                            Batal
+                        </button>
+                        <button type="submit" :disabled="isLoading || !manualInputCode.trim()"
+                            class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold rounded-xl shadow-sm transition disabled:opacity-50 flex justify-center items-center cursor-pointer">
+                            <span x-show="!isLoading">Cari & Presensi</span>
+                            <span x-show="isLoading" class="animate-pulse">Mencari...</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
         {{-- ============================================================= --}}
         {{-- MODAL POPUP HASIL SCAN QR                                     --}}
@@ -85,8 +140,24 @@
                 </div>
 
                 {{-- Detail Identitas --}}
-                <p class="text-[11px] font-mono text-slate-400 font-semibold tracking-wider uppercase mb-0.5"
-                    x-text="'NIM: ' + scanData.nim"></p>
+                <div class="flex flex-col items-center justify-center gap-1.5 mb-2">
+                    <template x-if="inputSource === 'manual'">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-full text-[10px] font-semibold tracking-wide">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                            Input Manual (Kode Unik)
+                        </span>
+                    </template>
+                    <div class="flex items-center justify-center gap-2">
+                        <p class="text-[11px] font-mono text-slate-400 font-semibold tracking-wider uppercase"
+                            x-text="'NIM: ' + scanData.nim"></p>
+                        <template x-if="scanData.kode_unik">
+                            <span
+                                class="px-2 py-0.5 bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-md text-[10px] font-mono font-bold"
+                                x-text="scanData.kode_unik"></span>
+                        </template>
+                    </div>
+                </div>
+
                 <h3 class="text-lg font-bold text-white mb-1 truncate" x-text="scanData.nama"></h3>
                 <p class="text-xs font-medium text-slate-400 mb-6 truncate" x-text="scanData.divisi"></p>
 
@@ -113,6 +184,9 @@
         function scannerApp() {
             return {
                 showPopup: false,
+                showManualModal: false,
+                manualInputCode: '',
+                inputSource: 'scan',
                 isLoading: false,
                 isSaving: false,
                 isScanning: false,
@@ -122,6 +196,7 @@
                     id: '',
                     nama: '',
                     nim: '',
+                    kode_unik: '',
                     divisi: '',
                     photo: ''
                 },
@@ -133,6 +208,36 @@
 
                 hiddenCanvas: null,
                 hiddenContext: null,
+
+                openManualModal() {
+                    this.isScanning = false;
+                    this.inputSource = 'manual';
+                    this.showManualModal = true;
+                    this.manualInputCode = '';
+                    this.$nextTick(() => {
+                        if (this.$refs.manualInput) {
+                            this.$refs.manualInput.focus();
+                        }
+                    });
+                },
+
+                closeManualModal() {
+                    this.showManualModal = false;
+                    this.manualInputCode = '';
+                    this.inputSource = 'scan';
+                    this.resumeScanning();
+                },
+
+                async submitManualCode() {
+                    const code = this.manualInputCode.trim();
+                    if (!code) return;
+
+                    this.inputSource = 'manual';
+                    await this.fetchDataFromBackend(null, code);
+                    if (this.scanData.id) {
+                        this.showManualModal = false;
+                    }
+                },
 
                 initScanner() {
                     this.hiddenCanvas = document.createElement('canvas');
@@ -234,13 +339,18 @@
                         return;
                     }
 
+                    this.inputSource = 'scan';
                     this.fetchDataFromBackend(qrPayload.token);
                 },
 
-                async fetchDataFromBackend(token) {
+                async fetchDataFromBackend(token = null, kodeUnik = null) {
                     this.isLoading = true;
 
                     try {
+                        const payload = {};
+                        if (token) payload.token = token;
+                        if (kodeUnik) payload.kode_unik = kodeUnik;
+
                         const response = await fetch("{{ route('dashboard.api.scan.lookup') }}", {
                             method: 'POST',
                             headers: {
@@ -248,16 +358,16 @@
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                                 'Accept': 'application/json',
                             },
-                            body: JSON.stringify({
-                                token: token
-                            })
+                            body: JSON.stringify(payload)
                         });
 
                         const result = await response.json();
 
                         if (!response.ok || !result.success) {
                             this.showToast(result.message || "Data pengguna tidak ditemukan.", "error");
-                            this.resumeScanning();
+                            if (!this.showManualModal) {
+                                this.resumeScanning();
+                            }
                             return;
                         }
 
@@ -265,6 +375,7 @@
                             id: result.data.id,
                             nama: result.data.nama,
                             nim: result.data.nim,
+                            kode_unik: result.data.kode_unik,
                             divisi: result.data.divisi,
                             photo: result.data.photo
                         };
@@ -272,7 +383,9 @@
                         this.showPopup = true;
                     } catch (error) {
                         this.showToast("Gagal menghubungi server. Periksa koneksi internet.", "error");
-                        this.resumeScanning();
+                        if (!this.showManualModal) {
+                            this.resumeScanning();
+                        }
                     } finally {
                         this.isLoading = false;
                     }
@@ -297,7 +410,8 @@
                             },
                             body: JSON.stringify({
                                 user_id: this.scanData.id,
-                                kegiatan_id: this.kegiatanId
+                                kegiatan_id: this.kegiatanId,
+                                sumber: this.inputSource || 'scan'
                             })
                         });
 
@@ -322,6 +436,7 @@
                         id: '',
                         nama: '',
                         nim: '',
+                        kode_unik: '',
                         divisi: '',
                         photo: ''
                     };

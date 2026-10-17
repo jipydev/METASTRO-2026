@@ -7,11 +7,13 @@ use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\Divisi;
 use App\Models\Jabatan;
+use App\Models\PengumpulanTugas;
 use App\Models\Tim;
 use App\Models\User;
 use App\Services\FileCompressionService;
 use App\Services\QrCodeService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -33,13 +35,14 @@ class UserController extends Controller
     {
         $query = User::with(['divisi', 'jabatan']);
 
-        // Filter search nama / NIM
+        // Filter search nama / NIM / Email / Kode Unik
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('nama', 'like', "%{$search}%")
                     ->orWhere('nim', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('kode_unik', 'like', "%{$search}%");
             });
         }
 
@@ -153,7 +156,7 @@ class UserController extends Controller
             }
         } elseif (strtolower($validated['role']) === 'peserta') {
             $divisiId = null;
-        } 
+        }
 
         $fotoPath = $request->hasFile('foto')
             ? $files->store($request->file('foto'), 'foto_profil')
@@ -173,6 +176,7 @@ class UserController extends Controller
             'status' => true,
             'is_initial_setup_completed' => false,
             'qr_token' => (string) Str::uuid(),
+            'kode_unik' => app(QrCodeService::class)->generateUniqueCode(),
             'qr_updated_at' => now(),
         ]);
 
@@ -269,16 +273,16 @@ class UserController extends Controller
     public function resetPassword(User $user)
     {
         $newPassword = 'metastro2026';
-        
+
         $user->update([
             'password' => Hash::make($newPassword),
             'must_change_password' => true,
         ]);
-        
-        \Illuminate\Support\Facades\DB::table('audit_logs')->insert([
+
+        DB::table('audit_logs')->insert([
             'user_id' => auth()->id(),
             'action_type' => 'regenerate_password',
-            'description' => 'Mereset password pengguna: ' . $user->nama,
+            'description' => 'Mereset password pengguna: '.$user->nama,
             'target_id' => $user->id,
             'ip_address' => request()->ip(),
             'created_at' => now(),
@@ -297,17 +301,17 @@ class UserController extends Controller
             return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
-        \Illuminate\Support\Facades\DB::transaction(function() use ($user) {
-            \App\Models\PengumpulanTugas::where('user_id', $user->id)
+        DB::transaction(function () use ($user) {
+            PengumpulanTugas::where('user_id', $user->id)
                 ->update([
                     'original_participant_name' => $user->nama,
                     'user_id' => null,
                 ]);
-            
-            \Illuminate\Support\Facades\DB::table('audit_logs')->insert([
+
+            DB::table('audit_logs')->insert([
                 'user_id' => auth()->id(),
                 'action_type' => 'hard_delete_user',
-                'description' => 'Menghapus permanen pengguna: ' . $user->nama,
+                'description' => 'Menghapus permanen pengguna: '.$user->nama,
                 'target_id' => $user->id,
                 'ip_address' => request()->ip(),
                 'created_at' => now(),
@@ -322,27 +326,5 @@ class UserController extends Controller
         });
 
         return back()->with('success', 'Pengguna berhasil dihapus secara permanen. Data tugas terkait tetap dipertahankan.');
-    }
-
-    /**
-     * Reset QR Code untuk 1 user
-     */
-    public function resetQr(User $user, QrCodeService $qrService)
-    {
-        $qrService->regenerateForUser($user);
-
-        return back()->with('success', "QR Code untuk {$user->nama} berhasil di-generate ulang.");
-    }
-
-    /**
-     * Reset QR Code untuk semua user sekaligus
-     */
-    public function resetAllQr(QrCodeService $qrService)
-    {
-        User::query()->each(function (User $user) use ($qrService) {
-            $qrService->regenerateForUser($user);
-        });
-
-        return back()->with('success', 'Seluruh token QR Code pengguna berhasil di-generate ulang.');
     }
 }

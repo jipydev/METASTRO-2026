@@ -22,11 +22,14 @@ class RoleSeeder extends Seeder
             'admin',
             'panitia',
             'peserta',
+            'archivist',
+            'pathfinder',
+            'guider',
         ];
 
         foreach ($roles as $roleName) {
             Role::firstOrCreate([
-                'name'       => $roleName,
+                'name' => $roleName,
                 'guard_name' => 'web',
             ]);
         }

@@ -1,4 +1,4 @@
-﻿<x-app-layout :$title>
+<x-app-layout :$title>
     {{-- Notifikasi SweetAlert --}}
     @if (session('success') || session('error'))
         <script>
@@ -26,19 +26,13 @@
 
     <div x-data="{
         openDeleteModal: false,
-        openResetQrModal: false,
-        openRegenAllModal: false,
         openViewQrModal: false,
     
-        selectedUser: { id: null, nama: '', nim: '', email: '', role_type: 'peserta', divisi_id: '', jabatan_id: '', qr_token: '', status: true },
+        selectedUser: { id: null, nama: '', nim: '', email: '', role_type: 'peserta', divisi_id: '', jabatan_id: '', qr_token: '', kode_unik: '', status: true },
     
         initDelete(user) {
             this.selectedUser = { ...user };
             this.openDeleteModal = true;
-        },
-        initResetQr(user) {
-            this.selectedUser = { ...user };
-            this.openResetQrModal = true;
         },
         initViewQr(user) {
             this.selectedUser = { ...user };
@@ -55,22 +49,11 @@
                         Kelola Pengguna & QR Code
                     </h1>
                     <p class="page-subtitle">
-                        Monitoring data pengguna dan pengelolaan token QR presensi.
+                        Monitoring data pengguna dan kode QR presensi.
                     </p>
                 </div>
 
                 <div class="flex items-center gap-2.5">
-                    {{-- Re-generate Semua QR --}}
-                    <button type="button" @click="openRegenAllModal = true"
-                        class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-                            </path>
-                        </svg>
-                        <span>Re-generate Semua QR</span>
-                    </button>
-
                     {{-- Tambah Pengguna --}}
                     <a href="{{ route('admin.users.create') }}"
                         class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer">
@@ -141,8 +124,8 @@
                                 <th class="px-5 py-3.5">NIM</th>
                                 <th class="px-5 py-3.5">Role</th>
                                 <th class="px-5 py-3.5">Divisi / Jabatan</th>
-                                <th class="px-5 py-3.5 text-center">Status Token QR</th>
-                                <th class="px-5 py-3.5">Terakhir Update QR</th>
+                                <th class="px-5 py-3.5 text-center">Kode Unik</th>
+                                <th class="px-5 py-3.5 text-center">Status QR</th>
                                 <th class="px-5 py-3.5 text-right">Aksi</th>
                             </tr>
                         </thead>
@@ -196,13 +179,24 @@
                                         @endif
                                     </td>
 
+                                    {{-- Kolom Kode Unik --}}
+                                    <td class="px-5 py-3.5 text-center">
+                                        @if ($user->kode_unik)
+                                            <span
+                                                class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-brand-50 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300 border border-brand-200/60 dark:border-brand-800/40">
+                                                {{ $user->kode_unik }}
+                                            </span>
+                                        @else
+                                            <span class="text-slate-400 font-mono text-[11px]">—</span>
+                                        @endif
+                                    </td>
+
                                     {{-- Kolom Status Token QR --}}
                                     <td class="px-5 py-3.5 text-center">
                                         @if ($user->qr_token)
                                             <span
                                                 class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40">
-                                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Siap
-                                                Dipakai
+                                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Aktif
                                             </span>
                                         @else
                                             <span
@@ -212,38 +206,20 @@
                                         @endif
                                     </td>
 
-                                    <td class="px-5 py-3.5 text-slate-500 dark:text-slate-400 text-[11px]">
-                                        {{ $user->qr_updated_at ? $user->qr_updated_at->diffForHumans() : '-' }}
-                                    </td>
-
                                     {{-- Kolom Aksi Icon Buttons --}}
                                     <td class="px-5 py-3.5 text-right">
                                         <div class="flex items-center justify-end gap-1">
 
                                             {{-- 1. Tombol Lihat QR --}}
                                             <button type="button"
-                                                @click="initViewQr({{ json_encode(['id' => $user->id, 'nama' => $user->nama, 'nim' => $user->nim, 'qr_token' => $user->qr_token, 'divisi' => $user->formatted_divisi_jabatan, 'divisi_badge' => $user->divisi?->badgeClasses() ?? '']) }})"
+                                                @click="initViewQr({{ json_encode(['id' => $user->id, 'nama' => $user->nama, 'nim' => $user->nim, 'qr_token' => $user->qr_token, 'kode_unik' => $user->kode_unik, 'divisi' => $user->formatted_divisi_jabatan, 'divisi_badge' => $user->divisi?->badgeClasses() ?? '']) }})"
                                                 class="p-1.5 rounded-lg text-slate-500 hover:text-brand-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-indigo-950/60 transition cursor-pointer"
-                                                title="Lihat QR Code">
+                                                title="Lihat QR Code & Kode Unik">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2"
                                                         d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                                                </svg>
-                                            </button>
-
-                                            {{-- 2. Tombol Reset QR --}}
-                                            <button type="button"
-                                                @click="initResetQr({{ json_encode(['id' => $user->id, 'nama' => $user->nama]) }})"
-                                                class="p-1.5 rounded-lg text-slate-500 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/60 transition cursor-pointer"
-                                                title="Re-generate QR Token">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-                                                    </path>
                                                 </svg>
                                             </button>
 
@@ -355,6 +331,17 @@
                         </template>
                     </div>
 
+                    {{-- Kode Unik Box --}}
+                    <template x-if="selectedUser.kode_unik">
+                        <div class="mt-2 text-center">
+                            <span class="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold mb-1">
+                                Kode Unik Absensi
+                            </span>
+                            <span class="font-mono text-base font-bold text-brand-600 dark:text-brand-400 bg-slate-100 dark:bg-slate-700/80 px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-600 inline-block select-all"
+                                x-text="selectedUser.kode_unik"></span>
+                        </div>
+                    </template>
+
                     <div class="mt-5 flex gap-2">
                         <button type="button" @click="openViewQrModal = false"
                             class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl transition text-[11px]">
@@ -362,73 +349,6 @@
                         </button>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        {{-- MODAL RESET SINGLE QR --}}
-        <div x-show="openResetQrModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto"
-            role="dialog" aria-modal="true">
-            <div class="flex items-center justify-center min-h-screen px-4">
-                <div x-show="openResetQrModal" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm"
-                    @click="openResetQrModal = false"></div>
-
-                <form :action="'{{ url('admin/users') }}/' + selectedUser.id + '/reset-qr'" method="POST"
-                    x-show="openResetQrModal" x-transition
-                    class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-sm shadow-xl text-xs">
-                    @csrf
-                    @method('PATCH')
-                    <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Reset Token QR?</h3>
-                    <p class="text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
-                        Token QR untuk pengguna <strong class="text-slate-900 dark:text-white"
-                            x-text="selectedUser.nama"></strong> akan diperbarui. QR code lama tidak akan berlaku lagi
-                        untuk presensi.
-                    </p>
-
-                    <div class="flex justify-end gap-2">
-                        <button type="button" @click="openResetQrModal = false"
-                            class="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl transition">
-                            Batal
-                        </button>
-                        <button type="submit"
-                            class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl shadow-sm transition">
-                            Ya, Reset QR
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        {{-- MODAL REGENERATE SEMUA QR --}}
-        <div x-show="openRegenAllModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto"
-            role="dialog" aria-modal="true">
-            <div class="flex items-center justify-center min-h-screen px-4">
-                <div x-show="openRegenAllModal" x-transition.opacity
-                    class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="openRegenAllModal = false"></div>
-
-                <form action="{{ route('admin.users.reset-all-qr') }}" method="POST" x-show="openRegenAllModal"
-                    x-transition
-                    class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-md shadow-xl text-xs">
-                    @csrf
-                    @method('PATCH')
-                    <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Re-generate Semua QR Token?
-                    </h3>
-                    <p class="text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
-                        Tindakan ini akan membuat token QR baru untuk <strong>seluruh pengguna</strong> sekaligus.
-                        Seluruh QR Code lama yang sudah diunduh atau dicetak panitia/peserta tidak akan bisa digunakan
-                        lagi.
-                    </p>
-
-                    <div class="flex justify-end gap-2">
-                        <button type="button" @click="openRegenAllModal = false"
-                            class="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl transition">
-                            Batal
-                        </button>
-                        <button type="submit"
-                            class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl shadow-sm transition">
-                            Ya, Re-generate Semua
-                        </button>
-                    </div>
-                </form>
             </div>
         </div>
 

@@ -158,8 +158,6 @@ Route::prefix('/dashboard')->name('dashboard.')->middleware(['auth', 'verified',
 Route::prefix('/dashboard')->name('admin.')->middleware(['auth', 'verified', 'initial.setup', 'can:admin-access'])->group(function () {
     Route::resource('users', UserController::class)->except(['show'])->names('users');
     Route::patch('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
-    Route::patch('users/{user}/reset-qr', [UserController::class, 'resetQr'])->name('users.reset-qr');
-    Route::patch('users-reset-all-qr', [UserController::class, 'resetAllQr'])->name('users.reset-all-qr');
 });
 
 require __DIR__.'/auth.php';

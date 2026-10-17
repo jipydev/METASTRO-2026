@@ -20,7 +20,7 @@ class ScanController extends Controller
     public function __construct(private AttendanceRecorder $recorder) {}
 
     /**
-     * Lookup data user dari QR token (dipanggil saat kamera mendeteksi barcode).
+     * Lookup data user dari QR token atau kode unik (dipanggil saat kamera mendeteksi barcode atau input manual).
      */
     public function lookup(Request $request, QrCodeService $qrService): JsonResponse
     {
@@ -31,17 +31,32 @@ class ScanController extends Controller
             ], 403);
         }
 
-        $request->validate(
-            ['token' => ['required', 'string']],
-            ['token.required' => 'QR Code tidak terbaca. Coba pindai ulang.']
-        );
+        $token = $request->input('token');
+        $kodeUnik = $request->input('kode_unik') ?? $request->input('code');
 
-        $user = $qrService->lookupByToken($request->token);
+        if (empty($token) && empty($kodeUnik)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Token QR atau Kode Unik wajib diisi.',
+            ], 422);
+        }
+
+        $user = null;
+        if (! empty($token)) {
+            $user = $qrService->lookupByToken($token);
+            if (! $user) {
+                $user = $qrService->lookupByKodeUnik($token);
+            }
+        }
+
+        if (! $user && ! empty($kodeUnik)) {
+            $user = $qrService->lookupByKodeUnik($kodeUnik);
+        }
 
         if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'QR Code tidak valid atau akun pengguna dinonaktifkan.',
+                'message' => 'Pengguna tidak ditemukan atau QR Code / Kode Unik tidak valid.',
             ], 404);
         }
 
@@ -51,6 +66,7 @@ class ScanController extends Controller
                 'id' => $user->id,
                 'nama' => $user->nama,
                 'nim' => $user->nim,
+                'kode_unik' => $user->kode_unik,
                 'divisi' => $user->divisi instanceof Divisi ? $user->divisi->nama : 'Tanpa Divisi',
                 'photo' => $user->foto
                     ? asset('storage/'.$user->foto)
@@ -75,6 +91,7 @@ class ScanController extends Controller
             [
                 'user_id' => ['required', 'integer', 'exists:users,id'],
                 'kegiatan_id' => ['nullable', 'integer', 'exists:kegiatans,id'],
+                'sumber' => ['nullable', 'string', 'in:scan,manual'],
             ],
             [
                 'user_id.required' => 'Pengguna tidak ditemukan.',
@@ -127,9 +144,10 @@ class ScanController extends Controller
             }
 
             $petugas = Auth::user();
+            $sumber = $request->input('sumber', 'scan');
 
             try {
-                $presensi = $this->recorder->record($peserta, $kegiatan, $petugas, 'scan', $waktuSekarang);
+                $presensi = $this->recorder->record($peserta, $kegiatan, $petugas, $sumber, $waktuSekarang);
             } catch (AttendanceAlreadyRecordedException $e) {
                 return response()->json([
                     'success' => false,
