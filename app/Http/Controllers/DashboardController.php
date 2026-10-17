@@ -106,11 +106,30 @@ class DashboardController extends Controller
             $tugases = collect();
         }
 
+        $pengumumanTerbaru = null;
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('pengumumans')) {
+                $pengumumanTerbaru = Pengumuman::with('pembuat.divisi')
+                    ->visibleTo($user)
+                    ->latest('tanggal_publish')
+                    ->latest('created_at')
+                    ->first();
+            }
+        } catch (\Throwable $e) {
+            $pengumumanTerbaru = null;
+        }
+
         return view('dashboard.peserta', [
             'title' => 'Dashboard',
             'user' => $user,
             'kegiatans' => $kegiatans,
             'tugases' => $tugases,
+            'pengumumanTerbaru' => $pengumumanTerbaru,
         ]);
+    }
+
+    public function pesertaDashboard(Request $request): View
+    {
+        return $this->peserta($request);
     }
 }
