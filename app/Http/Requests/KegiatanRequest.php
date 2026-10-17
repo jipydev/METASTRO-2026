@@ -87,6 +87,7 @@ class KegiatanRequest extends FormRequest
             'presensi_mulai.date' => 'Waktu buka presensi tidak valid.',
             'presensi_selesai.date' => 'Waktu tutup presensi tidak valid.',
             'presensi_selesai.after_or_equal' => 'Waktu tutup presensi harus sama dengan atau setelah waktu buka.',
+            'is_published.boolean' => 'Status publikasi tidak valid.',
         ];
     }
 }

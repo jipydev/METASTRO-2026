@@ -48,8 +48,8 @@ class KegiatanController extends Controller
         $validated = $request->validated();
         $validated['tanggal'] = $validated['tanggal_mulai'];
 
-        // Menangani input checkbox is_published (bernilai 1/true jika dicentang, 0/false jika tidak)
-        $validated['is_published'] = $request->has('is_published') ? true : false;
+        // Menggunakan method bawaan Laravel untuk membaca nilai checkbox dengan aman (true/false)
+        $validated['is_published'] = $request->boolean('is_published');
 
         // Format ulang datetime-local agar sesuai dengan format DATETIME MySQL
         if (! empty($validated['presensi_mulai'])) {
@@ -74,8 +74,8 @@ class KegiatanController extends Controller
         $validated = $request->validated();
         $validated['tanggal'] = $validated['tanggal_mulai'];
 
-        // Menangani input checkbox is_published pada form edit
-        $validated['is_published'] = $request->has('is_published') ? true : false;
+        // Menggunakan method bawaan Laravel untuk membaca nilai checkbox dengan aman (true/false)
+        $validated['is_published'] = $request->boolean('is_published');
 
         // Format ulang datetime-local agar sesuai dengan format DATETIME MySQL
         if (! empty($validated['presensi_mulai'])) {
