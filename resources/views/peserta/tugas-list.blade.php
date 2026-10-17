@@ -26,7 +26,7 @@
         .font-oswald-header { font-family: 'Oswald', sans-serif; letter-spacing: 0.12em; }
     </style>
 </head>
-<body class="font-poppins antialiased bg-slate-50/60 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-dvh transition-colors duration-300"
+<body class="font-poppins antialiased bg-slate-50/60 dark:bg-orange-500 text-slate-800 dark:text-slate-100 min-h-dvh transition-colors duration-300"
     x-data="{
         tab: 'semua',
         mobileMenu: false,
@@ -110,7 +110,7 @@
                         Setiap regu wajib membuat rekaman video yel-yel kekompakan regu masing-masing berdurasi maksimal 2 menit dengan semangat tinggi.
                     </p>
                     <div class="flex items-center justify-end pt-2 border-t border-slate-100 dark:border-slate-700/50">
-                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="inline-flex items-center gap-1.5 bg-slate-900 dark:bg-amber-400 hover:bg-slate-800 dark:hover:bg-amber-300 text-white dark:text-slate-950 font-semibold text-xs px-5 py-2 rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer">
+                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="inline-flex items-center gap-1.5 bg-orange-500 dark:bg-amber-400 hover:bg-slate-800 dark:hover:bg-amber-300 text-white dark:text-slate-950 font-semibold text-xs px-5 py-2 rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer">
                             Kumpulkan
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                         </a>
@@ -127,7 +127,7 @@
                         Membuat identitas bendera regu berukuran 60x40 cm dengan tiang bambu/kayu yang rapi dan kuat untuk dibawa selama kegiatan.
                     </p>
                     <div class="flex items-center justify-end pt-2 border-t border-slate-100 dark:border-slate-700/50">
-                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="inline-flex items-center gap-1.5 bg-slate-900 dark:bg-amber-400 hover:bg-slate-800 dark:hover:bg-amber-300 text-white dark:text-slate-950 font-semibold text-xs px-5 py-2 rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer">
+                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="inline-flex items-center gap-1.5 bg-orange-500 dark:bg-amber-400 hover:bg-slate-800 dark:hover:bg-amber-300 text-white dark:text-slate-950 font-semibold text-xs px-5 py-2 rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer">
                             Kumpulkan
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                         </a>
@@ -144,7 +144,7 @@
                         Video kolaboratif seluruh angkatan menampilkan jargon kebersamaan dan kekeluargaan METASTRO 2026.
                     </p>
                     <div class="flex items-center justify-end pt-2 border-t border-slate-100 dark:border-slate-700/50">
-                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="inline-flex items-center gap-1.5 bg-slate-900 dark:bg-amber-400 hover:bg-slate-800 dark:hover:bg-amber-300 text-white dark:text-slate-950 font-semibold text-xs px-5 py-2 rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer">
+                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="inline-flex items-center gap-1.5 bg-orange-500 dark:bg-amber-400 hover:bg-slate-800 dark:hover:bg-amber-300 text-white dark:text-slate-950 font-semibold text-xs px-5 py-2 rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer">
                             Kumpulkan
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                         </a>
@@ -161,7 +161,7 @@
                         Mengembangkan jejaring profesional dengan menambahkan koneksi LinkedIn minimal 150 koneksi aktif dan follow page himpunan.
                     </p>
                     <div class="flex items-center justify-end pt-2 border-t border-slate-100 dark:border-slate-700/50">
-                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="inline-flex items-center gap-1.5 bg-slate-900 dark:bg-amber-400 hover:bg-slate-800 dark:hover:bg-amber-300 text-white dark:text-slate-950 font-semibold text-xs px-5 py-2 rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer">
+                        <a href="{{ route('peserta.tugas-kumpulkan') }}" class="inline-flex items-center gap-1.5 bg-orange-500 dark:bg-amber-400 hover:bg-slate-800 dark:hover:bg-amber-300 text-white dark:text-slate-950 font-semibold text-xs px-5 py-2 rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer">
                             Kumpulkan
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                         </a>
