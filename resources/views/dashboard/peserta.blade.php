@@ -28,7 +28,8 @@
                 localStorage.setItem('theme', 'light');
             }
         }
-    }" class="bg-slate-50/50 dark:bg-slate-900 min-h-screen pb-12 font-poppins transition-colors duration-300">
+    }"
+        class="bg-slate-50/50 dark:bg-slate-900 min-h-screen pb-12 font-poppins transition-colors duration-300">
 
         <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
 
@@ -197,67 +198,77 @@
 
                 <!-- 3. LIST PENUGASAN SECTION -->
                 <section>
-    <div class="flex items-center gap-2 mb-4 pl-1">
-        <div class="w-1.5 h-5 bg-[#FF5B00] rounded-full"></div>
-        <h3 class="font-bold text-lg text-slate-800 dark:text-white">
-            List Penugasan
-        </h3>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <!-- DAY 1 Card -->
-        <a href="{{ route('peserta.tugas-list', ['day' => 'DAY 1']) }}"
-            class="block bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200/60 dark:border-slate-700/60 shadow-sm hover:shadow-md hover:border-orange-300 dark:hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 group cursor-pointer">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-[#FF5B00] group-hover:scale-110 transition-transform">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
+                    <div class="flex items-center gap-2 mb-4 pl-1">
+                        <div class="w-1.5 h-5 bg-[#FF5B00] rounded-full"></div>
+                        <h3 class="font-bold text-lg text-slate-800 dark:text-white">
+                            List Penugasan
+                        </h3>
                     </div>
-                    <span class="font-bold text-lg text-slate-800 dark:text-white tracking-wide group-hover:text-[#FF5B00] transition-colors">
-                        DAY 1
-                    </span>
-                </div>
-                <div class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-700 flex items-center justify-center group-hover:bg-[#FF5B00] group-hover:text-white text-slate-400 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </div>
-            </div>
 
-            <div class="w-full h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                <div class="h-full bg-emerald-500 rounded-full" style="width: 68%;"></div>
-            </div>
-        </a>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        @forelse ($days ?? [] as $index => $day)
+                            @php
+                                // Contoh kalkulasi progres dinamis/dummy per Day
+                                $dummyProgress = [68, 32, 50, 10, 80][$index % 5] ?? 50;
+                                $isPassed = $dummyProgress >= 50;
+                                $bgClass = $isPassed ? 'bg-emerald-500' : 'bg-amber-400';
+                                $textClass = $isPassed
+                                    ? 'text-emerald-600 dark:text-emerald-400'
+                                    : 'text-amber-500 dark:text-amber-400';
+                            @endphp
 
-        <!-- DAY 2 Card -->
-        <a href="{{ route('peserta.tugas-list', ['day' => 'DAY 2']) }}"
-            class="block bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200/60 dark:border-slate-700/60 shadow-sm hover:shadow-md hover:border-orange-300 dark:hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 group cursor-pointer">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-[#FF5B00] group-hover:scale-110 transition-transform">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
+                            <!-- Card Day Dinamis -->
+                            <a href="{{ route('peserta.tugas-list', ['day' => $day]) }}"
+                                class="block bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200/60 dark:border-slate-700/60 shadow-sm hover:shadow-md hover:border-orange-300 dark:hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 group cursor-pointer">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-[#FF5B00] group-hover:scale-110 transition-transform">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                        <span
+                                            class="font-bold text-lg text-slate-800 dark:text-white tracking-wide group-hover:text-[#FF5B00] transition-colors uppercase">
+                                            {{ $day }}
+                                        </span>
+                                    </div>
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-700 flex items-center justify-center group-hover:bg-[#FF5B00] group-hover:text-white text-slate-400 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Progress Bar -->
+                                <div>
+                                    <div
+                                        class="text-xs text-slate-500 dark:text-slate-400 font-medium mb-2 flex justify-between items-end">
+                                        <span>Progres Pengerjaan</span>
+                                        <span
+                                            class="{{ $textClass }} font-bold text-sm">{{ $dummyProgress }}%</span>
+                                    </div>
+                                    <div
+                                        class="w-full h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full {{ $bgClass }} rounded-full transition-all duration-1000 ease-out"
+                                            style="width: {{ $dummyProgress }}%;"></div>
+                                    </div>
+                                </div>
+                            </a>
+                        @empty
+                            <div
+                                class="col-span-full py-8 text-center bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 text-slate-400 text-xs">
+                                Belum ada penugasan yang tersedia saat ini.
+                            </div>
+                        @endforelse
                     </div>
-                    <span class="font-bold text-lg text-slate-800 dark:text-white tracking-wide group-hover:text-[#FF5B00] transition-colors">
-                        DAY 2
-                    </span>
-                </div>
-                <div class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-700 flex items-center justify-center group-hover:bg-[#FF5B00] group-hover:text-white text-slate-400 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="w-full h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                <div class="h-full bg-amber-400 rounded-full" style="width: 32%;"></div>
-            </div>
-        </a>
-    </div>
-</section>
+                </section>
 
                 <!-- 4. TIMELINE SECTION -->
                 <section>
@@ -279,7 +290,8 @@
                                     class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-white dark:bg-slate-800 border-4 border-[#FF5B00] group-hover:scale-125 transition-transform shadow-[0_0_10px_rgba(255,91,0,0.4)]">
                                 </div>
                                 <div class="bg-orange-50 dark:bg-slate-700/50 inline-block px-3 py-1 rounded-lg mb-1">
-                                    <h4 class="font-bold text-sm sm:text-base text-[#FF5B00] dark:text-orange-400">DAY 1
+                                    <h4 class="font-bold text-sm sm:text-base text-[#FF5B00] dark:text-orange-400">DAY
+                                        1
                                     </h4>
                                 </div>
                                 <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium">18
@@ -350,8 +362,8 @@
                                         <span x-text="activeDay">DAY 1</span>
                                     </span>
                                     <svg class="w-4 h-4 text-slate-400 transition-transform duration-300"
-                                        :class="dayDropdownOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
+                                        :class="dayDropdownOpen ? 'rotate-180' : ''" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M19 9l-7 7-7-7" />
                                     </svg>
@@ -364,7 +376,8 @@
                                     <template x-for="day in ['DAY 1', 'DAY 2', 'DAY 3']">
                                         <button type="button" @click="activeDay = day; dayDropdownOpen = false"
                                             class="w-full text-left px-4 py-2.5 text-sm font-medium transition-colors"
-                                            :class="activeDay === day ? 'bg-orange-50 dark:bg-slate-700/80 text-[#FF5B00]' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-600 dark:text-slate-300'">
+                                            :class="activeDay === day ? 'bg-orange-50 dark:bg-slate-700/80 text-[#FF5B00]' :
+                                                'hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-600 dark:text-slate-300'">
                                             <span x-text="day"></span>
                                         </button>
                                     </template>
@@ -375,7 +388,8 @@
                         <div
                             class="bg-slate-50/50 dark:bg-slate-900/30 rounded-2xl p-2 sm:p-4 border border-slate-100 dark:border-slate-800">
                             <!-- Checklist Items: DAY 1 -->
-                            <div x-show="activeDay === 'DAY 1'" x-transition.opacity.duration.300ms class="space-y-1.5">
+                            <div x-show="activeDay === 'DAY 1'" x-transition.opacity.duration.300ms
+                                class="space-y-1.5">
                                 @php
                                     $itemsDay1 = [
                                         'day1_buku' => 'Buku Angkatan',
@@ -391,15 +405,20 @@
                                         class="flex items-center gap-3.5 cursor-pointer p-3 rounded-xl hover:bg-white dark:hover:bg-slate-800 transition-colors group select-none"
                                         @click="toggleItem('{{ $key }}')">
                                         <div class="relative w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-200"
-                                            :class="isItemChecked('{{ $key }}') ? 'bg-[#FF5B00] border-[#FF5B00] shadow-sm' : 'border-slate-300 dark:border-slate-500 group-hover:border-[#FF5B00]/50 bg-white dark:bg-slate-900'">
+                                            :class="isItemChecked('{{ $key }}') ?
+                                                'bg-[#FF5B00] border-[#FF5B00] shadow-sm' :
+                                                'border-slate-300 dark:border-slate-500 group-hover:border-[#FF5B00]/50 bg-white dark:bg-slate-900'">
                                             <svg x-show="isItemChecked('{{ $key }}')" x-transition.scale
                                                 class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor"
                                                 stroke-width="3" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M5 13l4 4L19 7" />
                                             </svg>
                                         </div>
                                         <span class="text-sm sm:text-base font-medium transition-colors duration-200"
-                                            :class="isItemChecked('{{ $key }}') ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200 group-hover:text-[#FF5B00] dark:group-hover:text-orange-400'">
+                                            :class="isItemChecked('{{ $key }}') ?
+                                                'line-through text-slate-400 dark:text-slate-500' :
+                                                'text-slate-700 dark:text-slate-200 group-hover:text-[#FF5B00] dark:group-hover:text-orange-400'">
                                             {{ $label }}
                                         </span>
                                     </label>
@@ -423,15 +442,20 @@
                                         class="flex items-center gap-3.5 cursor-pointer p-3 rounded-xl hover:bg-white dark:hover:bg-slate-800 transition-colors group select-none"
                                         @click="toggleItem('{{ $key }}')">
                                         <div class="relative w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-200"
-                                            :class="isItemChecked('{{ $key }}') ? 'bg-[#FF5B00] border-[#FF5B00] shadow-sm' : 'border-slate-300 dark:border-slate-500 group-hover:border-[#FF5B00]/50 bg-white dark:bg-slate-900'">
+                                            :class="isItemChecked('{{ $key }}') ?
+                                                'bg-[#FF5B00] border-[#FF5B00] shadow-sm' :
+                                                'border-slate-300 dark:border-slate-500 group-hover:border-[#FF5B00]/50 bg-white dark:bg-slate-900'">
                                             <svg x-show="isItemChecked('{{ $key }}')" x-transition.scale
                                                 class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor"
                                                 stroke-width="3" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M5 13l4 4L19 7" />
                                             </svg>
                                         </div>
                                         <span class="text-sm sm:text-base font-medium transition-colors duration-200"
-                                            :class="isItemChecked('{{ $key }}') ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200 group-hover:text-[#FF5B00] dark:group-hover:text-orange-400'">
+                                            :class="isItemChecked('{{ $key }}') ?
+                                                'line-through text-slate-400 dark:text-slate-500' :
+                                                'text-slate-700 dark:text-slate-200 group-hover:text-[#FF5B00] dark:group-hover:text-orange-400'">
                                             {{ $label }}
                                         </span>
                                     </label>
@@ -455,15 +479,20 @@
                                         class="flex items-center gap-3.5 cursor-pointer p-3 rounded-xl hover:bg-white dark:hover:bg-slate-800 transition-colors group select-none"
                                         @click="toggleItem('{{ $key }}')">
                                         <div class="relative w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-200"
-                                            :class="isItemChecked('{{ $key }}') ? 'bg-[#FF5B00] border-[#FF5B00] shadow-sm' : 'border-slate-300 dark:border-slate-500 group-hover:border-[#FF5B00]/50 bg-white dark:bg-slate-900'">
+                                            :class="isItemChecked('{{ $key }}') ?
+                                                'bg-[#FF5B00] border-[#FF5B00] shadow-sm' :
+                                                'border-slate-300 dark:border-slate-500 group-hover:border-[#FF5B00]/50 bg-white dark:bg-slate-900'">
                                             <svg x-show="isItemChecked('{{ $key }}')" x-transition.scale
                                                 class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor"
                                                 stroke-width="3" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M5 13l4 4L19 7" />
                                             </svg>
                                         </div>
                                         <span class="text-sm sm:text-base font-medium transition-colors duration-200"
-                                            :class="isItemChecked('{{ $key }}') ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200 group-hover:text-[#FF5B00] dark:group-hover:text-orange-400'">
+                                            :class="isItemChecked('{{ $key }}') ?
+                                                'line-through text-slate-400 dark:text-slate-500' :
+                                                'text-slate-700 dark:text-slate-200 group-hover:text-[#FF5B00] dark:group-hover:text-orange-400'">
                                             {{ $label }}
                                         </span>
                                     </label>
