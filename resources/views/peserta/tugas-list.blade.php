@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="min-h-dvh">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,6 +27,7 @@
         .font-oswald-header { font-family: 'Oswald', sans-serif; letter-spacing: 0.12em; }
     </style>
 </head>
+
 <body class="font-poppins antialiased bg-slate-50/60 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-dvh transition-colors duration-300"
     x-data="{
         tab: 'semua',
@@ -145,4 +147,5 @@
         </footer>
     </div>
 </body>
+
 </html>
