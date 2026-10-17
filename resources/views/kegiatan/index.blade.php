@@ -116,6 +116,7 @@
             this.isEdit = true;
             this.formAction = '/dashboard/kegiatan/' + item.id;
             this.form = Object.assign({}, item);
+            this.form.is_published = Boolean(item.is_published);
             this.showModal = true;
         },
     

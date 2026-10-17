@@ -259,13 +259,13 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            *Penugasan day selanjutnya akan muncul secara otomatis ketika dibuat oleh admin.
+                            *Penugasan day selanjutnya coming soon.
                         </p>
                     @endif
                 </section>
 
                 <!-- 4. TIMELINE SECTION -->
-                <section>
+                <section class="mt-4">
                     <div class="flex items-center gap-2 mb-4 pl-1">
                         <div class="w-1.5 h-5 bg-[#FF5B00] rounded-full"></div>
                         <h3 class="font-bold text-lg text-slate-800 dark:text-white">
@@ -307,12 +307,9 @@
                                         class="bg-slate-100 dark:bg-slate-700 inline-block px-3 py-1 rounded-lg mb-1 border border-dashed border-slate-300 dark:border-slate-600">
                                         <h4
                                             class="font-bold text-sm sm:text-base text-slate-500 dark:text-slate-400 dynamic-pulse">
-                                            ✨ Coming Soon
+                                            Coming Soon
                                         </h4>
                                     </div>
-                                    <p class="text-xs sm:text-sm text-slate-400 dark:text-slate-500 italic">
-                                        Kegiatan baru sedang dipersiapkan panitia...
-                                    </p>
                                 </div>
                             @endif
 
