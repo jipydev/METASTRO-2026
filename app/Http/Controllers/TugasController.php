@@ -153,4 +153,45 @@ class TugasController extends Controller
 
         return redirect()->route('dashboard.tugas.index')->with('success', 'Tugas berhasil dihapus.');
     }
+<<<<<<< HEAD
+=======
+
+    /**
+     * Tampilan Dashboard untuk Peserta (Menampilkan daftar Card Day)
+     */
+    public function pesertaDashboard()
+    {
+        $days = $this->dayOptions();
+
+        return view('peserta.dashboard', compact('days'));
+    }   
+
+   /**
+     * Tampilan List Tugas untuk Peserta (Berdasarkan Day yang diklik)
+     */
+    public function pesertaTugasList(Request $request)
+    {
+        $selectedDay = $request->query('day');
+        
+        // Membersihkan string parameter dari spasi berlebih & decode %20
+        if (is_string($selectedDay) && trim($selectedDay) !== '') {
+            $selectedDay = urldecode(trim($selectedDay));
+        } else {
+            $selectedDay = null;
+        }
+
+        $tugases = Tugas::query()
+            ->when($selectedDay !== null, function ($query) use ($selectedDay) {
+                // Menggunakan LIKE agar pencarian 'day 1', 'Day 1', atau 'DAY 1' tetap cocok di database
+                $query->where('day', 'LIKE', $selectedDay);
+            })
+            ->orderBy('tenggat_waktu', 'asc')
+            ->get();
+
+        return view('peserta.tugas-list', [
+            'tugases' => $tugases,
+            'selectedDay' => $selectedDay,
+        ]);
+    }
+>>>>>>> 1fb5c5440408fb2da1f851c5874224fbc9faa15b
 }
