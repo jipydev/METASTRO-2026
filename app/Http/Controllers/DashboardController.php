@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Kegiatan;
 use App\Models\Notulensi;
 use App\Models\Pengumuman;
+use App\Models\Tugas;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -89,20 +90,18 @@ class DashboardController extends Controller
         $user = $request->user();
 
         $kegiatans = collect();
-        $hasUnpublished = false; // Tambahkan penanda ini
+        $hasUnpublished = false;
 
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('kegiatans')) {
-                // Ambil kegiatan yang sudah di-publish untuk ditampilkan di timeline
                 $kegiatans = Kegiatan::where('jenis', 'peserta')
                     ->where('is_published', true)
                     ->orderBy('tanggal', 'asc')
                     ->get();
 
-                // Cek apakah ada kegiatan peserta yang BELUM di-publish
                 $hasUnpublished = Kegiatan::where('jenis', 'peserta')
                     ->where('is_published', false)
-                    ->exists(); // Mengembalikan true/false dengan cepat tanpa load semua data
+                    ->exists();
             }
         } catch (\Throwable $e) {
             $kegiatans = collect();
@@ -110,12 +109,24 @@ class DashboardController extends Controller
         }
 
         $tugases = collect();
+        $days = collect(); // Inisialisasi collection kosong
+
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('tugases')) {
-                $tugases = \App\Models\Tugas::orderBy('tenggat_waktu', 'asc')->get();
+                $tugases = Tugas::orderBy('tenggat_waktu', 'asc')->get();
+
+                // Ambil daftar Day unik yang ada di tabel tugases
+                $days = Tugas::query()
+                    ->whereNotNull('day')
+                    ->where('day', '!=', '')
+                    ->distinct()
+                    ->pluck('day')
+                    ->sort(SORT_NATURAL | SORT_FLAG_CASE)
+                    ->values();
             }
         } catch (\Throwable $e) {
             $tugases = collect();
+            $days = collect();
         }
 
         $pengumumanTerbaru = null;
@@ -135,8 +146,9 @@ class DashboardController extends Controller
             'title' => 'Dashboard',
             'user' => $user,
             'kegiatans' => $kegiatans,
-            'hasUnpublished' => $hasUnpublished, // Kirim variabel ke view
+            'hasUnpublished' => $hasUnpublished,
             'tugases' => $tugases,
+            'days' => $days, // <--- Dikirimkan ke view peserta
             'pengumumanTerbaru' => $pengumumanTerbaru,
         ]);
     }
