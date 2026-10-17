@@ -416,7 +416,7 @@
             <div class="flex items-center justify-center min-h-screen px-4">
                 <div x-show="openEditPengumuman" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="openEditPengumuman = false"></div>
 
-                <form :action="'{{ url('pengumuman') }}/' + selectedPengumuman.id" method="POST" enctype="multipart/form-data"
+                <form :action="'{{ url('dashboard/pengumuman') }}/' + selectedPengumuman.id" method="POST" enctype="multipart/form-data"
                     x-show="openEditPengumuman" x-transition
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-lg shadow-xl text-xs">
                     @csrf
@@ -480,7 +480,7 @@
             <div class="flex items-center justify-center min-h-screen px-4">
                 <div x-show="openDeletePengumuman" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="openDeletePengumuman = false"></div>
 
-                <form :action="'{{ url('pengumuman') }}/' + selectedPengumuman.id" method="POST"
+                <form :action="'{{ url('dashboard/pengumuman') }}/' + selectedPengumuman.id" method="POST"
                     x-show="openDeletePengumuman" x-transition
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-sm shadow-xl text-xs">
                     @csrf

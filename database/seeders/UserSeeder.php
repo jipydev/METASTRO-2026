@@ -58,5 +58,26 @@ class UserSeeder extends Seeder
             ]
         );
         $chiperUser->syncRoles(['admin', 'panitia']);
+
+        // 3. Akun Peserta (Jingga Muda)
+        $pesertaUser = User::updateOrCreate(
+            ['email' => env('PESERTA_EMAIL', 'peserta@metastro.id')],
+            [
+                'nim' => '2600001',
+                'nama' => 'Peserta Jingga Muda',
+                'password' => bcrypt(env('PESERTA_PASSWORD', 'PesertaMetastro2026!')),
+                'divisi_id' => null,
+                'jabatan_id' => null,
+                'nomor_hp' => '081234567890',
+                'jenis_kelamin' => 'laki-laki',
+                'qr_token' => Str::uuid(),
+                'qr_updated_at' => now(),
+                'status' => true,
+                'is_initial_setup_completed' => true,
+                'email_verified_at' => now(),
+                'must_change_password' => false,
+            ]
+        );
+        $pesertaUser->syncRoles(['peserta']);
     }
 }

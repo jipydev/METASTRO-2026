@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Tugas;
 use Illuminate\Http\Request;
-
 use Illuminate\Routing\Controller;
 
 class TugasController extends Controller
@@ -29,6 +28,7 @@ class TugasController extends Controller
     {
         $search = trim((string) $request->query('search', ''));
         $jenis = $request->query('jenis');
+        $day = $request->query('day');
 
         $data = [
             'title' => 'Tugas',
@@ -40,10 +40,12 @@ class TugasController extends Controller
                     });
                 })
                 ->when(in_array($jenis, ['individu', 'tim', 'angkatan'], true), fn ($query) => $query->where('jenis', $jenis))
+                ->when(!empty($day), fn ($query) => $query->where('day', $day))
                 ->paginate(10)
                 ->withQueryString(),
             'search' => $search,
             'jenis' => $jenis,
+            'day' => $day,
         ];
         return view('tugas.index', $data);
     }
@@ -63,6 +65,7 @@ class TugasController extends Controller
             'judul' => 'required|string|max:100',
             'deskripsi' => 'nullable|string',
             'jenis' => 'required|in:individu,tim,angkatan',
+            'day' => 'nullable|string|max:50',
             'tenggat_waktu' => 'nullable|date',
         ], [
             'judul.required' => 'Judul tugas harus diisi.',
@@ -71,6 +74,8 @@ class TugasController extends Controller
             'deskripsi.string' => 'Deskripsi tugas harus berupa teks.',
             'jenis.required' => 'Jenis tugas harus dipilih.',
             'jenis.in' => 'Jenis tugas tidak valid.',
+            'day.string' => 'Day harus berupa teks.',
+            'day.max' => 'Day tidak boleh lebih dari 50 karakter.',
             'tenggat_waktu.date' => 'Tenggat waktu harus berupa tanggal yang valid.',
         ]);
 
@@ -97,6 +102,7 @@ class TugasController extends Controller
             'judul' => 'required|string|max:100',
             'deskripsi' => 'nullable|string',
             'jenis' => 'required|in:individu,tim,angkatan',
+            'day' => 'nullable|string|max:50',
             'tenggat_waktu' => 'nullable|date',
         ], [
             'judul.required' => 'Judul tugas harus diisi.',
@@ -105,12 +111,13 @@ class TugasController extends Controller
             'deskripsi.string' => 'Deskripsi tugas harus berupa teks.',
             'jenis.required' => 'Jenis tugas harus dipilih.',
             'jenis.in' => 'Jenis tugas tidak valid.',
+            'day.string' => 'Day harus berupa teks.',
+            'day.max' => 'Day tidak boleh lebih dari 50 karakter.',
             'tenggat_waktu.date' => 'Tenggat waktu harus berupa tanggal yang valid.',
         ]);
 
         $validatedData['deskripsi'] = $this->sanitizeDescription($validatedData['deskripsi'] ?? null);
         Tugas::where('id', $id)->update($validatedData);
-
 
         return redirect()->route('dashboard.tugas.index')->with('success', 'Tugas berhasil diperbarui.');
     }
