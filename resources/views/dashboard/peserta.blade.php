@@ -214,7 +214,10 @@
                                         <h4 class="font-bold text-sm sm:text-base text-[#FF5B00] dark:text-orange-400">
                                             {{ $kegiatan->nama }}</h4>
                                     </div>
-                                    <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium">{{ $kegiatan->tanggal_mulai }}</p>
+                                    <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium">
+                                        {{ \Carbon\Carbon::parse($kegiatan->tanggal_mulai)->translatedFormat('d F Y') }}
+                                    </p>
+
                                 </div>
                             @endforeach
                         </div>
