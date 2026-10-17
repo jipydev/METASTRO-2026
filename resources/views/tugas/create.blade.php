@@ -77,21 +77,15 @@
 
                 {{-- Jenis Tugas --}}
                 <div>
-                    <div>
-                        <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                            Jenis Penugasan <span class="text-red-500">*</span>
-                        </label>
-                        <select name="jenis" required class="form-control-app w-full">
-                            <option value="individu" @selected(old('jenis') === 'individu')>Individu (Dikerjakan & dikumpul per
-                                peserta)</option>
-                            <option value="tim" @selected(old('jenis') === 'tim')>Tim / Kelompok (Dikumpulkan oleh 1
-                                perwakilan tim)</option>
-                            <option value="angkatan" @selected(old('jenis') === 'angkatan')>Angkatan (Dikumpulkan oleh 1
-                                perwakilan angkatan)</option>
-                        </select>
-                        <p class="text-[10px] text-slate-400 mt-1">Untuk tugas tim/angkatan, status review otomatis
-                            berlaku ke seluruh anggota terkait.</p>
-                    </div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                        Jenis Penugasan <span class="text-red-500">*</span>
+                    </label>
+                    <select name="jenis" required class="form-control-app w-full">
+                        <option value="individu" @selected(old('jenis') === 'individu')>Individu (Dikerjakan & dikumpul per peserta)</option>
+                        <option value="tim" @selected(old('jenis') === 'tim')>Tim / Kelompok (Dikumpulkan oleh 1 perwakilan tim)</option>
+                        <option value="angkatan" @selected(old('jenis') === 'angkatan')>Angkatan (Dikumpulkan oleh 1 perwakilan angkatan)</option>
+                    </select>
+                    <p class="text-[10px] text-slate-400 mt-1">Untuk tugas tim/angkatan, status review otomatis berlaku ke seluruh anggota terkait.</p>
                 </div>
 
                 <div class="flex items-start w-full gap-4 flex-wrap sm:flex-nowrap">
@@ -102,12 +96,11 @@
                         </label>
                         <input type="datetime-local" name="tenggat_waktu" required value="{{ old('tenggat_waktu') }}"
                             class="form-control-app w-full sm:w-80">
+                        @error('tenggat_waktu')
+                            <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
-<<<<<<< HEAD
-                    {{-- Day (dinamis dari tabel days) --}}
-                    <x-tugas.day-select :days="$days" />
-=======
                     {{-- Day --}}
                     <div class="w-full">
                         <label for="day" class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
@@ -117,16 +110,17 @@
                             autocomplete="off" value="{{ old('day') }}" placeholder="Pilih atau ketik, mis. Day 1"
                             class="form-control-app w-full">
                         <datalist id="day-options">
-                            @foreach ($days as $d)
-                                <option value="{{ $d }}"></option>
-                            @endforeach
+                            @if(isset($days) && is_iterable($days))
+                                @foreach ($days as $d)
+                                    <option value="{{ $d }}"></option>
+                                @endforeach
+                            @endif
                         </datalist>
                         <p class="text-[10px] text-slate-400 mt-1">Pilih dari daftar atau ketik Day baru.</p>
                         @error('day')
                             <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
                         @enderror
                     </div>
->>>>>>> ac6a3c5fe086a38ec24b358f9584faf2bf4d549c
                 </div>
 
                 {{-- Deskripsi / Instruksi Penugasan --}}
@@ -155,7 +149,7 @@
                 </div>
             </div>
 
-            {{-- Action Buttons with Loading Indicator --}}
+            {{-- Action Buttons --}}
             <div class="pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-end gap-3">
                 <a href="{{ route('dashboard.tugas.index') }}"
                     class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold rounded-xl transition">
