@@ -99,6 +99,9 @@
                             <option value="angkatan" @selected(old('jenis', $tugas['jenis'] ?? '') === 'angkatan')>Angkatan (Perwakilan)</option>
                         </select>
                     </div>
+
+                    {{-- Day (dinamis dari tabel days) --}}
+                    <x-tugas.day-select :days="$days" :value="$tugas['day_id'] ?? null" />
                 </div>
 
                 {{-- Deskripsi / Instruksi Penugasan --}}

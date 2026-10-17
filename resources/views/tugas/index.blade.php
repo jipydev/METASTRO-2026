@@ -10,7 +10,13 @@
             </p>
             </div>
         @endcan
-        <div>
+        <div class="flex items-center gap-2">
+            @can('manage-tugas')
+                <a href="{{ route('dashboard.days.index') }}"
+                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition cursor-pointer">
+                    <span>Kelola Day</span>
+                </a>
+            @endcan
             <a href="{{ route('dashboard.tugas.create') }}"
                 class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-sm transition cursor-pointer">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,7 +31,7 @@
     <div x-data="{
         openDetailModal: false,
         openDeleteModal: false,
-        selectedTugas: { id: null, judul: '', deskripsi: '', jenis: '', tenggat_waktu: '', pembuat_nama: '' },
+        selectedTugas: { id: null, judul: '', deskripsi: '', jenis: '', day: null, tenggat_waktu: '', pembuat_nama: '' },
         isDeleting: false
     }" class="py-6 max-w-7xl mx-auto font-poppins">
 
@@ -69,8 +75,20 @@
                     <option value="angkatan" @selected($jenis === 'angkatan')>Angkatan</option>
                 </select>
             </div>
+
+            {{-- Filter Day (dinamis dari tabel days) --}}
+            <div class="flex items-center gap-2">
+                <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Day:</label>
+                <select name="day" class="form-control-app">
+                    <option value="" @selected(empty($day))>Semua Day</option>
+                    @foreach ($days as $d)
+                        <option value="{{ $d->id }}" @selected((int) $day === (int) $d->id)>{{ $d->nama }}</option>
+                    @endforeach
+                </select>
+            </div>
+
             <button type="submit" class="btn-filter">Cari</button>
-            @if ($search !== '' || in_array($jenis, ['individu', 'tim', 'angkatan'], true))
+            @if ($search !== '' || in_array($jenis, ['individu', 'tim', 'angkatan'], true) || !empty($day))
                 <a href="{{ route('dashboard.tugas.index') }}"
                     class="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400">
                     Reset
@@ -88,6 +106,7 @@
                         <tr>
                             <th class="py-3.5 px-4 rounded-l-xl">Judul & Deskripsi Tugas</th>
                             <th class="py-3.5 px-4 text-center">Jenis</th>
+                            <th class="py-3.5 px-4 text-center">Day</th>
                             <th class="py-3.5 px-4">Tenggat Waktu</th>
                             <th class="py-3.5 px-4">Pembuat</th>
                             <th class="py-3.5 px-4 text-center rounded-r-xl">Aksi</th>
@@ -120,6 +139,16 @@
                                             class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300">
                                             Angkatan
                                         </span>
+                                    @endif
+                                </td>
+                                <td class="py-4 px-4 text-center whitespace-nowrap">
+                                    @if ($tugas->day)
+                                        <span
+                                            class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-brand-100 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300">
+                                            {{ $tugas->day->nama }}
+                                        </span>
+                                    @else
+                                        <span class="text-slate-400">-</span>
                                     @endif
                                 </td>
                                 <td class="py-4 px-4 whitespace-nowrap">
@@ -170,13 +199,13 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center py-8 text-slate-400">Belum ada data tugas.</td>
+                                <td colspan="6" class="text-center py-8 text-slate-400">Belum ada data tugas.</td>
                             </tr>
                         @endforelse
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="5" class="px-4 py-3">
+                            <td colspan="6" class="px-4 py-3">
                                 {{ $tugases->links('pagination::tailwind') }}
                             </td>
                         </tr>
@@ -209,6 +238,13 @@
                             <span
                                 class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-brand-100 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300"
                                 x-text="selectedTugas.jenis"></span>
+                        </div>
+
+                        <div>
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Day</span>
+                            <span
+                                class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200"
+                                x-text="selectedTugas.day?.nama || '-'"></span>
                         </div>
 
                         <div>

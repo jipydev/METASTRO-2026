@@ -12,12 +12,14 @@ use App\Models\Tim;
 use App\Models\User;
 use App\Services\FileCompressionService;
 use App\Services\QrCodeService;
+use App\Services\UserImportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UserController extends Controller
 {
@@ -327,4 +329,64 @@ class UserController extends Controller
 
         return back()->with('success', 'Pengguna berhasil dihapus secara permanen. Data tugas terkait tetap dipertahankan.');
     }
+<<<<<<< HEAD
+=======
+
+    /**
+     * Reset QR Code untuk 1 user
+     */
+    public function resetQr(User $user, QrCodeService $qrService)
+    {
+        $qrService->regenerateForUser($user);
+
+        return back()->with('success', "QR Code untuk {$user->nama} berhasil di-generate ulang.");
+    }
+
+    /**
+     * Reset QR Code untuk semua user sekaligus
+     */
+    public function resetAllQr(QrCodeService $qrService)
+    {
+        User::query()->each(function (User $user) use ($qrService) {
+            $qrService->regenerateForUser($user);
+        });
+
+        return back()->with('success', 'Seluruh token QR Code pengguna berhasil di-generate ulang.');
+    }
+
+    /**
+     * Download template XLSX untuk import user.
+     */
+    public function template(UserImportService $importService): StreamedResponse
+    {
+        return $importService->downloadTemplate();
+    }
+
+    /**
+     * Import data pengguna dari file XLSX/CSV.
+     */
+    public function import(Request $request, UserImportService $importService)
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:10240'],
+        ], [
+            'file.required' => 'Pilih file spreadsheet terlebih dahulu.',
+            'file.mimes' => 'File harus berformat .xlsx, .xls, atau .csv.',
+            'file.max' => 'Ukuran file maksimal adalah 10MB.',
+        ]);
+
+        $result = $importService->import($request->file('file'));
+
+        if (! empty($result['errors']) && $result['created_count'] === 0) {
+            return back()->with('error', 'Gagal mengimpor data: '.implode(' ', array_slice($result['errors'], 0, 3)));
+        }
+
+        $msg = "Berhasil mengimpor {$result['created_count']} pengguna baru.";
+        if ($result['skipped_count'] > 0) {
+            $msg .= " ({$result['skipped_count']} data dilewati karena kendala validasi).";
+        }
+
+        return redirect()->route('admin.users.index')->with('success', $msg);
+    }
+>>>>>>> c76c3db8bc44a4fc4ec825d7f8903dfb962a5cf9
 }
