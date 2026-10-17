@@ -31,7 +31,8 @@ class KegiatanRequest extends FormRequest
         return [
             'nama' => ['required', 'string', 'max:255'],
             'deskripsi' => ['nullable', 'string', 'max:2000'],
-            'jenis' => ['required', 'in:rapat,pelaksanaan'],
+            'jenis' => ['required', 'in:peserta,panitia'],
+            'is_published' => ['nullable', 'boolean'], // <-- Tambahkan baris ini
             'tanggal_mulai' => ['required', 'date'],
             'tanggal_selesai' => ['required', 'date', 'after_or_equal:tanggal_mulai'],
             'waktu_mulai' => ['nullable', 'date_format:H:i'],
@@ -86,6 +87,7 @@ class KegiatanRequest extends FormRequest
             'presensi_mulai.date' => 'Waktu buka presensi tidak valid.',
             'presensi_selesai.date' => 'Waktu tutup presensi tidak valid.',
             'presensi_selesai.after_or_equal' => 'Waktu tutup presensi harus sama dengan atau setelah waktu buka.',
+            'is_published.boolean' => 'Status publikasi tidak valid.',
         ];
     }
 }

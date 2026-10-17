@@ -144,7 +144,7 @@
                                 <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Status *</label>
                                 <select name="status" class="{{ $fieldClass }}">
                                     <option value="draft">Draft (Hanya Divisi Saya)</option>
-                                    <option value="published">Publish (Semua Panitia)</option>
+                                    <option value="published">Publish</option>
                                 </select>
                             </div>
                             <div>
@@ -186,7 +186,7 @@
                             <div>
                                 <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Status *</label>
                                 <select name="status" x-model="selectedPengumuman.status" class="{{ $fieldClass }}">
-                                    <option value="published">Publish (Semua Panitia)</option>
+                                    <option value="published">Publish</option>
                                     <option value="draft">Draft (Hanya Divisi Saya)</option>
                                 </select>
                             </div>

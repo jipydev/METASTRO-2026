@@ -19,6 +19,7 @@ class Kegiatan extends Model
         'nama',
         'deskripsi',
         'jenis',
+        'is_published',
         'tipe',
         'tempat',
         'tanggal',

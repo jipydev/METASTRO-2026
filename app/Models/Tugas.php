@@ -12,15 +12,15 @@ class Tugas extends Model
     public const DAYS = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
 
     protected $fillable = [
-        'judul', 
-        'deskripsi', 
-        'status', 
-        'jenis', 
-        'day', 
-        'tenggat_waktu', 
+        'judul',
+        'deskripsi',
+        'status',
+        'jenis',
+        'day',
+        'tenggat_waktu',
         'pembuat_id'
     ];
-    
+
     protected $table = 'tugases';
 
     public function pembuat()

@@ -31,7 +31,11 @@
     <div x-data="{
         openDetailModal: false,
         openDeleteModal: false,
+<<<<<<< HEAD
         selectedTugas: { id: null, judul: '', deskripsi: '', jenis: '', day: null, tenggat_waktu: '', pembuat_nama: '' },
+=======
+        selectedTugas: { id: null, judul: '', deskripsi: '', jenis: '', day: '', tenggat_waktu: '', pembuat_nama: '' },
+>>>>>>> ac6a3c5fe086a38ec24b358f9584faf2bf4d549c
         isDeleting: false
     }" class="py-6 max-w-7xl mx-auto font-poppins">
 
@@ -76,6 +80,7 @@
                 </select>
             </div>
 
+<<<<<<< HEAD
             {{-- Filter Day (dinamis dari tabel days) --}}
             <div class="flex items-center gap-2">
                 <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Day:</label>
@@ -83,12 +88,25 @@
                     <option value="" @selected(empty($day))>Semua Day</option>
                     @foreach ($days as $d)
                         <option value="{{ $d->id }}" @selected((int) $day === (int) $d->id)>{{ $d->nama }}</option>
+=======
+            {{-- Filter Day (pilihan diambil dari Day yang sudah dipakai di tugas) --}}
+            <div class="flex items-center gap-2">
+                <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Day:</label>
+                <select name="day" class="form-control-app">
+                    <option value="" @selected($day === null)>Semua Day</option>
+                    @foreach ($days as $d)
+                        <option value="{{ $d }}" @selected($day === $d)>{{ $d }}</option>
+>>>>>>> ac6a3c5fe086a38ec24b358f9584faf2bf4d549c
                     @endforeach
                 </select>
             </div>
 
             <button type="submit" class="btn-filter">Cari</button>
+<<<<<<< HEAD
             @if ($search !== '' || in_array($jenis, ['individu', 'tim', 'angkatan'], true) || !empty($day))
+=======
+            @if ($search !== '' || in_array($jenis, ['individu', 'tim', 'angkatan'], true) || $day !== null)
+>>>>>>> ac6a3c5fe086a38ec24b358f9584faf2bf4d549c
                 <a href="{{ route('dashboard.tugas.index') }}"
                     class="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400">
                     Reset
@@ -142,10 +160,17 @@
                                     @endif
                                 </td>
                                 <td class="py-4 px-4 text-center whitespace-nowrap">
+<<<<<<< HEAD
                                     @if ($tugas->day)
                                         <span
                                             class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-brand-100 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300">
                                             {{ $tugas->day->nama }}
+=======
+                                    @if (!empty($tugas['day']))
+                                        <span
+                                            class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-brand-100 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300">
+                                            {{ $tugas['day'] }}
+>>>>>>> ac6a3c5fe086a38ec24b358f9584faf2bf4d549c
                                         </span>
                                     @else
                                         <span class="text-slate-400">-</span>
@@ -244,7 +269,11 @@
                             <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Day</span>
                             <span
                                 class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200"
+<<<<<<< HEAD
                                 x-text="selectedTugas.day?.nama || '-'"></span>
+=======
+                                x-text="selectedTugas.day || '-'"></span>
+>>>>>>> ac6a3c5fe086a38ec24b358f9584faf2bf4d549c
                         </div>
 
                         <div>

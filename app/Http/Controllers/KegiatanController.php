@@ -48,6 +48,9 @@ class KegiatanController extends Controller
         $validated = $request->validated();
         $validated['tanggal'] = $validated['tanggal_mulai'];
 
+        // Menggunakan method bawaan Laravel untuk membaca nilai checkbox dengan aman (true/false)
+        $validated['is_published'] = $request->boolean('is_published');
+
         // Format ulang datetime-local agar sesuai dengan format DATETIME MySQL
         if (! empty($validated['presensi_mulai'])) {
             $validated['presensi_mulai'] = Carbon::parse($validated['presensi_mulai'])->format('Y-m-d H:i:s');
@@ -63,10 +66,16 @@ class KegiatanController extends Controller
         return back()->with('success', 'Kegiatan baru berhasil ditambahkan ke timeline.');
     }
 
+    /**
+     * Memperbarui data kegiatan.
+     */
     public function update(KegiatanRequest $request, Kegiatan $kegiatan): RedirectResponse
     {
         $validated = $request->validated();
         $validated['tanggal'] = $validated['tanggal_mulai'];
+
+        // Menggunakan method bawaan Laravel untuk membaca nilai checkbox dengan aman (true/false)
+        $validated['is_published'] = $request->boolean('is_published');
 
         // Format ulang datetime-local agar sesuai dengan format DATETIME MySQL
         if (! empty($validated['presensi_mulai'])) {
