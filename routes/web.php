@@ -46,6 +46,9 @@ Route::middleware(['auth'])->prefix('peserta')->name('peserta.')->group(function
     })->name('arsip');
 });
 
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Onboarding / First Time Setup
