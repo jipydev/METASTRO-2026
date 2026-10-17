@@ -64,22 +64,6 @@
                     @include('peserta.partials.navbar')
                 @endif
 
-<<<<<<< HEAD
-                <!-- PAGE HEADER -->
-                <div class="flex items-center gap-3 py-3 mb-4">
-                    <a href="/dashboard"
-                        class="p-2 -ml-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors"
-                        title="Kembali ke Dashboard">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                        </svg>
-                    </a>
-                    <div>
-                        <h2 class="font-bold text-xl text-slate-900 dark:text-white tracking-tight">List Penugasan</h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 font-normal">Pilih & selesaikan penugasan
-                            tepat waktu</p>
-                    </div>
-=======
             <!-- PAGE HEADER -->
             <div class="flex items-center gap-3 py-3 mb-4">
                 <a href="/dashboard" class="p-2 -ml-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors" title="Kembali ke Dashboard">
@@ -103,7 +87,6 @@
                         Deadline Terdekat
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
                     </button>
->>>>>>> 1fb5c5440408fb2da1f851c5874224fbc9faa15b
                 </div>
 
                 <!-- SORTING & FILTERS -->
@@ -129,56 +112,6 @@
                                     </button>
                                 </div>
 
-<<<<<<< HEAD
-                                <!-- TABS FILTER -->
-                                <div
-                                    class="flex gap-1.5 p-1.5 bg-slate-200/50 dark:bg-slate-800/60 rounded-2xl text-xs font-medium overflow-x-auto scrollbar-hide border border-slate-200/40 dark:border-slate-700/40">
-                                    <button type="button" x-on:click="tab = 'semua'"
-                                        :class="tab == 'semua' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'"
-                                        class="flex-1 py-2 px-3 rounded-xl whitespace-nowrap transition-all duration-200 text-center cursor-pointer">Semua</button>
-                                    <button type="button" x-on:click="tab = 'individu'"
-                                        :class="tab == 'individu' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'"
-                                        class="flex-1 py-2 px-3 rounded-xl whitespace-nowrap transition-all duration-200 text-center cursor-pointer">Individu</button>
-                                    <button type="button" x-on:click="tab = 'regu'"
-                                        :class="tab == 'regu' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'"
-                                        class="flex-1 py-2 px-3 rounded-xl whitespace-nowrap transition-all duration-200 text-center cursor-pointer">Regu</button>
-                                    <button type="button" x-on:click="tab = 'angkatan'"
-                                        :class="tab == 'angkatan' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'"
-                                        class="flex-1 py-2 px-3 rounded-xl whitespace-nowrap transition-all duration-200 text-center cursor-pointer">Angkatan</button>
-                                </div>
-                            </div>
-
-                            <!-- TASK LIST -->
-                            <div class="space-y-3.5">
-                                <!-- Individu 1 -->
-                                <div x-show="tab == 'semua' || tab == 'individu'" x-transition.opacity.duration.200ms
-                                    class="group bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/60 hover:border-slate-300 dark:hover:border-slate-600 rounded-2xl p-5 shadow-xs transition-all duration-200">
-                                    <div class="flex items-center justify-between gap-2 mb-2.5">
-                                        <h3
-                                            class="font-bold text-base text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                                            Membuat esai</h3>
-                                        <span
-                                            class="bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[11px] font-semibold px-2.5 py-0.5 rounded-full shrink-0 border border-rose-500/20">Individu</span>
-                                    </div>
-                                    <p
-                                        class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4 line-clamp-2">
-                                        Setelah mendengarkan pemateri di hari pertama, peserta menulis esai terkait
-                                        seluruh materi dengan ketentuan: maksimal 600 kata, tidak boleh AI.
-                                    </p>
-                                    <div
-                                        class="flex items-center justify-end pt-2 border-t border-slate-100 dark:border-slate-700/50">
-                                        <a href="{{ route('peserta.tugas-kumpulkan') }}"
-                                            class="inline-flex items-center gap-1.5 bg-orange-500 dark:bg-amber-400 hover:bg-slate-800 dark:hover:bg-amber-300 text-white dark:text-slate-950 font-semibold text-xs px-5 py-2 rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer">
-                                            Kumpulkan
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </div>
-=======
             <!-- TASK LIST DINAMIS -->
             <div class="space-y-3.5">
                 @forelse ($tugases ?? [] as $tugas)
@@ -232,7 +165,6 @@
                 @endforelse
             </div>
         </div>
->>>>>>> 1fb5c5440408fb2da1f851c5874224fbc9faa15b
 
                                 <!-- Regu 1 -->
                                 <div x-show="tab == 'semua' || tab == 'regu'" x-transition.opacity.duration.200ms
