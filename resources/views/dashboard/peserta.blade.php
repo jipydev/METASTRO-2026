@@ -285,48 +285,46 @@
                         <div class="relative border-l-2 border-orange-100 dark:border-slate-700 ml-3 space-y-8">
 
                             <!-- Step 1: DAY 1 -->
-                            <div class="relative pl-6 sm:pl-8 group">
-                                <div
-                                    class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-white dark:bg-slate-800 border-4 border-[#FF5B00] group-hover:scale-125 transition-transform shadow-[0_0_10px_rgba(255,91,0,0.4)]">
+                             @foreach ($kegiatans as $kegiatan)
+                                <div class="relative pl-6 sm:pl-8 group">
+                                    <div
+                                        class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-white dark:bg-slate-800 border-4 border-[#FF5B00] group-hover:scale-125 transition-transform shadow-[0_0_10px_rgba(255,91,0,0.4)]">
+                                    </div>
+                                    <div
+                                        class="bg-orange-50 dark:bg-slate-700/50 inline-block px-3 py-1 rounded-lg mb-1">
+                                        <h4 class="font-bold text-sm sm:text-base text-[#FF5B00] dark:text-orange-400">
+                                            {{ $kegiatan->nama }}
+                                        </h4>
+                                    </div>
+                                    <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium">
+                                        {{ \Carbon\Carbon::parse($kegiatan->tanggal_mulai)->translatedFormat('d F Y') }}
+                                    </p>
                                 </div>
-                                <div class="bg-orange-50 dark:bg-slate-700/50 inline-block px-3 py-1 rounded-lg mb-1">
-                                    <h4 class="font-bold text-sm sm:text-base text-[#FF5B00] dark:text-orange-400">DAY
-                                        1
-                                    </h4>
-                                </div>
-                                <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium">18
-                                    Oktober 2026</p>
-                            </div>
+                            @endforeach
 
-                            <!-- Step 2: DAY 2 -->
-                            <div class="relative pl-6 sm:pl-8 group">
-                                <div
-                                    class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-white dark:bg-slate-800 border-4 border-slate-300 dark:border-slate-500 group-hover:border-[#FF5B00] group-hover:scale-125 transition-all">
+                            <!-- Elemen "Coming Soon" otomatis muncul jika ada kegiatan yang belum di-publish -->
+                            @if ($hasUnpublished)
+                                <div class="relative pl-6 sm:pl-8 group opacity-75">
+                                    <!-- Dot Timeline dengan gaya putus-putus / abu-abu penanda coming soon -->
+                                    <div
+                                        class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-white dark:bg-slate-800 border-4 border-slate-400 dark:border-slate-600 shadow-[0_0_8px_rgba(156,163,175,0.4)] animate-pulse">
+                                    </div>
+                                    <div
+                                        class="bg-slate-100 dark:bg-slate-700 inline-block px-3 py-1 rounded-lg mb-1 border border-dashed border-slate-300 dark:border-slate-600">
+                                        <h4
+                                            class="font-bold text-sm sm:text-base text-slate-500 dark:text-slate-400 dynamic-pulse">
+                                            Coming Soon
+                                        </h4>
+                                    </div>
                                 </div>
-                                <div
-                                    class="bg-slate-50 dark:bg-slate-700/30 inline-block px-3 py-1 rounded-lg mb-1 transition-colors group-hover:bg-orange-50 dark:group-hover:bg-slate-700/50">
-                                    <h4
-                                        class="font-bold text-sm sm:text-base text-slate-700 dark:text-slate-200 group-hover:text-[#FF5B00] dark:group-hover:text-orange-400 transition-colors">
-                                        DAY 2</h4>
-                                </div>
-                                <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium">19
-                                    Oktober 2026</p>
-                            </div>
+                            @endif
 
-                            <!-- Step 3: DAY 3 -->
-                            <div class="relative pl-6 sm:pl-8 group">
-                                <div
-                                    class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-white dark:bg-slate-800 border-4 border-slate-300 dark:border-slate-500 group-hover:border-[#FF5B00] group-hover:scale-125 transition-all">
+                            <!-- Kondisi cadangan: Jika sama sekali TIDAK ADA kegiatan (baik publish maupun belum) -->
+                            @if ($kegiatans->isEmpty() && !$hasUnpublished)
+                                <div class="text-center py-4 text-slate-400 dark:text-slate-500">
+                                    Belum ada agenda kegiatan saat ini.
                                 </div>
-                                <div
-                                    class="bg-slate-50 dark:bg-slate-700/30 inline-block px-3 py-1 rounded-lg mb-1 transition-colors group-hover:bg-orange-50 dark:group-hover:bg-slate-700/50">
-                                    <h4
-                                        class="font-bold text-sm sm:text-base text-slate-700 dark:text-slate-200 group-hover:text-[#FF5B00] dark:group-hover:text-orange-400 transition-colors">
-                                        DAY 3</h4>
-                                </div>
-                                <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium">20
-                                    Oktober 2026</p>
-                            </div>
+                            @endif
                         </div>
 
                 </section>
