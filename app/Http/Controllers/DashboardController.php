@@ -89,14 +89,14 @@ class DashboardController extends Controller
         /** @var User $user */
         $user = $request->user();
 
+        // 1. Ambil kegiatan peserta yang sudah dipublish
         $kegiatans = collect();
         $hasUnpublished = false;
-
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('kegiatans')) {
                 $kegiatans = Kegiatan::where('jenis', 'peserta')
                     ->where('is_published', true)
-                    ->orderBy('tanggal', 'asc')
+                    ->orderBy('tanggal_mulai', 'asc')
                     ->get();
 
                 $hasUnpublished = Kegiatan::where('jenis', 'peserta')
@@ -105,28 +105,55 @@ class DashboardController extends Controller
             }
         } catch (\Throwable $e) {
             $kegiatans = collect();
-            $hasUnpublished = false;
         }
 
-        $tugases = collect();
-        $days = collect(); // Inisialisasi collection kosong
+        // 2. Ambil daftar Day unik langsung dari tabel Tugas
+        $days = collect();
+        $dayProgressData = [];
 
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('tugases')) {
-                $tugases = Tugas::orderBy('tenggat_waktu', 'asc')->get();
-
-                // Ambil daftar Day unik yang ada di tabel tugases
-                $days = Tugas::query()
-                    ->whereNotNull('day')
+                // Ambil semua string day unik (misal: 'DAY 1', 'DAY 2', dst)
+                $days = Tugas::whereNotNull('day')
                     ->where('day', '!=', '')
                     ->distinct()
                     ->pluck('day')
                     ->sort(SORT_NATURAL | SORT_FLAG_CASE)
                     ->values();
+
+                // Jika collection $days kosong tapi ada data tugas, kita paksa ambil atau mapping manual
+                if ($days->isEmpty()) {
+                    $days = collect(['DAY 1']); // Fallback darurat jika kolom day kosong
+                }
+
+                foreach ($days as $day) {
+                    // Hitung total tugas pada day tersebut
+                    $totalTugas = Tugas::where('day', $day)->count();
+
+                    $tugasSelesai = 0;
+                    if ($totalTugas > 0) {
+                        // Cek apakah user sudah mengumpulkan tugas ini
+                        $tugasSelesai = Tugas::where('day', $day)
+                            ->whereHas('pengumpulans', function ($query) use ($user) {
+                                $query->where('user_id', $user->id);
+                            })->count();
+
+                        $percent = round(($tugasSelesai / $totalTugas) * 100);
+                    } else {
+                        $percent = 0;
+                    }
+
+                    $dayProgressData[$day] = [
+                        'total' => $totalTugas,
+                        'selesai' => $tugasSelesai,
+                        'percent' => $percent,
+                    ];
+                }
             }
         } catch (\Throwable $e) {
-            $tugases = collect();
-            $days = collect();
+            // Fallback aman jika terjadi error query
+            $days = collect(['DAY 1']);
+            $dayProgressData['DAY 1'] = ['total' => 0, 'selesai' => 0, 'percent' => 0];
         }
 
         $pengumumanTerbaru = null;
@@ -147,8 +174,8 @@ class DashboardController extends Controller
             'user' => $user,
             'kegiatans' => $kegiatans,
             'hasUnpublished' => $hasUnpublished,
-            'tugases' => $tugases,
-            'days' => $days, // <--- Dikirimkan ke view peserta
+            'days' => $days,
+            'dayProgressData' => $dayProgressData,
             'pengumumanTerbaru' => $pengumumanTerbaru,
         ]);
     }

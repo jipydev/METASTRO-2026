@@ -54,9 +54,6 @@
                     </p>
                 </div>
 
-<<<<<<< HEAD
-                <div class="flex items-center gap-2.5">
-=======
                 <div class="flex flex-wrap items-center gap-2.5">
                     {{-- Unduh Template Excel --}}
                     <a href="{{ route('admin.users.template') }}"
@@ -92,7 +89,6 @@
                         <span>Re-generate QR</span>
                     </button>
 
->>>>>>> c76c3db8bc44a4fc4ec825d7f8903dfb962a5cf9
                     {{-- Tambah Pengguna --}}
                     <a href="{{ route('admin.users.create') }}"
                         class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer">
