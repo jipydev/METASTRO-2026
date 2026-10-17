@@ -26,8 +26,7 @@
             x-transition:leave-end="opacity-0 -translate-y-6"
             class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-11/12 max-w-sm px-5 py-3.5 rounded-2xl shadow-2xl flex items-center justify-center gap-2 text-center border"
             :class="toast.type === 'error' ? 'bg-red-600/90 border-red-500 text-white backdrop-blur-md' :
-                'bg-emerald-600/90 border-emerald-500 text-white backdrop-blur-md'"
-            style="display: none;">
+                'bg-emerald-600/90 border-emerald-500 text-white backdrop-blur-md'" style="display: none;">
             <span x-text="toast.type === 'error' ? '⚠️' : '✅'"></span>
             <span x-text="toast.message" class="text-xs sm:text-sm font-semibold tracking-wide"></span>
         </div>
@@ -79,7 +78,7 @@
         </div>
 
         {{-- ============================================================= --}}
-        {{-- MODAL INPUT MANUAL KODE UNIK (LUPA HP / KAMERA ERROR)         --}}
+        {{-- MODAL INPUT MANUAL KODE UNIK (LUPA HP / KAMERA ERROR) --}}
         {{-- ============================================================= --}}
         <div x-show="showManualModal" style="display: none;"
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
@@ -99,12 +98,10 @@
 
                 <h3 class="text-base sm:text-lg font-bold text-white mb-1">Presensi Kode Unik</h3>
                 <p class="text-xs text-slate-400 mb-5 leading-relaxed">
-                    Masukkan <strong>Kode Unik</strong> atau <strong>NIM</strong> user yang lupa bawa HP atau rusak.
-                </p>
+                    Masukkan <strong>Kode Unik</strong></p>
 
                 <form @submit.prevent="submitManualCode()">
-                    <input type="text" x-model="manualInputCode" x-ref="manualInput"
-                        placeholder="Contoh: MTR-7A3B / NIM"
+                    <input type="text" x-model="manualInputCode" x-ref="manualInput" placeholder="Contoh: MTR-7A3B"
                         class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-center text-white font-mono text-base font-bold placeholder-slate-500 focus:outline-hidden focus:border-brand-500 uppercase tracking-widest mb-4 transition"
                         autofocus />
 
@@ -124,7 +121,7 @@
         </div>
 
         {{-- ============================================================= --}}
-        {{-- MODAL POPUP HASIL SCAN QR                                     --}}
+        {{-- MODAL POPUP HASIL SCAN QR --}}
         {{-- ============================================================= --}}
         <div x-show="showPopup" style="display: none;"
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
@@ -135,15 +132,19 @@
 
                 {{-- Foto User --}}
                 <div class="mx-auto w-24 h-24 mb-4 rounded-full p-1 bg-slate-600 shadow-md">
-                    <img :src="scanData.photo"
-                        class="w-full h-full rounded-full object-cover border-2 border-slate-900" alt="Foto Profil" />
+                    <img :src="scanData.photo" class="w-full h-full rounded-full object-cover border-2 border-slate-900"
+                        alt="Foto Profil" />
                 </div>
 
                 {{-- Detail Identitas --}}
                 <div class="flex flex-col items-center justify-center gap-1.5 mb-2">
                     <template x-if="inputSource === 'manual'">
-                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-full text-[10px] font-semibold tracking-wide">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                        <span
+                            class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-full text-[10px] font-semibold tracking-wide">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
                             Input Manual (Kode Unik)
                         </span>
                     </template>
@@ -249,10 +250,10 @@
 
                 startCamera() {
                     navigator.mediaDevices.getUserMedia({
-                            video: {
-                                facingMode: "environment"
-                            }
-                        })
+                        video: {
+                            facingMode: "environment"
+                        }
+                    })
                         .then(stream => {
                             this.stream = stream;
                             this.$refs.video.srcObject = stream;
@@ -312,7 +313,7 @@
 
                     this.hiddenContext.drawImage(video, 0, 0, this.hiddenCanvas.width, this.hiddenCanvas.height);
                     let imageData = this.hiddenContext.getImageData(0, 0, this.hiddenCanvas.width, this.hiddenCanvas
-                    .height);
+                        .height);
                     let code = jsQR(imageData.data, imageData.width, imageData.height);
 
                     if (code) {
