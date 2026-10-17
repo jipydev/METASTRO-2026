@@ -40,7 +40,7 @@
             id: null,
             nama: '',
             deskripsi: '',
-            jenis: 'rapat',
+            jenis: 'peserta',
             is_published: false,
             tanggal_mulai: '',
             tanggal_selesai: '',
@@ -97,7 +97,7 @@
                 id: null,
                 nama: '',
                 deskripsi: '',
-                jenis: 'rapat',
+                jenis: 'pantia',
                 is_published: false,
                 tanggal_mulai: today,
                 tanggal_selesai: today,
@@ -155,7 +155,7 @@
 
             {{-- Grid Kartu Kegiatan --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                @forelse($kegiatans as$item)
+                @forelse($kegiatans as $item)
                     @php
                         $jsonItem = json_encode([
                             'id' => $item->id,
@@ -190,7 +190,7 @@
                                         {{ $item->nama }}</h3>
                                     <div class="flex items-center gap-1.5 mt-1">
                                         <span
-                                            class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider {{ $item->jenis === 'pelaksanaan' ? 'bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300' : 'bg-violet-100 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300' }}">
+                                            class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider {{ $item->jenis === 'peserta' ? 'bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300' : 'bg-violet-100 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300' }}">
                                             {{ ucfirst($item->jenis) }}
                                         </span>
                                         <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider {{ $item->is_published ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' }}">
@@ -343,8 +343,8 @@
                                 *</label>
                             <select name="jenis" x-model="form.jenis" required
                                 class="w-full bg-slate-50 dark:bg-slate-700 rounded-xl border-gray-300 dark:border-slate-600 p-2.5 text-xs text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
-                                <option value="rapat">Rapat</option>
-                                <option value="pelaksanaan">Pelaksanaan</option>
+                                <option value="peserta">Peserta</option>
+                                <option value="panitia">Panitia</option>
                             </select>
                         </div>
                         <div>
