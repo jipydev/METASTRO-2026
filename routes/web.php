@@ -30,17 +30,23 @@ Route::get('/', [HomeController::class, 'index'])->name('landing-page');
 
 Route::get('/tim', [TimController::class, 'peserta'])->name('tim.index');
 
+
+
+
 Route::middleware(['auth'])->prefix('peserta')->name('peserta.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'pesertaDashboard'])->name('dashboard');
+    
+    
+    Route::get('/tugas-list', [TugasController::class, 'pesertaTugasList'])->name('tugas-list');
+    
     Route::get('/tugas-hari', function () {
         return view('peserta.tugas-hari');
     })->name('tugas-hari');
-    Route::get('/tugas-list', function () {
-        return view('peserta.tugas-list');
-    })->name('tugas-list');
+
     Route::get('/tugas-kumpulkan', function () {
         return view('peserta.tugas-kumpulkan');
     })->name('tugas-kumpulkan');
+
     Route::get('/arsip', function () {
         return view('peserta.arsip');
     })->name('arsip');
