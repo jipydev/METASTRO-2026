@@ -147,4 +147,33 @@ class TugasController extends Controller
 
         return redirect()->route('dashboard.tugas.index')->with('success', 'Tugas berhasil dihapus.');
     }
+
+    /**
+     * Tampilan Dashboard untuk Peserta (Menampilkan daftar Card Day)
+     */
+    public function pesertaDashboard()
+    {
+        $days = $this->dayOptions();
+
+        return view('peserta.dashboard', compact('days'));
+    }   
+
+    /**
+     * Tampilan List Tugas untuk Peserta (Berdasarkan Day yang diklik)
+     */
+    public function pesertaTugasList(Request $request)
+    {
+        $selectedDay = $request->query('day');
+        $selectedDay = is_string($selectedDay) && trim($selectedDay) !== '' ? trim($selectedDay) : null;
+
+        $tugases = Tugas::query()
+            ->when($selectedDay !== null, fn ($query) => $query->where('day', $selectedDay))
+            ->orderBy('tenggat_waktu', 'asc')
+            ->get();
+
+        return view('peserta.tugas-list', [
+            'tugases' => $tugases,
+            'selectedDay' => $selectedDay,
+        ]);
+    }
 }
