@@ -197,6 +197,7 @@
                 </div>
 
                 <!-- 3. LIST PENUGASAN SECTION -->
+<!-- 3. LIST PENUGASAN SECTION -->
 <section>
     <div class="flex items-center gap-2 mb-4 pl-1">
         <div class="w-1.5 h-5 bg-[#FF5B00] rounded-full"></div>
@@ -208,11 +209,11 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         @forelse ($days ?? [] as $day)
             @php
-                // Ambil data dinamis dari controller, fallback ke 0 jika kosong
+                // Ambil data dinamis dari controller berdasarkan key $day
                 $progressInfo = $dayProgressData[$day] ?? ['percent' => 0, 'total' => 0, 'selesai' => 0];
                 $currentPercent = $progressInfo['percent'];
                 
-                // Kondisi warna berdasarkan persentase (Contoh: >= 100% hijau, selain itu oranye/kuning)
+                // Kondisi warna berdasarkan persentase
                 $isCompleted = $currentPercent >= 100;
                 $bgClass = $isCompleted ? 'bg-emerald-500' : 'bg-[#FF5B00]';
                 $textClass = $isCompleted 
