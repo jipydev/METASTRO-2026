@@ -104,8 +104,24 @@
                             class="form-control-app w-full sm:w-80">
                     </div>
 
-                    {{-- Day (dinamis dari tabel days) --}}
-                    <x-tugas.day-select :days="$days" />
+                    {{-- Day --}}
+                    <div class="w-full">
+                        <label for="day" class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Day
+                        </label>
+                        <input type="text" id="day" name="day" list="day-options" maxlength="50"
+                            autocomplete="off" value="{{ old('day') }}" placeholder="Pilih atau ketik, mis. Day 1"
+                            class="form-control-app w-full">
+                        <datalist id="day-options">
+                            @foreach ($days as $d)
+                                <option value="{{ $d }}"></option>
+                            @endforeach
+                        </datalist>
+                        <p class="text-[10px] text-slate-400 mt-1">Pilih dari daftar atau ketik Day baru.</p>
+                        @error('day')
+                            <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
                 {{-- Deskripsi / Instruksi Penugasan --}}

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Tugas extends Model
 {
@@ -16,7 +15,7 @@ class Tugas extends Model
         'deskripsi',
         'status',
         'jenis',
-        'day_id',
+        'day',
         'tenggat_waktu',
         'pembuat_id'
     ];
@@ -26,10 +25,5 @@ class Tugas extends Model
     public function pembuat()
     {
         return $this->belongsTo(User::class, 'pembuat_id');
-    }
-
-    public function day(): BelongsTo
-    {
-        return $this->belongsTo(Day::class);
     }
 }
