@@ -166,25 +166,21 @@ class TugasController extends Controller
      */
     public function pesertaTugasList(Request $request)
     {
-        // Ambil query parameter 'day' dari URL (?day=DAY%201)
         $selectedDay = $request->query('day');
 
-        // Bersihkan dan decode nilai parameter jika berupa string
         if (is_string($selectedDay) && trim($selectedDay) !== '') {
-            $selectedDay = urldecode(trim($selectedDay));
+            $selectedDay = trim(urldecode($selectedDay));
         } else {
             $selectedDay = null;
         }
 
-        // Filter data tugas berdasarkan Day jika ada
         $tugases = Tugas::query()
             ->when($selectedDay !== null, function ($query) use ($selectedDay) {
-                $query->where('day', 'LIKE', $selectedDay);
+                $query->whereRaw('LOWER(TRIM(day)) = ?', [mb_strtolower($selectedDay)]);
             })
             ->orderBy('tenggat_waktu', 'asc')
             ->get();
 
-        // Pastikan mengembalikan view peserta.tugas-list beserta variabelnya
         return view('peserta.tugas-list', [
             'tugases' => $tugases,
             'selectedDay' => $selectedDay,
