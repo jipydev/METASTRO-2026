@@ -55,8 +55,8 @@ class TugasController extends Controller
                             ->orWhere('deskripsi', 'like', "%{$search}%");
                     });
                 })
-                ->when(in_array($jenis, ['individu', 'tim', 'angkatan'], true), fn ($query) => $query->where('jenis', $jenis))
-                ->when($day !== null, fn ($query) => $query->where('day', $day))
+                ->when(in_array($jenis, ['individu', 'tim', 'angkatan'], true), fn($query) => $query->where('jenis', $jenis))
+                ->when($day !== null, fn($query) => $query->where('day', $day))
                 ->paginate(10)
                 ->withQueryString(),
             'days' => $this->dayOptions(),
@@ -156,30 +156,35 @@ class TugasController extends Controller
         $days = $this->dayOptions();
 
         return view('peserta.dashboard', compact('days'));
-    }   
+    }
 
-   /**
+    /**
      * Tampilan List Tugas untuk Peserta (Berdasarkan Day yang diklik)
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View
      */
     public function pesertaTugasList(Request $request)
     {
+        // Ambil query parameter 'day' dari URL (?day=DAY%201)
         $selectedDay = $request->query('day');
-        
-        // Membersihkan string parameter dari spasi berlebih & decode %20
+
+        // Bersihkan dan decode nilai parameter jika berupa string
         if (is_string($selectedDay) && trim($selectedDay) !== '') {
             $selectedDay = urldecode(trim($selectedDay));
         } else {
             $selectedDay = null;
         }
 
+        // Filter data tugas berdasarkan Day jika ada
         $tugases = Tugas::query()
             ->when($selectedDay !== null, function ($query) use ($selectedDay) {
-                
                 $query->where('day', 'LIKE', $selectedDay);
             })
             ->orderBy('tenggat_waktu', 'asc')
             ->get();
 
+        // Pastikan mengembalikan view peserta.tugas-list beserta variabelnya
         return view('peserta.tugas-list', [
             'tugases' => $tugases,
             'selectedDay' => $selectedDay,

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="min-h-dvh">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,6 +27,7 @@
         .font-oswald-header { font-family: 'Oswald', sans-serif; letter-spacing: 0.12em; }
     </style>
 </head>
+
 <body class="font-poppins antialiased bg-slate-50/60 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-dvh transition-colors duration-300"
     x-data="{
         tab: 'semua',
@@ -98,6 +100,10 @@
                             'regu' => 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20',
                             'angkatan' => 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
                         ][$jenis] ?? 'bg-slate-100 text-slate-600 border-slate-200';
+
+                        // Kirim ID lewat Query String (?tugas_id=X) agar kompatibel dengan route tanpa parameter URL
+                        $tugasId = $tugas->id ?? null;
+                        $kumpulkanUrl = route('peserta.tugas-kumpulkan') . ($tugasId ? '?tugas_id=' . $tugasId : '');
                     @endphp
 
                     <div x-show="tab == 'semua' || tab == '{{ $tabCategory }}'" x-transition.opacity.duration.200ms
@@ -122,7 +128,7 @@
                                 <span>Deadline: {{ isset($tugas->tenggat_waktu) && $tugas->tenggat_waktu ? \Carbon\Carbon::parse($tugas->tenggat_waktu)->translatedFormat('d M H:i') . ' WIB' : 'Tidak ada' }}</span>
                             </div>
 
-                            <a href="{{ route('peserta.tugas-kumpulkan', ['tugas_id' => $tugas->id ?? 0]) }}"
+                            <a href="{{ $kumpulkanUrl }}"
                                 class="inline-flex items-center gap-1.5 bg-orange-500 dark:bg-amber-400 hover:bg-slate-800 dark:hover:bg-amber-300 text-white dark:text-slate-950 font-semibold text-xs px-5 py-2 rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer">
                                 Kumpulkan
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
