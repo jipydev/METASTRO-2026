@@ -265,7 +265,7 @@
                 </section>
 
                 <!-- 4. TIMELINE SECTION -->
-                <section>
+                <section class="mt-4">
                     <div class="flex items-center gap-2 mb-4 pl-1">
                         <div class="w-1.5 h-5 bg-[#FF5B00] rounded-full"></div>
                         <h3 class="font-bold text-lg text-slate-800 dark:text-white">
