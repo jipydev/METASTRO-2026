@@ -48,6 +48,9 @@ class KegiatanController extends Controller
         $validated = $request->validated();
         $validated['tanggal'] = $validated['tanggal_mulai'];
 
+        // Menangani input checkbox is_published (bernilai 1/true jika dicentang, 0/false jika tidak)
+        $validated['is_published'] = $request->has('is_published') ? true : false;
+
         // Format ulang datetime-local agar sesuai dengan format DATETIME MySQL
         if (! empty($validated['presensi_mulai'])) {
             $validated['presensi_mulai'] = Carbon::parse($validated['presensi_mulai'])->format('Y-m-d H:i:s');
@@ -63,10 +66,16 @@ class KegiatanController extends Controller
         return back()->with('success', 'Kegiatan baru berhasil ditambahkan ke timeline.');
     }
 
+    /**
+     * Memperbarui data kegiatan.
+     */
     public function update(KegiatanRequest $request, Kegiatan $kegiatan): RedirectResponse
     {
         $validated = $request->validated();
         $validated['tanggal'] = $validated['tanggal_mulai'];
+
+        // Menangani input checkbox is_published pada form edit
+        $validated['is_published'] = $request->has('is_published') ? true : false;
 
         // Format ulang datetime-local agar sesuai dengan format DATETIME MySQL
         if (! empty($validated['presensi_mulai'])) {
