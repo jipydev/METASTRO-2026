@@ -94,13 +94,18 @@
                     </div>
                 </div>
 
-                {{-- Tenggat Waktu --}}
-                <div>
-                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                        Tenggat Waktu Pengumpulan <span class="text-red-500">*</span>
-                    </label>
-                    <input type="datetime-local" name="tenggat_waktu" required value="{{ old('tenggat_waktu') }}"
-                        class="form-control-app w-full sm:w-80">
+                <div class="flex items-start w-full gap-4 flex-wrap sm:flex-nowrap">
+                    {{-- Tenggat Waktu --}}
+                    <div>
+                        <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Tenggat Waktu Pengumpulan <span class="text-red-500">*</span>
+                        </label>
+                        <input type="datetime-local" name="tenggat_waktu" required value="{{ old('tenggat_waktu') }}"
+                            class="form-control-app w-full sm:w-80">
+                    </div>
+
+                    {{-- Day (dinamis dari tabel days) --}}
+                    <x-tugas.day-select :days="$days" />
                 </div>
 
                 {{-- Deskripsi / Instruksi Penugasan --}}
