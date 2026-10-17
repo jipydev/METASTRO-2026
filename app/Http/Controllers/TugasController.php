@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Day;
 use App\Models\Tugas;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -28,11 +29,11 @@ class TugasController extends Controller
     {
         $search = trim((string) $request->query('search', ''));
         $jenis = $request->query('jenis');
-        $day = $request->query('day');
+        $day = $request->integer('day') ?: null;
 
         $data = [
             'title' => 'Tugas',
-            'tugases' => Tugas::query()->orderBy('jenis')
+            'tugases' => Tugas::query()->with('day')->orderBy('jenis')
                 ->when($search !== '', function ($query) use ($search) {
                     $query->where(function ($query) use ($search) {
                         $query->where('judul', 'like', "%{$search}%")
@@ -40,9 +41,10 @@ class TugasController extends Controller
                     });
                 })
                 ->when(in_array($jenis, ['individu', 'tim', 'angkatan'], true), fn ($query) => $query->where('jenis', $jenis))
-                ->when(!empty($day), fn ($query) => $query->where('day', $day))
+                ->when($day !== null, fn ($query) => $query->where('day_id', $day))
                 ->paginate(10)
                 ->withQueryString(),
+            'days' => Day::ordered()->get(),
             'search' => $search,
             'jenis' => $jenis,
             'day' => $day,
@@ -54,6 +56,7 @@ class TugasController extends Controller
     {
         $data = [
             'title' => 'Buat Tugas Baru',
+            'days' => Day::ordered()->get(),
         ];
 
         return view('tugas.create', $data);
@@ -65,7 +68,7 @@ class TugasController extends Controller
             'judul' => 'required|string|max:100',
             'deskripsi' => 'nullable|string',
             'jenis' => 'required|in:individu,tim,angkatan',
-            'day' => 'nullable|string|max:50',
+            'day_id' => 'nullable|integer|exists:days,id',
             'tenggat_waktu' => 'nullable|date',
         ], [
             'judul.required' => 'Judul tugas harus diisi.',
@@ -74,8 +77,8 @@ class TugasController extends Controller
             'deskripsi.string' => 'Deskripsi tugas harus berupa teks.',
             'jenis.required' => 'Jenis tugas harus dipilih.',
             'jenis.in' => 'Jenis tugas tidak valid.',
-            'day.string' => 'Day harus berupa teks.',
-            'day.max' => 'Day tidak boleh lebih dari 50 karakter.',
+            'day_id.integer' => 'Day tidak valid.',
+            'day_id.exists' => 'Day yang dipilih tidak ditemukan.',
             'tenggat_waktu.date' => 'Tenggat waktu harus berupa tanggal yang valid.',
         ]);
 
@@ -91,8 +94,9 @@ class TugasController extends Controller
         $data = [
             'title' => 'Edit Tugas',
             'tugas' => Tugas::findOrFail($id),
+            'days' => Day::ordered()->get(),
         ];
-        
+
         return view('tugas.edit', $data);
     }
 
@@ -102,7 +106,7 @@ class TugasController extends Controller
             'judul' => 'required|string|max:100',
             'deskripsi' => 'nullable|string',
             'jenis' => 'required|in:individu,tim,angkatan',
-            'day' => 'nullable|string|max:50',
+            'day_id' => 'nullable|integer|exists:days,id',
             'tenggat_waktu' => 'nullable|date',
         ], [
             'judul.required' => 'Judul tugas harus diisi.',
@@ -111,8 +115,8 @@ class TugasController extends Controller
             'deskripsi.string' => 'Deskripsi tugas harus berupa teks.',
             'jenis.required' => 'Jenis tugas harus dipilih.',
             'jenis.in' => 'Jenis tugas tidak valid.',
-            'day.string' => 'Day harus berupa teks.',
-            'day.max' => 'Day tidak boleh lebih dari 50 karakter.',
+            'day_id.integer' => 'Day tidak valid.',
+            'day_id.exists' => 'Day yang dipilih tidak ditemukan.',
             'tenggat_waktu.date' => 'Tenggat waktu harus berupa tanggal yang valid.',
         ]);
 
