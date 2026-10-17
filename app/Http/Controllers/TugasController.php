@@ -158,16 +158,25 @@ class TugasController extends Controller
         return view('peserta.dashboard', compact('days'));
     }   
 
-    /**
+   /**
      * Tampilan List Tugas untuk Peserta (Berdasarkan Day yang diklik)
      */
     public function pesertaTugasList(Request $request)
     {
         $selectedDay = $request->query('day');
-        $selectedDay = is_string($selectedDay) && trim($selectedDay) !== '' ? trim($selectedDay) : null;
+        
+        // Membersihkan string parameter dari spasi berlebih & decode %20
+        if (is_string($selectedDay) && trim($selectedDay) !== '') {
+            $selectedDay = urldecode(trim($selectedDay));
+        } else {
+            $selectedDay = null;
+        }
 
         $tugases = Tugas::query()
-            ->when($selectedDay !== null, fn ($query) => $query->where('day', $selectedDay))
+            ->when($selectedDay !== null, function ($query) use ($selectedDay) {
+                // Menggunakan LIKE agar pencarian 'day 1', 'Day 1', atau 'DAY 1' tetap cocok di database
+                $query->where('day', 'LIKE', $selectedDay);
+            })
             ->orderBy('tenggat_waktu', 'asc')
             ->get();
 

@@ -53,7 +53,7 @@
 
             <!-- PAGE HEADER -->
             <div class="flex items-center gap-3 py-3 mb-4">
-                <a href="{{ route('dashboard') }}" class="p-2 -ml-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors" title="Kembali ke Dashboard">
+                <a href="{{ route('peserta.dashboard') }}" class="p-2 -ml-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors" title="Kembali ke Dashboard">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                     </svg>
@@ -89,7 +89,7 @@
             <div class="space-y-3.5">
                 @forelse ($tugases ?? [] as $tugas)
                     @php
-                        $jenis = strtolower($tugas->jenis ?? $tugas['jenis'] ?? 'individu');
+                        $jenis = strtolower($tugas->jenis ?? 'individu');
                         $tabCategory = ($jenis === 'tim' || $jenis === 'regu') ? 'tim' : $jenis;
                         
                         $badgeClasses = [
@@ -98,29 +98,20 @@
                             'regu' => 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20',
                             'angkatan' => 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
                         ][$jenis] ?? 'bg-slate-100 text-slate-600 border-slate-200';
-
-                        // Link kumpulkan tugas aman
-                        $tugasId = $tugas->id ?? $tugas['id'] ?? null;
-                        $kumpulkanUrl = '#';
-                        if (\Illuminate\Support\Facades\Route::has('peserta.tugas-kumpulkan') && $tugasId) {
-                            $kumpulkanUrl = route('peserta.tugas-kumpulkan', ['id' => $tugasId]);
-                        } elseif (\Illuminate\Support\Facades\Route::has('tugas.show') && $tugasId) {
-                            $kumpulkanUrl = route('tugas.show', $tugasId);
-                        }
                     @endphp
 
                     <div x-show="tab == 'semua' || tab == '{{ $tabCategory }}'" x-transition.opacity.duration.200ms
                         class="group bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/60 hover:border-slate-300 dark:hover:border-slate-600 rounded-2xl p-5 shadow-xs transition-all duration-200">
                         <div class="flex items-center justify-between gap-2 mb-2.5">
                             <h3 class="font-bold text-base text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                                {{ $tugas->judul ?? $tugas['judul'] ?? 'Penugasan' }}
+                                {{ $tugas->judul ?? 'Penugasan' }}
                             </h3>
                             <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full shrink-0 border capitalize {{ $badgeClasses }}">
                                 {{ $jenis }}
                             </span>
                         </div>
                         <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4 line-clamp-2">
-                            {{ strip_tags($tugas->deskripsi ?? $tugas['deskripsi'] ?? '') }}
+                            {{ strip_tags($tugas->deskripsi ?? '') }}
                         </p>
                         
                         <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700/50">
@@ -131,7 +122,7 @@
                                 <span>Deadline: {{ isset($tugas->tenggat_waktu) && $tugas->tenggat_waktu ? \Carbon\Carbon::parse($tugas->tenggat_waktu)->translatedFormat('d M H:i') . ' WIB' : 'Tidak ada' }}</span>
                             </div>
 
-                            <a href="{{ $kumpulkanUrl }}"
+                            <a href="{{ route('peserta.tugas-kumpulkan', ['tugas_id' => $tugas->id ?? 0]) }}"
                                 class="inline-flex items-center gap-1.5 bg-orange-500 dark:bg-amber-400 hover:bg-slate-800 dark:hover:bg-amber-300 text-white dark:text-slate-950 font-semibold text-xs px-5 py-2 rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer">
                                 Kumpulkan
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
