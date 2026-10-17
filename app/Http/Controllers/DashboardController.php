@@ -152,9 +152,4 @@ class DashboardController extends Controller
             'pengumumanTerbaru' => $pengumumanTerbaru,
         ]);
     }
-
-    public function pesertaDashboard(Request $request): View
-    {
-        return $this->peserta($request);
-    }
 }

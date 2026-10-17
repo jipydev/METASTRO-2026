@@ -33,7 +33,7 @@
 
         <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
 
-            <div>
+            <div class="flex flex-col gap-4">
                 <!-- 2. WELCOME / DEADLINE CARD -->
                 <div
                     class="bg-white dark:bg-slate-800 border border-orange-100/60 dark:border-amber-900/40 border-l-4 !border-l-[#F97316] rounded-2xl p-4 sm:p-5 shadow-sm relative overflow-hidden mb-5">

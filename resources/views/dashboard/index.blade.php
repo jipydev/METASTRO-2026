@@ -378,7 +378,7 @@
                                 <select name="status"
                                     class="w-full bg-slate-50 dark:bg-slate-700 rounded-xl border border-slate-300 dark:border-slate-600 p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
                                     <option value="draft">Draft (Hanya Divisi Saya)</option>
-                                    <option value="published">Publish (Semua Panitia)</option>
+                                    <option value="published">Publish</option>
                                 </select>
                             </div>
 
@@ -441,7 +441,7 @@
                                 <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Status *</label>
                                 <select name="status" x-model="selectedPengumuman.status"
                                     class="w-full bg-slate-50 dark:bg-slate-700 rounded-xl border border-slate-300 dark:border-slate-600 p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
-                                    <option value="published">Publish (Semua Panitia)</option>
+                                    <option value="published">Publish</option>
                                     <option value="draft">Draft (Hanya Divisi Saya)</option>
                                 </select>
                             </div>
