@@ -35,17 +35,12 @@
 
         <div class="space-y-6 sm:space-y-8">
             <!-- 2. WELCOME / DEADLINE CARD -->
-<<<<<<< HEAD
-            <div class="bg-white dark:bg-slate-800 border border-orange-100/60 dark:border-amber-900/40 border-l-4 !border-l-[#F97316] rounded-2xl p-4 sm:p-5 shadow-sm relative overflow-hidden mb-5">
-                <div class="flex items-center justify-between gap-3">
-=======
-            <div class="relative bg-gradient-to-br from-white to-orange-50/50 dark:from-slate-800 dark:to-slate-800/80 border border-orange-100 dark:border-slate-700/60 rounded-3xl p-5 sm:p-6 shadow-[0_2px_20px_-8px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col justify-center group">
+            <div class="relative bg-gradient-to-br from-white to-orange-50/50 dark:from-slate-800 dark:to-slate-800/80 border border-orange-100 dark:border-slate-700/60 rounded-3xl p-5 sm:p-6 shadow-[0_2px_20px_-8px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col justify-center group mb-5">
                 
                 <!-- Decorative background blur -->
                 <div class="absolute -right-10 -top-10 w-40 h-40 bg-orange-400/10 dark:bg-orange-500/10 rounded-full blur-3xl group-hover:bg-orange-400/20 transition-all duration-500"></div>
 
-                <div class="relative flex items-center justify-between gap-4">
->>>>>>> fd1882d897cad6848e495b6d55cdd6ce64a35bae
+                <div class="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <!-- Left: Greetings & Deadline info -->
                     <div class="min-w-0 flex-1">
                         <h2 class="font-kalam text-xl sm:text-2xl font-bold text-slate-800 dark:text-amber-50 tracking-wide leading-tight flex items-center gap-2">
@@ -60,28 +55,17 @@
                         </div>
                     </div>
 
-<<<<<<< HEAD
-                    <!-- Right: Deadline Time side-by-side with Kumpulkan Button -->
-                    <div class="flex items-center shrink-0 gap-3">
-                        <span class="text-red-500 font-bold text-sm sm:text-base tracking-wide whitespace-nowrap">
-                            12:45
-                        </span>
-                        
-                        <a href="{{ route('peserta.arsip') }}"
-                            class="inline-block bg-[#FFF0B3] dark:bg-amber-400 hover:bg-[#FFE685] dark:hover:bg-amber-300 text-[#1E293B] font-bold text-xs sm:text-[13px] px-3.5 py-1.5 rounded-lg shadow-2xs transition active:scale-95 cursor-pointer text-center whitespace-nowrap">
-=======
-                    <!-- Right: Timer & Kumpulkan Button -->
-                    <div class="flex flex-col items-end shrink-0 gap-2.5">
-                        <div class="bg-red-50 dark:bg-red-500/10 px-3 py-1 rounded-lg border border-red-100 dark:border-red-500/20">
-                            <span class="text-red-600 dark:text-red-400 font-bold text-sm sm:text-base tracking-wider">
+                    <!-- Right: Deadline Time side-by-side (samping kiri) dengan Tombol Kumpulkan -->
+                    <div class="flex items-center shrink-0 gap-3 self-end sm:self-center">
+                        <div class="bg-red-50 dark:bg-red-500/10 px-3 py-1.5 rounded-xl border border-red-100 dark:border-red-500/20">
+                            <span class="text-red-600 dark:text-red-400 font-bold text-sm sm:text-base tracking-wider whitespace-nowrap">
                                 12:45
                             </span>
                         </div>
                         
                         <a href="{{ route('peserta.arsip') }}"
-                            class="inline-flex items-center justify-center gap-1 bg-[#FF5B00] hover:bg-[#E05000] text-white font-semibold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-md shadow-orange-500/20 transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer">
->>>>>>> fd1882d897cad6848e495b6d55cdd6ce64a35bae
-                            Kumpulkan
+                            class="inline-flex items-center justify-center gap-1.5 bg-[#FF5B00] hover:bg-[#E05000] text-white font-semibold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-md shadow-orange-500/20 transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer whitespace-nowrap">
+                            <span>Kumpulkan</span>
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"></path></svg>
                         </a>
                     </div>
