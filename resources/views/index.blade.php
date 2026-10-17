@@ -208,116 +208,135 @@
                     </h3>
 
                     <!-- Timeline List -->
+<div class="relative pl-6 space-y-6">
+    <!-- Garis Konektor Vertikal Oranye -->
+    <div class="absolute left-1.5 top-2.5 bottom-3 w-0.5 bg-linear-to-b from-amber-500 via-orange-400 to-orange-300">
+    </div>
 
-                    <div class="relative pl-6 space-y-6">
-                        <!-- Garis Konektor Vertikal Oranye -->
-                        <div
-                            class="absolute left-1.5 top-2.5 bottom-3 w-0.5 bg-linear-to-b from-amber-500 via-orange-400 to-orange-300">
-                        </div>
+    @if (isset($kegiatans) && $kegiatans->count() > 0)
+        <!-- 1. Menampilkan list kegiatan yang SUDAH di-publish -->
+        @foreach ($kegiatans as $index => $kegiatan)
+            @php
+                $today = \Carbon\Carbon::today();
+                $kegiatanDate = \Carbon\Carbon::parse($kegiatan->tanggal_mulai);
 
-                        @if (isset($kegiatans) && $kegiatans->count() > 0)
-                            @foreach ($kegiatans as $index => $kegiatan)
-                                @php
-                                    $today = \Carbon\Carbon::today();
-                                    $kegiatanDate = \Carbon\Carbon::parse($kegiatan->tanggal_mulai);
+                if ($kegiatanDate->lt($today)) {
+                    $badgeText = 'selesai';
+                    $badgeClass = 'bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300';
+                    $dotColor = 'bg-emerald-500';
+                } elseif ($kegiatanDate->isToday()) {
+                    $badgeText = 'sedang berjalan';
+                    $badgeClass = 'bg-sky-100 text-sky-700 border-sky-300 animate-pulse dark:bg-sky-950/60 dark:text-sky-300';
+                    $dotColor = 'bg-sky-500';
+                } else {
+                    $badgeText = 'akan datang';
+                    $badgeClass = 'bg-orange-100/80 text-orange-800 border-orange-300 dark:bg-orange-950/60 dark:text-orange-300';
+                    $dotColor = 'bg-[#fe5a1d]';
+                }
+            @endphp
 
-                                    if ($kegiatanDate->lt($today)) {
-                                        $badgeText = 'selesai';
-                                        $badgeClass =
-                                            'bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300';
-                                        $dotColor = 'bg-emerald-500';
-                                    } elseif ($kegiatanDate->isToday()) {
-                                        $badgeText = 'sedang berjalan';
-                                        $badgeClass =
-                                            'bg-sky-100 text-sky-700 border-sky-300 animate-pulse dark:bg-sky-950/60 dark:text-sky-300';
-                                        $dotColor = 'bg-sky-500';
-                                    } else {
-                                        $badgeText = 'akan datang';
-                                        $badgeClass =
-                                            'bg-orange-100/80 text-orange-800 border-orange-300 dark:bg-orange-950/60 dark:text-orange-300';
-                                        $dotColor = 'bg-[#fe5a1d]';
-                                    }
-                                @endphp
+            <div class="relative flex flex-col items-start text-left">
+                <!-- Dot Indikator -->
+                <span class="absolute -left-5.75 top-1 w-3.5 h-3.5 rounded-full {{ $dotColor }} border-2 border-white dark:border-slate-800 shadow-sm"></span>
 
-                                <div class="relative flex flex-col items-start text-left">
-                                    <!-- Dot Indikator -->
-                                    <span
-                                        class="absolute -left-5.75 top-1 w-3.5 h-3.5 rounded-full {{ $dotColor }} border-2 border-white dark:border-slate-800 shadow-sm"></span>
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-slate-800 dark:text-white text-sm tracking-wide">
+                        {{ $kegiatan->nama ?? 'DAY ' . ($index + 1) }}
+                    </span>
+                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border {{ $badgeClass }}">
+                        {{ $badgeText }}
+                    </span>
+                </div>
 
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-bold text-slate-800 dark:text-white text-sm tracking-wide">
-                                            {{ $kegiatan->nama ?? 'DAY ' . ($index + 1) }}
-                                        </span>
-                                        <span
-                                            class="text-[10px] font-semibold px-2 py-0.5 rounded-full border {{ $badgeClass }}">
-                                            {{ $badgeText }}
-                                        </span>
-                                    </div>
+                <div class="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                    <span class="font-medium text-slate-800 dark:text-slate-100">{{ $kegiatanDate->translatedFormat('d F') }}</span>
+                    @if ($kegiatan->tanggal_selesai && $kegiatan->tanggal_selesai->ne($kegiatan->tanggal_mulai))
+                        <span> - {{ $kegiatan->tanggal_selesai->translatedFormat('d F') }}</span>
+                    @endif
+                    @if ($kegiatan->waktu_mulai)
+                        <span class="text-slate-400 mx-1">&bull;</span>
+                        <span>{{ \Carbon\Carbon::parse($kegiatan->waktu_mulai)->format('H.i') }}
+                            @if ($kegiatan->waktu_selesai)
+                                - {{ \Carbon\Carbon::parse($kegiatan->waktu_selesai)->format('H.i') }}
+                            @endif
+                            - {{ $kegiatan->tempat ?? 'Kampus' }}
+                        </span>
+                    @endif
+                </div>
+            </div>
+        @endforeach
 
-                                    <div class="text-xs text-slate-600 dark:text-slate-300 mt-1">
-                                        <span
-                                            class="font-medium text-slate-800 dark:text-slate-100">{{ $kegiatanDate->translatedFormat('d F') }}</span>
-                                        @if ($kegiatan->tanggal_selesai && $kegiatan->tanggal_selesai->ne($kegiatan->tanggal_mulai))
-                                            <span> - {{ $kegiatan->tanggal_selesai->translatedFormat('d F') }}</span>
-                                        @endif
-                                        @if ($kegiatan->waktu_mulai)
-                                            <span class="text-slate-400 mx-1">&bull;</span>
-                                            <span>{{ \Carbon\Carbon::parse($kegiatan->waktu_mulai)->format('H.i') }}
-                                                @if ($kegiatan->waktu_selesai)
-                                                    -
-                                                    {{ \Carbon\Carbon::parse($kegiatan->waktu_selesai)->format('H.i') }}
-                                                @endif
-                                                -
-                                                {{ $kegiatan->tempat ?? 'Kampus' }}
-                                            </span>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        @else
-                            <!-- Sesuai Persis Tampilan Referensi Gambar -->
-                            <div class="relative flex flex-col items-start text-left">
-                                <span
-                                    class="absolute -left-5.75 top-1 w-3.5 h-3.5 rounded-full bg-[#fe5a1d] border-2 border-white shadow-sm"></span>
-                                <div class="flex items-center gap-2">
-                                    <span class="font-bold text-slate-800 dark:text-white text-sm">DAY 1</span>
-                                    <span
-                                        class="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-300">selesai</span>
-                                </div>
-                                <div class="text-xs text-slate-600 dark:text-slate-300 mt-1">
-                                    <strong>13 Agustus</strong> &bull; 12.45 - LAB IPA
-                                </div>
-                            </div>
+        <!-- 2. Menampilkan elemen "Coming Soon" di bawah list jika ada kegiatan belum di-publish -->
+        @if ($hasUnpublished)
+            <div class="relative flex flex-col items-start text-left opacity-80">
+                <!-- Dot Indikator Abu-abu / Putus-putus -->
+                <span class="absolute -left-5.75 top-1 w-3.5 h-3.5 rounded-full bg-slate-400 dark:bg-slate-600 border-2 border-white dark:border-slate-800 shadow-sm animate-pulse"></span>
 
-                            <div class="relative flex flex-col items-start text-left">
-                                <span
-                                    class="absolute -left-5.75 top-1 w-3.5 h-3.5 rounded-full bg-amber-500 border-2 border-white shadow-sm"></span>
-                                <div class="flex items-center gap-2">
-                                    <span class="font-bold text-slate-800 dark:text-white text-sm">DAY 2</span>
-                                    <span
-                                        class="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-700 border border-sky-300">sedang
-                                        berjalan</span>
-                                </div>
-                                <div class="text-xs text-slate-600 dark:text-slate-300 mt-1">
-                                    <strong>20 Agustus</strong> &bull; 12.45 - Ruang 29
-                                </div>
-                            </div>
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-slate-500 dark:text-slate-400 text-sm tracking-wide">
+                        ✨ COMING SOON
+                    </span>
+                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border border-dashed border-slate-300 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+                        misteri
+                    </span>
+                </div>
+                <div class="text-[11px] text-slate-400 dark:text-slate-500 italic mt-0.5">
+                    Agenda keseruan berikutnya sedang dipersiapkan...
+                </div>
+            </div>
+        @endif
 
-                            <div class="relative flex flex-col items-start text-left">
-                                <span
-                                    class="absolute -left-5.75 top-1 w-3.5 h-3.5 rounded-full bg-[#fe5a1d] border-2 border-white shadow-sm"></span>
-                                <div class="flex items-center gap-2">
-                                    <span class="font-bold text-slate-800 dark:text-white text-sm">DAY 3</span>
-                                    <span
-                                        class="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-800 border border-orange-300">akan
-                                        datang</span>
-                                </div>
-                                <div class="text-xs text-slate-600 dark:text-slate-300 mt-1">
-                                    <strong>27 Agustus</strong> &bull; 12.45 - Albar
-                                </div>
-                            </div>
-                        @endif
-                    </div>
+    @else
+        <!-- 3. Kondisi jika TIDAK ADA kegiatan yang publish sama sekali, tapi ada data belum di-publish -->
+        @if ($hasUnpublished)
+            <div class="relative flex flex-col items-start text-left">
+                <span class="absolute -left-5.75 top-1 w-3.5 h-3.5 rounded-full bg-amber-500 border-2 border-white shadow-sm animate-pulse"></span>
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-slate-800 dark:text-white text-sm">DAY 1</span>
+                    <span class="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-300">coming soon</span>
+                </div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1 italic">
+                    Garis lini masa kegiatan segera dirilis dalam waktu dekat!
+                </div>
+            </div>
+        @else
+            <!-- 4. Kondisi data benar-benar kosong kosong (Hardcoded dummy bawaan Anda) -->
+            <div class="relative flex flex-col items-start text-left">
+                <span class="absolute -left-5.75 top-1 w-3.5 h-3.5 rounded-full bg-[#fe5a1d] border-2 border-white shadow-sm"></span>
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-slate-800 dark:text-white text-sm">DAY 1</span>
+                    <span class="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-300">selesai</span>
+                </div>
+                <div class="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                    <strong>13 Agustus</strong> &bull; 12.45 - LAB IPA
+                </div>
+            </div>
+
+            <div class="relative flex flex-col items-start text-left">
+                <span class="absolute -left-5.75 top-1 w-3.5 h-3.5 rounded-full bg-amber-500 border-2 border-white shadow-sm"></span>
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-slate-800 dark:text-white text-sm">DAY 2</span>
+                    <span class="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-700 border border-sky-300">sedang berjalan</span>
+                </div>
+                <div class="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                    <strong>20 Agustus</strong> &bull; 12.45 - Ruang 29
+                </div>
+            </div>
+
+            <div class="relative flex flex-col items-start text-left">
+                <span class="absolute -left-5.75 top-1 w-3.5 h-3.5 rounded-full bg-[#fe5a1d] border-2 border-white shadow-sm"></span>
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-slate-800 dark:text-white text-sm">DAY 3</span>
+                    <span class="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-800 border border-orange-300">akan datang</span>
+                </div>
+                <div class="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                    <strong>27 Agustus</strong> &bull; 12.45 - Albar
+                </div>
+            </div>
+        @endif
+    @endif
+</div>
+
 
                 </div>
             </div>

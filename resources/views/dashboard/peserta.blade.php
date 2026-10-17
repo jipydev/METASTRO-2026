@@ -203,7 +203,7 @@
                         <!-- Modern Vertical Timeline -->
                         <div class="relative border-l-2 border-orange-100 dark:border-slate-700 ml-3 space-y-8">
 
-                            <!-- Steps -->
+                            <!-- Tampilkan list kegiatan yang sudah publish -->
                             @foreach ($kegiatans as $kegiatan)
                                 <div class="relative pl-6 sm:pl-8 group">
                                     <div
@@ -212,16 +212,45 @@
                                     <div
                                         class="bg-orange-50 dark:bg-slate-700/50 inline-block px-3 py-1 rounded-lg mb-1">
                                         <h4 class="font-bold text-sm sm:text-base text-[#FF5B00] dark:text-orange-400">
-                                            {{ $kegiatan->nama }}</h4>
+                                            {{ $kegiatan->nama }}
+                                        </h4>
                                     </div>
                                     <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium">
                                         {{ \Carbon\Carbon::parse($kegiatan->tanggal_mulai)->translatedFormat('d F Y') }}
                                     </p>
-
                                 </div>
                             @endforeach
+
+                            <!-- Elemen "Coming Soon" otomatis muncul jika ada kegiatan yang belum di-publish -->
+                            @if ($hasUnpublished)
+                                <div class="relative pl-6 sm:pl-8 group opacity-75">
+                                    <!-- Dot Timeline dengan gaya putus-putus / abu-abu penanda coming soon -->
+                                    <div
+                                        class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-white dark:bg-slate-800 border-4 border-slate-400 dark:border-slate-600 shadow-[0_0_8px_rgba(156,163,175,0.4)] animate-pulse">
+                                    </div>
+                                    <div
+                                        class="bg-slate-100 dark:bg-slate-700 inline-block px-3 py-1 rounded-lg mb-1 border border-dashed border-slate-300 dark:border-slate-600">
+                                        <h4
+                                            class="font-bold text-sm sm:text-base text-slate-500 dark:text-slate-400 dynamic-pulse">
+                                            ✨ Coming Soon
+                                        </h4>
+                                    </div>
+                                    <p class="text-xs sm:text-sm text-slate-400 dark:text-slate-500 italic">
+                                        Kegiatan baru sedang dipersiapkan panitia...
+                                    </p>
+                                </div>
+                            @endif
+
+                            <!-- Kondisi cadangan: Jika sama sekali TIDAK ADA kegiatan (baik publish maupun belum) -->
+                            @if ($kegiatans->isEmpty() && !$hasUnpublished)
+                                <div class="text-center py-4 text-slate-400 dark:text-slate-500">
+                                    Belum ada agenda kegiatan saat ini.
+                                </div>
+                            @endif
+
                         </div>
                     </div>
+
                 </section>
 
                 <!-- 5. CEK BARANG BAWAAN PRIBADI SECTION -->

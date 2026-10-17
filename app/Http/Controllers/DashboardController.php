@@ -54,8 +54,8 @@ class DashboardController extends Controller
                 ->orderBy('waktu_mulai', 'asc')
                 ->first()
                 ?? Kegiatan::orderBy('tanggal_mulai', 'desc')
-                    ->orderBy('waktu_mulai', 'desc')
-                    ->first();
+                ->orderBy('waktu_mulai', 'desc')
+                ->first();
         }
 
         if ($kegiatanTerbaru) {
@@ -89,12 +89,24 @@ class DashboardController extends Controller
         $user = $request->user();
 
         $kegiatans = collect();
+        $hasUnpublished = false; // Tambahkan penanda ini
+
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('kegiatans')) {
-                $kegiatans = Kegiatan::orderBy('tanggal', 'asc')->get();
+                // Ambil kegiatan yang sudah di-publish untuk ditampilkan di timeline
+                $kegiatans = Kegiatan::where('jenis', 'peserta')
+                    ->where('is_published', true)
+                    ->orderBy('tanggal', 'asc')
+                    ->get();
+
+                // Cek apakah ada kegiatan peserta yang BELUM di-publish
+                $hasUnpublished = Kegiatan::where('jenis', 'peserta')
+                    ->where('is_published', false)
+                    ->exists(); // Mengembalikan true/false dengan cepat tanpa load semua data
             }
         } catch (\Throwable $e) {
             $kegiatans = collect();
+            $hasUnpublished = false;
         }
 
         $tugases = collect();
@@ -110,6 +122,7 @@ class DashboardController extends Controller
             'title' => 'Dashboard',
             'user' => $user,
             'kegiatans' => $kegiatans,
+            'hasUnpublished' => $hasUnpublished, // Kirim variabel ke view
             'tugases' => $tugases,
         ]);
     }
