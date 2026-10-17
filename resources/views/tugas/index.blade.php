@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    {{-- Toast Alert & Loading Container --}}
+    {{-- Toast Alert Container --}}
     <div x-data="{
         openDetailModal: false,
         openDeleteModal: false,

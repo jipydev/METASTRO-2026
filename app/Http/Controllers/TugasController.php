@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Tugas;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
 
 class TugasController extends Controller
 {
@@ -24,10 +23,6 @@ class TugasController extends Controller
         ) ?? $description;
     }
 
-    /**
-     * Daftar Day unik yang sudah pernah dipakai di tabel tugases.
-     * Diurutkan natural supaya "Day 2" tampil sebelum "Day 10".
-     */
     private function dayOptions()
     {
         return Tugas::query()
@@ -46,35 +41,35 @@ class TugasController extends Controller
         $day = $request->query('day');
         $day = is_string($day) && trim($day) !== '' ? trim($day) : null;
 
-        $data = [
+        $tugases = Tugas::with('pembuat')
+            ->orderBy('created_at', 'desc')
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('judul', 'like', "%{$search}%")
+                        ->orWhere('deskripsi', 'like', "%{$search}%");
+                });
+            })
+            ->when(in_array($jenis, ['individu', 'tim', 'angkatan'], true), fn($query) => $query->where('jenis', $jenis))
+            ->when($day !== null, fn($query) => $query->where('day', $day))
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('tugas.index', [
             'title' => 'Tugas',
-            'tugases' => Tugas::query()->orderBy('jenis')
-                ->when($search !== '', function ($query) use ($search) {
-                    $query->where(function ($query) use ($search) {
-                        $query->where('judul', 'like', "%{$search}%")
-                            ->orWhere('deskripsi', 'like', "%{$search}%");
-                    });
-                })
-                ->when(in_array($jenis, ['individu', 'tim', 'angkatan'], true), fn($query) => $query->where('jenis', $jenis))
-                ->when($day !== null, fn($query) => $query->where('day', $day))
-                ->paginate(10)
-                ->withQueryString(),
+            'tugases' => $tugases,
             'days' => $this->dayOptions(),
             'search' => $search,
             'jenis' => $jenis,
             'day' => $day,
-        ];
-        return view('tugas.index', $data);
+        ]);
     }
 
     public function create()
     {
-        $data = [
+        return view('tugas.create', [
             'title' => 'Buat Tugas Baru',
             'days' => $this->dayOptions(),
-        ];
-
-        return view('tugas.create', $data);
+        ]);
     }
 
     public function store(Request $request)
@@ -85,16 +80,6 @@ class TugasController extends Controller
             'jenis' => 'required|in:individu,tim,angkatan',
             'day' => 'nullable|string|max:50',
             'tenggat_waktu' => 'nullable|date',
-        ], [
-            'judul.required' => 'Judul tugas harus diisi.',
-            'judul.string' => 'Judul tugas harus berupa teks.',
-            'judul.max' => 'Judul tugas tidak boleh lebih dari 100 karakter.',
-            'deskripsi.string' => 'Deskripsi tugas harus berupa teks.',
-            'jenis.required' => 'Jenis tugas harus dipilih.',
-            'jenis.in' => 'Jenis tugas tidak valid.',
-            'day.string' => 'Day harus berupa teks.',
-            'day.max' => 'Day tidak boleh lebih dari 50 karakter.',
-            'tenggat_waktu.date' => 'Tenggat waktu harus berupa tanggal yang valid.',
         ]);
 
         $validatedData['deskripsi'] = $this->sanitizeDescription($validatedData['deskripsi'] ?? null);
@@ -106,13 +91,11 @@ class TugasController extends Controller
 
     public function edit(int $id)
     {
-        $data = [
+        return view('tugas.edit', [
             'title' => 'Edit Tugas',
             'tugas' => Tugas::findOrFail($id),
             'days' => $this->dayOptions(),
-        ];
-
-        return view('tugas.edit', $data);
+        ]);
     }
 
     public function update(Request $request, int $id)
@@ -123,16 +106,6 @@ class TugasController extends Controller
             'jenis' => 'required|in:individu,tim,angkatan',
             'day' => 'nullable|string|max:50',
             'tenggat_waktu' => 'nullable|date',
-        ], [
-            'judul.required' => 'Judul tugas harus diisi.',
-            'judul.string' => 'Judul tugas harus berupa teks.',
-            'judul.max' => 'Judul tugas tidak boleh lebih dari 100 karakter.',
-            'deskripsi.string' => 'Deskripsi tugas harus berupa teks.',
-            'jenis.required' => 'Jenis tugas harus dipilih.',
-            'jenis.in' => 'Jenis tugas tidak valid.',
-            'day.string' => 'Day harus berupa teks.',
-            'day.max' => 'Day tidak boleh lebih dari 50 karakter.',
-            'tenggat_waktu.date' => 'Tenggat waktu harus berupa tanggal yang valid.',
         ]);
 
         $validatedData['deskripsi'] = $this->sanitizeDescription($validatedData['deskripsi'] ?? null);
@@ -148,9 +121,6 @@ class TugasController extends Controller
         return redirect()->route('dashboard.tugas.index')->with('success', 'Tugas berhasil dihapus.');
     }
 
-    /**
-     * Tampilan Dashboard untuk Peserta (Menampilkan daftar Card Day)
-     */
     public function pesertaDashboard()
     {
         $days = $this->dayOptions();
@@ -158,12 +128,6 @@ class TugasController extends Controller
         return view('peserta.dashboard', compact('days'));
     }
 
-    /**
-     * Tampilan List Tugas untuk Peserta (Berdasarkan Day yang diklik)
-     * 
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\View\View
-     */
     public function pesertaTugasList(Request $request)
     {
         $selectedDay = $request->query('day');
