@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('tugases', function (Blueprint $table) {
             $table->id();
+            
             $table->string('judul');
             $table->text('deskripsi');
             $table->enum('jenis', ['angkatan', 'tim', 'individu'])->default('individu');
