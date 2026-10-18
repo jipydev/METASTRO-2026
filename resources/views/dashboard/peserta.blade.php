@@ -359,7 +359,7 @@
                 </section>
 
                 <!-- 5. CEK BARANG BAWAAN PRIBADI SECTION -->
-                <section>
+                {{-- <section>
                     <div class="flex items-center gap-2 mb-4 pl-1">
                         <div class="w-1.5 h-5 bg-[#FF5B00] rounded-full"></div>
                         <h3 class="font-bold text-lg text-slate-800 dark:text-white">
@@ -529,7 +529,7 @@
                         </div>
 
                     </div>
-                </section>
+                </section> --}}
             </div>
 
         </div>
