@@ -12,10 +12,12 @@
         @endcan
         <div class="flex items-center gap-2">
             @can('manage-tugas')
-                <a href="{{ route('dashboard.days.index') }}"
-                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition cursor-pointer">
-                    <span>Kelola Day</span>
-                </a>
+                @if (\Illuminate\Support\Facades\Route::has('dashboard.days.index'))
+                    <a href="{{ route('dashboard.days.index') }}"
+                        class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition cursor-pointer">
+                        <span>Kelola Day</span>
+                    </a>
+                @endif
             @endcan
             <a href="{{ route('dashboard.tugas.create') }}"
                 class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-sm transition cursor-pointer">
@@ -61,8 +63,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                    <input type="search" name="search" value="{{ $search }}" placeholder="Cari judul atau deskripsi penugasan..."
-                        class="form-control-app w-full pl-10!">
+                    <input type="search" name="search" value="{{ $search }}"
+                        placeholder="Cari judul atau deskripsi penugasan..." class="form-control-app w-full pl-10!">
                 </div>
             </div>
 
@@ -124,22 +126,26 @@
                                 </td>
                                 <td class="py-4 px-4 text-center whitespace-nowrap">
                                     @if ($tugas->jenis === 'individu')
-                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300">
+                                        <span
+                                            class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300">
                                             Individu
                                         </span>
                                     @elseif ($tugas->jenis === 'tim')
-                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300">
+                                        <span
+                                            class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300">
                                             Tim (Perwakilan)
                                         </span>
                                     @else
-                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300">
+                                        <span
+                                            class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300">
                                             Angkatan
                                         </span>
                                     @endif
                                 </td>
                                 <td class="py-4 px-4 text-center whitespace-nowrap">
                                     @if (!empty($tugas->day))
-                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-brand-100 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300">
+                                        <span
+                                            class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-brand-100 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300">
                                             {{ $tugas->day }}
                                         </span>
                                     @else
@@ -147,15 +153,19 @@
                                     @endif
                                 </td>
                                 <td class="py-4 px-4 whitespace-nowrap">
-                                    @if($tugas->tenggat_waktu)
+                                    @if ($tugas->tenggat_waktu)
                                         <div class="font-semibold text-slate-900 dark:text-white">
                                             {{ \Carbon\Carbon::parse($tugas->tenggat_waktu)->translatedFormat('d M Y') }}
                                         </div>
-                                        <div class="text-[11px] text-red-600 dark:text-red-400 font-bold flex items-center gap-1 mt-0.5">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        <div
+                                            class="text-[11px] text-red-600 dark:text-red-400 font-bold flex items-center gap-1 mt-0.5">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
-                                            <span>{{ \Carbon\Carbon::parse($tugas->tenggat_waktu)->format('H:i') }} WIB</span>
+                                            <span>{{ \Carbon\Carbon::parse($tugas->tenggat_waktu)->format('H:i') }}
+                                                WIB</span>
                                         </div>
                                     @else
                                         <span class="text-slate-400">-</span>
@@ -219,34 +229,43 @@
 
                 <div x-show="openDetailModal" x-transition
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-lg shadow-xl text-xs">
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
-                        <h3 class="text-base font-bold text-slate-900 dark:text-white" x-text="selectedTugas.judul"></h3>
+                    <div
+                        class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white" x-text="selectedTugas.judul">
+                        </h3>
                         <button type="button" @click="openDetailModal = false"
                             class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
                     </div>
 
                     <div class="py-4 space-y-3">
                         <div>
-                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Kategori Jenis</span>
-                            <span class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-brand-100 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300"
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Kategori
+                                Jenis</span>
+                            <span
+                                class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-brand-100 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300"
                                 x-text="selectedTugas.jenis"></span>
                         </div>
 
                         <div>
-                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Day</span>
-                            <span class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200"
+                            <span
+                                class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Day</span>
+                            <span
+                                class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200"
                                 x-text="selectedTugas.day || '-'"></span>
                         </div>
 
                         <div>
-                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Instruksi & Deskripsi Penugasan</span>
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Instruksi
+                                & Deskripsi Penugasan</span>
                             <div class="rich-text-content mt-1 text-slate-700 dark:text-slate-200 leading-relaxed prose prose-sm dark:prose-invert max-w-none"
                                 x-html="selectedTugas.deskripsi"></div>
                         </div>
 
                         <div class="pt-2">
                             <div class="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
-                                <span class="text-[10px] text-red-600 dark:text-red-400 block font-bold uppercase">Tenggat Waktu</span>
+                                <span
+                                    class="text-[10px] text-red-600 dark:text-red-400 block font-bold uppercase">Tenggat
+                                    Waktu</span>
                                 <span class="text-xs font-bold text-red-700 dark:text-red-300"
                                     x-text="selectedTugas.tenggat_waktu"></span>
                             </div>
@@ -270,15 +289,17 @@
                 <div x-show="openDeleteModal" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm"
                     @click="openDeleteModal = false"></div>
 
-                <form :action="'{{ url('dashboard/tugas') }}/' + selectedTugas.id" method="POST" @submit="isDeleting = true"
-                    x-show="openDeleteModal" x-transition
+                <form :action="'{{ url('dashboard/tugas') }}/' + selectedTugas.id" method="POST"
+                    @submit="isDeleting = true" x-show="openDeleteModal" x-transition
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-sm shadow-xl text-xs">
                     @csrf
                     @method('DELETE')
 
                     <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Hapus Tugas Ini?</h3>
                     <p class="text-slate-500 dark:text-slate-400 mb-6">
-                        Apakah Anda yakin ingin menghapus data master tugas <strong class="text-slate-900 dark:text-white" x-text="selectedTugas.judul"></strong>? Seluruh data submisi peserta terkait akan ikut terhapus.
+                        Apakah Anda yakin ingin menghapus data master tugas <strong
+                            class="text-slate-900 dark:text-white" x-text="selectedTugas.judul"></strong>? Seluruh
+                        data submisi peserta terkait akan ikut terhapus.
                     </p>
 
                     <div class="flex justify-end gap-2">
@@ -290,8 +311,10 @@
                             class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-sm transition inline-flex items-center gap-2 disabled:opacity-50 cursor-pointer">
                             <template x-if="isDeleting">
                                 <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                                 </svg>
                             </template>
                             <span x-text="isDeleting ? 'Menghapus...' : 'Ya, Hapus'"></span>

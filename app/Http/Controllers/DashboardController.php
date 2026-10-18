@@ -91,12 +91,11 @@ class DashboardController extends Controller
 
         $kegiatans = collect();
         $hasUnpublished = false;
-
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('kegiatans')) {
                 $kegiatans = Kegiatan::where('jenis', 'peserta')
                     ->where('is_published', true)
-                    ->orderBy('tanggal', 'asc')
+                    ->orderBy('tanggal_mulai', 'asc')
                     ->get();
 
                 $hasUnpublished = Kegiatan::where('jenis', 'peserta')
@@ -105,28 +104,68 @@ class DashboardController extends Controller
             }
         } catch (\Throwable $e) {
             $kegiatans = collect();
-            $hasUnpublished = false;
         }
 
-        $tugases = collect();
-        $days = collect(); // Inisialisasi collection kosong
+        $days = collect();
+        $dayProgressData = [];
 
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('tugases')) {
-                $tugases = Tugas::orderBy('tenggat_waktu', 'asc')->get();
-
-                // Ambil daftar Day unik yang ada di tabel tugases
-                $days = Tugas::query()
-                    ->whereNotNull('day')
+                // Ambil daftar day unik yang ada di tabel tugas
+                $days = Tugas::whereNotNull('day')
                     ->where('day', '!=', '')
                     ->distinct()
                     ->pluck('day')
                     ->sort(SORT_NATURAL | SORT_FLAG_CASE)
                     ->values();
+
+                if ($days->isEmpty()) {
+                    // Fallback menggunakan konstanta DAYS jika tabel kosong
+                    $days = collect(Tugas::DAYS);
+                }
+
+                foreach ($days as $day) {
+                    // Hitung total tugas untuk day ini (mendukung format "1", "Day 1", "DAY 1")
+                    $numericDay = preg_replace('/[^0-9]/', '', $day);
+
+                    $tugasList = Tugas::where('day', $day)
+                        ->orWhere('day', 'Day ' . $numericDay)
+                        ->orWhere('day', 'DAY ' . $numericDay)
+                        ->orWhere('day', $numericDay)
+                        ->get();
+
+                    mw:
+                    $totalTugas = $tugasList->count();
+                    $tugasIds = $tugasList->pluck('id');
+
+                    $tugasSelesai = 0;
+                    if ($totalTugas > 0) {
+                        // Hitung langsung ke tabel pengumpulan_tugases
+                        $tugasSelesai = \App\Models\PengumpulanTugas::where('user_id', $user->id)
+                            ->whereIn('tugas_id', $tugasIds)
+                            ->count();
+
+                        $percent = round(($tugasSelesai / $totalTugas) * 100);
+                    } else {
+                        $percent = 0;
+                    }
+
+                    // Format label agar rapi di view (misal: "DAY 1")
+                    $labelKey = strtoupper($day);
+                    if (!str_starts_with($labelKey, 'DAY')) {
+                        $labelKey = 'DAY ' . $numericDay;
+                    }
+
+                    $dayProgressData[$day] = [
+                        'total' => $totalTugas,
+                        'selesai' => $tugasSelesai,
+                        'percent' => $percent,
+                    ];
+                }
             }
         } catch (\Throwable $e) {
-            $tugases = collect();
-            $days = collect();
+            $days = collect(['Day 1']);
+            $dayProgressData['Day 1'] = ['total' => 0, 'selesai' => 0, 'percent' => 0];
         }
 
         $pengumumanTerbaru = null;
@@ -147,8 +186,8 @@ class DashboardController extends Controller
             'user' => $user,
             'kegiatans' => $kegiatans,
             'hasUnpublished' => $hasUnpublished,
-            'tugases' => $tugases,
-            'days' => $days, // <--- Dikirimkan ke view peserta
+            'days' => $days,
+            'dayProgressData' => $dayProgressData,
             'pengumumanTerbaru' => $pengumumanTerbaru,
         ]);
     }

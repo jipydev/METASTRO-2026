@@ -16,7 +16,7 @@
 
     <div x-data="{
         isSubmitting: false,
-        editorHtml: @js(old('deskripsi', $tugas['deskripsi'] ?? '')),
+        editorHtml: @js(old('deskripsi', $tugas->deskripsi ?? '')),
         activeFormats: { bold: false, italic: false, underline: false, insertUnorderedList: false, insertOrderedList: false },
         format(command) {
             this.$refs.editor.focus();
@@ -56,7 +56,7 @@
         }
     }" class="py-8 max-w-4xl mx-auto font-poppins">
 
-        <form action="{{ route('dashboard.tugas.update', $tugas['id']) }}" method="POST"
+        <form action="{{ route('dashboard.tugas.update', $tugas->id) }}" method="POST"
             @submit="isSubmitting = true"
             class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-6 text-xs">
             @csrf
@@ -69,7 +69,7 @@
                         Judul Penugasan <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="judul" required maxlength="255"
-                        value="{{ old('judul', $tugas['judul'] ?? '') }}" class="form-control-app w-full">
+                        value="{{ old('judul', $tugas->judul ?? '') }}" class="form-control-app w-full">
                     @error('judul')
                         <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
                     @enderror
@@ -81,9 +81,9 @@
                         Jenis Penugasan <span class="text-red-500">*</span>
                     </label>
                     <select name="jenis" required class="form-control-app w-full">
-                        <option value="individu" @selected(old('jenis', $tugas['jenis'] ?? '') === 'individu')>Individu (Dikerjakan & dikumpul per peserta)</option>
-                        <option value="tim" @selected(old('jenis', $tugas['jenis'] ?? '') === 'tim')>Tim / Kelompok (Perwakilan)</option>
-                        <option value="angkatan" @selected(old('jenis', $tugas['jenis'] ?? '') === 'angkatan')>Angkatan (Perwakilan)</option>
+                        <option value="individu" @selected(old('jenis', $tugas->jenis ?? '') === 'individu')>Individu (Dikerjakan & dikumpul per peserta)</option>
+                        <option value="tim" @selected(old('jenis', $tugas->jenis ?? '') === 'tim')>Tim / Kelompok (Perwakilan)</option>
+                        <option value="angkatan" @selected(old('jenis', $tugas->jenis ?? '') === 'angkatan')>Angkatan (Perwakilan)</option>
                     </select>
                     @error('jenis')
                         <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
@@ -97,8 +97,8 @@
                             Tenggat Waktu Pengumpulan <span class="text-red-500">*</span>
                         </label>
                         @php
-                            $formattedDeadline = isset($tugas['tenggat_waktu'])
-                                ? \Carbon\Carbon::parse($tugas['tenggat_waktu'])->format('Y-m-d\TH:i')
+                            $formattedDeadline = isset($tugas->tenggat_waktu)
+                                ? \Carbon\Carbon::parse($tugas->tenggat_waktu)->format('Y-m-d\TH:i')
                                 : '';
                         @endphp
                         <input type="datetime-local" name="tenggat_waktu" required
@@ -109,13 +109,13 @@
                         @enderror
                     </div>
 
-                    {{-- Day Field (Sesuai dengan $days dari $this->dayOptions()) --}}
+                    {{-- Day Field --}}
                     <div class="w-full">
                         <label for="day" class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                             Day
                         </label>
                         <input type="text" id="day" name="day" list="day-options" maxlength="50"
-                            autocomplete="off" value="{{ old('day', $tugas['day'] ?? '') }}" placeholder="Pilih atau ketik, mis. Day 1"
+                            autocomplete="off" value="{{ old('day', $tugas->day ?? '') }}" placeholder="Pilih atau ketik, mis. Day 1"
                             class="form-control-app w-full">
                         <datalist id="day-options">
                             @if(isset($days) && is_iterable($days))
@@ -129,9 +129,6 @@
                             <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-
-                    {{-- Day (dinamis dari tabel days) --}}
-                    <x-tugas.day-select :days="$days" :value="$tugas['day_id'] ?? null" />
                 </div>
 
                 {{-- Deskripsi / Instruksi Penugasan --}}
