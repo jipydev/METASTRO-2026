@@ -9,7 +9,7 @@
 
         <!-- 1. TOP NAVBAR -->
         <header
-            class="w-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-xs px-4 py-2.5 flex items-center justify-between border-b border-orange-100/80 dark:border-slate-800 fixed left-0 right-0 top-0 z-40">
+            class="w-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-orange-100/80 dark:border-slate-800 fixed left-0 right-0 top-0 z-40 transition-all">
             <div class="container mx-auto flex justify-between items-center gap-2 sm:gap-4">
                 <!-- Brand Logo Metastro 2026 -->
                 <div class="flex items-center tracking-tight select-none font-oswald">
@@ -37,7 +37,7 @@
 
         <!-- 2. HERO SECTION -->
         <section
-            class="relative w-full min-h-87.5 sm:min-h-95 flex flex-col justify-center items-center text-center px-4 lg:px-0 py-8 mt-12 overflow-hidden">
+            class="relative w-full min-h-[420px] sm:min-h-[460px] flex flex-col justify-center items-center text-center px-4 lg:px-0 py-12 mt-12 overflow-hidden">
             @php
                 $heroImg = file_exists(public_path('images/peserta/hero.webp'))
                     ? asset('images/peserta/hero.webp')
@@ -49,52 +49,52 @@
             @endphp
             <!-- Foto Massa Background -->
             <img src="{{ $heroImg }}" alt="Massa METASTRO 2026"
-                class="absolute inset-0 w-full h-full object-cover object-center filter brightness-95" />
-            <!-- Overlay Vignette & Gradient -->
-            <div class="absolute inset-0 bg-linear-to-b from-black/30 via-black/25 to-black/40"></div>
+                class="absolute inset-0 w-full h-full object-cover object-center filter brightness-90" />
+            <!-- Overlay Vignette & Gradient (Dibuat sedikit lebih kontras agar teks terbaca jelas) -->
+            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60"></div>
 
             <!-- Judul & Tagline -->
-            <div class="relative z-10 flex flex-col items-center">
+            <div class="relative z-10 flex flex-col items-center mt-2">
                 <h1
-                    class="font-oswald text-4xl sm:text-[42px] font-bold text-[#FF7300] tracking-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.85)] leading-none uppercase inline-block">
+                    class="font-oswald text-4xl sm:text-5xl font-bold text-[#FF7300] tracking-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)] leading-none uppercase inline-block">
                     METASTRO <span class="text-white">2026.</span>
                 </h1>
                 <p
-                    class="font-caslon text-[11px] sm:text-xs font-bold text-white tracking-wider uppercase mt-2 drop-shadow-md max-w-full text-center">
+                    class="font-caslon text-xs sm:text-sm font-bold text-amber-200 tracking-widest uppercase mt-3 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] max-w-full text-center">
                     'SPIRIT OF HIRO, HEART OF SOLDER'
                 </p>
             </div>
 
-            <!-- Tombol Aksi: LOGIN / DASHBOARD, LIHAT TIM & BOOKLET -->
-            <div class="relative z-10 mt-6 sm:mt-7 w-full flex flex-col items-center">
-                <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 px-4">
+            <!-- Tombol Aksi: LOGIN / DASHBOARD, LIHAT TIM & BOOKLET (Desain Seragam & Konsisten) -->
+            <div class="relative z-10 mt-7 sm:mt-8 w-full flex flex-col items-center">
+                <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 px-4">
                     @auth
                         <a href="{{ route('dashboard.index') }}"
-                            class="inline-flex items-center justify-center px-5 py-2 rounded-lg bg-black/35 hover:bg-black/50 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
+                            class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-black/40 hover:bg-black/60 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300]/80 shadow-[0_0_15px_rgba(255,115,0,0.3)] backdrop-blur-sm transition-all duration-200 transform hover:scale-105 active:scale-95">
                             DASHBOARD
                         </a>
                     @else
                         <a href="{{ route('login') }}"
-                            class="inline-flex items-center justify-center px-6 py-2 rounded-lg bg-black/15 hover:bg-black/50 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
+                            class="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-black/30 hover:bg-black/60 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300]/80 shadow-[0_0_15px_rgba(255,115,0,0.3)] backdrop-blur-sm transition-all duration-200 transform hover:scale-105 active:scale-95">
                             LOGIN
                         </a>
                     @endauth
                     
                     <a href="{{ route('tim.index') }}"
-                        class="inline-flex items-center justify-center px-5 py-2 rounded-lg bg-black/35 hover:bg-black/50 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
+                        class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-black/40 hover:bg-black/60 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300]/80 shadow-[0_0_15px_rgba(255,115,0,0.3)] backdrop-blur-sm transition-all duration-200 transform hover:scale-105 active:scale-95">
                         Lihat Tim
                     </a>
 
-                    <!-- Tombol Akses Booklet (Mengarah langsung ke file booklet.pdf di folder public) -->
+                    <!-- Tombol Akses Booklet (Diberi aksen warna penuh yang elegan dan ikon mungil) -->
                     <a href="{{ asset('booklet.pdf') }}" target="_blank"
-                        class="inline-flex items-center gap-1.5 justify-center px-5 py-2 rounded-lg bg-[#FF7300]/80 hover:bg-[#FF7300] text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-orange-400 shadow-[0_0_15px_rgba(255,115,0,0.5)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-0-5H20"></path></svg>
+                        class="inline-flex items-center gap-2 justify-center px-5 py-2.5 rounded-xl bg-[#FF7300] hover:bg-[#e06500] text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-orange-400 shadow-[0_4px_20px_rgba(255,115,0,0.5)] backdrop-blur-sm transition-all duration-200 transform hover:scale-105 active:scale-95">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path></svg>
                         Booklet
                     </a>
                 </div>
 
                 @auth
-                    <span class="text-[11px] text-white/85 mt-2.5 font-medium drop-shadow">
+                    <span class="text-xs text-white/90 mt-3 font-medium drop-shadow-md">
                         Halo, <strong class="text-amber-300">{{ auth()->user()->nama }}</strong>
                     </span>
                 @endauth
@@ -109,8 +109,8 @@
             </div>
 
             <!-- Teks Intro METASTRO -->
-            <div class="container mx-auto">
-                <h2 class="text-2xl sm:text-3xl font-bold text-[#FF7300] mb-2">
+            <div class="container mx-auto max-w-2xl">
+                <h2 class="text-2xl sm:text-3xl font-bold text-[#FF7300] mb-2 font-oswald tracking-wide">
                     Selamat Datang di METASTRO 2026
                 </h2>
                 <p
@@ -147,7 +147,7 @@
                                 : asset('images/background-metastro.webp')));
                 @endphp
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-2xl p-2.5 pb-4 shadow-sm border border-slate-100 dark:border-slate-700/80 card-bottom-accent">
+                    class="bg-white dark:bg-slate-800 rounded-2xl p-3 pb-4 shadow-sm border border-slate-100 dark:border-slate-700/80 card-bottom-accent">
                     <div class="w-full h-40 sm:h-44 rounded-xl overflow-hidden mb-3 bg-slate-100 dark:bg-slate-700">
                         <img src="{{ $hiroImg }}" alt="Spirit of HIRO"
                             class="w-full h-full object-cover origin-top"
@@ -176,7 +176,7 @@
                                 : asset('images/background-metastro.webp')));
                 @endphp
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-2xl p-2.5 pb-4 shadow-sm border border-slate-100 dark:border-slate-700/80 card-bottom-accent">
+                    class="bg-white dark:bg-slate-800 rounded-2xl p-3 pb-4 shadow-sm border border-slate-100 dark:border-slate-700/80 card-bottom-accent">
                     <div class="w-full h-40 sm:h-44 rounded-xl overflow-hidden mb-3 bg-slate-100 dark:bg-slate-700">
                         <img src="{{ $solderImg }}" alt="Heart of SOLDER" class="w-full h-full object-cover"
                             onerror="this.src='{{ asset('images/background-metastro.webp') }}'">
@@ -194,7 +194,7 @@
                 </div>
 
                 <!-- Garis Pemisah Oranye Horizontal -->
-                <div class="w-full h-0.5 bg-linear-to-r from-transparent via-[#fe5a1d]/70 to-transparent my-6">
+                <div class="w-full h-0.5 bg-gradient-to-r from-transparent via-[#fe5a1d]/70 to-transparent my-6">
                 </div>
             </section>
         </div>
@@ -203,11 +203,11 @@
         <section class="pb-12">
             <div class="container mx-auto">
                 <div
-                    class="relative bg-linear-to-b from-[#fff6ed] via-[#fee7d3] to-[#fcd9b6] dark:from-slate-800/90 dark:via-slate-800 dark:to-orange-950/10 md:rounded-3xl md:mx-4 lg:mx-0 p-6 shadow-md border border-orange-200/70 dark:border-orange-500/20 overflow-hidden">
+                    class="relative bg-gradient-to-b from-[#fff6ed] via-[#fee7d3] to-[#fcd9b6] dark:from-slate-800/90 dark:via-slate-800 dark:to-orange-950/10 md:rounded-3xl md:mx-4 lg:mx-0 p-6 shadow-md border border-orange-200/70 dark:border-orange-500/20 overflow-hidden">
 
                     <!-- Fluid Glow Ambient di Pojok Kanan Bawah -->
                     <div
-                        class="absolute -right-6 -bottom-6 w-36 h-36 bg-linear-to-tr from-orange-500 to-amber-300 opacity-40 blur-2xl rounded-full pointer-events-none">
+                        class="absolute -right-6 -bottom-6 w-36 h-36 bg-gradient-to-tr from-orange-500 to-amber-300 opacity-40 blur-2xl rounded-full pointer-events-none">
                     </div>
 
                     <h3
@@ -219,7 +219,7 @@
                     <div class="relative pl-6 space-y-6">
                         <!-- Garis Konektor Vertikal Oranye -->
                         <div
-                            class="absolute left-1.5 top-2.5 bottom-3 w-0.5 bg-linear-to-b from-amber-500 via-orange-400 to-orange-300">
+                            class="absolute left-1.5 top-2.5 bottom-3 w-0.5 bg-gradient-to-b from-amber-500 via-orange-400 to-orange-300">
                         </div>
 
                         @if (isset($kegiatans) && $kegiatans->count() > 0)
@@ -266,8 +266,7 @@
                                         <span
                                             class="font-medium text-slate-800 dark:text-slate-100">{{ $kegiatanDate->translatedFormat('d F') }}</span>
                                         @if ($kegiatan->tanggal_selesai && $kegiatan->tanggal_selesai->ne($kegiatan->tanggal_mulai))
-                                            - <span>
-{{ $kegiatan->tanggal_selesai->translatedFormat('d F') }}</span>
+                                            - <span>{{ $kegiatan->tanggal_selesai->translatedFormat('d F') }}</span>
                                         @endif
                                         @if ($kegiatan->waktu_mulai)
                                             <span class="text-slate-400 mx-1">&bull;</span>
@@ -286,7 +285,6 @@
                             <!-- 2. Menampilkan elemen "Coming Soon" di bawah list jika ada kegiatan belum di-publish -->
                             @if ($hasUnpublished)
                                 <div class="relative flex flex-col items-start text-left opacity-80">
-                                    <!-- Dot Indikator Abu-abu / Putus-putus -->
                                     <span
                                         class="absolute -left-5.75 top-1 w-3.5 h-3.5 rounded-full bg-slate-400 dark:bg-slate-600 border-2 border-white dark:border-slate-800 shadow-sm animate-pulse"></span>
 
@@ -318,7 +316,7 @@
                                     </div>
                                 </div>
                             @else
-                                <!-- 4. Kondisi data benar-benar kosong kosong (Hardcoded dummy bawaan Anda) -->
+                                <!-- 4. Kondisi data benar-benar kosong (Hardcoded dummy bawaan Anda) -->
                                 <div class="relative flex flex-col items-start text-left">
                                     <span
                                         class="absolute -left-5.75 top-1 w-3.5 h-3.5 rounded-full bg-[#fe5a1d] border-2 border-white shadow-sm"></span>
