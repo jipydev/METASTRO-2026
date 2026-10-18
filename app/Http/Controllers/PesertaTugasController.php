@@ -197,33 +197,35 @@ class PesertaTugasController extends Controller
         }
 
         // =========================================================================
-        // LOGIKA PENGIRIMAN NOTIFIKASI
+        // LOGIKA DISTRIBUSI NOTIFIKASI
         // =========================================================================
 
-        // 1. SEMUA PENGUMPULAN: Notifikasi dikirimkan ke Divisi Pathfinder
-        $pathfinders = User::whereHas('divisi', fn($q) => $q->whereRaw('LOWER(nama) = ?', ['pathfinder']))
+        // 1. SEMUA TUGAS/PENGUMPULAN: Notifikasi dikirimkan ke Divisi Pathfinder, Ranger, dan Admin (Chiper)
+        $universalReceivers = User::query()
             ->where('status', true)
+            ->where(function ($query) {
+                $query->whereHas('divisi', fn($q) => $q->whereRaw('LOWER(nama) in (?, ?)', ['pathfinder', 'ranger']))
+                    ->orWhere(fn($sub) => $sub->isAdmin()); // Memastikan Admin/Chiper juga ikut masuk
+            })
             ->get();
 
-        foreach ($pathfinders as $pathfinder) {
-            // Sesuaikan dengan method dispatcher notifikasi Anda (contoh: tugasSubmitted / custom dispatcher)
-            // $this->notifications->tugasSubmitted($submission, $pathfinder);
+        foreach ($universalReceivers as $receiver) {
+            // $this->notifications->tugasUniversalSubmitted($submission, $receiver);
         }
 
-        // 2. BERDASARKAN JENIS TUGAS
-        $jenisTugas = strtolower($tugas->jenis); // 'individu', 'tim', atau 'angkatan'
+        // 2. BERDASARKAN JENIS TUGAS (Individu, Tim, Angkatan)
+        $jenisTugas = strtolower($tugas->jenis);
 
-        // Ambil guider yang membimbing tim user ini
         $guiderIds = $tim ? Guider::where('tim_id', $tim->id)->pluck('pembimbing_id') : collect();
         $guiders = User::whereIn('id', $guiderIds)->where('status', true)->get();
 
         if ($jenisTugas === 'individu') {
-            // INDIVIDU: Dikirim ke guider di tim nya dia
+            // INDIVIDU: Dikirim ke guider di tim peserta tersebut
             foreach ($guiders as $guider) {
                 // $this->notifications->tugasIndividuSubmitted($submission, $guider);
             }
         } elseif ($jenisTugas === 'tim') {
-            // TIM: Ditampilkan/dikirim ke sesama anggota tim dan guider tim tersebut
+            // TIM: Dikirim ke sesama anggota tim dan guider tim tersebut
             $anggotaTimIds = $tim ? AnggotaTim::where('tim_id', $tim->id)->pluck('anggota_id') : collect();
             $sesamaTim = User::whereIn('id', $anggotaTimIds)->where('id', '!=', $user->id)->where('status', true)->get();
 
@@ -232,12 +234,11 @@ class PesertaTugasController extends Controller
                 // $this->notifications->tugasTimSubmitted($submission, $penerima);
             }
         } elseif ($jenisTugas === 'angkatan') {
-            // ANGKATAN: Ditampilkan/dikirim ke semua guider dan semua role peserta
+            // ANGKATAN: Dikirim ke semua guider dan seluruh role peserta
             $allGuiders = User::whereHas('divisi', fn($q) => $q->whereRaw('LOWER(nama) = ?', ['guider']))
                 ->where('status', true)
                 ->get();
 
-            // Ambil seluruh user dengan role peserta aktif
             $allPeserta = User::where('status', true)->get()->filter(fn($u) => $u->isPeserta());
 
             $penerimaAngkatan = $allGuiders->concat($allPeserta);

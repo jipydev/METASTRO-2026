@@ -94,50 +94,31 @@ class TugasController extends Controller
         $tugas = Tugas::create($validatedData);
 
         // =========================================================================
-        // LOGIKA DISTRIBUSI NOTIFIKASI PEMBUATAN TUGAS BARU
+        // LOGIKA DISTRIBUSI NOTIFIKASI PEMBUATAN TUGAS BARU (KHUSUS PESERTA)
         // =========================================================================
-
-        // 1. Semua tugas baru mengirim notifikasi universal ke Divisi Pathfinder
-        $pathfinders = User::whereHas('divisi', fn($q) => $q->whereRaw('LOWER(nama) = ?', ['pathfinder']))
-            ->where('status', true)
-            ->get();
-
-        foreach ($pathfinders as $pathfinder) {
-            // $this->notifications->tugasBaruPathfinder($tugas, $pathfinder);
-        }
 
         $jenisTugas = strtolower($tugas->jenis); // 'individu', 'tim', atau 'angkatan'
 
         if ($jenisTugas === 'individu') {
-            // Tugas Individu: Dikirim ke semua Guider pembimbing atau peserta terkait
-            $allGuiders = User::whereHas('divisi', fn($q) => $q->whereRaw('LOWER(nama) = ?', ['guider']))
-                ->where('status', true)
-                ->get();
-
-            foreach ($allGuiders as $guider) {
-                // $this->notifications->tugasBaruGuider($tugas, $guider);
-            }
-        } elseif ($jenisTugas === 'tim') {
-            // Tugas Tim: Dikirim ke seluruh Guider dan semua Anggota Tim aktif
-            $allGuiders = User::whereHas('divisi', fn($q) => $q->whereRaw('LOWER(nama) = ?', ['guider']))
-                ->where('status', true)
-                ->get();
-            $allAnggotaTim = User::whereHas('tims')->where('status', true)->get();
-
-            $penerimaTim = $allGuiders->concat($allAnggotaTim);
-            foreach ($penerimaTim as $penerima) {
-                // $this->notifications->tugasBaruTim($tugas, $penerima);
-            }
-        } elseif ($jenisTugas === 'angkatan') {
-            // Tugas Angkatan: Dikirim ke semua Guider dan seluruh Peserta aktif
-            $allGuiders = User::whereHas('divisi', fn($q) => $q->whereRaw('LOWER(nama) = ?', ['guider']))
-                ->where('status', true)
-                ->get();
+            // Tugas Individu: Dikirimkan ke seluruh user yang berstatus sebagai Peserta aktif
             $allPeserta = User::where('status', true)->get()->filter(fn($u) => $u->isPeserta());
 
-            $penerimaAngkatan = $allGuiders->concat($allPeserta);
-            foreach ($penerimaAngkatan as $penerima) {
-                // $this->notifications->tugasBaruAngkatan($tugas, $penerima);
+            foreach ($allPeserta as $peserta) {
+                // $this->notifications->tugasBaruIndividuPeserta($tugas, $peserta);
+            }
+        } elseif ($jenisTugas === 'tim') {
+            // Tugas Tim: Dikirimkan ke semua anggota yang tergabung dalam tim aktif
+            $allAnggotaTim = User::whereHas('tims')->where('status', true)->get();
+
+            foreach ($allAnggotaTim as $anggota) {
+                // $this->notifications->tugasBaruTimPeserta($tugas, $anggota);
+            }
+        } elseif ($jenisTugas === 'angkatan') {
+            // Tugas Angkatan: Dikirimkan ke seluruh Peserta aktif secara universal
+            $allPeserta = User::where('status', true)->get()->filter(fn($u) => $u->isPeserta());
+
+            foreach ($allPeserta as $peserta) {
+                // $this->notifications->tugasBaruAngkatanPeserta($tugas, $peserta);
             }
         }
 
@@ -167,8 +148,6 @@ class TugasController extends Controller
 
         $tugas = Tugas::findOrFail($id);
         $tugas->update($validatedData);
-
-        // Opsional: Jika ingin mengirim notifikasi pembaruan tugas, Anda bisa menambahkan dispatcher di sini.
 
         return redirect()->route('dashboard.tugas.index')->with('success', 'Tugas berhasil diperbarui.');
     }
