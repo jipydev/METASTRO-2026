@@ -26,7 +26,7 @@ class InitialSetupRequest extends FormRequest
             'nama' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
             'nomor_hp' => ['required', 'string', 'max:20'],
-            'password' => ['required', 'confirmed', Password::defaults()],
+            'password' => ['required', 'confirmed', Password::min(8)],
         ];
 
         $rules['foto'] = $user->isPeserta()
