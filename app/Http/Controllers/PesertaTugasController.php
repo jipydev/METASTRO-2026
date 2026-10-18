@@ -97,6 +97,7 @@ class PesertaTugasController extends Controller
         });
 
         return view('peserta.tugas-list', [
+            'title' => 'Daftar Tugas',
             'tasks' => $tasksWithStatus,
             'search' => $search,
             'dayFilter' => $dayFilter,
@@ -116,6 +117,7 @@ class PesertaTugasController extends Controller
         $isExpired = $tugas->tenggat_waktu ? Carbon::now()->greaterThan($tugas->tenggat_waktu) : false;
 
         return view('peserta.tugas-kumpulkan', [
+            'title' => 'Kumpulkan Tugas',
             'tugas' => $tugas,
             'tim' => $tim,
             'submission' => $submission,
