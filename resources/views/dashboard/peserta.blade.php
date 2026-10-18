@@ -65,21 +65,26 @@
                             </div>
                         </div>
 
-                    <!-- Right: Deadline Time side-by-side (samping kiri) dengan Tombol Kumpulkan -->
-                    <div class="flex items-center shrink-0 gap-3 self-end sm:self-center">
-                        <div class="bg-red-50 dark:bg-red-500/10 px-3 py-1.5 rounded-xl border border-red-100 dark:border-red-500/20">
-                            <span class="text-red-600 dark:text-red-400 font-bold text-sm sm:text-base tracking-wider whitespace-nowrap">
-                                12:45
-                            </span>
+                        <!-- Right: Deadline Time side-by-side (samping kiri) dengan Tombol Kumpulkan -->
+                        <div class="flex items-center shrink-0 gap-3 self-end sm:self-center">
+                            <div
+                                class="bg-red-50 dark:bg-red-500/10 px-3 py-1.5 rounded-xl border border-red-100 dark:border-red-500/20">
+                                <span
+                                    class="text-red-600 dark:text-red-400 font-bold text-sm sm:text-base tracking-wider whitespace-nowrap">
+                                    12:45
+                                </span>
+                            </div>
+
+                            <a href="{{ route('peserta.tugas-list') }}"
+                                class="inline-flex items-center justify-center gap-1.5 bg-[#FF5B00] hover:bg-[#E05000] text-white font-semibold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-md shadow-orange-500/20 transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer whitespace-nowrap">
+                                <span>Kumpulkan</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                        d="M5 12h14M12 5l7 7-7 7"></path>
+                                </svg>
+                            </a>
                         </div>
-                        
-                        <a href="{{ route('peserta.tugas-list') }}"
-                            class="inline-flex items-center justify-center gap-1.5 bg-[#FF5B00] hover:bg-[#E05000] text-white font-semibold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-md shadow-orange-500/20 transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer whitespace-nowrap">
-                            <span>Kumpulkan</span>
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"></path></svg>
-                        </a>
                     </div>
-                </div>
 
                     <!-- Pengumuman Singkat Dibawah Deadline -->
                     <div class="mt-3.5 pt-3 border-t border-dashed border-slate-200/80 dark:border-slate-700/80">
@@ -192,82 +197,91 @@
                 </div>
 
                 <!-- 3. LIST PENUGASAN SECTION -->
-<!-- 3. LIST PENUGASAN SECTION -->
-<section>
-    <div class="flex items-center gap-2 mb-4 pl-1">
-        <div class="w-1.5 h-5 bg-[#FF5B00] rounded-full"></div>
-        <h3 class="font-bold text-lg text-slate-800 dark:text-white">
-            List Penugasan
-        </h3>
-    </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- DAY 1 Card -->
-                    <a href="{{ route('peserta.tugas-list', ['day' => 'Day 1']) }}"
-                        class="block bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200/60 dark:border-slate-700/60 shadow-sm hover:shadow-md hover:border-orange-300 dark:hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 group cursor-pointer">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-[#FF5B00] group-hover:scale-110 transition-transform">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                </div>
-                                <span class="font-bold text-lg text-slate-800 dark:text-white tracking-wide group-hover:text-[#FF5B00] transition-colors">
-                                    DAY 1
-                                </span>
-                            </div>
-                            <div class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-700 flex items-center justify-center group-hover:bg-[#FF5B00] group-hover:text-white text-slate-400 transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-                            </div>
-                        </div>
-                        <div>
-                            <span
-                                class="font-bold text-lg text-slate-800 dark:text-white tracking-wide group-hover:text-[#FF5B00] transition-colors uppercase block">
-                                {{ $day }}
-                            </span>
-                            <span class="text-[11px] text-slate-400 font-medium">
-                                {{ $progressInfo['selesai'] }} dari {{ $progressInfo['total'] }} tugas selesai
-                            </span>
-                        </div>
-                    </a>
-
-                    <!-- DAY 2 Card -->
-                    <a href="{{ route('peserta.tugas-list', ['day' => 'Day 2']) }}"
-                        class="block bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200/60 dark:border-slate-700/60 shadow-sm hover:shadow-md hover:border-orange-300 dark:hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 group cursor-pointer">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-[#FF5B00] group-hover:scale-110 transition-transform">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                </div>
-                                <span class="font-bold text-lg text-slate-800 dark:text-white tracking-wide group-hover:text-[#FF5B00] transition-colors">
-                                    DAY 2
-                                </span>
-                            </div>
-                            <div class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-700 flex items-center justify-center group-hover:bg-[#FF5B00] group-hover:text-white text-slate-400 transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-                            </div>
-                        </div>
-
-                <!-- Progress Bar -->
-                <div>
-                    <div
-                        class="text-xs text-slate-500 dark:text-slate-400 font-medium mb-2 flex justify-between items-end">
-                        <span>Progres Pengerjaan</span>
-                        <span class="{{ $textClass }} font-bold text-sm">{{ $currentPercent }}%</span>
+                <!-- 3. LIST PENUGASAN SECTION -->
+                <section>
+                    <div class="flex items-center gap-2 mb-4 pl-1">
+                        <div class="w-1.5 h-5 bg-[#FF5B00] rounded-full"></div>
+                        <h3 class="font-bold text-lg text-slate-800 dark:text-white">
+                            List Penugasan
+                        </h3>
                     </div>
-                    <div
-                        class="w-full h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                        <div class="h-full {{ $bgClass }} rounded-full transition-all duration-1000 ease-out"
-                            style="width: {{ $currentPercent }}%;"></div>
-                    </div>
-                </div>
-            </a>
-        @empty
-            <div
-                class="col-span-full py-8 text-center bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 text-slate-400 text-xs">
-                Belum ada penugasan yang tersedia saat ini.
-            </div>
-        @endforelse
-    </div>
-</section>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        @forelse ($days ?? [] as $day)
+                            @php
+                                // Ambil data dinamis dari controller berdasarkan key $day
+                                $progressInfo = $dayProgressData[$day] ?? [
+                                    'percent' => 0,
+                                    'total' => 0,
+                                    'selesai' => 0,
+                                ];
+                                $currentPercent = $progressInfo['percent'];
+
+                                // Kondisi warna berdasarkan persentase
+                                $isCompleted = $currentPercent >= 100;
+                                $bgClass = $isCompleted ? 'bg-emerald-500' : 'bg-[#FF5B00]';
+                                $textClass = $isCompleted
+                                    ? 'text-emerald-600 dark:text-emerald-400'
+                                    : 'text-orange-500 dark:text-orange-400';
+                            @endphp
+
+                            <!-- Card Day Dinamis -->
+                            <a href="{{ route('peserta.tugas-list', ['day' => $day]) }}"
+                                class="block bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200/60 dark:border-slate-700/60 shadow-sm hover:shadow-md hover:border-orange-300 dark:hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 group cursor-pointer">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-[#FF5B00] group-hover:scale-110 transition-transform">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <span
+                                                class="font-bold text-lg text-slate-800 dark:text-white tracking-wide group-hover:text-[#FF5B00] transition-colors uppercase block">
+                                                {{ $day }}
+                                            </span>
+                                            <span class="text-[11px] text-slate-400 font-medium">
+                                                {{ $progressInfo['selesai'] }} dari {{ $progressInfo['total'] }} tugas
+                                                selesai
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-700 flex items-center justify-center group-hover:bg-[#FF5B00] group-hover:text-white text-slate-400 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Progress Bar -->
+                                <div>
+                                    <div
+                                        class="text-xs text-slate-500 dark:text-slate-400 font-medium mb-2 flex justify-between items-end">
+                                        <span>Progres Pengerjaan</span>
+                                        <span
+                                            class="{{ $textClass }} font-bold text-sm">{{ $currentPercent }}%</span>
+                                    </div>
+                                    <div
+                                        class="w-full h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full {{ $bgClass }} rounded-full transition-all duration-1000 ease-out"
+                                            style="width: {{ $currentPercent }}%;"></div>
+                                    </div>
+                                </div>
+                            </a>
+                        @empty
+                            <div
+                                class="col-span-full py-8 text-center bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 text-slate-400 text-xs">
+                                Belum ada penugasan yang tersedia saat ini.
+                            </div>
+                        @endforelse
+                </section>
 
                 <!-- 4. TIMELINE SECTION -->
                 <section>
@@ -284,7 +298,7 @@
                         <div class="relative border-l-2 border-orange-100 dark:border-slate-700 ml-3 space-y-8">
 
                             <!-- Step 1: DAY 1 -->
-                             @foreach ($kegiatans as $kegiatan)
+                            @foreach ($kegiatans as $kegiatan)
                                 <div class="relative pl-6 sm:pl-8 group">
                                     <div
                                         class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-white dark:bg-slate-800 border-4 border-[#FF5B00] group-hover:scale-125 transition-transform shadow-[0_0_10px_rgba(255,91,0,0.4)]">
