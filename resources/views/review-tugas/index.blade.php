@@ -59,8 +59,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                    <input type="search" name="search" value="{{ $search }}" placeholder="Cari nama tugas atau nama pengumpul..."
-                        class="form-control-app w-full pl-10!">
+                    <input type="search" name="search" value="{{ $search }}"
+                        placeholder="Cari nama tugas atau nama pengumpul..." class="form-control-app w-full pl-10!">
                 </div>
             </div>
 
@@ -68,7 +68,7 @@
                 <div class="flex items-center gap-1.5">
                     <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Status:</label>
                     <select name="status" class="form-control-app">
-                        <option value="" @selected(! in_array($status, ['pending', 'reviewed', 'rejected'], true))>Semua Status</option>
+                        <option value="" @selected(!in_array($status, ['pending', 'reviewed', 'rejected'], true))>Semua Status</option>
                         <option value="pending" @selected($status === 'pending')>Pending (Belum Direview)</option>
                         <option value="reviewed" @selected($status === 'reviewed')>Reviewed (Telah Direview)</option>
                         <option value="rejected" @selected($status === 'rejected')>Rejected (Butuh Revisi)</option>
@@ -78,17 +78,20 @@
                 <div class="flex items-center gap-1.5">
                     <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Jenis:</label>
                     <select name="jenis" class="form-control-app">
-                        <option value="" @selected(! in_array($jenis, ['individu', 'tim', 'angkatan'], true))>Semua Jenis</option>
+                        <option value="" @selected(!in_array($jenis, ['individu', 'tim', 'angkatan'], true))>Semua Jenis</option>
                         <option value="individu" @selected($jenis === 'individu')>Individu</option>
                         <option value="tim" @selected($jenis === 'tim')>Tim (Perwakilan)</option>
                         <option value="angkatan" @selected($jenis === 'angkatan')>Angkatan (Perwakilan)</option>
                     </select>
                     <button type="submit" class="btn-filter">Cari</button>
-                    @if ($search !== '' || in_array($status, ['pending', 'reviewed', 'rejected'], true) || in_array($jenis, ['individu', 'tim', 'angkatan'], true))
+                    @if (
+                        $search !== '' ||
+                            in_array($status, ['pending', 'reviewed', 'rejected'], true) ||
+                            in_array($jenis, ['individu', 'tim', 'angkatan'], true))
                         <a href="{{ route('dashboard.pengumpulan-tugas.index', $tugasId > 0 ? ['tugas_id' => $tugasId] : []) }}"
                             class="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400">Reset</a>
                     @endif
-            </div>
+                </div>
         </form>
 
         {{-- Table List Submisi --}}
@@ -182,7 +185,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center py-8 text-slate-400">Belum ada submisi pengumpulan
+                                <td colspan="5" class="text-center py-8 text-slate-400">Belum ada submisi
+                                    pengumpulan
                                     tugas.
                                 </td>
                             </tr>
@@ -197,133 +201,146 @@
         </div>
 
         {{-- MODAL REVIEW PENGUMPULAN TUGAS --}}
-        <div x-show="openReviewModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" role="dialog"
-            aria-modal="true">
+        <div x-show="openReviewModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto"
+            role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4">
                 <div x-show="openReviewModal" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm"
                     @click="openReviewModal = false"></div>
 
                 <form :action="'{{ url('dashboard/pengumpulan-tugas') }}/' + selectedSubmisi.id" method="POST"
                     @submit="isSavingReview = true" x-show="openReviewModal" x-transition
-                    class="relative bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 p-6 sm:p-8 w-full max-w-2xl shadow-xl text-xs space-y-5">
+                    class="relative bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl border border-slate-100 dark:border-slate-700 p-4 sm:p-8 w-full max-w-2xl shadow-xl text-xs flex flex-col max-h-[90vh] my-auto overflow-hidden">
                     @csrf
                     @method('PUT')
 
+                    {{-- Header Modal (Fixed) --}}
                     <div
-                        class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
-                        <div>
-                            <span class="text-[10px] font-bold text-brand-600 uppercase tracking-wider block"
+                        class="flex items-start justify-between pb-3 border-b border-slate-100 dark:border-slate-700 shrink-0 gap-3">
+                        <div class="min-w-0 flex-1">
+                            <span class="text-[10px] font-bold text-brand-600 uppercase tracking-wider block truncate"
                                 x-text="selectedSubmisi.jenis_tugas"></span>
-                            <h3 class="text-base font-bold text-slate-900 dark:text-white"
+                            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug break-words"
                                 x-text="selectedSubmisi.judul_tugas"></h3>
                         </div>
                         <button type="button" @click="openReviewModal = false"
-                            class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+                            class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-2xl leading-none p-1 -mr-1 -mt-1 shrink-0">&times;</button>
                     </div>
 
-                    {{-- Submitter Info & File Link --}}
+                    {{-- Scrollable Form Body --}}
+                    <div class="overflow-y-auto py-4 space-y-4 pr-1 -mr-1 custom-scrollbar flex-1">
+
+                        {{-- Submitter Info & File Link --}}
+                        <div
+                            class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 sm:p-4 bg-slate-50 dark:bg-slate-700/40 rounded-2xl border border-slate-100 dark:border-slate-700">
+                            <div class="min-w-0">
+                                <span class="text-[10px] font-bold uppercase text-slate-400 block">Pengumpul /
+                                    Perwakilan</span>
+                                <span class="font-bold text-slate-900 dark:text-white text-xs block mt-0.5 truncate"
+                                    x-text="selectedSubmisi.nama_pengumpul"></span>
+                                <span class="text-[11px] text-slate-500 block truncate"
+                                    x-text="selectedSubmisi.perwakilan_label + ' (' + selectedSubmisi.asal_tim + ')'"></span>
+                            </div>
+                            <div class="min-w-0">
+                                <span class="text-[10px] font-bold uppercase text-slate-400 block">Waktu
+                                    Pengumpulan</span>
+                                <span
+                                    class="font-semibold text-slate-800 dark:text-slate-200 text-xs block mt-0.5 truncate"
+                                    x-text="selectedSubmisi.dikumpulkan_at"></span>
+                                <span
+                                    class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 block mt-0.5">Tepat
+                                    Waktu (Sebelum Deadline)</span>
+                            </div>
+                        </div>
+
+                        {{-- Catatan Peserta --}}
+                        <div>
+                            <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 block mb-1">Catatan
+                                dari Peserta:</span>
+                            <div class="p-3 bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-200/60 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs leading-relaxed break-words max-h-32 overflow-y-auto"
+                                x-text="selectedSubmisi.catatan_peserta || 'Tidak ada catatan khusus dari peserta.'">
+                            </div>
+                        </div>
+
+                        {{-- Tautan Berkas --}}
+                        <div>
+                            <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 block mb-1">Tautan
+                                Berkas Tugas:</span>
+                            <a :href="selectedSubmisi.tautan_berkas" target="_blank"
+                                class="inline-flex items-center justify-center sm:justify-start w-full sm:w-auto gap-2 px-3.5 py-2.5 bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/40 dark:hover:bg-brand-950/60 text-brand-600 dark:text-brand-300 font-bold rounded-xl transition border border-brand-200/60 dark:border-brand-800/40 text-center">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                                <span class="truncate">Buka Berkas Pengerjaan di Tab Baru</span>
+                            </a>
+                        </div>
+
+                        {{-- Form Input Status Reviu --}}
+                        <div class="pt-3 border-t border-slate-100 dark:border-slate-700">
+                            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-2">
+                                Pembaruan Status Kelayakan <span class="text-red-500">*</span>
+                            </label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <label
+                                    class="flex items-start gap-3 cursor-pointer p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition"
+                                    :class="selectedSubmisi.status === 'reviewed' ?
+                                        'border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/30 ring-2 ring-emerald-500/20' :
+                                        ''">
+                                    <input type="radio" name="status" value="reviewed"
+                                        x-model="selectedSubmisi.status"
+                                        class="mt-0.5 text-brand-600 focus:ring-brand-500 shrink-0">
+                                    <div class="min-w-0">
+                                        <span class="font-bold text-slate-900 dark:text-white block text-xs">Reviewed
+                                            (Lulus)</span>
+                                        <p class="text-[10px] text-slate-400 mt-0.5 leading-tight">Pengerjaan telah
+                                            memenuhi standar instruksi.</p>
+                                    </div>
+                                </label>
+
+                                <label
+                                    class="flex items-start gap-3 cursor-pointer p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition"
+                                    :class="selectedSubmisi.status === 'rejected' ?
+                                        'border-red-500 bg-red-50/40 dark:bg-red-950/30 ring-2 ring-red-500/20' : ''">
+                                    <input type="radio" name="status" value="rejected"
+                                        x-model="selectedSubmisi.status"
+                                        class="mt-0.5 text-red-600 focus:ring-red-500 shrink-0">
+                                    <div class="min-w-0">
+                                        <span class="font-bold text-slate-900 dark:text-white block text-xs">Rejected
+                                            (Revisi)</span>
+                                        <p class="text-[10px] text-slate-400 mt-0.5 leading-tight">Belum sesuai dan
+                                            membutuhkan perbaikan lebih lanjut.</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        {{-- Form Input Catatan Anonim --}}
+                        <div>
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
+                                <label class="font-bold text-slate-700 dark:text-slate-300">
+                                    Catatan / Komentar Evaluasi Pembimbing <span class="text-red-500">*</span>
+                                </label>
+                                <span
+                                    class="text-[10px] font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/50 px-2 py-0.5 rounded-full w-fit">
+                                    Komentar disampaikan secara anonim
+                                </span>
+                            </div>
+                            <textarea name="catatan_pemeriksa" rows="3" required x-model="selectedSubmisi.catatan_pemeriksa"
+                                placeholder="Tuliskan apresiasi, koreksi, atau instruksi perbaikan kepada peserta/kelompok..."
+                                class="form-control-app w-full resize-y min-h-20 text-xs"></textarea>
+                        </div>
+                    </div>
+
+                    {{-- Action Buttons (Fixed at Bottom) --}}
                     <div
-                        class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-slate-50 dark:bg-slate-700/40 rounded-2xl border border-slate-100 dark:border-slate-700">
-                        <div>
-                            <span class="text-[10px] font-bold uppercase text-slate-400 block">Pengumpul /
-                                Perwakilan</span>
-                            <span class="font-bold text-slate-900 dark:text-white text-xs block mt-0.5"
-                                x-text="selectedSubmisi.nama_pengumpul"></span>
-                            <span class="text-[11px] text-slate-500"
-                                x-text="selectedSubmisi.perwakilan_label + ' (' + selectedSubmisi.asal_tim + ')'"></span>
-                        </div>
-                        <div>
-                            <span class="text-[10px] font-bold uppercase text-slate-400 block">Waktu Pengumpulan</span>
-                            <span class="font-semibold text-slate-800 dark:text-slate-200 text-xs block mt-0.5"
-                                x-text="selectedSubmisi.dikumpulkan_at"></span>
-                            <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">Tepat Waktu
-                                (Sebelum Deadline)</span>
-                        </div>
-                    </div>
-
-                    {{-- Catatan Peserta --}}
-                    <div>
-                        <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 block mb-1">Catatan dari
-                            Peserta:</span>
-                        <div class="p-3 bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-200/60 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs leading-relaxed"
-                            x-text="selectedSubmisi.catatan_peserta || 'Tidak ada catatan khusus dari peserta.'"></div>
-                    </div>
-
-                    {{-- Tautan Berkas --}}
-                    <div>
-                        <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 block mb-1">Tautan Berkas
-                            Tugas:</span>
-                        <a :href="selectedSubmisi.tautan_berkas" target="_blank"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/40 dark:hover:bg-brand-950/60 text-brand-600 dark:text-brand-300 font-bold rounded-xl transition border border-brand-200/60 dark:border-brand-800/40">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                            <span>Buka Berkas Pengerjaan di Tab Baru</span>
-                        </a>
-                    </div>
-
-                    {{-- Form Input Status Reviu --}}
-                    <div class="pt-3 border-t border-slate-100 dark:border-slate-700">
-                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-2">
-                            Pembaruan Status Kelayakan <span class="text-red-500">*</span>
-                        </label>
-                        <div class="flex flex-wrap gap-4">
-                            <label
-                                class="flex items-center gap-2 cursor-pointer p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/40"
-                                :class="selectedSubmisi.status === 'reviewed' ?
-                                    'border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/30 ring-2 ring-emerald-500/20' :
-                                    ''">
-                                <input type="radio" name="status" value="reviewed"
-                                    x-model="selectedSubmisi.status" class="text-brand-600 focus:ring-brand-500">
-                                <div>
-                                    <span class="font-bold text-slate-900 dark:text-white">Reviewed (Telah Direview /
-                                        Lulus)</span>
-                                    <p class="text-[10px] text-slate-400">Pengerjaan telah memenuhi standar instruksi.
-                                    </p>
-                                </div>
-                            </label>
-
-                            <label
-                                class="flex items-center gap-2 cursor-pointer p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/40"
-                                :class="selectedSubmisi.status === 'rejected' ?
-                                    'border-red-500 bg-red-50/40 dark:bg-red-950/30 ring-2 ring-red-500/20' : ''">
-                                <input type="radio" name="status" value="rejected"
-                                    x-model="selectedSubmisi.status" class="text-red-600 focus:ring-red-500">
-                                <div>
-                                    <span class="font-bold text-slate-900 dark:text-white">Rejected (Butuh
-                                        Revisi)</span>
-                                    <p class="text-[10px] text-slate-400">Belum sesuai dan membutuhkan perbaikan lebih
-                                        lanjut.</p>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    {{-- Form Input Catatan Anonim --}}
-                    <div>
-                        <div class="flex items-center justify-between mb-1.5">
-                            <label class="font-bold text-slate-700 dark:text-slate-300">
-                                Catatan / Komentar Evaluasi Pembimbing <span class="text-red-500">*</span>
-                            </label>
-                            <span
-                                class="text-[10px] font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/50 px-2 py-0.5 rounded-full">
-                                Komentar disampaikan secara anonim
-                            </span>
-                        </div>
-                        <textarea name="catatan_pemeriksa" rows="4" required x-model="selectedSubmisi.catatan_pemeriksa"
-                            placeholder="Tuliskan apresiasi, koreksi, atau instruksi perbaikan kepada peserta/kelompok..."
-                            class="form-control-app w-full resize-y"></textarea>
-                    </div>
-
-                    {{-- Action Buttons with Loading States --}}
-                    <div class="mt-6 flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-700">
+                        class="pt-3 border-t border-slate-100 dark:border-slate-700 flex flex-col-reverse sm:flex-row justify-end gap-2 shrink-0">
                         <button type="button" @click="openReviewModal = false" :disabled="isSavingReview"
-                            class="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl transition">
+                            class="w-full sm:w-auto px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl transition text-center">
                             Batal
                         </button>
                         <button type="submit" :disabled="isSavingReview"
-                            class="btn-primary inline-flex items-center gap-2 disabled:opacity-50">
+                            class="btn-primary w-full sm:w-auto inline-flex items-center justify-center gap-2 disabled:opacity-50 py-2.5">
                             <template x-if="isSavingReview">
                                 <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10"
