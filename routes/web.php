@@ -15,6 +15,7 @@ use App\Http\Controllers\PengajuanIzinController;
 use App\Http\Controllers\PengumpulanTugasController;
 use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PresensiController;
+use App\Http\Controllers\PesertaTugasController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TimController;
 use App\Http\Controllers\TugasController;
@@ -32,18 +33,12 @@ Route::get('/tim', [TimController::class, 'peserta'])->name('tim.index');
 
 Route::middleware(['auth'])->prefix('peserta')->name('peserta.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'pesertaDashboard'])->name('dashboard');
-    Route::get('/tugas-hari', function () {
-        return view('peserta.tugas-hari');
-    })->name('tugas-hari');
-    Route::get('/tugas-list', function () {
-        return view('peserta.tugas-list');
-    })->name('tugas-list');
-    Route::get('/tugas-kumpulkan', function () {
-        return view('peserta.tugas-kumpulkan');
-    })->name('tugas-kumpulkan');
-    Route::get('/arsip', function () {
-        return view('peserta.arsip');
-    })->name('arsip');
+    Route::get('/tugas-hari', [PesertaTugasController::class, 'tugasHari'])->name('tugas-hari');
+    Route::get('/tugas-list', [PesertaTugasController::class, 'list'])->name('tugas-list');
+    Route::get('/tugas/{tugas}/kumpulkan', [PesertaTugasController::class, 'kumpulkan'])->name('tugas-kumpulkan');
+    Route::post('/tugas/{tugas}/kumpulkan', [PesertaTugasController::class, 'store'])->name('tugas-kumpulkan.store');
+    Route::delete('/tugas/{tugas}/kumpulkan', [PesertaTugasController::class, 'destroy'])->name('tugas-kumpulkan.destroy');
+    Route::get('/arsip', [PesertaTugasController::class, 'arsip'])->name('arsip');
 });
 
 /*

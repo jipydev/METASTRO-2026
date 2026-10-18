@@ -63,7 +63,7 @@
                             </span>
                         </div>
                         
-                        <a href="{{ route('peserta.arsip') }}"
+                        <a href="{{ route('peserta.tugas-list') }}"
                             class="inline-flex items-center justify-center gap-1.5 bg-[#FF5B00] hover:bg-[#E05000] text-white font-semibold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-md shadow-orange-500/20 transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer whitespace-nowrap">
                             <span>Kumpulkan</span>
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"></path></svg>
@@ -172,7 +172,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <!-- DAY 1 Card -->
-                    <a href="{{ route('peserta.tugas-list') }}"
+                    <a href="{{ route('peserta.tugas-list', ['day' => 'Day 1']) }}"
                         class="block bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200/60 dark:border-slate-700/60 shadow-sm hover:shadow-md hover:border-orange-300 dark:hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 group cursor-pointer">
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center gap-3">
@@ -201,7 +201,7 @@
                     </a>
 
                     <!-- DAY 2 Card -->
-                    <a href="{{ route('peserta.tugas-list') }}"
+                    <a href="{{ route('peserta.tugas-list', ['day' => 'Day 2']) }}"
                         class="block bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200/60 dark:border-slate-700/60 shadow-sm hover:shadow-md hover:border-orange-300 dark:hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 group cursor-pointer">
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center gap-3">

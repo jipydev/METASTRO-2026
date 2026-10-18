@@ -23,8 +23,20 @@ class Tugas extends Model
     
     protected $table = 'tugases';
 
+    protected function casts(): array
+    {
+        return [
+            'tenggat_waktu' => 'datetime',
+        ];
+    }
+
     public function pembuat()
     {
         return $this->belongsTo(User::class, 'pembuat_id');
+    }
+
+    public function pengumpulans()
+    {
+        return $this->hasMany(PengumpulanTugas::class, 'tugas_id');
     }
 }

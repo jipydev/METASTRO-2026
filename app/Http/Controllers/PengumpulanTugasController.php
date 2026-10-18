@@ -27,9 +27,13 @@ class PengumpulanTugasController extends Controller
                         ->orWhereHas('tim', fn ($team) => $team->where('nama', 'like', "%{$search}%"));
                 });
             })
-            ->when(auth()->user()->isGuider() && !auth()->user()->isAdmin(), function ($query) {
+            ->when(auth()->user()->isGuider() && !auth()->user()->isAdmin() && !auth()->user()->isPathfinder(), function ($query) {
                 $timIds = \App\Models\Guider::where('pembimbing_id', auth()->id())->pluck('tim_id');
-                $query->whereIn('tim_id', $timIds);
+                $anggotaIds = \App\Models\AnggotaTim::whereIn('tim_id', $timIds)->pluck('anggota_id');
+                $query->where(function ($sub) use ($timIds, $anggotaIds) {
+                    $sub->whereIn('tim_id', $timIds)
+                        ->orWhereIn('user_id', $anggotaIds);
+                });
             })
             ->when(in_array($status, ['pending', 'reviewed', 'rejected'], true), fn ($query) => $query->where('status', $status))
             ->when(in_array($jenis, ['individu', 'tim', 'angkatan'], true), fn ($query) => $query->whereHas('tugas', fn ($task) => $task->where('jenis', $jenis)))
@@ -40,7 +44,7 @@ class PengumpulanTugasController extends Controller
                 'id' => $submisi->id,
                 'judul_tugas' => $submisi->tugas?->judul ?? 'Tugas tidak ditemukan',
                 'jenis_tugas' => $submisi->tugas?->jenis ?? 'individu',
-                'nama_pengumpul' => $submisi->peserta?->nama ?? 'Peserta tidak ditemukan',
+                'nama_pengumpul' => $submisi->peserta?->nama ?? $submisi->original_participant_name ?? 'Peserta tidak ditemukan',
                 'perwakilan_label' => $submisi->tim ? 'Perwakilan Tim' : 'Peserta',
                 'nim_pengumpul' => $submisi->peserta?->nim ?? '-',
                 'asal_tim' => $submisi->tim?->nama ?? '-',
@@ -63,6 +67,18 @@ class PengumpulanTugasController extends Controller
 
     public function reviewUpdate(Request $request, PengumpulanTugas $pengumpulan): \Illuminate\Http\RedirectResponse
     {
+        if ($request->user()->isGuider() && !$request->user()->isAdmin() && !$request->user()->isPathfinder()) {
+            $timIds = \App\Models\Guider::where('pembimbing_id', $request->user()->id)->pluck('tim_id')->toArray();
+            $anggotaIds = \App\Models\AnggotaTim::whereIn('tim_id', $timIds)->pluck('anggota_id')->toArray();
+
+            $isAuthorized = ($pengumpulan->tim_id && in_array($pengumpulan->tim_id, $timIds, true))
+                || ($pengumpulan->user_id && in_array($pengumpulan->user_id, $anggotaIds, true));
+
+            if (!$isAuthorized) {
+                abort(403, 'Anda tidak memiliki wewenang untuk mereview pengumpulan tugas tim/peserta lain.');
+            }
+        }
+
         $validated = $request->validate([
             'status' => ['required', 'in:reviewed,rejected'],
             'catatan_pemeriksa' => ['required', 'string', 'max:2000'],
