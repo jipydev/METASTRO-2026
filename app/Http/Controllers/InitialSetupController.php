@@ -40,7 +40,15 @@ class InitialSetupController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        $validated = $request->validated();
+        $validated = $request->validated([
+            'foto' => 'nullable|image|max:2048', // Maksimal 2MB
+            'nim' => 'nullable|string|max:20',
+            'nama' => 'required|string|max:100',
+            'email' => 'required|email|unique:users,email',
+            'nomor_hp' => 'nullable|string|max:20',
+            'password' => 'required|confirmed|min:8',
+            'password_confirmation' => 'required'
+        ]);
 
         // Hapus foto lama jika ada
         if ($user->foto && Storage::disk('public')->exists($user->foto)) {
