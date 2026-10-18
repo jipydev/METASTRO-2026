@@ -593,7 +593,7 @@ class User extends Authenticatable implements PasskeyUser
     public function getFormattedDivisiJabatanOrTimAttribute(): string
     {
         // 1. Jika tidak punya divisi (biasanya Peserta), cek apakah memiliki tim
-        if (! $this->divisi) {
+        if (!$this->isPanitia) {
             $tim = $this->currentTim();
 
             if ($tim) {
