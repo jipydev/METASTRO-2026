@@ -201,13 +201,12 @@ class PesertaTugasController extends Controller
         // =========================================================================
 
         // 1. SEMUA TUGAS/PENGUMPULAN: Notifikasi dikirimkan ke Divisi Pathfinder, Ranger, dan Admin (Chiper)
-        $universalReceivers = User::query()
-            ->where('status', true)
-            ->where(function ($query) {
-                $query->whereHas('divisi', fn($q) => $q->whereRaw('LOWER(nama) in (?, ?)', ['pathfinder', 'ranger']))
-                    ->orWhere(fn($sub) => $sub->isAdmin()); // Memastikan Admin/Chiper juga ikut masuk
-            })
-            ->get();
+        $universalReceivers = User::where('status', true)->get()->filter(function ($u) {
+            $isPathfinderOrRanger = $u->divisi && in_array(strtolower($u->divisi->nama), ['pathfinder', 'ranger'], true);
+            $isAdmin = method_exists($u, 'isAdmin') ? $u->isAdmin() : false;
+
+            return $isPathfinderOrRanger || $isAdmin;
+        });
 
         foreach ($universalReceivers as $receiver) {
             // $this->notifications->tugasUniversalSubmitted($submission, $receiver);
