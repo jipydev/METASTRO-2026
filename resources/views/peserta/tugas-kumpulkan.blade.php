@@ -2,6 +2,7 @@
     <div x-data="{
         agreed: false,
         fileName: '',
+        fileSize: '',
         darkMode: document.documentElement.classList.contains('dark'),
         toggleTheme() {
             this.darkMode = !this.darkMode;
@@ -12,6 +13,23 @@
                 document.documentElement.classList.remove('dark');
                 localStorage.setItem('theme', 'light');
             }
+        },
+        handleFileChange(event) {
+            const file = event.target.files[0];
+            if (file) {
+                this.fileName = file.name;
+                this.fileSize = file.size > 1024 * 1024 
+                    ? (file.size / (1024 * 1024)).toFixed(2) + ' MB' 
+                    : (file.size / 1024).toFixed(2) + ' KB';
+            } else {
+                this.fileName = '';
+                this.fileSize = '';
+            }
+        },
+        removeFile() {
+            this.fileName = '';
+            this.fileSize = '';
+            this.$refs.fileInput.value = '';
         }
     }"
         class="bg-slate-50/50 dark:bg-slate-900 min-h-screen pb-12 font-poppins transition-colors duration-300">
@@ -128,21 +146,6 @@
                             <h4 class="font-bold text-sm sm:text-base text-slate-900 dark:text-white flex items-center gap-2">
                                 <span>Berkas Pengumpulan Anda</span>
                             </h4>
-                            <div>
-                                @if($submission->status === 'reviewed')
-                                    <span class="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 text-xs font-bold px-3 py-1 rounded-full">
-                                        Disetujui / Selesai
-                                    </span>
-                                @elseif($submission->status === 'rejected')
-                                    <span class="bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-700 text-xs font-bold px-3 py-1 rounded-full">
-                                        Perlu Revisi
-                                    </span>
-                                @else
-                                    <span class="bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-700 text-xs font-bold px-3 py-1 rounded-full">
-                                        Menunggu Review Guider
-                                    </span>
-                                @endif
-                            </div>
                         </div>
 
                         <div class="space-y-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-5">
@@ -220,17 +223,46 @@
                                 <label class="block text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                                     Pilih File PDF:
                                 </label>
-                                <label class="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-[#FF5B00] rounded-2xl cursor-pointer bg-slate-50/50 dark:bg-slate-700/30 hover:bg-orange-50/30 transition group">
-                                    <svg class="w-10 h-10 text-slate-400 group-hover:text-[#FF5B00] transition-colors mb-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                                    </svg>
-                                    <span class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 group-hover:text-[#FF5B00]" x-text="fileName ? fileName : 'Klik untuk memilih berkas PDF'">
-                                        Klik untuk memilih berkas PDF
-                                    </span>
-                                    <span class="text-[11px] text-slate-400 mt-1">Hanya format PDF (Maks. 5MB)</span>
-                                    <input type="file" name="file_tugas" accept=".pdf,application/pdf" class="hidden" required
-                                        @change="fileName = $event.target.files[0] ? $event.target.files[0].name : ''">
-                                </label>
+
+                                <!-- Area Klik yang Dipicu lewat Alpine.js ($refs) -->
+                                <div @click="$refs.fileInput.click()" class="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-[#FF5B00] rounded-2xl cursor-pointer bg-slate-50/50 dark:bg-slate-700/30 hover:bg-orange-50/30 transition group">
+                                    
+                                    <!-- Tampilan Default Sebelum File Dipilih -->
+                                    <div class="flex flex-col items-center text-center" x-show="!fileName">
+                                        <svg class="w-10 h-10 text-slate-400 group-hover:text-[#FF5B00] transition-colors mb-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                        </svg>
+                                        <span class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 group-hover:text-[#FF5B00]">
+                                            Klik untuk memilih berkas PDF
+                                        </span>
+                                        <span class="text-[11px] text-slate-400 mt-1">Hanya format PDF (Maks. 5MB)</span>
+                                    </div>
+
+                                    <!-- Tampilan Preview Setelah File Dipilih -->
+                                    <div class="flex items-center justify-between w-full p-3 bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-900/50 rounded-xl shadow-xs" x-show="fileName" x-cloak>
+                                        <div class="flex items-center gap-3 overflow-hidden">
+                                            <div class="p-2.5 bg-orange-100 dark:bg-orange-950/60 text-[#FF5B00] rounded-lg shrink-0">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                            </div>
+                                            <div class="truncate text-left">
+                                                <p class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate" x-text="fileName"></p>
+                                                <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                                                    <span>Berkas sudah terupload</span>
+                                                    <span class="text-slate-400">•</span>
+                                                    <span x-text="fileSize"></span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- Tombol Batalkan File (Gunakan @click.stop agar tidak memicu pembukaan file explorer lagi) -->
+                                        <button type="button" @click.stop="removeFile()" class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition" title="Batalkan pilihan file">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                        </button>
+                                    </div>
+
+                                    <!-- Input File Asli (Tersembunyi, dipanggil via $refs.fileInput.click()) -->
+                                    <input type="file" name="file_tugas" x-ref="fileInput" accept=".pdf,application/pdf" class="hidden" required
+                                        @change="handleFileChange($event)">
+                                </div>
                             </div>
 
                             <!-- CATATAN PESERTA -->
