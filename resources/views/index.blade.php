@@ -65,23 +65,31 @@
                 </p>
             </div>
 
-            <!-- Tombol Aksi: LOGIN & LIHAT TIM -->
+            <!-- Tombol Aksi: LOGIN / DASHBOARD, LIHAT TIM & BOOKLET -->
             <div class="relative z-10 mt-6 sm:mt-7 w-full flex flex-col items-center">
-                <div class="flex items-center justify-center gap-4">
+                <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 px-4">
                     @auth
                         <a href="{{ route('dashboard.index') }}"
-                            class="inline-flex items-center justify-center px-6 py-2 rounded-lg bg-black/35 hover:bg-black/50 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
+                            class="inline-flex items-center justify-center px-5 py-2 rounded-lg bg-black/35 hover:bg-black/50 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
                             DASHBOARD
                         </a>
                     @else
                         <a href="{{ route('login') }}"
-                            class="inline-flex items-center justify-center px-7 py-2 rounded-lg bg-black/15 hover:bg-black/50 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
+                            class="inline-flex items-center justify-center px-6 py-2 rounded-lg bg-black/15 hover:bg-black/50 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
                             LOGIN
                         </a>
                     @endauth
+                    
                     <a href="{{ route('tim.index') }}"
-                        class="inline-flex items-center justify-center px-6 py-2 rounded-lg bg-black/35 hover:bg-black/50 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
+                        class="inline-flex items-center justify-center px-5 py-2 rounded-lg bg-black/35 hover:bg-black/50 text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-[#FF7300] shadow-[0_0_15px_rgba(255,115,0,0.35)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
                         Lihat Tim
+                    </a>
+
+                    <!-- Tombol Akses Booklet (Mengarah langsung ke file booklet.pdf di folder public) -->
+                    <a href="{{ asset('booklet.pdf') }}" target="_blank"
+                        class="inline-flex items-center gap-1.5 justify-center px-5 py-2 rounded-lg bg-[#FF7300]/80 hover:bg-[#FF7300] text-white font-poppins text-xs sm:text-sm font-semibold tracking-wider uppercase border border-orange-400 shadow-[0_0_15px_rgba(255,115,0,0.5)] backdrop-blur-xs transition-all duration-200 transform hover:scale-105 active:scale-95">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-0-5H20"></path></svg>
+                        Booklet
                     </a>
                 </div>
 
@@ -258,7 +266,8 @@
                                         <span
                                             class="font-medium text-slate-800 dark:text-slate-100">{{ $kegiatanDate->translatedFormat('d F') }}</span>
                                         @if ($kegiatan->tanggal_selesai && $kegiatan->tanggal_selesai->ne($kegiatan->tanggal_mulai))
-                                            <span> - {{ $kegiatan->tanggal_selesai->translatedFormat('d F') }}</span>
+                                            - <span>
+{{ $kegiatan->tanggal_selesai->translatedFormat('d F') }}</span>
                                         @endif
                                         @if ($kegiatan->waktu_mulai)
                                             <span class="text-slate-400 mx-1">&bull;</span>
