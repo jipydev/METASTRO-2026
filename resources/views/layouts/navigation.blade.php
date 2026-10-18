@@ -289,10 +289,13 @@
                 <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Pengguna</span>
             </a>
         @endif
-    </nav>
 
-    <div class="mt-auto shrink-0 border-t border-gray-100 dark:border-slate-700/80 p-2.5 space-y-1">
         @if (!auth()->user()->isPanitia())
+            <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Informasi Lainnya
+            </p>
+            <hr class="border-slate-100 dark:border-slate-700/60 my-1!" x-show="sidebarCollapsed && !sidebarOpen"
+                x-cloak>
+
             <!-- Tombol Booklet di Bagian Bawah Sidebar -->
             <a href="{{ asset('booklet.pdf') }}" target="_blank" title="Booklet"
                 class="w-full flex items-center rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60 hover:text-brand-600 dark:hover:text-brand-400 transition"
@@ -317,8 +320,10 @@
                 <span class="truncate" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Instagram</span>
             </a>
         @endif
+    </nav>
 
-        <button @click="toggleTheme()" type="button" title="Ubah tema"
+    <div class="mt-auto shrink-0 border-t border-gray-100 dark:border-slate-700/80 p-2.5 space-y-1">
+                <button @click="toggleTheme()" type="button" title="Ubah tema"
             class="w-full flex items-center rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition"
             :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
             <svg x-show="darkMode" x-cloak class="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24"
