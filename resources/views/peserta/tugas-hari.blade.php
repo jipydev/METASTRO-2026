@@ -60,20 +60,11 @@
 
             <!-- CONTENT -->
             <div class="space-y-4">
-                @php
-                    $days = [
-                        ['day' => 1, 'progress' => 3, 'max' => 5],
-                        ['day' => 2, 'progress' => 2, 'max' => 5],
-                        ['day' => 3, 'progress' => 3, 'max' => 5],
-                        ['day' => 4, 'progress' => 4, 'max' => 5],
-                    ];
-                @endphp
-
-                @foreach($days as $item)
-                <a href="{{ route('peserta.tugas-list') }}" class="block bg-white dark:bg-slate-800/90 rounded-2xl p-5 shadow-xs border border-slate-100 dark:border-slate-700/60 hover:border-[#FF5B00]/40 dark:hover:border-orange-500/40 hover:shadow-md transition active:scale-[0.99] group">
+                @forelse($days as $item)
+                <a href="{{ route('peserta.tugas-list', ['day' => $item['name']]) }}" class="block bg-white dark:bg-slate-800/90 rounded-2xl p-5 shadow-xs border border-slate-100 dark:border-slate-700/60 hover:border-[#FF5B00]/40 dark:hover:border-orange-500/40 hover:shadow-md transition active:scale-[0.99] group">
                     <div class="flex items-center justify-between mb-2">
                         <h3 class="font-bold text-base sm:text-lg text-[#1E293B] dark:text-white group-hover:text-[#FF5B00] transition-colors">
-                            DAY {{ $item['day'] }}
+                            {{ strtoupper($item['name']) }}
                         </h3>
                         <svg class="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:translate-x-1 group-hover:text-[#FF5B00] transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
@@ -83,18 +74,18 @@
                     
                     <div class="relative w-full">
                         <div class="h-2.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full flex overflow-hidden">
-                            <div class="h-full bg-[#FF5B00] rounded-full transition-all duration-500" style="width: {{ ($item['progress'] / $item['max']) * 100 }}%"></div>
-                        </div>
-                        <div class="flex justify-between mt-1.5 px-1 text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                            <span>1</span>
-                            <span>2</span>
-                            <span>3</span>
-                            <span>4</span>
-                            <span>5</span>
+                            @php
+                                $percent = $item['max'] > 0 ? round(($item['progress'] / $item['max']) * 100) : 0;
+                            @endphp
+                            <div class="h-full bg-[#FF5B00] rounded-full transition-all duration-500" style="width: {{ $percent }}%"></div>
                         </div>
                     </div>
                 </a>
-                @endforeach
+                @empty
+                    <div class="p-6 text-center bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+                        <p class="text-xs text-slate-500">Belum ada hari penugasan yang tercatat.</p>
+                    </div>
+                @endforelse
             </div>
         </div>
 

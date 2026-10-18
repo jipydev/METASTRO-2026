@@ -88,9 +88,8 @@
                         <a href="{{ route('dashboard.pengumpulan-tugas.index', $tugasId > 0 ? ['tugas_id' => $tugasId] : []) }}"
                             class="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400">Reset</a>
                     @endif
-                </form>
             </div>
-        </div>
+        </form>
 
         {{-- Table List Submisi --}}
         <div class="table-card">

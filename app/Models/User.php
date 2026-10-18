@@ -92,6 +92,11 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(AnggotaTim::class, 'anggota_id');
     }
 
+    public function currentTim(): ?Tim
+    {
+        return $this->tims()->with('tim')->first()?->tim;
+    }
+
     public function divisi(): BelongsTo
     {
         return $this->belongsTo(Divisi::class);
@@ -448,7 +453,7 @@ class User extends Authenticatable implements PasskeyUser
 
     public function canReviewTugas(): bool
     {
-        return $this->isAdmin() || $this->isGuider();
+        return $this->isAdmin() || $this->isGuider() || $this->isPathfinder();
     }
 
     public function canApproveRangerIzin(): bool

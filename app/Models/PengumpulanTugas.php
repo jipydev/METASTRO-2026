@@ -25,6 +25,13 @@ class PengumpulanTugas extends Model
 
     protected $table = 'pengumpulan_tugases';
 
+    protected function casts(): array
+    {
+        return [
+            'tanggal_pengumpulan' => 'datetime',
+        ];
+    }
+
     public function tugas()
     {
         return $this->belongsTo(Tugas::class, 'tugas_id');
