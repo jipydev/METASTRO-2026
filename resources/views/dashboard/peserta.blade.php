@@ -43,155 +43,169 @@
                         class="absolute -right-10 -top-10 w-40 h-40 bg-orange-400/10 dark:bg-orange-500/10 rounded-full blur-3xl group-hover:bg-orange-400/20 transition-all duration-500">
                     </div>
 
-                    <div class="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="relative flex flex-col gap-4">
                         <!-- Left: Greetings & Deadline info -->
                         <div class="min-w-0 flex-1">
                             <h2
                                 class="font-kalam text-xl sm:text-2xl font-bold text-slate-800 dark:text-amber-50 tracking-wide leading-tight flex items-center gap-2">
                                 Hallo, Jingga muda! <span class="animate-wave inline-block origin-[70%_70%]">👋</span>
                             </h2>
+                        </div>
 
+                        <div
+                            class="bg-white/80 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-orange-100 dark:border-slate-700/80 shadow-xs flex items-center gap-3.5 p-2">
                             <div
-                                class="mt-3 inline-flex items-center gap-2 bg-white/60 dark:bg-slate-900/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-orange-100 dark:border-slate-700">
-                                <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor"
+                                class="w-10 h-10 rounded-xl bg-orange-500/10 dark:bg-orange-500/20 text-[#FF5B00] flex items-center justify-center shrink-0">
+                                <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
-                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
-                                    Deadline: <span class="font-semibold text-slate-800 dark:text-slate-100 ml-1">Video
-                                        perkenalan</span>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="text-[10px] font-bold tracking-wider uppercase text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/50 px-2 py-0.5 rounded-md border border-orange-200/50 dark:border-orange-900/50">
+                                        Deadline Terdekat
+                                    </span>
+                                    @if (isset($deadlineTerdekat) && $deadlineTerdekat->tenggat_waktu)
+                                        <span class="text-[11px] text-slate-400 font-medium">
+                                            •
+                                            {{ \Carbon\Carbon::parse($deadlineTerdekat->tenggat_waktu)->translatedFormat('d M Y, H:i') }}
+                                            WIB
+                                        </span>
+                                    @endif
+                                </div>
+                                <p
+                                    class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate mt-0.5">
+                                    {{ $deadlineTerdekat ? $deadlineTerdekat->judul : 'Tidak ada penugasan aktif saat ini' }}
                                 </p>
                             </div>
-                        </div>
 
-                        <!-- Right: Deadline Time side-by-side (samping kiri) dengan Tombol Kumpulkan -->
-                        <div class="flex items-center shrink-0 gap-3 self-end sm:self-center">
-                            <div
-                                class="bg-red-50 dark:bg-red-500/10 px-3 py-1.5 rounded-xl border border-red-100 dark:border-red-500/20">
-                                <span
-                                    class="text-red-600 dark:text-red-400 font-bold text-sm sm:text-base tracking-wider whitespace-nowrap">
-                                    12:45
-                                </span>
-                            </div>
-
-                            <a href="{{ route('peserta.tugas-list') }}"
-                                class="inline-flex items-center justify-center gap-1.5 bg-[#FF5B00] hover:bg-[#E05000] text-white font-semibold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-md shadow-orange-500/20 transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer whitespace-nowrap">
-                                <span>Kumpulkan</span>
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                        d="M5 12h14M12 5l7 7-7 7"></path>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Pengumuman Singkat Dibawah Deadline -->
-                    <div class="mt-3.5 pt-3 border-t border-dashed border-slate-200/80 dark:border-slate-700/80">
-                        <button type="button" @click="openPengumumanDetail = true"
-                            class="w-full flex items-center justify-between gap-2.5 p-2.5 rounded-xl bg-orange-50/70 hover:bg-orange-100/70 dark:bg-orange-950/30 dark:hover:bg-orange-950/50 border border-orange-200/60 dark:border-orange-800/40 text-left transition group cursor-pointer">
-                            <div class="flex items-center gap-2.5 min-w-0">
-                                <span
-                                    class="flex items-center justify-center w-7 h-7 rounded-lg bg-[#FF5B00]/10 text-[#FF5B00] shrink-0">
+                            <!-- Right: Action Button & Jam Badge -->
+                            <div class="">
+                                <a href="{{ isset($deadlineTerdekat) ? route('peserta.tugas-kumpulkan', $deadlineTerdekat->id) : route('peserta.tugas-list') }}"
+                                    class="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-[#FF5B00] hover:bg-[#E05000] text-white font-semibold text-xs sm:text-sm px-5 py-3 rounded-xl shadow-md shadow-orange-500/25 transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer whitespace-nowrap">
+                                    <span>Kumpulkan Tugas</span>
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z">
-                                        </path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                            d="M5 12h14M12 5l7 7-7 7"></path>
                                     </svg>
-                                </span>
-                                <div class="min-w-0">
-                                    <div class="flex items-center gap-2">
-                                        <span
-                                            class="text-[11px] font-bold tracking-wider uppercase text-[#FF5B00]">Pengumuman</span>
-                                        <span class="text-[10px] text-slate-400">•
-                                            {{ $pengumumanTerbaru?->tanggal_publish ? \Carbon\Carbon::parse($pengumumanTerbaru->tanggal_publish)->diffForHumans() : 'Terbaru' }}</span>
-                                    </div>
-                                    <p
-                                        class="text-xs font-medium text-slate-700 dark:text-slate-200 truncate mt-0.5 group-hover:text-[#FF5B00] transition-colors">
-                                        {{ $pengumumanTerbaru?->judul ?? 'Pemberitahuan penting kegiatan METASTRO 2026' }}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <span
-                                class="text-xs font-semibold text-[#FF5B00] flex items-center gap-1 shrink-0 group-hover:translate-x-0.5 transition-transform">
-                                <span class="hidden sm:inline text-[11px]">Lihat Detail</span>
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 5l7 7-7 7" />
-                                </svg>
-                            </span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Modal Detail Pengumuman -->
-                <div x-show="openPengumumanDetail" x-cloak
-                    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
-                    @click.self="openPengumumanDetail = false" @keydown.escape.window="openPengumumanDetail = false">
-                    <div x-show="openPengumumanDetail" x-transition.scale.95
-                        class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-lg p-5 sm:p-6 shadow-2xl border border-slate-100 dark:border-slate-700 relative max-h-[90vh] flex flex-col">
-                        <!-- Modal Header -->
-                        <div
-                            class="flex items-start justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-700">
-                            <div class="flex items-center gap-2.5">
-                                <span
-                                    class="flex items-center justify-center w-8 h-8 rounded-xl bg-orange-100 dark:bg-orange-950/60 text-[#FF5B00] shrink-0">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z">
-                                        </path>
-                                    </svg>
-                                </span>
-                                <div>
-                                    <span
-                                        class="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-[#FF5B00]">
-                                        Pengumuman
-                                    </span>
-                                    <h3 class="font-bold text-base sm:text-lg text-[#1E293B] dark:text-white mt-1">
-                                        {{ $pengumumanTerbaru?->judul ?? 'Pemberitahuan Kegiatan METASTRO 2026' }}
-                                    </h3>
-                                    <p class="text-[11px] text-slate-400 mt-0.5">
-                                        {{ $pengumumanTerbaru?->tanggal_publish ? \Carbon\Carbon::parse($pengumumanTerbaru->tanggal_publish)->locale('id')->isoFormat('D MMMM Y, HH.mm') . ' WIB' : 'Hari ini' }}
-                                        • Oleh {{ $pengumumanTerbaru?->pembuat?->nama ?? 'Panitia METASTRO' }}
-                                    </p>
-                                </div>
-                            </div>
-                            <button type="button" @click="openPengumumanDetail = false"
-                                class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-
-                        <!-- Modal Body -->
-                        <div
-                            class="overflow-y-auto py-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line flex-1">
-                            {{ $pengumumanTerbaru?->isi ?? "Halo teman-teman Jingga Muda!\n\nPastikan seluruh berkas dan tugas dikumpulkan tepat waktu sebelum batas tenggat berakhir. Jika ada kendala terkait penugasan atau atribut, segera hubungi guider kelompok masing-masing ya!\n\nSemangat dan persiapkan diri dengan baik!" }}
-                        </div>
-
-                        @if ($pengumumanTerbaru?->lampiran)
-                            <div class="pt-3 border-t border-slate-100 dark:border-slate-700 mb-3">
-                                <a href="{{ asset('storage/' . $pengumumanTerbaru->lampiran) }}" target="_blank"
-                                    class="inline-flex items-center gap-2 text-xs font-semibold text-[#FF5B00] hover:underline">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13">
-                                        </path>
-                                    </svg>
-                                    <span>Lihat Lampiran Dokumen</span>
                                 </a>
                             </div>
-                        @endif
+                        </div>
 
-                        <!-- Modal Footer -->
-                        <div class="pt-3 border-t border-slate-100 dark:border-slate-700 flex justify-end">
-                            <button type="button" @click="openPengumumanDetail = false"
-                                class="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[#1E293B] dark:text-slate-200 font-semibold text-xs rounded-xl transition cursor-pointer">
-                                Tutup
+                        <!-- Pengumuman Singkat Dibawah Deadline -->
+                        <div class="mt-3.5 pt-3 border-t border-dashed border-slate-200/80 dark:border-slate-700/80">
+                            <button type="button" @click="openPengumumanDetail = true"
+                                class="w-full flex items-center justify-between gap-2.5 p-2.5 rounded-xl bg-orange-50/70 hover:bg-orange-100/70 dark:bg-orange-950/30 dark:hover:bg-orange-950/50 border border-orange-200/60 dark:border-orange-800/40 text-left transition group cursor-pointer">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <span
+                                        class="flex items-center justify-center w-7 h-7 rounded-lg bg-[#FF5B00]/10 text-[#FF5B00] shrink-0">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z">
+                                            </path>
+                                        </svg>
+                                    </span>
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2">
+                                            <span
+                                                class="text-[11px] font-bold tracking-wider uppercase text-[#FF5B00]">Pengumuman</span>
+                                            <span class="text-[10px] text-slate-400">•
+                                                {{ $pengumumanTerbaru?->tanggal_publish ? \Carbon\Carbon::parse($pengumumanTerbaru->tanggal_publish)->diffForHumans() : 'Terbaru' }}</span>
+                                        </div>
+                                        <p
+                                            class="text-xs font-medium text-slate-700 dark:text-slate-200 truncate mt-0.5 group-hover:text-[#FF5B00] transition-colors">
+                                            {{ $pengumumanTerbaru?->judul ?? 'Pemberitahuan penting kegiatan METASTRO 2026' }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <span
+                                    class="text-xs font-semibold text-[#FF5B00] flex items-center gap-1 shrink-0 group-hover:translate-x-0.5 transition-transform">
+                                    <span class="hidden sm:inline text-[11px]">Lihat Detail</span>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </span>
                             </button>
+                        </div>
+
+                        <!-- Modal Detail Pengumuman -->
+                        <div x-show="openPengumumanDetail" x-cloak
+                            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
+                            @click.self="openPengumumanDetail = false"
+                            @keydown.escape.window="openPengumumanDetail = false">
+                            <div x-show="openPengumumanDetail" x-transition.scale.95
+                                class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-lg p-5 sm:p-6 shadow-2xl border border-slate-100 dark:border-slate-700 relative max-h-[90vh] flex flex-col">
+                                <!-- Modal Header -->
+                                <div
+                                    class="flex items-start justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-700">
+                                    <div class="flex items-center gap-2.5">
+                                        <span
+                                            class="flex items-center justify-center w-8 h-8 rounded-xl bg-orange-100 dark:bg-orange-950/60 text-[#FF5B00] shrink-0">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z">
+                                                </path>
+                                            </svg>
+                                        </span>
+                                        <div>
+                                            <span
+                                                class="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-[#FF5B00]">
+                                                Pengumuman
+                                            </span>
+                                            <h3
+                                                class="font-bold text-base sm:text-lg text-[#1E293B] dark:text-white mt-1">
+                                                {{ $pengumumanTerbaru?->judul ?? 'Pemberitahuan Kegiatan METASTRO 2026' }}
+                                            </h3>
+                                            <p class="text-[11px] text-slate-400 mt-0.5">
+                                                {{ $pengumumanTerbaru?->tanggal_publish ? \Carbon\Carbon::parse($pengumumanTerbaru->tanggal_publish)->locale('id')->isoFormat('D MMMM Y, HH.mm') . ' WIB' : 'Hari ini' }}
+                                                • Oleh {{ $pengumumanTerbaru?->pembuat?->nama ?? 'Panitia METASTRO' }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button type="button" @click="openPengumumanDetail = false"
+                                        class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <!-- Modal Body -->
+                                <div
+                                    class="overflow-y-auto py-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line flex-1">
+                                    {{ $pengumumanTerbaru?->isi ?? "Halo teman-teman Jingga Muda!\n\nPastikan seluruh berkas dan tugas dikumpulkan tepat waktu sebelum batas tenggat berakhir. Jika ada kendala terkait penugasan atau atribut, segera hubungi guider kelompok masing-masing ya!\n\nSemangat dan persiapkan diri dengan baik!" }}
+                                </div>
+
+                                @if ($pengumumanTerbaru?->lampiran)
+                                    <div class="pt-3 border-t border-slate-100 dark:border-slate-700 mb-3">
+                                        <a href="{{ asset('storage/' . $pengumumanTerbaru->lampiran) }}" target="_blank"
+                                            class="inline-flex items-center gap-2 text-xs font-semibold text-[#FF5B00] hover:underline">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13">
+                                                </path>
+                                            </svg>
+                                            <span>Lihat Lampiran Dokumen</span>
+                                        </a>
+                                    </div>
+                                @endif
+
+                                <!-- Modal Footer -->
+                                <div class="pt-3 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+                                    <button type="button" @click="openPengumumanDetail = false"
+                                        class="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[#1E293B] dark:text-slate-200 font-semibold text-xs rounded-xl transition cursor-pointer">
+                                        Tutup
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -245,7 +259,9 @@
                                                 {{ $day }}
                                             </span>
                                             <span class="text-[11px] text-slate-400 font-medium">
-                                                {{ $progressInfo['selesai'] }} dari {{ $progressInfo['total'] }} tugas
+                                                {{ $progressInfo['selesai'] }} dari
+                                                {{ $progressInfo['total'] }}
+                                                tugas
                                                 selesai
                                             </span>
                                         </div>
@@ -387,7 +403,8 @@
                                     <template x-for="day in ['DAY 1', 'DAY 2', 'DAY 3']">
                                         <button type="button" @click="activeDay = day; dayDropdownOpen = false"
                                             class="w-full text-left px-4 py-2.5 text-sm font-medium transition-colors"
-                                            :class="activeDay === day ? 'bg-orange-50 dark:bg-slate-700/80 text-[#FF5B00]' :
+                                            :class="activeDay === day ?
+                                                'bg-orange-50 dark:bg-slate-700/80 text-[#FF5B00]' :
                                                 'hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-600 dark:text-slate-300'">
                                             <span x-text="day"></span>
                                         </button>

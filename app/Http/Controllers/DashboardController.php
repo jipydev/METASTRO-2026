@@ -89,6 +89,26 @@ class DashboardController extends Controller
         /** @var User $user */
         $user = $request->user();
 
+        // Cari tugas dengan deadline terdekat yang masih aktif / masa mendatang
+        $deadlineTerdekat = null;
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('tugases')) {
+                $deadlineTerdekat = Tugas::whereNotNull('tenggat_waktu')
+                    ->where('tenggat_waktu', '>=', Carbon::now())
+                    ->orderBy('tenggat_waktu', 'asc')
+                    ->first();
+
+                // Fallback jika semua deadline sudah lewat, ambil yang paling akhir atau terbaru
+                if (!$deadlineTerdekat) {
+                    $deadlineTerdekat = Tugas::whereNotNull('tenggat_waktu')
+                        ->orderBy('tenggat_waktu', 'desc')
+                        ->first();
+                }
+            }
+        } catch (\Throwable $e) {
+            $deadlineTerdekat = null;
+        }
+
         $kegiatans = collect();
         $hasUnpublished = false;
         try {
@@ -189,6 +209,7 @@ class DashboardController extends Controller
             'days' => $days,
             'dayProgressData' => $dayProgressData,
             'pengumumanTerbaru' => $pengumumanTerbaru,
+            'deadlineTerdekat' => $deadlineTerdekat,
         ]);
     }
 }

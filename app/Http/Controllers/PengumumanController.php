@@ -27,6 +27,10 @@ class PengumumanController extends Controller
         /** @var User $user */
         $user = $request->user();
 
+        if(!$user->isPanitia()) {
+            abort(403, 'Anda tidak memiliki hak akses untuk melihat pengumuman.');
+        }
+
         $pengumumans = Pengumuman::with('pembuat.divisi')
             ->visibleTo($user)
             ->when($request->filled('search'), function ($q) use ($request) {

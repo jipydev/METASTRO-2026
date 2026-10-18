@@ -21,6 +21,12 @@ class KegiatanController extends Controller
      */
     public function index(Request $request): View
     {
+        $user = Auth::user();
+
+        if (!$user->isPanitia()) {
+            abort(403, 'Anda tidak memiliki hak akses untuk melihat pengumuman.');
+        }
+
         $kegiatans = Kegiatan::withCount('presensis')
             ->when($request->filled('search'), function ($q) use ($request) {
                 $search = $request->string('search')->toString();
@@ -45,6 +51,8 @@ class KegiatanController extends Controller
      */
     public function store(KegiatanRequest $request): RedirectResponse
     {
+        c
+
         $validated = $request->validated();
         $validated['tanggal'] = $validated['tanggal_mulai'];
 
@@ -71,6 +79,12 @@ class KegiatanController extends Controller
      */
     public function update(KegiatanRequest $request, Kegiatan $kegiatan): RedirectResponse
     {
+        $user = Auth::user();
+
+        if (!$user->isPanitia()) {
+            abort(403, 'Anda tidak memiliki hak akses untuk melihat pengumuman.');
+        }
+
         $validated = $request->validated();
         $validated['tanggal'] = $validated['tanggal_mulai'];
 
