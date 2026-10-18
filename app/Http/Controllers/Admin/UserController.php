@@ -329,8 +329,6 @@ class UserController extends Controller
 
         return back()->with('success', 'Pengguna berhasil dihapus secara permanen. Data tugas terkait tetap dipertahankan.');
     }
-<<<<<<< HEAD
-=======
 
     /**
      * Reset QR Code untuk 1 user
@@ -388,5 +386,4 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index')->with('success', $msg);
     }
->>>>>>> c76c3db8bc44a4fc4ec825d7f8903dfb962a5cf9
 }

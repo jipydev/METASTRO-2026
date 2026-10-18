@@ -40,7 +40,6 @@
 <body
     class=" dark:text-slate-100 min-h-screen transition-colors duration-200 bg-stone-100 dark:bg-slate-950 font-poppins  text-slate-800 antialiased flex flex-col justify-center selection:bg-orange-500 selection:text-white">
     {{ $slot }}
-    </main>
 </body>
 
 </html>

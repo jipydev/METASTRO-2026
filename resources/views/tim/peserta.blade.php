@@ -101,11 +101,18 @@
                                             @foreach ($tim->guiders as $guider)
                                                 @php
                                                     $pembimbing = $guider->pembimbing;
+                                                    $whatsappNumber = null;
+                                                    if ($pembimbing?->nomor_hp) {
+                                                        $cleanedPhone = preg_replace('/\D+/', '', $pembimbing->nomor_hp);
+                                                        $whatsappNumber = str_starts_with($cleanedPhone, '0')
+                                                            ? '62' . substr($cleanedPhone, 1)
+                                                            : $cleanedPhone;
+                                                    }
                                                 @endphp
                                                 <article
                                                     class="flex min-w-0 items-center gap-3 rounded-2xl border border-orange-100 bg-orange-50/60 p-3 shadow-sm dark:border-slate-700 dark:bg-slate-700/40">
-                                                    @if ($pembimbing?->foto && file_exists(public_path("storage/$pembimbing->foto")))
-                                                        <img src="{{ asset("storage/$pembimbing->foto") }}"
+                                                    @if ($pembimbing?->foto && file_exists(public_path('storage/' . $pembimbing->foto)))
+                                                        <img src="{{ asset('storage/' . $pembimbing->foto) }}"
                                                             alt="{{ $pembimbing->nama }}"
                                                             class="h-14 w-14 shrink-0 rounded-2xl object-cover ring-2 ring-white dark:ring-slate-600">
                                                     @else
@@ -130,17 +137,7 @@
                                                                 {{ $pembimbing?->nama ?? 'Guider belum tersedia' }}
                                                             </span>
                                                         </span>
-                                                        @if ($pembimbing?->nomor_hp)
-                                                            @php
-                                                                $whatsappNumber = preg_replace(
-                                                                    '/\D+/',
-                                                                    '',
-                                                                    $pembimbing->nomor_hp,
-                                                                );
-                                                                $whatsappNumber = str_starts_with($whatsappNumber, '0')
-                                                                    ? '62' . substr($whatsappNumber, 1)
-                                                                    : $whatsappNumber;
-                                                            @endphp
+                                                        @if ($whatsappNumber)
                                                             <a href="https://wa.me/{{ $whatsappNumber }}"
                                                                 target="_blank" rel="noopener noreferrer"
                                                                 class="mt-1 flex items-center gap-1 truncate text-xs text-slate-500 transition-colors hover:text-[#FF7300] dark:text-slate-300"
