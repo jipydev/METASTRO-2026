@@ -587,16 +587,28 @@ class User extends Authenticatable implements PasskeyUser
     /**
      * Mendapatkan format label jabatan & divisi yang dinamis sesuai aturan kepanitiaan.
      */
-    public function getFormattedDivisiJabatanAttribute(): string
+    /**
+     * Mendapatkan format label jabatan & divisi atau tim yang dinamis sesuai aturan kepanitiaan/peserta.
+     */
+    public function getFormattedDivisiJabatanOrTimAttribute(): string
     {
+        // 1. Jika tidak punya divisi (biasanya Peserta), cek apakah memiliki tim
         if (! $this->divisi) {
+            $tim = $this->currentTim();
+
+            if ($tim) {
+                return 'Tim: ' . $tim->nama;
+            }
+
             return '— / —';
         }
 
+        // 2. Jika Stakeholder dengan jabatan khusus
         if ($this->isStakeholder() && $this->jabatan) {
             return $this->jabatan->nama;
         }
 
+        // 3. Format untuk Panitia (Divisi & Jabatan)
         $jabatanName = strtolower($this->jabatan?->nama ?? 'anggota');
 
         $prefix = match ($jabatanName) {
@@ -606,6 +618,6 @@ class User extends Authenticatable implements PasskeyUser
             default => 'Anggota ',
         };
 
-        return $prefix.$this->divisi->nama;
+        return $prefix . $this->divisi->nama;
     }
 }
