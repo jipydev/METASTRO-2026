@@ -39,7 +39,7 @@
                         </h3>
 
                         <p class="text-xs text-slate-600 dark:text-slate-400 font-semibold truncate mt-0.5">
-                            {{ $user->getFormattedDivisiJabatanAttribute() }}
+                            {{ $user->getFormattedDivisiJabatanOrTimAttribute() }}
                         </p>
 
                         <p class="text-[11px] font-mono text-slate-400 dark:text-slate-400 mt-0.5">
