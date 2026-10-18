@@ -597,7 +597,7 @@ class User extends Authenticatable implements PasskeyUser
             $tim = $this->currentTim();
 
             if ($tim) {
-                return 'Tim: ' . $tim->nama;
+                return 'Tim ' . $tim->nama;
             }
 
             return '— / —';
