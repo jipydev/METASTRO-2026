@@ -3,10 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\PengumpulanTugas;
+use App\Models\User;
+use App\Models\Guider;
+use App\Models\AnggotaTim;
+use App\Services\NotificationDispatcher;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 
 class PengumpulanTugasController extends Controller
 {
+    public function __construct(private NotificationDispatcher $notifications) {}
+
     public function reviewIndex(Request $request)
     {
         $tugasId = $request->integer('tugas_id');
@@ -16,31 +23,31 @@ class PengumpulanTugasController extends Controller
 
         $submisiList = PengumpulanTugas::query()
             ->with(['tugas', 'peserta', 'tim'])
-            ->when($tugasId > 0, fn ($query) => $query->where('tugas_id', $tugasId))
+            ->when($tugasId > 0, fn($query) => $query->where('tugas_id', $tugasId))
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
-                    $query->whereHas('tugas', fn ($task) => $task->where('judul', 'like', "%{$search}%"))
+                    $query->whereHas('tugas', fn($task) => $task->where('judul', 'like', "%{$search}%"))
                         ->orWhereHas('peserta', function ($participant) use ($search) {
                             $participant->where('nama', 'like', "%{$search}%")
                                 ->orWhere('nim', 'like', "%{$search}%");
                         })
-                        ->orWhereHas('tim', fn ($team) => $team->where('nama', 'like', "%{$search}%"));
+                        ->orWhereHas('tim', fn($team) => $team->where('nama', 'like', "%{$search}%"));
                 });
             })
             ->when(auth()->user()->isGuider() && !auth()->user()->isAdmin() && !auth()->user()->isPathfinder(), function ($query) {
-                $timIds = \App\Models\Guider::where('pembimbing_id', auth()->id())->pluck('tim_id');
-                $anggotaIds = \App\Models\AnggotaTim::whereIn('tim_id', $timIds)->pluck('anggota_id');
+                $timIds = Guider::where('pembimbing_id', auth()->id())->pluck('tim_id');
+                $anggotaIds = AnggotaTim::whereIn('tim_id', $timIds)->pluck('anggota_id');
                 $query->where(function ($sub) use ($timIds, $anggotaIds) {
                     $sub->whereIn('tim_id', $timIds)
                         ->orWhereIn('user_id', $anggotaIds);
                 });
             })
-            ->when(in_array($status, ['pending', 'reviewed', 'rejected'], true), fn ($query) => $query->where('status', $status))
-            ->when(in_array($jenis, ['individu', 'tim', 'angkatan'], true), fn ($query) => $query->whereHas('tugas', fn ($task) => $task->where('jenis', $jenis)))
+            ->when(in_array($status, ['pending', 'reviewed', 'rejected'], true), fn($query) => $query->where('status', $status))
+            ->when(in_array($jenis, ['individu', 'tim', 'angkatan'], true), fn($query) => $query->whereHas('tugas', fn($task) => $task->where('jenis', $jenis)))
             ->latest('tanggal_pengumpulan')
             ->paginate(10)
             ->withQueryString()
-            ->through(fn (PengumpulanTugas $submisi): array => [
+            ->through(fn(PengumpulanTugas $submisi): array => [
                 'id' => $submisi->id,
                 'judul_tugas' => $submisi->tugas?->judul ?? 'Tugas tidak ditemukan',
                 'jenis_tugas' => $submisi->tugas?->jenis ?? 'individu',
@@ -65,11 +72,11 @@ class PengumpulanTugasController extends Controller
         ]);
     }
 
-    public function reviewUpdate(Request $request, PengumpulanTugas $pengumpulan): \Illuminate\Http\RedirectResponse
+    public function reviewUpdate(Request $request, PengumpulanTugas $pengumpulan): RedirectResponse
     {
         if ($request->user()->isGuider() && !$request->user()->isAdmin() && !$request->user()->isPathfinder()) {
-            $timIds = \App\Models\Guider::where('pembimbing_id', $request->user()->id)->pluck('tim_id')->toArray();
-            $anggotaIds = \App\Models\AnggotaTim::whereIn('tim_id', $timIds)->pluck('anggota_id')->toArray();
+            $timIds = Guider::where('pembimbing_id', $request->user()->id)->pluck('tim_id')->toArray();
+            $anggotaIds = AnggotaTim::whereIn('tim_id', $timIds)->pluck('anggota_id')->toArray();
 
             $isAuthorized = ($pengumpulan->tim_id && in_array($pengumpulan->tim_id, $timIds, true))
                 || ($pengumpulan->user_id && in_array($pengumpulan->user_id, $anggotaIds, true));
@@ -88,6 +95,9 @@ class PengumpulanTugasController extends Controller
             ...$validated,
             'pemeriksa_id' => $request->user()->id,
         ]);
+
+        // Opsional: Anda juga bisa menambahkan dispatch notifikasi ke peserta/tim 
+        // ketika status tugas direview/diperbarui oleh panitia jika diperlukan.
 
         return back()->with('success', 'Status dan komentar pengumpulan berhasil diperbarui.');
     }

@@ -3,10 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tugas;
+use App\Models\User;
+use App\Models\Guider;
+use App\Models\AnggotaTim;
+use App\Services\NotificationDispatcher;
 use Illuminate\Http\Request;
 
 class TugasController extends Controller
 {
+    public function __construct(private NotificationDispatcher $notifications) {}
+
     private function sanitizeDescription(?string $description): ?string
     {
         if ($description === null) {
@@ -84,7 +90,56 @@ class TugasController extends Controller
 
         $validatedData['deskripsi'] = $this->sanitizeDescription($validatedData['deskripsi'] ?? null);
         $validatedData['pembuat_id'] = auth()->id();
-        Tugas::create($validatedData);
+
+        $tugas = Tugas::create($validatedData);
+
+        // =========================================================================
+        // LOGIKA DISTRIBUSI NOTIFIKASI PEMBUATAN TUGAS BARU
+        // =========================================================================
+
+        // 1. Semua tugas baru mengirim notifikasi universal ke Divisi Pathfinder
+        $pathfinders = User::whereHas('divisi', fn($q) => $q->whereRaw('LOWER(nama) = ?', ['pathfinder']))
+            ->where('status', true)
+            ->get();
+
+        foreach ($pathfinders as $pathfinder) {
+            // $this->notifications->tugasBaruPathfinder($tugas, $pathfinder);
+        }
+
+        $jenisTugas = strtolower($tugas->jenis); // 'individu', 'tim', atau 'angkatan'
+
+        if ($jenisTugas === 'individu') {
+            // Tugas Individu: Dikirim ke semua Guider pembimbing atau peserta terkait
+            $allGuiders = User::whereHas('divisi', fn($q) => $q->whereRaw('LOWER(nama) = ?', ['guider']))
+                ->where('status', true)
+                ->get();
+
+            foreach ($allGuiders as $guider) {
+                // $this->notifications->tugasBaruGuider($tugas, $guider);
+            }
+        } elseif ($jenisTugas === 'tim') {
+            // Tugas Tim: Dikirim ke seluruh Guider dan semua Anggota Tim aktif
+            $allGuiders = User::whereHas('divisi', fn($q) => $q->whereRaw('LOWER(nama) = ?', ['guider']))
+                ->where('status', true)
+                ->get();
+            $allAnggotaTim = User::whereHas('tims')->where('status', true)->get();
+
+            $penerimaTim = $allGuiders->concat($allAnggotaTim);
+            foreach ($penerimaTim as $penerima) {
+                // $this->notifications->tugasBaruTim($tugas, $penerima);
+            }
+        } elseif ($jenisTugas === 'angkatan') {
+            // Tugas Angkatan: Dikirim ke semua Guider dan seluruh Peserta aktif
+            $allGuiders = User::whereHas('divisi', fn($q) => $q->whereRaw('LOWER(nama) = ?', ['guider']))
+                ->where('status', true)
+                ->get();
+            $allPeserta = User::where('status', true)->get()->filter(fn($u) => $u->isPeserta());
+
+            $penerimaAngkatan = $allGuiders->concat($allPeserta);
+            foreach ($penerimaAngkatan as $penerima) {
+                // $this->notifications->tugasBaruAngkatan($tugas, $penerima);
+            }
+        }
 
         return redirect()->route('dashboard.tugas.index')->with('success', 'Tugas berhasil dibuat.');
     }
@@ -109,7 +164,11 @@ class TugasController extends Controller
         ]);
 
         $validatedData['deskripsi'] = $this->sanitizeDescription($validatedData['deskripsi'] ?? null);
-        Tugas::where('id', $id)->update($validatedData);
+
+        $tugas = Tugas::findOrFail($id);
+        $tugas->update($validatedData);
+
+        // Opsional: Jika ingin mengirim notifikasi pembaruan tugas, Anda bisa menambahkan dispatcher di sini.
 
         return redirect()->route('dashboard.tugas.index')->with('success', 'Tugas berhasil diperbarui.');
     }

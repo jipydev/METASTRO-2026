@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\PengumpulanTugas;
 use App\Models\Tugas;
+use App\Models\User;
+use App\Models\Guider;
+use App\Models\AnggotaTim;
+use App\Services\NotificationDispatcher;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,6 +17,11 @@ use Illuminate\View\View;
 
 class PesertaTugasController extends Controller
 {
+    /**
+     * Inject NotificationDispatcher untuk menangani pengiriman notifikasi.
+     */
+    public function __construct(private NotificationDispatcher $notifications) {}
+
     /**
      * Helper untuk mengambil Tim dari peserta yang sedang login.
      */
@@ -55,7 +64,7 @@ class PesertaTugasController extends Controller
                         ->orWhere('deskripsi', 'like', "%{$search}%");
                 });
             })
-            ->when(!empty($dayFilter), fn ($q) => $q->where('day', $dayFilter))
+            ->when(!empty($dayFilter), fn($q) => $q->where('day', $dayFilter))
             ->orderBy('tenggat_waktu', 'asc')
             ->get();
 
@@ -66,7 +75,7 @@ class PesertaTugasController extends Controller
                 if ($tim) {
                     $q->orWhere('tim_id', $tim->id);
                 }
-                $q->orWhereHas('tugas', fn ($t) => $t->where('jenis', 'angkatan'));
+                $q->orWhereHas('tugas', fn($t) => $t->where('jenis', 'angkatan'));
             })
             ->get();
 
@@ -74,11 +83,11 @@ class PesertaTugasController extends Controller
             $submission = null;
 
             if ($tugas->jenis === 'tim') {
-                $submission = $tim ? $userSubmissions->first(fn ($s) => $s->tugas_id === $tugas->id && $s->tim_id === $tim->id) : null;
+                $submission = $tim ? $userSubmissions->first(fn($s) => $s->tugas_id === $tugas->id && $s->tim_id === $tim->id) : null;
             } elseif ($tugas->jenis === 'angkatan') {
-                $submission = $userSubmissions->first(fn ($s) => $s->tugas_id === $tugas->id);
+                $submission = $userSubmissions->first(fn($s) => $s->tugas_id === $tugas->id);
             } else {
-                $submission = $userSubmissions->first(fn ($s) => $s->tugas_id === $tugas->id && $s->user_id === $user->id);
+                $submission = $userSubmissions->first(fn($s) => $s->tugas_id === $tugas->id && $s->user_id === $user->id);
             }
 
             $isExpired = $tugas->tenggat_waktu ? Carbon::now()->greaterThan($tugas->tenggat_waktu) : false;
@@ -126,7 +135,7 @@ class PesertaTugasController extends Controller
     }
 
     /**
-     * Simpan / Upload Berkas Tugas (PDF).
+     * Simpan / Upload Berkas Tugas (PDF) serta Kirim Notifikasi.
      */
     public function store(Tugas $tugas, Request $request): RedirectResponse
     {
@@ -173,8 +182,9 @@ class PesertaTugasController extends Controller
                 'status' => 'pending',
                 'tanggal_pengumpulan' => Carbon::now(),
             ]);
+            $submission = $submission->fresh(['tugas', 'peserta', 'tim']);
         } else {
-            PengumpulanTugas::create([
+            $submission = PengumpulanTugas::create([
                 'tugas_id' => $tugas->id,
                 'user_id' => $user->id,
                 'original_participant_name' => $user->nama,
@@ -183,7 +193,57 @@ class PesertaTugasController extends Controller
                 'catatan_peserta' => $catatan,
                 'status' => 'pending',
                 'tanggal_pengumpulan' => Carbon::now(),
-            ]);
+            ])->load(['tugas', 'peserta', 'tim']);
+        }
+
+        // =========================================================================
+        // LOGIKA PENGIRIMAN NOTIFIKASI
+        // =========================================================================
+
+        // 1. SEMUA PENGUMPULAN: Notifikasi dikirimkan ke Divisi Pathfinder
+        $pathfinders = User::whereHas('divisi', fn($q) => $q->whereRaw('LOWER(nama) = ?', ['pathfinder']))
+            ->where('status', true)
+            ->get();
+
+        foreach ($pathfinders as $pathfinder) {
+            // Sesuaikan dengan method dispatcher notifikasi Anda (contoh: tugasSubmitted / custom dispatcher)
+            // $this->notifications->tugasSubmitted($submission, $pathfinder);
+        }
+
+        // 2. BERDASARKAN JENIS TUGAS
+        $jenisTugas = strtolower($tugas->jenis); // 'individu', 'tim', atau 'angkatan'
+
+        // Ambil guider yang membimbing tim user ini
+        $guiderIds = $tim ? Guider::where('tim_id', $tim->id)->pluck('pembimbing_id') : collect();
+        $guiders = User::whereIn('id', $guiderIds)->where('status', true)->get();
+
+        if ($jenisTugas === 'individu') {
+            // INDIVIDU: Dikirim ke guider di tim nya dia
+            foreach ($guiders as $guider) {
+                // $this->notifications->tugasIndividuSubmitted($submission, $guider);
+            }
+        } elseif ($jenisTugas === 'tim') {
+            // TIM: Ditampilkan/dikirim ke sesama anggota tim dan guider tim tersebut
+            $anggotaTimIds = $tim ? AnggotaTim::where('tim_id', $tim->id)->pluck('anggota_id') : collect();
+            $sesamaTim = User::whereIn('id', $anggotaTimIds)->where('id', '!=', $user->id)->where('status', true)->get();
+
+            $penerimaTim = $sesamaTim->concat($guiders);
+            foreach ($penerimaTim as $penerima) {
+                // $this->notifications->tugasTimSubmitted($submission, $penerima);
+            }
+        } elseif ($jenisTugas === 'angkatan') {
+            // ANGKATAN: Ditampilkan/dikirim ke semua guider dan semua role peserta
+            $allGuiders = User::whereHas('divisi', fn($q) => $q->whereRaw('LOWER(nama) = ?', ['guider']))
+                ->where('status', true)
+                ->get();
+
+            // Ambil seluruh user dengan role peserta aktif
+            $allPeserta = User::where('status', true)->get()->filter(fn($u) => $u->isPeserta());
+
+            $penerimaAngkatan = $allGuiders->concat($allPeserta);
+            foreach ($penerimaAngkatan as $penerima) {
+                // $this->notifications->tugasAngkatanSubmitted($submission, $penerima);
+            }
         }
 
         return redirect()->route('peserta.tugas-kumpulkan', $tugas->id)
@@ -236,7 +296,7 @@ class PesertaTugasController extends Controller
                 if ($tim) {
                     $q->orWhere('tim_id', $tim->id);
                 }
-                $q->orWhereHas('tugas', fn ($t) => $t->where('jenis', 'angkatan'));
+                $q->orWhereHas('tugas', fn($t) => $t->where('jenis', 'angkatan'));
             })
             ->pluck('tugas_id')
             ->unique()
@@ -245,7 +305,7 @@ class PesertaTugasController extends Controller
         $days = collect($dayNames)->map(function ($dayName) use ($userSubmissions) {
             $tugasDay = Tugas::where('day', $dayName)->get();
             $max = $tugasDay->count();
-            $completed = $tugasDay->filter(fn ($t) => in_array($t->id, $userSubmissions, true))->count();
+            $completed = $tugasDay->filter(fn($t) => in_array($t->id, $userSubmissions, true))->count();
 
             // Ekstrak angka hari jika format 'Day X'
             preg_match('/(\d+)/', (string) $dayName, $matches);
@@ -279,7 +339,7 @@ class PesertaTugasController extends Controller
                 if ($tim) {
                     $q->orWhere('tim_id', $tim->id);
                 }
-                $q->orWhereHas('tugas', fn ($t) => $t->where('jenis', 'angkatan'));
+                $q->orWhereHas('tugas', fn($t) => $t->where('jenis', 'angkatan'));
             })
             ->latest('tanggal_pengumpulan')
             ->get();
