@@ -177,9 +177,6 @@
                                 <div class="p-3.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40 rounded-2xl mt-3">
                                     <span class="font-bold text-amber-800 dark:text-amber-300 block mb-1">Catatan Pemeriksa:</span>
                                     <p class="text-slate-700 dark:text-slate-300 leading-relaxed">{{ $submission->catatan_pemeriksa }}</p>
-                                    @if($submission->pemeriksa)
-                                        <p class="text-[11px] text-slate-400 mt-1">Oleh: {{ $submission->pemeriksa->nama }}</p>
-                                    @endif
                                 </div>
                             @endif
                         </div>
