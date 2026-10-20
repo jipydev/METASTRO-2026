@@ -33,22 +33,6 @@
             </div>
         @endif
 
-        {{-- Filter Tabs --}}
-        <div class="mb-6 flex flex-wrap gap-2 border-b border-gray-200 dark:border-slate-700 pb-3">
-            <a href="{{ route('dashboard.pengajuan-izin.review', ['filter' => 'pending']) }}"
-                class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 {{ $filter === 'pending' ? 'bg-brand-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }}">
-                Menunggu Review
-            </a>
-            <a href="{{ route('dashboard.pengajuan-izin.review', ['filter' => 'approved']) }}"
-                class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 {{ $filter === 'approved' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }}">
-                Disetujui
-            </a>
-            <a href="{{ route('dashboard.pengajuan-izin.review', ['filter' => 'rejected']) }}"
-                class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 {{ $filter === 'rejected' ? 'bg-red-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }}">
-                Ditolak
-            </a>
-        </div>
-
         {{-- Content Card --}}
         <div
             class="bg-white dark:bg-slate-800 shadow-sm rounded-3xl p-6 sm:p-7 border border-gray-100 dark:border-slate-700">
