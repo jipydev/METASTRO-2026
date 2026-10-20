@@ -51,8 +51,6 @@ class KegiatanController extends Controller
      */
     public function store(KegiatanRequest $request): RedirectResponse
     {
-        c
-
         $validated = $request->validated();
         $validated['tanggal'] = $validated['tanggal_mulai'];
 
