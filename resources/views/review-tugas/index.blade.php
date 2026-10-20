@@ -245,7 +245,8 @@
                                     Pengumpulan</span>
                                 <span
                                     class="font-semibold text-slate-800 dark:text-slate-200 text-xs block mt-0.5 truncate"
-                                    x-text="selectedSubmisi.dikumpulkan_at"></span>
+                                    x-text="selectedSubmisi.dikumpulkan_at ? new Date(selectedSubmisi.dikumpulkan_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) : ''">
+                                </span>
                                 <span
                                     class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 block mt-0.5">Tepat
                                     Waktu (Sebelum Deadline)</span>

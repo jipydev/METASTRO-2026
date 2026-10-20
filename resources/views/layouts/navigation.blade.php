@@ -146,22 +146,25 @@
             </a>
         @endif
 
-        {{-- Group: Perizinan --}}
-        <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Perizinan
-        </p>
-        <hr class="border-slate-100 dark:border-slate-700/60 !my-1" x-show="sidebarCollapsed && !sidebarOpen" x-cloak>
+        @if (!auth()->user()->isPanitia())
+            {{-- Group: Perizinan --}}
+            <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Perizinan
+            </p>
+            <hr class="border-slate-100 dark:border-slate-700/60 !my-1" x-show="sidebarCollapsed && !sidebarOpen"
+                x-cloak>
 
-        <a href="{{ route('dashboard.pengajuan-izin.index') }}" title="Pengajuan Izin"
-            class="{{ $navItem(request()->routeIs('dashboard.pengajuan-izin.index') || request()->routeIs('dashboard.pengajuan-izin.create')) }}"
-            :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' :
-                'gap-2.5 px-3 py-2'">
-            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Pengajuan
-                Izin</span>
-        </a>
+            <a href="{{ route('dashboard.pengajuan-izin.index') }}" title="Pengajuan Izin"
+                class="{{ $navItem(request()->routeIs('dashboard.pengajuan-izin.index') || request()->routeIs('dashboard.pengajuan-izin.create')) }}"
+                :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' :
+                    'gap-2.5 px-3 py-2'">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Pengajuan
+                    Izin</span>
+            </a>
+        @endif
 
         @if (auth()->user()->canReviewIzin())
             <a href="{{ route('dashboard.pengajuan-izin.review') }}" title="Review Izin"
@@ -323,7 +326,7 @@
     </nav>
 
     <div class="mt-auto shrink-0 border-t border-gray-100 dark:border-slate-700/80 p-2.5 space-y-1">
-                <button @click="toggleTheme()" type="button" title="Ubah tema"
+        <button @click="toggleTheme()" type="button" title="Ubah tema"
             class="w-full flex items-center rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition"
             :class="sidebarCollapsed && !sidebarOpen ? 'justify-center p-2.5' : 'gap-2.5 px-3 py-2'">
             <svg x-show="darkMode" x-cloak class="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24"

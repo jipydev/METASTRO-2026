@@ -27,6 +27,10 @@ class PengajuanIzinController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
+        if(!$user->isPanitia()) {
+            abort(404, 'Halaman tidak ditemukan.');
+        }
+
         $pengajuanList = PengajuanIzin::where('user_id', $user->id)
             ->with(['kegiatan', 'user.divisi', 'user.jabatan', 'reviewerKoordinator', 'reviewerRanger'])
             ->latest()
@@ -43,6 +47,12 @@ class PengajuanIzinController extends Controller
      */
     public function create(): View
     {
+        /** @var User $user */
+        $user = Auth::user();
+        if (!$user->isPanitia()) {
+            abort(404, 'Halaman tidak ditemukan.');
+        }
+
         $kegiatans = Kegiatan::orderBy('tanggal', 'desc')->limit(15)->get();
 
         return view('pengajuan-izin.create', [
@@ -56,6 +66,12 @@ class PengajuanIzinController extends Controller
      */
     public function store(StorePengajuanIzinRequest $request, FileCompressionService $files): RedirectResponse
     {
+        /** @var User $user */
+        $user = Auth::user();
+        if (!$user->isPanitia()) {
+            abort(404, 'Halaman tidak ditemukan.');
+        }
+        
         $validated = $request->validated();
 
         /** @var User $user */
@@ -135,6 +151,10 @@ class PengajuanIzinController extends Controller
         /** @var User $user */
         $user = Auth::user();
         $filter = $request->query('filter', 'pending');
+        
+        if (!$user->isPanitia()) {
+            abort(404, 'Halaman tidak ditemukan.');
+        }
 
         if (! $user->canReviewIzin()) {
             abort(403, 'Anda tidak memiliki hak akses untuk mereview izin.');
@@ -183,6 +203,10 @@ class PengajuanIzinController extends Controller
         $user = Auth::user();
         $catatan = $request->input('catatan');
 
+        if (!$user->isPanitia()) {
+            abort(404, 'Halaman tidak ditemukan.');
+        }
+
         if (in_array($pengajuanIzin->status, ['approved', 'rejected'], true)) {
             return back()->with('error', 'Pengajuan ini sudah selesai direview.');
         }
@@ -228,6 +252,9 @@ class PengajuanIzinController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+        if (!$user->isPanitia()) {
+            abort(404, 'Halaman tidak ditemukan.');
+        }
         $request->validate(
             ['catatan' => ['nullable', 'string', 'max:500']],
             ['catatan.max' => 'Catatan terlalu panjang. Maksimal 500 karakter.']
@@ -279,6 +306,10 @@ class PengajuanIzinController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
+        if (!$user->isPanitia()) {
+            abort(404, 'Halaman tidak ditemukan.');
+        }
+
         if (! $pengajuanIzin->canBeDeletedBy($user)) {
             abort(403, 'Anda tidak dapat menghapus pengajuan izin ini.');
         }
@@ -302,6 +333,12 @@ class PengajuanIzinController extends Controller
      */
     private function autoApproveKoordinatorPayload(User $user): array
     {
+        /** @var User $user */
+        $user = Auth::user();
+        if (!$user->isPanitia()) {
+            abort(404, 'Halaman tidak ditemukan.');
+        }
+
         $alasan = $user->isStakeholder()
             ? 'Otomatis disetujui karena pemohon dari Divisi Stakeholder.'
             : 'Otomatis disetujui karena pemohon adalah Ketua Divisi.';
@@ -320,6 +357,12 @@ class PengajuanIzinController extends Controller
      */
     private function syncToPresensi(PengajuanIzin $pengajuan): void
     {
+        /** @var User $user */
+        $user = Auth::user();
+        if (!$user->isPanitia()) {
+            abort(404, 'Halaman tidak ditemukan.');
+        }
+
         $statusPresensi = strtolower((string) $pengajuan->jenis_izin) === 'sakit' ? 'sakit' : 'izin';
 
         $pengajuan->loadMissing('reviewerRanger');
