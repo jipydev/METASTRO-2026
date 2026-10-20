@@ -197,7 +197,7 @@ class NotificationDispatcher
         $recipient->notify(new ReminderNotification(
             'Pengumpulan Tugas Baru',
             "{$namaPengumpul} telah mengumpulkan tugas \"{$judulTugas}\".",
-            route('admin.tugas.review', ['tugas_id' => $submission->tugas_id]),
+            route('dashboard.pengumpulan-tugas.index', ['tugas_id' => $submission->tugas_id]),
             'tugas',
         ));
     }
@@ -211,7 +211,7 @@ class NotificationDispatcher
         $guider->notify(new ReminderNotification(
             'Tugas Individu Dikumpulkan',
             "Bimbingan Anda, {$namaPengumpul}, mengumpulkan tugas \"{$judulTugas}\".",
-            route('admin.tugas.review', ['tugas_id' => $submission->tugas_id]),
+            route('dashboard.pengumpulan-tugas.index', ['tugas_id' => $submission->tugas_id]),
             'tugas',
         ));
     }
@@ -225,7 +225,7 @@ class NotificationDispatcher
         $recipient->notify(new ReminderNotification(
             'Tugas Tim Dikumpulkan',
             "Tim {$namaTim} telah mengumpulkan tugas \"{$judulTugas}\".",
-            route('admin.tugas.review', ['tugas_id' => $submission->tugas_id]),
+            route('dashboard.pengumpulan-tugas.index', ['tugas_id' => $submission->tugas_id]),
             'tugas',
         ));
     }
@@ -238,7 +238,7 @@ class NotificationDispatcher
         $recipient->notify(new ReminderNotification(
             'Tugas Angkatan Dikumpulkan',
             "Tugas angkatan \"{$judulTugas}\" telah dikumpulkan.",
-            route('admin.tugas.review', ['tugas_id' => $submission->tugas_id]),
+            route('dashboard.pengumpulan-tugas.index', ['tugas_id' => $submission->tugas_id]),
             'tugas',
         ));
     }
