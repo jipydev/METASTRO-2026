@@ -146,7 +146,7 @@
             </a>
         @endif
 
-        @if (!auth()->user()->isPanitia())
+        @if (auth()->user()->isPanitia())
             {{-- Group: Perizinan --}}
             <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Perizinan
             </p>
