@@ -125,7 +125,7 @@
                     {{-- Grid Role, Divisi, Jabatan --}}
 <div x-data="{
     stakeholderDivisiId: {{ $stakeholderDivisiId ?? 'null' }},
-    role: @js(old('role', $user->roles->first()?->name ?? '')),
+    role: @js(old('role', $user->roles->first()?->name ?? 'peserta')),
     divisiId: @js((string) old('divisi_id', $user->divisi_id ?? '')),
     jabatanId: @js((string) old('jabatan_id', $user->jabatan_id ?? '')),
     timId: @js((string) old('tim_id', $user->tims->first()?->tim_id ?? '')),

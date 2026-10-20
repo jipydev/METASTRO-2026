@@ -97,7 +97,7 @@
                     <div
                         x-data="{
                             stakeholderDivisiId: {{ $stakeholderDivisiId ?? 'null' }},
-                            role: @js(old('role', '')),
+                            role: @js(old('role', 'peserta')),
                             divisiId: @js((string) old('divisi_id', '')),
                             jabatanId: @js((string) old('jabatan_id', '')),
                             timId: @js((string) old('tim_id', '')),
