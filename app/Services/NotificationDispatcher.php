@@ -6,6 +6,7 @@ use App\Models\Hukuman;
 use App\Models\Kegiatan;
 use App\Models\Notulensi;
 use App\Models\PengajuanIzin;
+use App\Models\PengumpulanTugas;
 use App\Models\Pengumuman;
 use App\Models\Presensi;
 use App\Models\User;
@@ -31,7 +32,7 @@ class NotificationDispatcher
         }
 
         $rangers = User::activeRangers()
-            ->reject(fn (User $ranger) => $ranger->id === $presensi->user_id);
+            ->reject(fn(User $ranger) => $ranger->id === $presensi->user_id);
 
         if ($rangers->isNotEmpty()) {
             Notification::send($rangers, new PresensiRecordedNotification($presensi, 'ranger'));
@@ -41,7 +42,7 @@ class NotificationDispatcher
     public function presensiImported(Kegiatan $kegiatan, int $count, ?int $exceptUserId = null): void
     {
         $rangers = User::activeRangers()
-            ->reject(fn (User $ranger) => $ranger->id === $exceptUserId);
+            ->reject(fn(User $ranger) => $ranger->id === $exceptUserId);
 
         if ($rangers->isEmpty()) {
             return;
@@ -183,6 +184,69 @@ class NotificationDispatcher
         $this->notifyHukumanIssuer($hukuman, 'selesai');
     }
 
+    // =========================================================================
+    // TUGAS NOTIFICATIONS (METHODS BARU)
+    // =========================================================================
+
+    public function tugasUniversalSubmitted(PengumpulanTugas $submission, User $recipient): void
+    {
+        $submission->loadMissing('tugas');
+        $judulTugas = $submission->tugas?->judul ?? 'Tugas';
+        $namaPengumpul = $submission->original_participant_name ?? 'Peserta';
+
+        $recipient->notify(new ReminderNotification(
+            'Pengumpulan Tugas Baru',
+            "{$namaPengumpul} telah mengumpulkan tugas \"{$judulTugas}\".",
+            route('admin.tugas.review', ['tugas_id' => $submission->tugas_id]),
+            'tugas',
+        ));
+    }
+
+    public function tugasIndividuSubmitted(PengumpulanTugas $submission, User $guider): void
+    {
+        $submission->loadMissing('tugas');
+        $judulTugas = $submission->tugas?->judul ?? 'Tugas';
+        $namaPengumpul = $submission->original_participant_name ?? 'Peserta';
+
+        $guider->notify(new ReminderNotification(
+            'Tugas Individu Dikumpulkan',
+            "Bimbingan Anda, {$namaPengumpul}, mengumpulkan tugas \"{$judulTugas}\".",
+            route('admin.tugas.review', ['tugas_id' => $submission->tugas_id]),
+            'tugas',
+        ));
+    }
+
+    public function tugasTimSubmitted(PengumpulanTugas $submission, User $recipient): void
+    {
+        $submission->loadMissing(['tugas', 'tim']);
+        $judulTugas = $submission->tugas?->judul ?? 'Tugas';
+        $namaTim = $submission->tim?->nama ?? 'Tim';
+
+        $recipient->notify(new ReminderNotification(
+            'Tugas Tim Dikumpulkan',
+            "Tim {$namaTim} telah mengumpulkan tugas \"{$judulTugas}\".",
+            route('admin.tugas.review', ['tugas_id' => $submission->tugas_id]),
+            'tugas',
+        ));
+    }
+
+    public function tugasAngkatanSubmitted(PengumpulanTugas $submission, User $recipient): void
+    {
+        $submission->loadMissing('tugas');
+        $judulTugas = $submission->tugas?->judul ?? 'Tugas';
+
+        $recipient->notify(new ReminderNotification(
+            'Tugas Angkatan Dikumpulkan',
+            "Tugas angkatan \"{$judulTugas}\" telah dikumpulkan.",
+            route('admin.tugas.review', ['tugas_id' => $submission->tugas_id]),
+            'tugas',
+        ));
+    }
+
+    // =========================================================================
+    // PRIVATE HELPERS
+    // =========================================================================
+
     private function notifyPanitia(ReminderNotification $notification, ?int $exceptUserId = null): void
     {
         $recipients = User::activePanitia($exceptUserId);
@@ -197,7 +261,7 @@ class NotificationDispatcher
     private function notifyRangers(PengajuanIzin $izin, ?int $exceptUserId = null): void
     {
         $rangers = User::activeRangers()
-            ->reject(fn (User $ranger) => $ranger->id === $exceptUserId);
+            ->reject(fn(User $ranger) => $ranger->id === $exceptUserId);
 
         if ($rangers->isEmpty()) {
             return;
@@ -215,5 +279,25 @@ class NotificationDispatcher
         }
 
         $hukuman->issuer->notify(new HukumanNotification($hukuman, $event, 'issuer'));
+    }
+
+    public function tugasReviewed(PengumpulanTugas $submission): void
+    {
+        $submission->loadMissing(['tugas', 'peserta']);
+        $peserta = $submission->peserta;
+
+        if (! $peserta) {
+            return;
+        }
+
+        $judulTugas = $submission->tugas?->judul ?? 'Tugas';
+        $statusLabel = $submission->status === 'reviewed' ? 'disetujui (reviewed)' : 'ditolak / perlu revisi';
+
+        $peserta->notify(new ReminderNotification(
+            'Status Tugas Diperbarui',
+            "Pengumpulan untuk tugas \"{$judulTugas}\" telah {$statusLabel}.",
+            route('peserta.tugas-kumpulkan', $submission->tugas_id),
+            'tugas',
+        ));
     }
 }

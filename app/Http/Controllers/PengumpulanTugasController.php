@@ -96,8 +96,8 @@ class PengumpulanTugasController extends Controller
             'pemeriksa_id' => $request->user()->id,
         ]);
 
-        // Opsional: Anda juga bisa menambahkan dispatch notifikasi ke peserta/tim 
-        // ketika status tugas direview/diperbarui oleh panitia jika diperlukan.
+        // Kirim notifikasi ke peserta bahwa tugas telah direview
+        $this->notifications->tugasReviewed($pengumpulan->fresh(['tugas', 'peserta']));
 
         return back()->with('success', 'Status dan komentar pengumpulan berhasil diperbarui.');
     }
