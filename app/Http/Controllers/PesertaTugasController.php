@@ -92,6 +92,27 @@ class PesertaTugasController extends Controller
 
             $isExpired = $tugas->tenggat_waktu ? Carbon::now()->greaterThan($tugas->tenggat_waktu) : false;
 
+            // Tentukan status pengerjaan
+            $statusPengerjaan = 'unsubmitted';
+
+            if ($submission) {
+                // Jika sudah submit, cek apakah waktu pengumpulannya melewati deadline
+                $isLateSubmission = $tugas->tenggat_waktu && $submission->tanggal_pengumpulan
+                    ? Carbon::parse($submission->tanggal_pengumpulan)->greaterThan($tugas->tenggat_waktu)
+                    : false;
+
+                if ($isLateSubmission) {
+                    $statusPengerjaan = 'expired'; // Tulisan: "Terlambat Mengerjakan"
+                } else {
+                    $statusPengerjaan = $submission->status; // 'reviewed', 'pending', dll
+                }
+            } else {
+                // Jika BELUM submit
+                if ($isExpired) {
+                    $statusPengerjaan = 'unsubmitted_expired'; // Status khusus untuk belum submit tapi lewat deadline
+                }
+            }
+
             return [
                 'id' => $tugas->id,
                 'judul' => $tugas->judul,
@@ -101,7 +122,7 @@ class PesertaTugasController extends Controller
                 'tenggat_waktu' => $tugas->tenggat_waktu,
                 'is_expired' => $isExpired,
                 'submission' => $submission,
-                'status_pengerjaan' => $submission ? $submission->status : ($isExpired ? 'expired' : 'unsubmitted'),
+                'status_pengerjaan' => $statusPengerjaan,
             ];
         });
 
@@ -143,9 +164,9 @@ class PesertaTugasController extends Controller
         $tim = $this->getUserTim($user);
 
         // Cek deadline
-        if ($tugas->tenggat_waktu && Carbon::now()->greaterThan($tugas->tenggat_waktu)) {
-            return back()->withErrors(['file_tugas' => 'Tenggat waktu pengumpulan tugas ini telah berakhir.']);
-        }
+        // if ($tugas->tenggat_waktu && Carbon::now()->greaterThan($tugas->tenggat_waktu)) {
+        //     return back()->withErrors(['file_tugas' => 'Tenggat waktu pengumpulan tugas ini telah berakhir.']);
+        // }
 
         // Cek jika tugas jenis tim dan peserta belum punya tim
         if ($tugas->jenis === 'tim' && !$tim) {

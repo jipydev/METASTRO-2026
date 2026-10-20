@@ -45,15 +45,21 @@ class HukumanController extends Controller
 
         $hukumans = Hukuman::query()
             ->where('issuer_mode', $mode)
-            ->when($mode === 'pengawas', fn ($q) => $q->where('issued_by', $user->id))
-            ->when($mode === 'ranger' && ! $user->isAdmin(), fn ($q) => $q->where('issued_by', $user->id))
+            ->when(in_array($mode, ['pengawas', 'peserta']), fn($q) => $q->where('issued_by', $user->id))
+            ->when($mode === 'ranger' && ! $user->isAdmin(), fn($q) => $q->where('issued_by', $user->id))
             ->with(['user.divisi', 'user.jabatan', 'issuer.divisi', 'issuer.jabatan'])
             ->latest()
             ->paginate(15)
             ->withQueryString();
 
+        $title = match ($mode) {
+            'pengawas' => 'Kelola Hukuman Pengawas',
+            'peserta' => 'Kelola Hukuman Peserta',
+            default => 'Kelola Hukuman',
+        };
+
         return view('hukuman.kelola', [
-            'title' => $mode === 'pengawas' ? 'Kelola Hukuman Pengawas' : 'Kelola Hukuman',
+            'title' => $title,
             'mode' => $mode,
             'hukumans' => $hukumans,
             'isAdminIssuer' => $user->isAdmin() && $mode === 'ranger',
@@ -74,8 +80,14 @@ class HukumanController extends Controller
             ->orderBy('nama')
             ->get();
 
+        $title = match ($mode) {
+            'pengawas' => 'Hukum Pengawas',
+            'peserta' => 'Hukum Peserta',
+            default => 'Berikan Hukuman',
+        };
+
         return view('hukuman.create', [
-            'title' => $mode === 'pengawas' ? 'Hukum Pengawas' : 'Berikan Hukuman',
+            'title' => $title,
             'mode' => $mode,
             'targets' => $targets,
             'kategoriOptions' => Hukuman::KATEGORI,
@@ -119,7 +131,12 @@ class HukumanController extends Controller
             abort(403);
         }
 
-        $mode = $hukuman->issuer_mode === 'pengawas' ? 'pengawas' : 'ranger';
+        $mode = match ($hukuman->issuer_mode) {
+            'pengawas' => 'pengawas',
+            'peserta' => 'peserta',
+            default => 'ranger',
+        };
+
         $targets = $this->targetQuery($user, $mode)
             ->with(['divisi', 'jabatan'])
             ->orderBy('nama')
@@ -199,7 +216,11 @@ class HukumanController extends Controller
             abort(403);
         }
 
-        $mode = $hukuman->issuer_mode === 'pengawas' ? 'pengawas' : 'ranger';
+        $mode = match ($hukuman->issuer_mode) {
+            'pengawas' => 'pengawas',
+            'peserta' => 'peserta',
+            default => 'ranger',
+        };
         $target = $hukuman->user;
 
         if ($target) {
@@ -286,6 +307,7 @@ class HukumanController extends Controller
     {
         return match ($mode) {
             'pengawas' => $user->canIssueHukumanPengawas(),
+            'peserta' => $user->canIssueHukumanPeserta(),
             default => $user->canIssueHukumanRanger(),
         };
     }
@@ -295,6 +317,7 @@ class HukumanController extends Controller
     {
         return match ($mode) {
             'pengawas' => User::hukumanTargetPengawas(),
+            'peserta' => User::hukumanTargetPeserta(),
             default => $user->isAdmin()
                 ? User::hukumanTargetAdmin()
                 : User::hukumanTargetRanger(),

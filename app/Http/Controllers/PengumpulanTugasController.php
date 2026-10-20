@@ -47,20 +47,32 @@ class PengumpulanTugasController extends Controller
             ->latest('tanggal_pengumpulan')
             ->paginate(10)
             ->withQueryString()
-            ->through(fn(PengumpulanTugas $submisi): array => [
-                'id' => $submisi->id,
-                'judul_tugas' => $submisi->tugas?->judul ?? 'Tugas tidak ditemukan',
-                'jenis_tugas' => $submisi->tugas?->jenis ?? 'individu',
-                'nama_pengumpul' => $submisi->peserta?->nama ?? $submisi->original_participant_name ?? 'Peserta tidak ditemukan',
-                'perwakilan_label' => $submisi->tim ? 'Perwakilan Tim' : 'Peserta',
-                'nim_pengumpul' => $submisi->peserta?->nim ?? '-',
-                'asal_tim' => $submisi->tim?->nama ?? '-',
-                'tautan_berkas' => asset('storage/' . ltrim($submisi->file_path, '/')),
-                'catatan_peserta' => $submisi->catatan_peserta,
-                'catatan_pemeriksa' => $submisi->catatan_pemeriksa ?? '',
-                'status' => $submisi->status,
-                'dikumpulkan_at' => $submisi->tanggal_pengumpulan,
-            ]);
+            ->through(function (PengumpulanTugas $submisi): array {
+                $tugas = $submisi->tugas;
+
+                // Cek apakah pengumpulan melewati tenggat waktu
+                $isLate = false;
+                if ($tugas && $tugas->tenggat_waktu && $submisi->tanggal_pengumpulan) {
+                    $isLate = \Carbon\Carbon::parse($submisi->tanggal_pengumpulan)
+                        ->greaterThan($tugas->tenggat_waktu);
+                }
+
+                return [
+                    'id' => $submisi->id,
+                    'judul_tugas' => $tugas?->judul ?? 'Tugas tidak ditemukan',
+                    'jenis_tugas' => $tugas?->jenis ?? 'individu',
+                    'nama_pengumpul' => $submisi->peserta?->nama ?? $submisi->original_participant_name ?? 'Peserta tidak ditemukan',
+                    'perwakilan_label' => $submisi->tim ? 'Perwakilan Tim' : 'Peserta',
+                    'nim_pengumpul' => $submisi->peserta?->nim ?? '-',
+                    'asal_tim' => $submisi->tim?->nama ?? '-',
+                    'tautan_berkas' => asset('storage/' . ltrim($submisi->file_path, '/')),
+                    'catatan_peserta' => $submisi->catatan_peserta,
+                    'catatan_pemeriksa' => $submisi->catatan_pemeriksa ?? '',
+                    'status' => $submisi->status,
+                    'dikumpulkan_at' => $submisi->tanggal_pengumpulan,
+                    'is_late' => $isLate, // Tambahan penanda keterlambatan
+                ];
+            });
 
         return view('review-tugas.index', [
             'title' => 'Review Pengumpulan Tugas',

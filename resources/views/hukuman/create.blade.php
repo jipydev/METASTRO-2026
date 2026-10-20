@@ -18,12 +18,23 @@
             'id' => $user->id,
             'nama' => $user->nama,
             'nim' => (string) ($user->nim ?? ''),
-            'divisi' => $user->divisi?->nama ?? 'Umum',
-            'jabatan' => $user->formatted_divisi_jabatan,
+            'divisi' => $user->divisi?->nama ?? ($mode === 'peserta' ? 'Peserta' : 'Umum'),
+            'jabatan' => $user->formatted_divisi_jabatan_or_tim,
         ])->values();
         $selectedUserId = (string) old('user_id', $isEdit ? $hukuman->user_id : '');
         $selectedKategori = old('kategori', $isEdit ? $hukuman->kategori : '');
         $alasanValue = old('alasan', $isEdit ? $hukuman->alasan : '');
+        
+        $emptyTargetText = match($mode) {
+            'peserta' => 'Peserta tidak ditemukan.',
+            'pengawas' => 'Pengawas tidak ditemukan.',
+            default => 'Panitia tidak ditemukan.',
+        };
+        $targetCounterText = match($mode) {
+            'peserta' => $targets->count() . ' peserta tersedia. Ketik untuk memfilter daftar.',
+            'pengawas' => $targets->count() . ' pengawas tersedia. Ketik untuk memfilter daftar.',
+            default => $targets->count() . ' panitia tersedia. Ketik untuk memfilter daftar.',
+        };
     @endphp
 
     <div class="py-8 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 font-poppins">
@@ -152,13 +163,13 @@
                                 </button>
                             </template>
                             <div x-show="filteredTargets.length === 0" class="px-3.5 py-3 text-center text-slate-400">
-                                Panitia tidak ditemukan.
+                                {{ $emptyTargetText }}
                             </div>
                         </div>
                     </div>
 
                     <p class="text-[11px] text-slate-400">
-                        {{ $targets->count() }} panitia tersedia. Ketik untuk memfilter daftar.
+                        {{ $targetCounterText }}
                     </p>
                     @error('user_id')
                         <p class="text-xs text-red-600 dark:text-red-400 font-semibold">{{ $message }}</p>
@@ -206,7 +217,7 @@
                         <svg class="w-3.5 h-3.5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        Detail tugas per kategori tidak ditampilkan di web. Panitia mengerjakannya offline sesuai arahan Ranger.
+                        Detail tugas per kategori tidak ditampilkan di web. Tugas dikerjakan sesuai arahan Ranger.
                     </p>
 
                     @error('kategori')

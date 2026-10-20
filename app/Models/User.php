@@ -481,6 +481,26 @@ class User extends Authenticatable implements PasskeyUser
         return $this->isPengawas();
     }
 
+    // Add these permission methods in User.php
+
+    public function canIssueHukumanPeserta(): bool
+    {
+        return $this->isAdmin() || $this->isRanger();
+    }
+
+    /**
+     * Target Hukuman untuk Peserta (Hanya user yang berstatus peserta/bukan panitia/bukan admin).
+     *
+     * @param  Builder<self>  $query
+     */
+    public static function hukumanTargetPeserta(): Builder
+    {
+        return static::query()
+            ->where('status', true)
+            ->whereNull('divisi_id')
+            ->whereNull('jabatan_id');
+    }
+
     public function canManageHukuman(): bool
     {
         return $this->canIssueHukumanRanger() || $this->canIssueHukumanPengawas();

@@ -135,7 +135,19 @@
 
                                 <!-- BADGE STATUS PENGERJAAN -->
                                 <div class="shrink-0 text-right">
-                                    @if ($task['status_pengerjaan'] === 'reviewed' || $task['status_pengerjaan'] === 'pending')
+                                    @if ($task['status_pengerjaan'] === 'expired')
+                                        <!-- Ketika sudah submit tapi telat -->
+                                        <span
+                                            class="inline-flex items-center gap-1 bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-700 text-[10px] font-bold px-2.5 py-1 rounded-full">
+                                            Terlambat Mengerjakan
+                                        </span>
+                                    @elseif ($task['status_pengerjaan'] === 'unsubmitted_expired')
+                                        <!-- Ketika belum submit dan sudah lewat deadline -->
+                                        <span
+                                            class="inline-flex items-center gap-1 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 text-[10px] font-bold px-2.5 py-1 rounded-full">
+                                            Belum Dikerjakan (Lewat Deadline)
+                                        </span>
+                                    @elseif ($task['status_pengerjaan'] === 'reviewed' || $task['status_pengerjaan'] === 'pending')
                                         <span
                                             class="inline-flex items-center gap-1 bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 text-[10px] font-bold px-2.5 py-1 rounded-full">
                                             <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none"
@@ -148,17 +160,7 @@
                                     @elseif($task['status_pengerjaan'] === 'rejected')
                                         <span
                                             class="inline-flex items-center gap-1 bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-700 text-[10px] font-bold px-2.5 py-1 rounded-full">
-                                            <svg class="w-3 h-3 text-rose-600 dark:text-rose-400" fill="none"
-                                                stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
                                             Perlu Revisi
-                                        </span>
-                                    @elseif($task['status_pengerjaan'] === 'expired')
-                                        <span
-                                            class="inline-flex items-center gap-1 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 text-[10px] font-bold px-2.5 py-1 rounded-full">
-                                            Terlambat mengerjakan
                                         </span>
                                     @else
                                         <span
@@ -207,8 +209,8 @@
                                                 Kumpulkan Tugas
                                             @endif
                                         </span>
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
-                                            stroke-width="2.5" viewBox="0 0 24 24">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5"
+                                            viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                                         </svg>

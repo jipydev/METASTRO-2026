@@ -203,7 +203,6 @@
                 @endif
 
                 <!-- UPLOAD FORM AREA -->
-                @if(!$isExpired)
                     <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 sm:p-7 shadow-sm border border-slate-200/60 dark:border-slate-700/60">
                         <h4 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-1.5">
                             {{ $submission ? 'Unggah Ulang / Perbarui Berkas' : 'Form Pengumpulan Berkas' }}
@@ -288,16 +287,6 @@
                             </button>
                         </form>
                     </div>
-                @else
-                    <div class="p-6 rounded-3xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-center shadow-sm">
-                        <p class="text-xs sm:text-sm font-semibold text-rose-600 dark:text-rose-400">
-                            Tenggat waktu pengumpulan tugas ini telah berakhir.
-                        </p>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                            Sistem tidak lagi menerima pengunggahan atau perubahan berkas. Hubungi guider regu Anda bila terdapat kendala khusus.
-                        </p>
-                    </div>
-                @endif
 
             </div>
 
