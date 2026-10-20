@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('catatan_peserta');
             $table->string('catatan_pemeriksa')->nullable();
             $table->foreignId('pemeriksa_id')->nullable()->constrained('users')->onDelete('set null');
-            $table->enum('status', ['pending', 'reviewed', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'reviewed', 'rejected', 'expired'])->default('pending');
             $table->datetime('tanggal_pengumpulan')->useCurrent();
             $table->timestamps();
         });

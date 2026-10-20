@@ -209,7 +209,7 @@ class PesertaTugasController extends Controller
         });
 
         foreach ($universalReceivers as $receiver) {
-            // $this->notifications->tugasUniversalSubmitted($submission, $receiver);
+            $this->notifications->tugasUniversalSubmitted($submission, $receiver);
         }
 
         // 2. BERDASARKAN JENIS TUGAS (Individu, Tim, Angkatan)
@@ -221,7 +221,7 @@ class PesertaTugasController extends Controller
         if ($jenisTugas === 'individu') {
             // INDIVIDU: Dikirim ke guider di tim peserta tersebut
             foreach ($guiders as $guider) {
-                // $this->notifications->tugasIndividuSubmitted($submission, $guider);
+                $this->notifications->tugasIndividuSubmitted($submission, $guider);
             }
         } elseif ($jenisTugas === 'tim') {
             // TIM: Dikirim ke sesama anggota tim dan guider tim tersebut
@@ -230,7 +230,7 @@ class PesertaTugasController extends Controller
 
             $penerimaTim = $sesamaTim->concat($guiders);
             foreach ($penerimaTim as $penerima) {
-                // $this->notifications->tugasTimSubmitted($submission, $penerima);
+                $this->notifications->tugasTimSubmitted($submission, $penerima);
             }
         } elseif ($jenisTugas === 'angkatan') {
             // ANGKATAN: Dikirim ke semua guider dan seluruh role peserta
@@ -242,7 +242,7 @@ class PesertaTugasController extends Controller
 
             $penerimaAngkatan = $allGuiders->concat($allPeserta);
             foreach ($penerimaAngkatan as $penerima) {
-                // $this->notifications->tugasAngkatanSubmitted($submission, $penerima);
+                $this->notifications->tugasAngkatanSubmitted($submission, $penerima);
             }
         }
 
