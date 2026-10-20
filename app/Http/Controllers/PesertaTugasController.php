@@ -160,8 +160,6 @@ class PesertaTugasController extends Controller
      */
     public function store(Tugas $tugas, Request $request): RedirectResponse
     {
-    public function store(Tugas $tugas, Request $request): RedirectResponse
-    {
         $user = $request->user();
         $tim = $this->getUserTim($user);
         $submission = $this->findSubmissionForTask($tugas, $user, $tim);
