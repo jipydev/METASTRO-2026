@@ -203,16 +203,20 @@
                 @endif
 
                 <!-- UPLOAD FORM AREA -->
-                    <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 sm:p-7 shadow-sm border border-slate-200/60 dark:border-slate-700/60">
-                        <h4 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-1.5">
-                            {{ $submission ? 'Unggah Ulang / Perbarui Berkas' : 'Form Pengumpulan Berkas' }}
-                        </h4>
-                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-5">
-                            Format berkas harus berupa dokumen <strong>PDF</strong> dengan batas ukuran maksimal <strong>5 MB</strong>.
-                        </p>
+                @if(!$isExpired || !$submission)
+    <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 sm:p-7 shadow-sm border border-slate-200/60 dark:border-slate-700/60">
+        <h4 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-1.5">
+            {{ $submission ? 'Unggah Ulang / Perbarui Berkas' : 'Form Pengumpulan Berkas' }}
+        </h4>
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-5">
+            Format berkas harus berupa dokumen <strong>PDF</strong> dengan batas ukuran maksimal <strong>5 MB</strong>.
+            @if($isExpired && !$submission)
+                <span class="block text-rose-600 dark:text-rose-400 font-semibold mt-1">Perhatian: Anda mengumpulkan tugas setelah tenggat waktu berakhir (Terlambat).</span>
+            @endif
+        </p>
 
-                        <form method="POST" action="{{ route('peserta.tugas-kumpulkan.store', $tugas->id) }}" enctype="multipart/form-data">
-                            @csrf
+        <form method="POST" action="{{ route('peserta.tugas-kumpulkan.store', $tugas->id) }}" enctype="multipart/form-data">
+            @csrf
 
                             <!-- DRAG & DROP / FILE INPUT -->
                             <div class="mb-5">
@@ -286,7 +290,17 @@
                                 <span>{{ $submission ? 'Unggah Ulang Tugas' : 'Kumpulkan Tugas Sekarang' }}</span>
                             </button>
                         </form>
-                    </div>
+    </div>
+@else
+    <div class="p-6 rounded-3xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-center shadow-sm">
+        <p class="text-xs sm:text-sm font-semibold text-rose-600 dark:text-rose-400">
+            Tenggat waktu pengumpulan tugas ini telah berakhir.
+        </p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            Anda sudah mengumpulkan tugas ini sebelumnya dan tenggat waktu telah berlalu, sehingga perubahan berkas tidak lagi diizinkan.
+        </p>
+    </div>
+@endif
 
             </div>
 

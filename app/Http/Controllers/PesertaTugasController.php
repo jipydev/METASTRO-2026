@@ -160,13 +160,18 @@ class PesertaTugasController extends Controller
      */
     public function store(Tugas $tugas, Request $request): RedirectResponse
     {
+    public function store(Tugas $tugas, Request $request): RedirectResponse
+    {
         $user = $request->user();
         $tim = $this->getUserTim($user);
+        $submission = $this->findSubmissionForTask($tugas, $user, $tim);
 
-        // Cek deadline
-        // if ($tugas->tenggat_waktu && Carbon::now()->greaterThan($tugas->tenggat_waktu)) {
-        //     return back()->withErrors(['file_tugas' => 'Tenggat waktu pengumpulan tugas ini telah berakhir.']);
-        // }
+        $isExpired = $tugas->tenggat_waktu && Carbon::now()->greaterThan($tugas->tenggat_waktu);
+
+        // ATURAN: Jika sudah lewat deadline DAN sudah pernah submit sebelumnya, tolak
+        if ($isExpired && $submission) {
+            return back()->withErrors(['file_tugas' => 'Tenggat waktu telah berakhir dan Anda tidak dapat mengubah tugas yang sudah dikumpulkan.']);
+        }
 
         // Cek jika tugas jenis tim dan peserta belum punya tim
         if ($tugas->jenis === 'tim' && !$tim) {
@@ -174,7 +179,7 @@ class PesertaTugasController extends Controller
         }
 
         $request->validate([
-            'file_tugas' => ['required', 'file', 'mimes:pdf', 'max:5120'], // Max 5MB
+            'file_tugas' => ['required', 'file', 'mimes:pdf', 'max:5120'],
             'catatan_peserta' => ['nullable', 'string', 'max:1000'],
         ], [
             'file_tugas.required' => 'Berkas tugas format PDF wajib diunggah.',
@@ -185,8 +190,6 @@ class PesertaTugasController extends Controller
 
         $filePath = $request->file('file_tugas')->store('pengumpulan_tugas', 'public');
         $catatan = $request->input('catatan_peserta') ?? '';
-
-        $submission = $this->findSubmissionForTask($tugas, $user, $tim);
 
         if ($submission) {
             // Hapus file lama jika ada
@@ -205,6 +208,7 @@ class PesertaTugasController extends Controller
             ]);
             $submission = $submission->fresh(['tugas', 'peserta', 'tim']);
         } else {
+            // Pembuatan submission baru (meskipun telat, diizinkan jika belum pernah submit)
             $submission = PengumpulanTugas::create([
                 'tugas_id' => $tugas->id,
                 'user_id' => $user->id,
