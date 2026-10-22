@@ -68,24 +68,56 @@ class PengajuanIzinController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
-        // if (!$user->isPanitia()) {
-        //     abort(404, 'Halaman tidak ditemukan.');
-        // }
-        
-        $validated = $request->validated();
 
-        /** @var User $user */
-        $user = Auth::user();
+        $validated = $request->validated();
         $kegiatan = Kegiatan::findOrFail($validated['kegiatan_id']);
 
-        // Cek duplikasi pengajuan
-        $existing = PengajuanIzin::where('user_id', $user->id)
+        // --------------------------------------------------------------------------
+        // 1. CEK DUPLIKASI ATAU BENTROK JADWAL IZIN
+        // --------------------------------------------------------------------------
+
+        // A. Cek apakah sudah pernah mengajukan izin untuk KEGIATAN YANG SAMA
+        $existingIzinKegiatan = PengajuanIzin::where('user_id', $user->id)
             ->where('kegiatan_id', $kegiatan->id)
             ->first();
 
-        if ($existing && $existing->status !== 'pending') {
-            return back()->with('error', "Anda sudah pernah mengajukan izin untuk kegiatan '{$kegiatan->nama}'.");
+        if ($existingIzinKegiatan) {
+            // Jika statusnya bukan pending (misal: disetujui / ditolak), tidak boleh kirim lagi
+            if ($existingIzinKegiatan->status !== 'pending') {
+                return back()
+                    ->withInput()
+                    ->with('error', "Anda sudah pernah mengajukan izin untuk kegiatan '{$kegiatan->nama}'.");
+            }
         }
+
+        // B. Cek apakah ada BENTROK WAKTU (Tanggal & Jam yang sama) dengan kegiatan lain
+        // Memeriksa pengajuan izin user di tanggal yang sama di mana jam kegiatan beririsan/overlapping
+        $bentrokJadwal = PengajuanIzin::where('user_id', $user->id)
+            ->where('kegiatan_id', '!=', $kegiatan->id)
+            ->where('status', '!=', 'rejected') // Abaikan jika izin sebelumnya sudah ditolak
+            ->whereHas('kegiatan', function ($query) use ($kegiatan) {
+                $query->where('tanggal', $kegiatan->tanggal)
+                    // Cek tumpang tindih rentang jam (Overlapping Time Range)
+                    ->where(function ($q) use ($kegiatan) {
+                        $q->whereBetween('jam_mulai', [$kegiatan->jam_mulai, $kegiatan->jam_selesai])
+                            ->orWhereBetween('jam_selesai', [$kegiatan->jam_mulai, $kegiatan->jam_selesai])
+                            ->orWhere(function ($sub) use ($kegiatan) {
+                                $sub->where('jam_mulai', '<=', $kegiatan->jam_mulai)
+                                    ->where('jam_selesai', '>=', $kegiatan->jam_selesai);
+                            });
+                    });
+            })
+            ->first();
+
+        if ($bentrokJadwal) {
+            return back()
+                ->withInput()
+                ->with('error', "Anda sudah memiliki pengajuan izin pada tanggal dan jam yang sama untuk kegiatan '{$bentrokJadwal->kegiatan->nama}'.");
+        }
+
+        // --------------------------------------------------------------------------
+        // 2. PROSES UPLOAD FILE & SIMPAN DATA
+        // --------------------------------------------------------------------------
 
         $suratPath = $request->hasFile('surat_izin')
             ? $files->store($request->file('surat_izin'), 'izin/surat')
@@ -98,41 +130,45 @@ class PengajuanIzinController extends Controller
         $user->loadMissing('jabatan', 'divisi');
         $skipKoordinator = $user->skipsKoordinatorIzinReview();
 
-        if ($existing) {
-            $wasPendingKoordinator = $existing->status_koordinator === 'pending';
+        // Jika memperbarui izin yang masih berstatus 'pending' pada kegiatan yang sama
+        if ($existingIzinKegiatan) {
+            $wasPendingKoordinator = $existingIzinKegiatan->status_koordinator === 'pending';
             $data = [
                 'jenis_izin' => $validated['jenis_izin'],
                 'alasan' => $validated['alasan'],
-                'surat_izin' => $suratPath ?? $existing->surat_izin,
-                'bukti' => $buktiPath ?? $existing->bukti,
+                'surat_izin' => $suratPath ?? $existingIzinKegiatan->surat_izin,
+                'bukti' => $buktiPath ?? $existingIzinKegiatan->bukti,
             ];
 
-            if ($skipKoordinator && $existing->status_koordinator === 'pending') {
+            if ($skipKoordinator && $existingIzinKegiatan->status_koordinator === 'pending') {
                 $data = array_merge($data, $this->autoApproveKoordinatorPayload($user));
             }
 
-            $existing->update($data);
+            $existingIzinKegiatan->update($data);
 
             if ($skipKoordinator && $wasPendingKoordinator) {
-                $this->notifications->izinSubmitted($existing->fresh(['user.divisi', 'user.jabatan', 'kegiatan']));
+                $this->notifications->izinSubmitted($existingIzinKegiatan->fresh(['user.divisi', 'user.jabatan', 'kegiatan']));
             }
 
-            return redirect()->route('pengajuan-izin.index')
+            return redirect()->route('dashboard.pengajuan-izin.index')
                 ->with('success', 'Pengajuan izin yang masih menunggu review berhasil dilengkapi.');
         }
 
-        $pengajuan = PengajuanIzin::create(array_merge([
-            'user_id' => $user->id,
-            'kegiatan_id' => $kegiatan->id,
-            'tanggal_izin' => $kegiatan->tanggal,
-            'jenis_izin' => $validated['jenis_izin'],
-            'alasan' => $validated['alasan'],
-            'surat_izin' => $suratPath,
-            'bukti' => $buktiPath,
-            'status_ranger' => 'pending',
-        ], $skipKoordinator
-            ? $this->autoApproveKoordinatorPayload($user)
-            : ['status_koordinator' => 'pending', 'status' => 'pending']
+        // Buat pengajuan izin baru
+        $pengajuan = PengajuanIzin::create(array_merge(
+            [
+                'user_id' => $user->id,
+                'kegiatan_id' => $kegiatan->id,
+                'tanggal_izin' => $kegiatan->tanggal,
+                'jenis_izin' => $validated['jenis_izin'],
+                'alasan' => $validated['alasan'],
+                'surat_izin' => $suratPath,
+                'bukti' => $buktiPath,
+                'status_ranger' => 'pending',
+            ],
+            $skipKoordinator
+                ? $this->autoApproveKoordinatorPayload($user)
+                : ['status_koordinator' => 'pending', 'status' => 'pending']
         ));
 
         $this->notifications->izinSubmitted($pengajuan->load(['user.divisi', 'user.jabatan', 'kegiatan']));
@@ -151,7 +187,7 @@ class PengajuanIzinController extends Controller
         /** @var User $user */
         $user = Auth::user();
         $filter = $request->query('filter', 'pending');
-        
+
         // if (!$user->isPanitia()) {
         //     abort(404, 'Halaman tidak ditemukan.');
         // }
@@ -177,7 +213,7 @@ class PengajuanIzinController extends Controller
                 $query->where('status', 'rejected');
             }
         } else {
-            $query->whereHas('user', fn ($q) => $q->where('divisi_id', $user->divisi_id)->where('id', '!=', $user->id));
+            $query->whereHas('user', fn($q) => $q->where('divisi_id', $user->divisi_id)->where('id', '!=', $user->id));
             if ($filter === 'pending') {
                 $query->where('status_koordinator', 'pending');
             } elseif ($filter === 'approved') {
