@@ -203,11 +203,11 @@
                                         </div>
                                     </td>
                                     <td class="px-5 py-3.5">
-                                        <x-divisi-badge :divisi="$row['divisi_nama']" :label="$row['divisi_jabatan']" size="xs" />
-                                    </td>
-                                    <td class="px-5 py-3.5">
     <x-divisi-badge :divisi="$row['divisi']" :label="$row['divisi_jabatan']" size="xs" />
 </td>
+                                    <td class="px-5 py-3.5 text-center whitespace-nowrap font-mono text-[11px]">
+                                        {{ $row['waktu_presensi'] !== '-' ? $row['waktu_presensi'] . ' WIB' : '-' }}
+                                    </td>
                                     <td class="px-5 py-3.5 text-center whitespace-nowrap">
                                         <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider {{ $badgeClass }}">
                                             {{ str_replace('_', ' ', $row['status']) }}
