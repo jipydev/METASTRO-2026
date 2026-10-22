@@ -47,8 +47,8 @@ class PengajuanIzinController extends Controller
      */
     public function create()
     {
-        
-       $user = Auth::user();
+
+        $user = Auth::user();
 
         $kegiatans = Kegiatan::query()
             ->where('is_published', true) // Hanya tampilkan kegiatan yang sudah dipublish
@@ -62,7 +62,7 @@ class PengajuanIzinController extends Controller
             ->orderBy('tanggal', 'asc')
             ->get();
 
-        return view('dashboard.pengajuan-izin.create', compact('kegiatans'));
+        return view('pengajuan-izin.create', compact('kegiatans'));
     }
 
     /**
