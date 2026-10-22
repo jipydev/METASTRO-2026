@@ -49,9 +49,9 @@ class PengajuanIzinController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
-        if (!$user->isPanitia()) {
-            abort(404, 'Halaman tidak ditemukan.');
-        }
+        // if (!$user->isPanitia()) {
+        //     abort(404, 'Halaman tidak ditemukan.');
+        // }
 
         $kegiatans = Kegiatan::orderBy('tanggal', 'desc')->limit(15)->get();
 
@@ -68,9 +68,9 @@ class PengajuanIzinController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
-        if (!$user->isPanitia()) {
-            abort(404, 'Halaman tidak ditemukan.');
-        }
+        // if (!$user->isPanitia()) {
+        //     abort(404, 'Halaman tidak ditemukan.');
+        // }
         
         $validated = $request->validated();
 
@@ -152,9 +152,9 @@ class PengajuanIzinController extends Controller
         $user = Auth::user();
         $filter = $request->query('filter', 'pending');
         
-        if (!$user->isPanitia()) {
-            abort(404, 'Halaman tidak ditemukan.');
-        }
+        // if (!$user->isPanitia()) {
+        //     abort(404, 'Halaman tidak ditemukan.');
+        // }
 
         if (! $user->canReviewIzin()) {
             abort(403, 'Anda tidak memiliki hak akses untuk mereview izin.');
@@ -359,9 +359,9 @@ class PengajuanIzinController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
-        if (!$user->isPanitia()) {
-            abort(404, 'Halaman tidak ditemukan.');
-        }
+        // if (!$user->isPanitia()) {
+        //     abort(404, 'Halaman tidak ditemukan.');
+        // }
 
         $statusPresensi = strtolower((string) $pengajuan->jenis_izin) === 'sakit' ? 'sakit' : 'izin';
 
