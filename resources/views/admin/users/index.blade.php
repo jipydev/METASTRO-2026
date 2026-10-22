@@ -160,7 +160,7 @@
                                 <th class="px-5 py-3.5">Pengguna</th>
                                 <th class="px-5 py-3.5">NIM</th>
                                 <th class="px-5 py-3.5">Role</th>
-                                <th class="px-5 py-3.5">Divisi / Jabatan</th>
+                                <th class="px-5 py-3.5">Divisi / Tim</th>
                                 <th class="px-5 py-3.5 text-center">Kode Unik</th>
                                 <th class="px-5 py-3.5 text-center">Status QR</th>
                                 <th class="px-5 py-3.5 text-right">Aksi</th>
@@ -208,13 +208,16 @@
                                         @endforeach
                                     </td>
 
-                                    <td class="px-5 py-3.5">
-                                        @if ($user->divisi)
-                                            <x-divisi-badge :divisi="$user->divisi" :label="$user->formatted_divisi_jabatan_or_tim" />
-                                        @else
-                                            <span class="text-slate-400">—</span>
-                                        @endif
-                                    </td>
+                                    {{-- Kolom Divisi / Jabatan / Tim --}}
+<td class="px-5 py-3.5">
+    @if ($user->divisi)
+        <x-divisi-badge :divisi="$user->divisi" :label="$user->formatted_divisi_jabatan_or_tim" />
+    @else
+        <span class="text-slate-600 dark:text-slate-300 font-medium text-xs">
+            {{ $user->formatted_divisi_jabatan_or_tim }}
+        </span>
+    @endif
+</td>
 
                                     {{-- Kolom Kode Unik --}}
                                     <td class="px-5 py-3.5 text-center">
