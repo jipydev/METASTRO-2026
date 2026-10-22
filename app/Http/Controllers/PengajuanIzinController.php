@@ -27,9 +27,9 @@ class PengajuanIzinController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        if(!$user->isPanitia()) {
-            abort(404, 'Halaman tidak ditemukan.');
-        }
+        // if(!$user->isPanitia()) {
+        //     abort(404, 'Halaman tidak ditemukan.');
+        // }
 
         $pengajuanList = PengajuanIzin::where('user_id', $user->id)
             ->with(['kegiatan', 'user.divisi', 'user.jabatan', 'reviewerKoordinator', 'reviewerRanger'])
