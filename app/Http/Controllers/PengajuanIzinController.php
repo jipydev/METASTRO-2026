@@ -91,21 +91,28 @@ class PengajuanIzinController extends Controller
         }
 
         // B. Cek apakah ada BENTROK WAKTU (Tanggal & Jam yang sama) dengan kegiatan lain
-        // Memeriksa pengajuan izin user di tanggal yang sama di mana jam kegiatan beririsan/overlapping
+        $waktuMulai = $kegiatan->waktu_mulai;
+        $waktuSelesai = $kegiatan->waktu_selesai;
+
         $bentrokJadwal = PengajuanIzin::where('user_id', $user->id)
             ->where('kegiatan_id', '!=', $kegiatan->id)
             ->where('status', '!=', 'rejected') // Abaikan jika izin sebelumnya sudah ditolak
-            ->whereHas('kegiatan', function ($query) use ($kegiatan) {
-                $query->where('tanggal', $kegiatan->tanggal)
-                    // Cek tumpang tindih rentang jam (Overlapping Time Range)
-                    ->where(function ($q) use ($kegiatan) {
-                        $q->whereBetween('jam_mulai', [$kegiatan->jam_mulai, $kegiatan->jam_selesai])
-                            ->orWhereBetween('jam_selesai', [$kegiatan->jam_mulai, $kegiatan->jam_selesai])
-                            ->orWhere(function ($sub) use ($kegiatan) {
-                                $sub->where('jam_mulai', '<=', $kegiatan->jam_mulai)
-                                    ->where('jam_selesai', '>=', $kegiatan->jam_selesai);
-                            });
-                    });
+            ->whereHas('kegiatan', function ($query) use ($kegiatan, $waktuMulai, $waktuSelesai) {
+                $query->where('tanggal', $kegiatan->tanggal);
+
+                // Hanya cek bentrok jam jika kedua kegiatan memiliki jam mulai & selesai
+                if (!empty($waktuMulai) && !empty($waktuSelesai)) {
+                    $query->whereNotNull('waktu_mulai')
+                        ->whereNotNull('waktu_selesai')
+                        ->where(function ($q) use ($waktuMulai, $waktuSelesai) {
+                            $q->whereBetween('waktu_mulai', [$waktuMulai, $waktuSelesai])
+                                ->orWhereBetween('waktu_selesai', [$waktuMulai, $waktuSelesai])
+                                ->orWhere(function ($sub) use ($waktuMulai, $waktuSelesai) {
+                                    $sub->where('waktu_mulai', '<=', $waktuMulai)
+                                        ->where('waktu_selesai', '>=', $waktuSelesai);
+                                });
+                        });
+                }
             })
             ->first();
 
