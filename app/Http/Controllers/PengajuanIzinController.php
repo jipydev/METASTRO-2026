@@ -137,7 +137,7 @@ class PengajuanIzinController extends Controller
 
         $this->notifications->izinSubmitted($pengajuan->load(['user.divisi', 'user.jabatan', 'kegiatan']));
 
-        return redirect()->route('pengajuan-izin.index')
+        return redirect()->route('dashboard.pengajuan-izin.index')
             ->with('success', $skipKoordinator
                 ? 'Pengajuan izin berhasil dikirim dan menunggu verifikasi Ranger.'
                 : 'Pengajuan izin berhasil dikirim dan menunggu verifikasi Koordinator.');
