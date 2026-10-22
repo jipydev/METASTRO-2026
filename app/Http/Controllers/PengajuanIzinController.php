@@ -49,6 +49,7 @@ class PengajuanIzinController extends Controller
     {
 
         $user = Auth::user();
+        $title = 'Ajukan Izin';
 
         $kegiatans = Kegiatan::query()
             ->where('is_published', true) // Hanya tampilkan kegiatan yang sudah dipublish
@@ -62,7 +63,7 @@ class PengajuanIzinController extends Controller
             ->orderBy('tanggal', 'asc')
             ->get();
 
-        return view('pengajuan-izin.create', compact('kegiatans'));
+        return view('pengajuan-izin.create', compact('kegiatans', 'title'));
     }
 
     /**
