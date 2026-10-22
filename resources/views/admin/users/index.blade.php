@@ -28,6 +28,8 @@
         openDeleteModal: false,
         openViewQrModal: false,
         openImportModal: false,
+        openRegenAllModal: false,
+        --{{-- Tambahkan ini --}}
     
         selectedUser: { id: null, nama: '', nim: '', email: '', role_type: 'peserta', divisi_id: '', jabatan_id: '', qr_token: '', kode_unik: '', status: true },
     
@@ -208,7 +210,7 @@
 
                                     <td class="px-5 py-3.5">
                                         @if ($user->divisi)
-                                            <x-divisi-badge :divisi="$user->divisi" :label="$user->formatted_divisi_jabatan" />
+                                            <x-divisi-badge :divisi="$user->divisi" :label="$user->formatted_divisi_jabatan_or_tim" />
                                         @else
                                             <span class="text-slate-400">—</span>
                                         @endif
@@ -247,7 +249,15 @@
 
                                             {{-- 1. Tombol Lihat QR --}}
                                             <button type="button"
-                                                @click="initViewQr({{ json_encode(['id' => $user->id, 'nama' => $user->nama, 'nim' => $user->nim, 'qr_token' => $user->qr_token, 'kode_unik' => $user->kode_unik, 'divisi' => $user->formatted_divisi_jabatan, 'divisi_badge' => $user->divisi?->badgeClasses() ?? '']) }})"
+                                                @click="initViewQr({{ json_encode([
+                                                    'id' => $user->id,
+                                                    'nama' => $user->nama,
+                                                    'nim' => $user->nim,
+                                                    'qr_token' => $user->qr_token,
+                                                    'kode_unik' => $user->kode_unik,
+                                                    'divisi' => $user->formatted_divisi_jabatan_or_tim,
+                                                    'divisi_badge' => $user->divisi?->badgeClasses() ?? '',
+                                                ]) }})"
                                                 class="p-1.5 rounded-lg text-slate-500 hover:text-brand-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-indigo-950/60 transition cursor-pointer"
                                                 title="Lihat QR Code & Kode Unik">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
@@ -372,7 +382,8 @@
                             <span class="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold mb-1">
                                 Kode Unik Absensi
                             </span>
-                            <span class="font-mono text-base font-bold text-brand-600 dark:text-brand-400 bg-slate-100 dark:bg-slate-700/80 px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-600 inline-block select-all"
+                            <span
+                                class="font-mono text-base font-bold text-brand-600 dark:text-brand-400 bg-slate-100 dark:bg-slate-700/80 px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-600 inline-block select-all"
                                 x-text="selectedUser.kode_unik"></span>
                         </div>
                     </template>
@@ -394,8 +405,8 @@
                 <div x-show="openDeleteModal" x-transition.opacity class="fixed inset-0 bg-black/50 backdrop-blur-sm"
                     @click="openDeleteModal = false"></div>
 
-                <form :action="'{{ url('dashboard/users') }}/' + selectedUser.id" method="POST" x-show="openDeleteModal"
-                    x-transition
+                <form :action="'{{ url('dashboard/users') }}/' + selectedUser.id" method="POST"
+                    x-show="openDeleteModal" x-transition
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-sm shadow-xl text-xs">
                     @csrf
                     @method('DELETE')
@@ -433,7 +444,8 @@
                     @csrf
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/40 text-sky-600 flex items-center justify-center">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/40 text-sky-600 flex items-center justify-center">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
@@ -441,36 +453,53 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Import Pengguna dari Excel</h3>
-                                <p class="text-[11px] text-slate-500 dark:text-slate-400">Buat akun secara massal dengan file spreadsheet</p>
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Import Pengguna dari Excel
+                                </h3>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400">Buat akun secara massal
+                                    dengan file spreadsheet</p>
                             </div>
                         </div>
-                        <button type="button" @click="openImportModal = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                        <button type="button" @click="openImportModal = false"
+                            class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
                     </div>
 
                     {{-- Panduan Singkat --}}
-                    <div class="p-3.5 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-700/60 mb-4 space-y-2 text-slate-600 dark:text-slate-300">
-                        <div class="font-semibold text-slate-700 dark:text-slate-200 flex items-center justify-between">
+                    <div
+                        class="p-3.5 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-700/60 mb-4 space-y-2 text-slate-600 dark:text-slate-300">
+                        <div
+                            class="font-semibold text-slate-700 dark:text-slate-200 flex items-center justify-between">
                             <span>Format Kolom Spreadsheet:</span>
-                            <a href="{{ route('admin.users.template') }}" class="text-brand-600 hover:underline flex items-center gap-1 font-bold">
+                            <a href="{{ route('admin.users.template') }}"
+                                class="text-brand-600 hover:underline flex items-center gap-1 font-bold">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                 </svg>
                                 Unduh Template .xlsx
                             </a>
                         </div>
                         <p class="leading-relaxed text-[11px]">
-                            Kolom wajib: <code class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono">nama</code>, 
-                            <code class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono">nim</code>, 
-                            <code class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono">email</code>, 
-                            <code class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono">role</code> (admin/panitia/peserta).
+                            Kolom wajib: <code
+                                class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono">nama</code>,
+                            <code
+                                class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono">nim</code>,
+                            <code
+                                class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono">email</code>,
+                            <code
+                                class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono">role</code>
+                            (admin/panitia/peserta).
                         </p>
                         <p class="leading-relaxed text-[11px] text-slate-500 dark:text-slate-400">
-                            Kolom opsional: <code class="font-mono">password</code> (default: metastro2026), <code class="font-mono">divisi</code>, <code class="font-mono">jabatan</code>, <code class="font-mono">tim</code>, <code class="font-mono">nomor_hp</code>, <code class="font-mono">jenis_kelamin</code> (L/P), <code class="font-mono">tanggal_lahir</code>.
+                            Kolom opsional: <code class="font-mono">password</code> (default: metastro2026), <code
+                                class="font-mono">divisi</code>, <code class="font-mono">jabatan</code>, <code
+                                class="font-mono">tim</code>, <code class="font-mono">nomor_hp</code>, <code
+                                class="font-mono">jenis_kelamin</code> (L/P), <code
+                                class="font-mono">tanggal_lahir</code>.
                         </p>
                     </div>
 
@@ -491,7 +520,8 @@
                         <button type="submit"
                             class="px-5 py-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
                             </svg>
                             <span>Mulai Import</span>
                         </button>
