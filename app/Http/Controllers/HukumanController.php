@@ -251,26 +251,32 @@ class HukumanController extends Controller
             abort(403);
         }
 
-        $file = $request->file('tugas_file');
+        if ($request->hasFile('tugas_file')) {
+            $file = $request->file('tugas_file');
 
-        // Hapus file lama jika sebelumnya sudah pernah mengunggah
-        if ($hukuman->tugas_link && \Illuminate\Support\Facades\Storage::disk('public')->exists($hukuman->tugas_link)) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($hukuman->tugas_link);
+            // Hapus file lama jika sebelumnya sudah ada
+            if ($hukuman->tugas_link && \Illuminate\Support\Facades\Storage::disk('public')->exists($hukuman->tugas_link)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($hukuman->tugas_link);
+            }
+
+            // Simpan file PDF baru ke storage public/hukuman-tugas
+            $path = $file->store('hukuman-tugas', 'public');
+
+            $hukuman->update([
+                'tugas_link' => $path,
+                'tugas_submitted_at' => now(),
+            ]);
+
+            $this->notifications->hukumanTugasSubmitted($hukuman->fresh());
+
+            return redirect()
+                ->route('dashboard.hukuman.show', $hukuman)
+                ->with('success', 'File tugas PDF berhasil diunggah.');
         }
-
-        // Simpan file PDF baru ke storage public/hukuman-tugas
-        $path = $file->store('hukuman-tugas', 'public');
-
-        $hukuman->update([
-            'tugas_link' => $path, // Menyimpan path file PDF di database
-            'tugas_submitted_at' => now(),
-        ]);
-
-        $this->notifications->hukumanTugasSubmitted($hukuman->fresh());
 
         return redirect()
             ->route('dashboard.hukuman.show', $hukuman)
-            ->with('success', 'File tugas PDF berhasil diunggah.');
+            ->with('success', 'Tidak ada file baru yang diunggah.');
     }
 
     public function complete(Request $request, Hukuman $hukuman): RedirectResponse

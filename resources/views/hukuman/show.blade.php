@@ -138,16 +138,16 @@
         @endif
 
         
-        {{-- Tugas (Wajib PDF) --}}
+        {{-- Tugas (Opsional PDF) --}}
         @if ($hukuman->sudahPembelaan() && ! $hukuman->isSelesai() && $isTarget)
             <div class="bg-white dark:bg-slate-800 shadow-sm rounded-3xl p-6 sm:p-7 border border-gray-100 dark:border-slate-700">
-                <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1">Submit Tugas PDF</h3>
+                <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1">Submit Tugas PDF (Opsional)</h3>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
-                    Unggah dokumen tugas berformat PDF. Pengunggahan ini wajib dilakukan sebelum menyelesaikan hukuman.
+                    Unggah dokumen tugas berformat PDF jika diperlukan. Kolom ini bersifat opsional.
                 </p>
                 <form method="POST" action="{{ route('dashboard.hukuman.tugas', $hukuman) }}" enctype="multipart/form-data" class="space-y-3">
                     @csrf
-                    <input type="file" name="tugas_file" accept=".pdf,application/pdf" required
+                    <input type="file" name="tugas_file" accept=".pxf,.pdf,application/pdf"
                            class="block w-full text-xs text-slate-500 dark:text-slate-400
                                   file:mr-4 file:py-2 file:px-4
                                   file:rounded-xl file:border-0
@@ -161,7 +161,7 @@
                     <div class="flex flex-wrap gap-2">
                         <button type="submit"
                                 class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl text-xs shadow-sm transition">
-                            Unggah Tugas PDF
+                            Simpan File PDF
                         </button>
                     </div>
                 </form>
@@ -177,23 +177,20 @@
                 @endif
             </div>
 
-            {{-- Tombol Selesai (Hanya muncul jika file tugas sudah diunggah) --}}
-            @if ($hukuman->tugas_link)
-                <div class="bg-white dark:bg-slate-800 shadow-sm rounded-3xl p-6 sm:p-7 border border-emerald-200 dark:border-emerald-800/60">
-                    <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1">Selesaikan Hukuman</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
-                        Tandai hukuman selesai setelah Anda mengunggah tugas PDF dan menyelesaikan arahan dari Ranger (2×24 jam).
-                    </p>
-                    <form method="POST" action="{{ route('dashboard.hukuman.selesai', $hukuman) }}"
-                          onsubmit="return confirm('Yakin hukuman sudah selesai dikerjakan?')">
-                        @csrf
-                        <button type="submit"
-                                class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs shadow-sm transition">
-                            Tandai Selesai
-                        </button>
-                    </form>
-                </div>
-            @endif
+            <div class="bg-white dark:bg-slate-800 shadow-sm rounded-3xl p-6 sm:p-7 border border-emerald-200 dark:border-emerald-800/60">
+                <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1">Selesaikan Hukuman</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                    Tandai hukuman selesai setelah Anda menyelesaikan tugas atau arahan dari Ranger (2×24 jam).
+                </p>
+                <form method="POST" action="{{ route('dashboard.hukuman.selesai', $hukuman) }}"
+                      onsubmit="return confirm('Yakin hukuman sudah selesai dikerjakan?')">
+                    @csrf
+                    <button type="submit"
+                            class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs shadow-sm transition">
+                        Tandai Selesai
+                    </button>
+                </form>
+            </div>
         @elseif ($hukuman->isSelesai())
             <div class="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-3xl p-6 text-center space-y-2">
                 <p class="text-sm font-bold text-emerald-700 dark:text-emerald-300">Hukuman selesai</p>

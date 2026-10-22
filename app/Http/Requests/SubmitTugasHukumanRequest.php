@@ -17,7 +17,7 @@ class SubmitTugasHukumanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tugas_file' => ['required', 'file', 'mimes:pdf', 'max:10240'], // Wajib PDF, maks 10MB
+            'tugas_file' => ['nullable', 'file', 'mimes:pdf', 'max:10240'], // Opsional (boleh kosong), jika diisi harus PDF maks 10MB
         ];
     }
 
@@ -27,7 +27,6 @@ class SubmitTugasHukumanRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'tugas_file.required' => 'File tugas PDF wajib diunggah.',
             'tugas_file.file' => 'File yang diunggah tidak valid.',
             'tugas_file.mimes' => 'Format file tugas harus berupa PDF.',
             'tugas_file.max' => 'Ukuran file PDF maksimal 10MB.',
