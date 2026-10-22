@@ -45,20 +45,24 @@ class PengajuanIzinController extends Controller
     /**
      * Menampilkan form pengajuan izin baru.
      */
-    public function create(): View
+    public function create()
     {
-        /** @var User $user */
-        $user = Auth::user();
-        // if (!$user->isPanitia()) {
-        //     abort(404, 'Halaman tidak ditemukan.');
-        // }
+        
+       $user = Auth::user();
 
-        $kegiatans = Kegiatan::orderBy('tanggal', 'desc')->limit(15)->get();
+        $kegiatans = Kegiatan::query()
+            ->where('is_published', true) // Hanya tampilkan kegiatan yang sudah dipublish
+            // Sesuaikan logika filter role pengguna di bawah ini:
+            ->when($user->isPanitia(), function ($query) {
+                $query->whereIn('tipe', ['panitia', 'umum']);
+            })
+            ->when(!$user->isPanitia(), function ($query) {
+                $query->where('tipe', 'umum');
+            })
+            ->orderBy('tanggal', 'asc')
+            ->get();
 
-        return view('pengajuan-izin.create', [
-            'title' => 'Ajukan Izin',
-            'kegiatans' => $kegiatans,
-        ]);
+        return view('dashboard.pengajuan-izin.create', compact('kegiatans'));
     }
 
     /**
