@@ -130,7 +130,7 @@ class PresensiController extends Controller
                     $scannerDivisi = $presensi->scanner->divisi?->nama ?? 'Umum';
                 }
 
-                $divisiJabatan = $user->formatted_divisi_jabatan;
+                $divisiJabatan = $user->formatted_divisi_jabatan_or_tim;
 
                 if ($search !== '') {
                     $haystack = mb_strtolower(implode(' ', array_filter([

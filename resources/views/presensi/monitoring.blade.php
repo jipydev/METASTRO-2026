@@ -173,7 +173,7 @@
                         <thead class="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200/80 dark:border-slate-700 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                             <tr>
                                 <th class="px-5 py-3.5">Pengguna</th>
-                                <th class="px-5 py-3.5">Divisi / Jabatan</th>
+                                <th class="px-5 py-3.5">Divisi / Tim</th>
                                 <th class="px-5 py-3.5 text-center">Waktu Presensi</th>
                                 <th class="px-5 py-3.5 text-center">Status</th>
                                 <th class="px-5 py-3.5">Di scan / disetujui oleh</th>
