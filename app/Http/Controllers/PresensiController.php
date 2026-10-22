@@ -158,20 +158,17 @@ class PresensiController extends Controller
                     'id' => $user->id,
                     'nama' => $user->nama,
                     'nim' => $user->nim,
-                    'foto' => $user->foto
-                        ? asset('storage/'.$user->foto)
-                        : 'https://ui-avatars.com/api/?size=128&background=fe5a1d&color=fff&name='.urlencode($user->nama),
+                    'foto' => $user->foto ? asset('storage/' . $user->foto) : '...',
                     'divisi_jabatan' => $divisiJabatan,
                     'status' => $status,
                     'waktu_presensi' => $waktuPresensi,
-                    'jam_tap' => $presensi?->isIzinAtauSakit()
-                        ? ($presensi->pengajuanIzin?->created_at ?? $presensi->jam_tap)
-                        : $presensi?->jam_tap,
+                    'jam_tap' => $presensi?->isIzinAtauSakit() ? ($presensi->pengajuanIzin?->created_at ?? $presensi->jam_tap) : $presensi?->jam_tap,
                     'via_izin' => $viaIzin,
                     'izin_reviewer' => $izinReviewer,
                     'izin_reviewer_divisi' => $izinReviewerDivisi,
                     'role_order' => $user->isAdmin() ? 1 : 2,
                     'divisi_id' => $user->divisi_id,
+                    'divisi' => $user->divisi, // Tambahkan baris ini agar mengirim objek model Divisi
                     'divisi_nama' => $user->divisi?->nama ?? '',
                     'jabatan_id' => $user->jabatan_id,
                     'scanner_nama' => $scannerNama,
