@@ -20,8 +20,11 @@
     
         handleSurat(event) {
             const file = event.target.files[0];
-            if (!file) { this.suratFileName = null;
-                this.suratFileSize = null; return; }
+            if (!file) {
+                this.suratFileName = null;
+                this.suratFileSize = null;
+                return;
+            }
             if (file.size > 5 * 1024 * 1024) {
                 alert('Ukuran file ' + file.name + ' terlalu besar (' + (file.size / (1024 * 1024)).toFixed(1) + ' MB). Maksimal ukuran file adalah 5 MB.');
                 event.target.value = '';
@@ -35,9 +38,12 @@
     
         handleBukti(event) {
             const file = event.target.files[0];
-            if (!file) { this.buktiFileName = null;
+            if (!file) {
+                this.buktiFileName = null;
                 this.buktiFileSize = null;
-                this.buktiPreview = null; return; }
+                this.buktiPreview = null;
+                return;
+            }
             if (file.size > 5 * 1024 * 1024) {
                 alert('Ukuran file ' + file.name + ' terlalu besar (' + (file.size / (1024 * 1024)).toFixed(1) + ' MB). Maksimal ukuran file adalah 5 MB.');
                 event.target.value = '';
@@ -102,12 +108,15 @@
                         class="block w-full border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:border-brand-500 focus:ring-brand-500 rounded-xl shadow-sm py-2.5 px-3 text-xs outline-none">
                         <option value="">-- Pilih Jadwal Kegiatan --</option>
                         @foreach ($kegiatans as $kegiatan)
-                            {{-- Pengecekan Akses Role / Tipe Kegiatan --}}
-                            @if ($kegiatan->tipe === 'semua' || (auth()->user()->isPanitia() && $kegiatan->tipe === 'panitia'))
+                            {{-- Pengecekan Filter Role Berdasarkan Kolom 'jenis' --}}
+                            @if (
+                                $kegiatan->jenis === 'semua' ||
+                                    (auth()->user()->isPanitia() && $kegiatan->jenis === 'panitia') ||
+                                    (!auth()->user()->isPanitia() && $kegiatan->jenis === 'peserta'))
                                 <option value="{{ $kegiatan->id }}"
                                     {{ old('kegiatan_id') == $kegiatan->id ? 'selected' : '' }}>
                                     {{ $kegiatan->nama }}
-                                    ({{ \Carbon\Carbon::parse($kegiatan->tanggal)->locale('id')->translatedFormat('d F Y') }},
+                                    ({{ \Carbon\Carbon::parse($kegiatan->tanggal_mulai ?? $kegiatan->tanggal)->locale('id')->translatedFormat('d F Y') }},
                                     {{ $kegiatan->waktu_mulai ? substr((string) $kegiatan->waktu_mulai, 0, 5) : '—' }}
                                     WIB)
                                 </option>
