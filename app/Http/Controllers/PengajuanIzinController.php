@@ -48,7 +48,7 @@ class PengajuanIzinController extends Controller
     public function create(): View
     {
         $title = 'Buat Pengajuan Izin';
-        $user = auth()->user();
+        $user = Auth::user();
 
         $kegiatans = Kegiatan::query()
             ->where('is_published', true) // Hanya tampilkan yang dipublikasi
