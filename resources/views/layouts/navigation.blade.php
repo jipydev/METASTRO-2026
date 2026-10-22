@@ -146,7 +146,7 @@
             </a>
         @endif
 
-        @if (auth()->user()->canViewPerizinan())
+        @if (auth()->user())
             {{-- Group: Perizinan --}}
             <p class="{{ $navGroup }}" x-show="!sidebarCollapsed || sidebarOpen" x-cloak>Perizinan
             </p>
