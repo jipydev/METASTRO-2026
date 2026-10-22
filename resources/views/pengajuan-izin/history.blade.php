@@ -61,8 +61,10 @@
                                 <th class="py-3 px-4 rounded-l-xl">Tanggal Pengajuan</th>
                                 <th class="py-3 px-4">Kegiatan / Agenda</th>
                                 <th class="py-3 px-4 text-center">Jenis</th>
-                                <th class="py-3 px-4 text-center">Approval Koordinator</th>
-                                <th class="py-3 px-4 text-center">Approval Ranger</th>
+                                @if (auth()->user()->isPanitia())
+                                    <th class="py-3 px-4 text-center">Approval Koordinator</th>
+                                    <th class="py-3 px-4 text-center">Approval Ranger</th>
+                                @endif
                                 <th class="py-3 px-4 text-center">Status Akhir</th>
                                 <th class="py-3 px-4 text-center rounded-r-xl">Aksi</th>
                             </tr>
@@ -93,6 +95,7 @@
                                         </span>
                                     </td>
 
+                                    @if (auth()->user()->isPanitia())
                                     <td class="py-3.5 px-4 text-center">
                                         @include('pengajuan-izin.partials.status-pill', [
                                             'status' => $p->status_koordinator,
@@ -112,6 +115,7 @@
                                                 {{ $p->reviewerRanger->nama }}</div>
                                         @endif
                                     </td>
+                                    @endif
 
                                     <td class="py-3.5 px-4 text-center whitespace-nowrap">
                                         @include('pengajuan-izin.partials.status-pill', [
@@ -128,7 +132,8 @@
                                                 Detail
                                             </button>
                                             @if ($p->canBeDeletedBy(auth()->user()))
-                                                <form action="{{ route('dashboard.pengajuan-izin.destroy', $p) }}" method="POST"
+                                                <form action="{{ route('dashboard.pengajuan-izin.destroy', $p) }}"
+                                                    method="POST"
                                                     onsubmit="return confirm('Hapus pengajuan izin ini?')">
                                                     @csrf
                                                     @method('DELETE')

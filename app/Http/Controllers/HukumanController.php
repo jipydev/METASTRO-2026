@@ -244,20 +244,33 @@ class HukumanController extends Controller
 
     public function submitTugas(SubmitTugasHukumanRequest $request, Hukuman $hukuman): RedirectResponse
     {
-        $link = $request->validated('tugas_link');
+        /** @var User $user */
+        $user = Auth::user();
+
+        if ($user->id !== $hukuman->user_id || $hukuman->isSelesai() || ! $hukuman->sudahPembelaan()) {
+            abort(403);
+        }
+
+        $file = $request->file('tugas_file');
+
+        // Hapus file lama jika sebelumnya sudah pernah mengunggah
+        if ($hukuman->tugas_link && \Illuminate\Support\Facades\Storage::disk('public')->exists($hukuman->tugas_link)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($hukuman->tugas_link);
+        }
+
+        // Simpan file PDF baru ke storage public/hukuman-tugas
+        $path = $file->store('hukuman-tugas', 'public');
 
         $hukuman->update([
-            'tugas_link' => $link,
-            'tugas_submitted_at' => $link ? now() : null,
+            'tugas_link' => $path, // Menyimpan path file PDF di database
+            'tugas_submitted_at' => now(),
         ]);
 
-        if ($link) {
-            $this->notifications->hukumanTugasSubmitted($hukuman->fresh());
-        }
+        $this->notifications->hukumanTugasSubmitted($hukuman->fresh());
 
         return redirect()
             ->route('dashboard.hukuman.show', $hukuman)
-            ->with('success', $link ? 'Link tugas berhasil disimpan.' : 'Link tugas dihapus.');
+            ->with('success', 'File tugas PDF berhasil diunggah.');
     }
 
     public function complete(Request $request, Hukuman $hukuman): RedirectResponse

@@ -8,12 +8,7 @@ class SubmitTugasHukumanRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $hukuman = $this->route('hukuman');
-
-        return $hukuman
-            && $this->user()?->id === $hukuman->user_id
-            && ! $hukuman->isSelesai()
-            && $hukuman->sudahPembelaan();
+        return true;
     }
 
     /**
@@ -22,7 +17,7 @@ class SubmitTugasHukumanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tugas_link' => ['nullable', 'url', 'max:2048'],
+            'tugas_file' => ['required', 'file', 'mimes:pdf', 'max:10240'], // Wajib PDF, maks 10MB
         ];
     }
 
@@ -32,8 +27,10 @@ class SubmitTugasHukumanRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'tugas_link.url' => 'Link tugas harus berupa URL yang valid (contoh: Google Drive).',
-            'tugas_link.max' => 'Link terlalu panjang.',
+            'tugas_file.required' => 'File tugas PDF wajib diunggah.',
+            'tugas_file.file' => 'File yang diunggah tidak valid.',
+            'tugas_file.mimes' => 'Format file tugas harus berupa PDF.',
+            'tugas_file.max' => 'Ukuran file PDF maksimal 10MB.',
         ];
     }
 }
