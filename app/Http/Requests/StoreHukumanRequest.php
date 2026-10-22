@@ -12,6 +12,7 @@ class StoreHukumanRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        /** @var User|null $user */
         $user = $this->user();
 
         if (! $user) {
@@ -24,13 +25,7 @@ class StoreHukumanRequest extends FormRequest
             return $user->canManageHukumanRecord($hukuman);
         }
 
-        $mode = $this->issuerMode();
-
-        if ($mode === 'ranger') {
-            return $user->canIssueHukumanRanger();
-        }
-
-        return $user->canIssueHukumanPengawas();
+        return $user->canManageHukuman();
     }
 
     /**
@@ -51,8 +46,8 @@ class StoreHukumanRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'user_id.required' => 'Panitia yang dihukum wajib dipilih.',
-            'user_id.exists' => 'Panitia yang dipilih tidak ditemukan.',
+            'user_id.required' => 'Target hukuman wajib dipilih.',
+            'user_id.exists' => 'Target yang dipilih tidak ditemukan.',
             'kategori.required' => 'Kategori hukuman wajib dipilih.',
             'kategori.in' => 'Kategori hukuman tidak valid.',
             'alasan.required' => 'Alasan hukuman wajib diisi.',
@@ -67,6 +62,9 @@ class StoreHukumanRequest extends FormRequest
                 return;
             }
 
+            /** @var User|null $user */
+            $user = $this->user();
+
             $target = User::query()
                 ->with('jabatan')
                 ->find($this->input('user_id'));
@@ -75,43 +73,15 @@ class StoreHukumanRequest extends FormRequest
                 return;
             }
 
-            $mode = $this->issuerMode();
-
-            if ($mode === 'ranger' && ! $this->isValidRangerTarget($target)) {
-                $message = $this->user()?->isAdmin()
-                    ? 'Target tidak valid untuk hukuman.'
-                    : 'Pengawas tidak dapat dihukum melalui mode Ranger.';
-
-                $validator->errors()->add('user_id', $message);
-            }
-
-            if ($mode === 'pengawas' && ! $target->isTargetHukumanPengawas()) {
-                $validator->errors()->add('user_id', 'Hanya pengawas yang dapat dihukum melalui mode Pengawas.');
+            if ($target->isTargetHukumanPengawas()) {
+                if (! $user?->canIssueHukumanPengawas() && ! $user?->isAdmin()) {
+                    $validator->errors()->add('user_id', 'Hanya pengawas atau admin yang dapat menghukum pengawas.');
+                }
+            } else {
+                if (! $user?->canIssueHukumanRanger() && ! $user?->isAdmin()) {
+                    $validator->errors()->add('user_id', 'Target tidak valid atau Anda tidak memiliki hak untuk menghukum target ini.');
+                }
             }
         });
-    }
-
-    public function issuerMode(): string
-    {
-        $hukuman = $this->route('hukuman');
-
-        if ($hukuman instanceof Hukuman) {
-            return $hukuman->issuer_mode === 'pengawas' ? 'pengawas' : 'ranger';
-        }
-
-        return $this->route('mode') === 'pengawas' ? 'pengawas' : 'ranger';
-    }
-
-    private function isValidRangerTarget(User $target): bool
-    {
-        if (! $target->status || ! $target->divisi_id) {
-            return false;
-        }
-
-        if ($this->user()?->isAdmin()) {
-            return true;
-        }
-
-        return ! $target->isTargetHukumanPengawas();
     }
 }

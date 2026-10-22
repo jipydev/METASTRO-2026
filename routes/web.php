@@ -98,18 +98,20 @@ Route::prefix('/dashboard')->name('dashboard.')->middleware(['auth', 'verified',
 
     Route::resource('notulensi', NotulensiController::class)->except(['create', 'edit']);
 
-    Route::prefix('hukuman')->name('hukuman.')->group(function () {
-        Route::get('/', [HukumanController::class, 'index'])->name('index');
-        Route::get('/kelola/{mode}', [HukumanController::class, 'kelola'])->where('mode', 'ranger|pengawas')->name('kelola');
-        Route::get('/buat/{mode}', [HukumanController::class, 'create'])->where('mode', 'ranger|pengawas')->name('create');
-        Route::post('/{mode}', [HukumanController::class, 'store'])->where('mode', 'ranger|pengawas')->name('store');
-        Route::get('/{hukuman}/edit', [HukumanController::class, 'edit'])->whereNumber('hukuman')->name('edit');
-        Route::put('/{hukuman}', [HukumanController::class, 'update'])->whereNumber('hukuman')->name('update');
-        Route::delete('/{hukuman}', [HukumanController::class, 'destroy'])->whereNumber('hukuman')->name('destroy');
-        Route::get('/{hukuman}', [HukumanController::class, 'show'])->whereNumber('hukuman')->name('show');
-        Route::post('/{hukuman}/pembelaan', [HukumanController::class, 'submitPembelaan'])->whereNumber('hukuman')->name('pembelaan');
-        Route::post('/{hukuman}/tugas', [HukumanController::class, 'submitTugas'])->whereNumber('hukuman')->name('tugas');
-        Route::post('/{hukuman}/selesai', [HukumanController::class, 'complete'])->whereNumber('hukuman')->name('selesai');
+    Route::prefix('/hukuman')->name('hukuman.')->group(function () {
+        Route::get('/', [HukumanController::class, 'index'])->name('index'); // <-- Tambahkan baris ini
+        Route::get('kelola', [HukumanController::class, 'kelola'])->name('kelola');
+        Route::get('buat', [HukumanController::class, 'create'])->name('create');
+        Route::post('store', [HukumanController::class, 'store'])->name('store');
+        Route::get('{hukuman}/edit', [HukumanController::class, 'edit'])->name('edit');
+        Route::put('{hukuman}', [HukumanController::class, 'update'])->name('update');
+        Route::delete('{hukuman}', [HukumanController::class, 'destroy'])->name('destroy');
+        Route::get('{hukuman}', [HukumanController::class, 'show'])->name('show');
+
+        // Tambahkan rute aksi untuk target hukuman
+        Route::post('{hukuman}/pembelaan', [HukumanController::class, 'submitPembelaan'])->name('pembelaan');
+        Route::post('{hukuman}/tugas', [HukumanController::class, 'submitTugas'])->name('tugas');
+        Route::post('{hukuman}/selesai', [HukumanController::class, 'complete'])->name('selesai');
     });
 
     /*

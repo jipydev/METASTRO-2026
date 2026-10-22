@@ -34,92 +34,45 @@ class HukumanController extends Controller
         ]);
     }
 
-    public function kelola(Request $request, string $mode = 'ranger'): View|RedirectResponse
+    public function kelola(Request $request, string $mode = 'ranger'): View
     {
         /** @var User $user */
         $user = Auth::user();
 
-        if (! $this->canManageMode($user, $mode)) {
-            abort(403);
-        }
-
         $hukumans = Hukuman::query()
-            ->where('issuer_mode', $mode)
-            ->when(in_array($mode, ['pengawas', 'peserta']), fn($q) => $q->where('issued_by', $user->id))
-            ->when($mode === 'ranger' && ! $user->isAdmin(), fn($q) => $q->where('issued_by', $user->id))
+            ->when(! $user->isAdmin(), fn($q) => $q->where('issued_by', $user->id))
             ->with(['user.divisi', 'user.jabatan', 'issuer.divisi', 'issuer.jabatan'])
             ->latest()
             ->paginate(15)
             ->withQueryString();
 
-        $title = match ($mode) {
-            'pengawas' => 'Kelola Hukuman Pengawas',
-            'peserta' => 'Kelola Hukuman Peserta',
-            default => 'Kelola Hukuman',
-        };
-
         return view('hukuman.kelola', [
-            'title' => $title,
-            'mode' => $mode,
+            'title' => 'Kelola Hukuman',
+            'mode' => $mode, // <-- Kirim variabel mode ke view
             'hukumans' => $hukumans,
-            'isAdminIssuer' => $user->isAdmin() && $mode === 'ranger',
+            'isAdminIssuer' => $user->isAdmin(),
         ]);
     }
 
-    public function create(string $mode = 'ranger'): View|RedirectResponse
+    public function create(): View|RedirectResponse
     {
         /** @var User $user */
         $user = Auth::user();
 
-        if (! $this->canManageMode($user, $mode)) {
+        if (! $user->canManageHukuman()) {
             abort(403);
         }
 
-        $targets = $this->targetQuery($user, $mode)
+        $targets = $this->getUnifiedTargets($user)
             ->with(['divisi', 'jabatan'])
             ->orderBy('nama')
             ->get();
 
-        $title = match ($mode) {
-            'pengawas' => 'Hukum Pengawas',
-            'peserta' => 'Hukum Peserta',
-            default => 'Berikan Hukuman',
-        };
-
         return view('hukuman.create', [
-            'title' => $title,
-            'mode' => $mode,
+            'title' => 'Berikan Hukuman',
             'targets' => $targets,
             'kategoriOptions' => Hukuman::KATEGORI,
-            'isAdminIssuer' => $user->isAdmin() && $mode === 'ranger',
         ]);
-    }
-
-    public function store(StoreHukumanRequest $request, string $mode = 'ranger'): RedirectResponse
-    {
-        /** @var User $user */
-        $user = Auth::user();
-
-        if (! $this->canManageMode($user, $mode)) {
-            abort(403);
-        }
-
-        $validated = $request->validated();
-
-        $hukuman = Hukuman::create([
-            'user_id' => $validated['user_id'],
-            'issued_by' => $user->id,
-            'kategori' => $validated['kategori'],
-            'issuer_mode' => $mode,
-            'alasan' => $validated['alasan'],
-            'deadline_at' => now()->addDays(2),
-        ]);
-
-        $this->notifications->hukumanIssued($hukuman);
-
-        return redirect()
-            ->route('dashboard.hukuman.kelola', ['mode' => $mode])
-            ->with('success', 'Hukuman berhasil diterbitkan.');
     }
 
     public function edit(Hukuman $hukuman): View
@@ -131,13 +84,7 @@ class HukumanController extends Controller
             abort(403);
         }
 
-        $mode = match ($hukuman->issuer_mode) {
-            'pengawas' => 'pengawas',
-            'peserta' => 'peserta',
-            default => 'ranger',
-        };
-
-        $targets = $this->targetQuery($user, $mode)
+        $targets = $this->getUnifiedTargets($user)
             ->with(['divisi', 'jabatan'])
             ->orderBy('nama')
             ->get();
@@ -149,12 +96,41 @@ class HukumanController extends Controller
 
         return view('hukuman.create', [
             'title' => 'Edit Hukuman',
-            'mode' => $mode,
             'hukuman' => $hukuman,
             'targets' => $targets,
             'kategoriOptions' => Hukuman::KATEGORI,
-            'isAdminIssuer' => $user->isAdmin() && $mode === 'ranger',
         ]);
+    }
+
+    public function store(StoreHukumanRequest $request): RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (! $user->canManageHukuman()) {
+            abort(403);
+        }
+
+        $validated = $request->validated();
+        $targetUser = User::query()->findOrFail($validated['user_id']);
+
+        // Tentukan issuer_mode yang benar ('pengawas' jika target pengawas, selain itu 'ranger')
+        $issuerMode = $targetUser->isTargetHukumanPengawas() ? 'pengawas' : 'ranger';
+
+        $hukuman = Hukuman::create([
+            'user_id' => $validated['user_id'],
+            'issued_by' => $user->id,
+            'kategori' => $validated['kategori'],
+            'issuer_mode' => $issuerMode,
+            'alasan' => $validated['alasan'],
+            'deadline_at' => now()->addDays(2),
+        ]);
+
+        $this->notifications->hukumanIssued($hukuman);
+
+        return redirect()
+            ->route('dashboard.hukuman.kelola')
+            ->with('success', 'Hukuman berhasil diterbitkan.');
     }
 
     public function update(StoreHukumanRequest $request, Hukuman $hukuman): RedirectResponse
@@ -167,12 +143,16 @@ class HukumanController extends Controller
         }
 
         $validated = $request->validated();
+        $targetUser = User::query()->findOrFail($validated['user_id']);
         $previousUserId = $hukuman->user_id;
         $targetChanged = (int) $validated['user_id'] !== (int) $previousUserId;
+
+        $issuerMode = $targetUser->isTargetHukumanPengawas() ? 'pengawas' : 'ranger';
 
         $payload = [
             'user_id' => $validated['user_id'],
             'kategori' => $validated['kategori'],
+            'issuer_mode' => $issuerMode,
             'alasan' => $validated['alasan'],
         ];
 
@@ -216,11 +196,6 @@ class HukumanController extends Controller
             abort(403);
         }
 
-        $mode = match ($hukuman->issuer_mode) {
-            'pengawas' => 'pengawas',
-            'peserta' => 'peserta',
-            default => 'ranger',
-        };
         $target = $hukuman->user;
 
         if ($target) {
@@ -230,7 +205,7 @@ class HukumanController extends Controller
         $hukuman->delete();
 
         return redirect()
-            ->route('dashboard.hukuman.kelola', ['mode' => $mode])
+            ->route('dashboard.hukuman.kelola')
             ->with('success', 'Hukuman berhasil dihapus.');
     }
 
@@ -303,25 +278,33 @@ class HukumanController extends Controller
             ->with('success', 'Hukuman ditandai selesai. Terima kasih sudah menyelesaikan tugas.');
     }
 
-    private function canManageMode(User $user, string $mode): bool
+    private function getUnifiedTargets(User $user)
     {
-        return match ($mode) {
-            'pengawas' => $user->canIssueHukumanPengawas(),
-            'peserta' => $user->canIssueHukumanPeserta(),
-            default => $user->canIssueHukumanRanger(),
-        };
-    }
+        if ($user->canIssueHukumanPengawas() && ! $user->canIssueHukumanRanger() && ! $user->isAdmin()) {
+            return User::hukumanTargetPengawas();
+        }
 
-    /** @return \Illuminate\Database\Eloquent\Builder<User> */
-    private function targetQuery(User $user, string $mode)
-    {
-        return match ($mode) {
-            'pengawas' => User::hukumanTargetPengawas(),
-            'peserta' => User::hukumanTargetPeserta(),
-            default => $user->isAdmin()
-                ? User::hukumanTargetAdmin()
-                : User::hukumanTargetRanger(),
-        };
+        return User::query()
+            ->where('status', true)
+            ->where(function ($query) use ($user) {
+                // Memasukkan target peserta
+                $query->whereNull('divisi_id')->whereNull('jabatan_id');
+
+                // Memasukkan target panitia sesuai hak akses
+                $query->orWhere(function ($q) use ($user) {
+                    $q->whereNotNull('divisi_id');
+                    if (! $user->isAdmin()) {
+                        $q->where(function ($inner) {
+                            $inner->whereNull('jabatan_id')
+                                ->orWhereHas('jabatan', fn($jabatan) => $jabatan->whereNotIn('nama', [
+                                    'Pengawas',
+                                    'Ketua Pengawas',
+                                    'Wakil Ketua Pengawas',
+                                ]));
+                        });
+                    }
+                });
+            });
     }
 
     private function canView(User $user, Hukuman $hukuman): bool
