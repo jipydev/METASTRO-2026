@@ -61,6 +61,7 @@ class PengumpulanTugasController extends Controller
 
                 return [
                     'id' => $submisi->id,
+                    'nomor_tugas' => $tugas?->nomor,
                     'judul_tugas' => $tugas?->judul ?? 'Tugas tidak ditemukan',
                     'jenis_tugas' => $tugas?->jenis ?? 'individu',
                     'nama_pengumpul' => $submisi->peserta?->nama ?? $submisi->original_participant_name ?? 'Peserta tidak ditemukan',

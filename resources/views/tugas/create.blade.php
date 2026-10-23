@@ -62,17 +62,37 @@
             @csrf
 
             <div class="space-y-4">
-                {{-- Judul --}}
-                <div>
-                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                        Judul Penugasan <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="judul" required maxlength="255" value="{{ old('judul') }}"
-                        placeholder="Contoh: Resume Materi Kepemimpinan dan Etika Metastro"
-                        class="form-control-app w-full">
-                    @error('judul')
-                        <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
-                    @enderror
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    {{-- Nomor Penugasan --}}
+                    <div class="sm:col-span-1">
+                        <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Nomor Tugas <span class="text-xs font-normal text-slate-400">(Otomatis 3 Digit)</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-2.5 text-slate-400 font-mono font-bold">#</span>
+                            <input type="text" name="nomor" maxlength="10"
+                                value="{{ old('nomor', $nextNomor ?? '') }}"
+                                placeholder="001"
+                                class="form-control-app w-full pl-8! font-mono font-bold text-orange-600 dark:text-orange-400">
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1">Terisi otomatis, dapat diubah manual.</p>
+                        @error('nomor')
+                            <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Judul --}}
+                    <div class="sm:col-span-3">
+                        <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Judul Penugasan <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="judul" required maxlength="255" value="{{ old('judul') }}"
+                            placeholder="Contoh: Resume Materi Kepemimpinan dan Etika Metastro"
+                            class="form-control-app w-full">
+                        @error('judul')
+                            <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
                 {{-- Jenis Tugas --}}

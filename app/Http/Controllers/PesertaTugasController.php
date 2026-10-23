@@ -115,6 +115,7 @@ class PesertaTugasController extends Controller
 
             return [
                 'id' => $tugas->id,
+                'nomor' => $tugas->nomor,
                 'judul' => $tugas->judul,
                 'deskripsi' => $tugas->deskripsi,
                 'jenis' => $tugas->jenis,

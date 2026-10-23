@@ -120,8 +120,15 @@
                         @forelse ($submisiList as $submisi)
                             <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-700/30 transition">
                                 <td class="py-4 px-4">
-                                    <div class="font-bold text-slate-900 dark:text-white text-sm">
-                                        {{ $submisi['judul_tugas'] }}
+                                    <div class="flex items-center gap-2">
+                                        @if (!empty($submisi['nomor_tugas']))
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold font-mono tracking-wider bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-200 dark:border-orange-800 shrink-0">
+                                                #{{ $submisi['nomor_tugas'] }}
+                                            </span>
+                                        @endif
+                                        <div class="font-bold text-slate-900 dark:text-white text-sm">
+                                            {{ $submisi['judul_tugas'] }}
+                                        </div>
                                     </div>
                                     <div class="mt-1">
                                         @if ($submisi['jenis_tugas'] === 'individu')

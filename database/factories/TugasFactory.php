@@ -18,6 +18,7 @@ class TugasFactory extends Factory
     public function definition(): array
     {
         return [
+            'nomor' => \App\Models\Tugas::generateNextNomor(),
             'judul' => fake()->sentence(),
             'deskripsi' => fake()->paragraph(),
             'jenis' => fake()->randomElement(['angkatan', 'tim', 'individu']),

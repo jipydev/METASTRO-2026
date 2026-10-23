@@ -128,8 +128,13 @@
                                         @endif
                                     </div>
                                     <h3
-                                        class="font-bold text-base text-slate-900 dark:text-white group-hover:text-[#FF5B00] transition-colors">
-                                        {{ $task['judul'] }}
+                                        class="font-bold text-base text-slate-900 dark:text-white group-hover:text-[#FF5B00] transition-colors flex items-center gap-2">
+                                        @if (!empty($task['nomor']))
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold font-mono tracking-wider bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-200 dark:border-orange-800 shrink-0">
+                                                #{{ $task['nomor'] }}
+                                            </span>
+                                        @endif
+                                        <span>{{ $task['judul'] }}</span>
                                     </h3>
                                 </div>
 

@@ -48,11 +48,13 @@ class TugasController extends Controller
         $day = is_string($day) && trim($day) !== '' ? trim($day) : null;
 
         $tugases = Tugas::with('pembuat')
+            ->orderBy('nomor', 'asc')
             ->orderBy('created_at', 'desc')
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     $query->where('judul', 'like', "%{$search}%")
-                        ->orWhere('deskripsi', 'like', "%{$search}%");
+                        ->orWhere('deskripsi', 'like', "%{$search}%")
+                        ->orWhere('nomor', 'like', "%{$search}%");
                 });
             })
             ->when(in_array($jenis, ['individu', 'tim', 'angkatan'], true), fn($query) => $query->where('jenis', $jenis))
@@ -75,18 +77,32 @@ class TugasController extends Controller
         return view('tugas.create', [
             'title' => 'Buat Tugas Baru',
             'days' => $this->dayOptions(),
+            'nextNomor' => Tugas::generateNextNomor(),
         ]);
     }
 
     public function store(Request $request)
     {
         $validatedData = $request->validate([
+            'nomor' => 'nullable|string|max:10|unique:tugases,nomor',
             'judul' => 'required|string|max:100',
             'deskripsi' => 'nullable|string',
             'jenis' => 'required|in:individu,tim,angkatan',
             'day' => 'nullable|string|max:50',
             'tenggat_waktu' => 'nullable|date',
         ]);
+
+        if (empty($validatedData['nomor'])) {
+            $validatedData['nomor'] = Tugas::generateNextNomor();
+        } else {
+            // Jika numerik murni, format jadi minimal 3 digit (contoh: 1 -> 001)
+            $trimmed = trim($validatedData['nomor']);
+            if (ctype_digit($trimmed)) {
+                $validatedData['nomor'] = str_pad($trimmed, 3, '0', STR_PAD_LEFT);
+            } else {
+                $validatedData['nomor'] = $trimmed;
+            }
+        }
 
         $validatedData['deskripsi'] = $this->sanitizeDescription($validatedData['deskripsi'] ?? null);
         $validatedData['pembuat_id'] = auth()->id();
@@ -136,7 +152,10 @@ class TugasController extends Controller
 
     public function update(Request $request, int $id)
     {
+        $tugas = Tugas::findOrFail($id);
+
         $validatedData = $request->validate([
+            'nomor' => 'nullable|string|max:10|unique:tugases,nomor,' . $tugas->id,
             'judul' => 'required|string|max:100',
             'deskripsi' => 'nullable|string',
             'jenis' => 'required|in:individu,tim,angkatan',
@@ -144,9 +163,19 @@ class TugasController extends Controller
             'tenggat_waktu' => 'nullable|date',
         ]);
 
+        if (empty($validatedData['nomor'])) {
+            $validatedData['nomor'] = $tugas->nomor ?: Tugas::generateNextNomor();
+        } else {
+            $trimmed = trim($validatedData['nomor']);
+            if (ctype_digit($trimmed)) {
+                $validatedData['nomor'] = str_pad($trimmed, 3, '0', STR_PAD_LEFT);
+            } else {
+                $validatedData['nomor'] = $trimmed;
+            }
+        }
+
         $validatedData['deskripsi'] = $this->sanitizeDescription($validatedData['deskripsi'] ?? null);
 
-        $tugas = Tugas::findOrFail($id);
         $tugas->update($validatedData);
 
         return redirect()->route('dashboard.tugas.index')->with('success', 'Tugas berhasil diperbarui.');

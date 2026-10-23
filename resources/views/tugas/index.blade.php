@@ -117,8 +117,15 @@
                         @forelse ($tugases as $tugas)
                             <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-700/30 transition">
                                 <td class="py-4 px-4">
-                                    <div class="font-bold text-slate-900 dark:text-white text-sm">
-                                        {{ $tugas->judul }}
+                                    <div class="flex items-center gap-2">
+                                        @if ($tugas->nomor)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold font-mono tracking-wider bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-200 dark:border-orange-800 shrink-0">
+                                                #{{ $tugas->nomor }}
+                                            </span>
+                                        @endif
+                                        <div class="font-bold text-slate-900 dark:text-white text-sm">
+                                            {{ $tugas->judul }}
+                                        </div>
                                     </div>
                                     <div class="text-[11px] text-slate-400 mt-1 line-clamp-1 max-w-md">
                                         {{ strip_tags($tugas->deskripsi ?? '') }}
@@ -231,8 +238,14 @@
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-lg shadow-xl text-xs">
                     <div
                         class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
-                        <h3 class="text-base font-bold text-slate-900 dark:text-white" x-text="selectedTugas.judul">
-                        </h3>
+                        <div class="flex items-center gap-2">
+                            <template x-if="selectedTugas.nomor">
+                                <span class="px-2 py-0.5 rounded-md text-[11px] font-bold font-mono tracking-wider bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-200 dark:border-orange-800"
+                                    x-text="'#' + selectedTugas.nomor"></span>
+                            </template>
+                            <h3 class="text-base font-bold text-slate-900 dark:text-white" x-text="selectedTugas.judul">
+                            </h3>
+                        </div>
                         <button type="button" @click="openDetailModal = false"
                             class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
                     </div>

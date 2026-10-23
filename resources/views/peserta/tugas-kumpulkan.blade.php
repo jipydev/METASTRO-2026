@@ -125,8 +125,13 @@
                         </div>
                     </div>
 
-                    <h3 class="font-bold text-lg sm:text-xl text-slate-900 dark:text-white mb-3.5">
-                        {{ $tugas->judul }}
+                    <h3 class="font-bold text-lg sm:text-xl text-slate-900 dark:text-white mb-3.5 flex items-center gap-2">
+                        @if (!empty($tugas->nomor))
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold font-mono tracking-wider bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-200 dark:border-orange-800 shrink-0">
+                                #{{ $tugas->nomor }}
+                            </span>
+                        @endif
+                        <span>{{ $tugas->judul }}</span>
                     </h3>
 
                     <!-- NOTICE KHUSUS TIM ATAU ANGKATAN -->
