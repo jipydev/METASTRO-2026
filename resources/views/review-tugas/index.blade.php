@@ -109,7 +109,7 @@
                             <th class="py-3.5 px-4 text-center rounded-r-xl">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100 dark:divide-slate-700">
+                    <tbody class="divide-y divide-gray-100 dark:divide-slate-700 overflow-x-auto">
                         @forelse ($submisiList as $submisi)
                             <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-700/30 transition">
                                 <td class="py-4 px-4">
@@ -328,14 +328,14 @@
                         <div>
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
                                 <label class="font-bold text-slate-700 dark:text-slate-300">
-                                    Catatan / Komentar Evaluasi Pembimbing <span class="text-red-500">*</span>
+                                    Catatan / Komentar Evaluasi Pembimbing
                                 </label>
                                 <span
                                     class="text-[10px] font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/50 px-2 py-0.5 rounded-full w-fit">
                                     Komentar disampaikan secara anonim
                                 </span>
                             </div>
-                            <textarea name="catatan_pemeriksa" rows="3" required x-model="selectedSubmisi.catatan_pemeriksa"
+                            <textarea name="catatan_pemeriksa" rows="3" x-model="selectedSubmisi.catatan_pemeriksa"
                                 placeholder="Tuliskan apresiasi, koreksi, atau instruksi perbaikan kepada peserta/kelompok..."
                                 class="form-control-app w-full resize-y min-h-20 text-xs"></textarea>
                         </div>
