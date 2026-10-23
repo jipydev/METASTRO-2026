@@ -65,7 +65,6 @@
                                     <th class="py-3 px-4 text-center">Approval Koordinator</th>
                                     <th class="py-3 px-4 text-center">Approval Ranger</th>
                                 @endif
-                                <th class="py-3 px-4 text-center">Status Akhir</th>
                                 <th class="py-3 px-4 text-center rounded-r-xl">Aksi</th>
                             </tr>
                         </thead>
@@ -96,33 +95,33 @@
                                     </td>
 
                                     @if (auth()->user()->isPanitia())
-                                    <td class="py-3.5 px-4 text-center">
-                                        @include('pengajuan-izin.partials.status-pill', [
-                                            'status' => $p->status_koordinator,
-                                        ])
-                                        @if ($p->reviewerKoordinator)
-                                            <div class="text-[10px] text-slate-400 mt-1 font-normal">
-                                                {{ $p->reviewerKoordinator->nama }}</div>
-                                        @endif
-                                    </td>
+                                        <td class="py-3.5 px-4 text-center">
+                                            @include('pengajuan-izin.partials.status-pill', [
+                                                'status' => $p->status_koordinator,
+                                            ])
+                                            @if ($p->reviewerKoordinator)
+                                                <div class="text-[10px] text-slate-400 mt-1 font-normal">
+                                                    {{ $p->reviewerKoordinator->nama }}</div>
+                                            @endif
+                                        </td>
 
-                                    <td class="py-3.5 px-4 text-center">
-                                        @include('pengajuan-izin.partials.status-pill', [
-                                            'status' => $p->status_ranger,
-                                        ])
-                                        @if ($p->reviewerRanger)
-                                            <div class="text-[10px] text-slate-400 mt-1 font-normal">
-                                                {{ $p->reviewerRanger->nama }}</div>
-                                        @endif
-                                    </td>
+                                        <td class="py-3.5 px-4 text-center">
+                                            @include('pengajuan-izin.partials.status-pill', [
+                                                'status' => $p->status_ranger,
+                                            ])
+                                            @if ($p->reviewerRanger)
+                                                <div class="text-[10px] text-slate-400 mt-1 font-normal">
+                                                    {{ $p->reviewerRanger->nama }}</div>
+                                            @endif
+                                        </td>
+
+                                        <td class="py-3.5 px-4 text-center whitespace-nowrap">
+                                            @include('pengajuan-izin.partials.status-pill', [
+                                                'status' => $p->status,
+                                                'final' => true,
+                                            ])
+                                        </td>
                                     @endif
-
-                                    <td class="py-3.5 px-4 text-center whitespace-nowrap">
-                                        @include('pengajuan-izin.partials.status-pill', [
-                                            'status' => $p->status,
-                                            'final' => true,
-                                        ])
-                                    </td>
 
                                     <td class="py-3.5 px-4 text-center whitespace-nowrap">
                                         <div class="flex items-center justify-center gap-1.5">
