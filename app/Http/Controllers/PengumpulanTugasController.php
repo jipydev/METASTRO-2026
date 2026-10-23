@@ -100,7 +100,7 @@ class PengumpulanTugasController extends Controller
 
         $validated = $request->validate([
             'status' => ['required', 'in:reviewed,rejected'],
-            'catatan_pemeriksa' => ['string', 'max:2000'],
+            'catatan_pemeriksa' => ['nullable', 'string', 'max:2000'],
         ]);
 
         $pengumpulan->update([
