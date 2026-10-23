@@ -453,7 +453,7 @@ class User extends Authenticatable implements PasskeyUser
 
     public function canReviewTugas(): bool
     {
-        return $this->isAdmin() || $this->isGuider() || $this->isPathfinder() || $this->isRanger();
+        return $this->isAdmin() || $this->isGuider() || $this->isPathfinder();
     }
 
     public function canApproveRangerIzin(): bool
