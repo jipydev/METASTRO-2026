@@ -50,12 +50,14 @@ class PengumpulanTugasController extends Controller
             ->through(function (PengumpulanTugas $submisi): array {
                 $tugas = $submisi->tugas;
 
-                // Cek apakah pengumpulan melewati tenggat waktu
-                $isLate = false;
-                if ($tugas && $tugas->tenggat_waktu && $submisi->tanggal_pengumpulan) {
-                    $isLate = \Carbon\Carbon::parse($submisi->tanggal_pengumpulan)
-                        ->greaterThan($tugas->tenggat_waktu);
-                }
+            // Cek apakah pengumpulan melewati tenggat waktu (diabaikan detiknya agar adil di menit yang sama)
+            $isLate = false;
+            if ($tugas && $tugas->tenggat_waktu && $submisi->tanggal_pengumpulan) {
+                $waktuPengumpulan = \Carbon\Carbon::parse($submisi->tanggal_pengumpulan)->startOfMinute();
+                $waktuTenggat = \Carbon\Carbon::parse($tugas->tenggat_waktu)->startOfMinute();
+
+                $isLate = $waktuPengumpulan->greaterThan($waktuTenggat);
+            }
 
                 return [
                     'id' => $submisi->id,

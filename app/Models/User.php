@@ -478,7 +478,7 @@ class User extends Authenticatable implements PasskeyUser
 
     public function canIssueHukumanPengawas(): bool
     {
-        return $this->isPengawas();
+        return $this->isPengawas() && $this->isRanger();
     }
 
     // Add these permission methods in User.php
