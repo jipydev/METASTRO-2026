@@ -26,7 +26,10 @@ class PengumpulanTugasController extends Controller
             ->when($tugasId > 0, fn($query) => $query->where('tugas_id', $tugasId))
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
-                    $query->whereHas('tugas', fn($task) => $task->where('judul', 'like', "%{$search}%"))
+                    $query->whereHas('tugas', function ($task) use ($search) {
+                        $task->where('judul', 'like', "%{$search}%")
+                            ->orWhere('kode_tugas', 'like', "%{$search}%"); // Pencarian kode tugas ditambahkan di sini
+                    })
                         ->orWhereHas('peserta', function ($participant) use ($search) {
                             $participant->where('nama', 'like', "%{$search}%")
                                 ->orWhere('nim', 'like', "%{$search}%");
@@ -50,17 +53,18 @@ class PengumpulanTugasController extends Controller
             ->through(function (PengumpulanTugas $submisi): array {
                 $tugas = $submisi->tugas;
 
-            // Cek apakah pengumpulan melewati tenggat waktu (diabaikan detiknya agar adil di menit yang sama)
-            $isLate = false;
-            if ($tugas && $tugas->tenggat_waktu && $submisi->tanggal_pengumpulan) {
-                $waktuPengumpulan = \Carbon\Carbon::parse($submisi->tanggal_pengumpulan)->startOfMinute();
-                $waktuTenggat = \Carbon\Carbon::parse($tugas->tenggat_waktu)->startOfMinute();
+                // Cek apakah pengumpulan melewati tenggat waktu (diabaikan detiknya agar adil di menit yang sama)
+                $isLate = false;
+                if ($tugas && $tugas->tenggat_waktu && $submisi->tanggal_pengumpulan) {
+                    $waktuPengumpulan = \Carbon\Carbon::parse($submisi->tanggal_pengumpulan)->startOfMinute();
+                    $waktuTenggat = \Carbon\Carbon::parse($tugas->tenggat_waktu)->startOfMinute();
 
-                $isLate = $waktuPengumpulan->greaterThan($waktuTenggat);
-            }
+                    $isLate = $waktuPengumpulan->greaterThan($waktuTenggat);
+                }
 
                 return [
                     'id' => $submisi->id,
+                    'kode_tugas' => $tugas?->kode_tugas ?? '-',
                     'judul_tugas' => $tugas?->judul ?? 'Tugas tidak ditemukan',
                     'jenis_tugas' => $tugas?->jenis ?? 'individu',
                     'nama_pengumpul' => $submisi->peserta?->nama ?? $submisi->original_participant_name ?? 'Peserta tidak ditemukan',
@@ -72,7 +76,7 @@ class PengumpulanTugasController extends Controller
                     'catatan_pemeriksa' => $submisi->catatan_pemeriksa ?? '',
                     'status' => $submisi->status,
                     'dikumpulkan_at' => $submisi->tanggal_pengumpulan,
-                    'is_late' => $isLate, // Tambahan penanda keterlambatan
+                    'is_late' => $isLate,
                 ];
             });
 

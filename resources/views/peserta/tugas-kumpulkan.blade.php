@@ -208,7 +208,7 @@
                                     <span class="text-slate-400 block mb-1">Catatan Peserta:</span>
                                     <p
                                         class="p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200 italic">
-                                        "{{ $submission->catatan_peserta }}"
+                                        {!! nl2br(e($submission->catatan_peserta)) !!}
                                     </p>
                                 </div>
                             @endif
@@ -346,9 +346,9 @@
                                     class="block text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                                     Catatan Pengumpulan (Opsional):
                                 </label>
-                                <textarea name="catatan_peserta" id="catatan_peserta" rows="3"
+                                <textarea name="catatan_peserta" id="catatan_peserta" rows="4"
                                     placeholder="Tuliskan catatan atau keterangan tugas bila ada..."
-                                    class="w-full p-3.5 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl text-xs sm:text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF5B00]/40 transition"></textarea>
+                                    class="w-full p-3.5 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl text-xs sm:text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF5B00]/40 transition resize-y"></textarea>
                             </div>
 
                             <!-- AGREEMENT CHECKBOX -->

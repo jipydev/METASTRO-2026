@@ -62,6 +62,19 @@
             @csrf
 
             <div class="space-y-4">
+                {{-- Kode Tugas --}}
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                        Kode Tugas <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="kode_tugas" required maxlength="50" value="{{ old('kode_tugas') }}"
+                        placeholder="Contoh: TGS-01"
+                        class="form-control-app w-full">
+                    @error('kode_tugas')
+                        <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 {{-- Judul --}}
                 <div>
                     <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5">

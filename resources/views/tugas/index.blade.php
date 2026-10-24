@@ -33,7 +33,7 @@
     <div x-data="{
         openDetailModal: false,
         openDeleteModal: false,
-        selectedTugas: { id: null, judul: '', deskripsi: '', jenis: '', day: '', tenggat_waktu: '', pembuat_nama: '' },
+        selectedTugas: { id: null, kode_tugas: '', judul: '', deskripsi: '', jenis: '', day: '', tenggat_waktu: '', pembuat_nama: '' },
         isDeleting: false
     }" class="py-6 max-w-7xl mx-auto font-poppins">
 
@@ -64,7 +64,8 @@
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                     <input type="search" name="search" value="{{ $search }}"
-                        placeholder="Cari judul atau deskripsi penugasan..." class="form-control-app w-full pl-10!">
+                        placeholder="Cari kode, judul, atau deskripsi penugasan..."
+                        class="form-control-app w-full pl-10!">
                 </div>
             </div>
 
@@ -105,7 +106,7 @@
                     <thead
                         class="bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 uppercase text-[11px] font-semibold tracking-wider">
                         <tr>
-                            <th class="py-3.5 px-4 rounded-l-xl">Judul & Deskripsi Tugas</th>
+                            <th class="py-3.5 px-4 rounded-l-xl">Kode, Judul & Deskripsi Tugas</th>
                             <th class="py-3.5 px-4 text-center">Jenis</th>
                             <th class="py-3.5 px-4 text-center">Day</th>
                             <th class="py-3.5 px-4">Tenggat Waktu</th>
@@ -117,6 +118,11 @@
                         @forelse ($tugases as $tugas)
                             <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-700/30 transition">
                                 <td class="py-4 px-4">
+                                    <div class="font-bold">
+
+                                        {{ $tugas->kode_tugas }}
+
+                                    </div>
                                     <div class="font-bold text-slate-900 dark:text-white text-sm">
                                         {{ $tugas->judul }}
                                     </div>
@@ -229,10 +235,15 @@
 
                 <div x-show="openDetailModal" x-transition
                     class="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 w-full max-w-lg shadow-xl text-xs">
-                    <div
-                        class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
-                        <h3 class="text-base font-bold text-slate-900 dark:text-white" x-text="selectedTugas.judul">
-                        </h3>
+                    <div class="flex items-start justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
+                        <div>
+                            <span
+                                class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-md font-bold text-slate-800 dark:text-slate-200 text-[11px] inline-block mb-1"
+                                x-text="selectedTugas.kode_tugas"></span>
+                            <h3 class="text-base font-bold text-slate-900 dark:text-white"
+                                x-text="selectedTugas.judul">
+                            </h3>
+                        </div>
                         <button type="button" @click="openDetailModal = false"
                             class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
                     </div>
@@ -266,8 +277,8 @@
                                 <span
                                     class="text-[10px] text-red-600 dark:text-red-400 block font-bold uppercase">Tenggat
                                     Waktu</span>
-                                <span class="text-xs font-bold text-red-700 dark:text-red-300"
-                                    x-text="selectedTugas.tenggat_waktu"></span>
+                                <span
+                                    x-text="selectedTugas.tenggat_waktu ? new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(selectedTugas.tenggat_waktu)) + ' WIB' : '-'"></span>
                             </div>
                         </div>
                     </div>

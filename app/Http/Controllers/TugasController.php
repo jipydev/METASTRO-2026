@@ -52,7 +52,8 @@ class TugasController extends Controller
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     $query->where('judul', 'like', "%{$search}%")
-                        ->orWhere('deskripsi', 'like', "%{$search}%");
+                        ->orWhere('deskripsi', 'like', "%{$search}%")
+                        ->orWhere('kode_tugas', 'like', "%{$search}%");
                 });
             })
             ->when(in_array($jenis, ['individu', 'tim', 'angkatan'], true), fn($query) => $query->where('jenis', $jenis))
@@ -81,6 +82,7 @@ class TugasController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
+            'kode_tugas' => 'required|string|max:50|unique:tugases,kode_tugas', // Ditambahkan validasi kode tugas
             'judul' => 'required|string|max:100',
             'deskripsi' => 'nullable|string',
             'jenis' => 'required|in:individu,tim,angkatan',
@@ -136,7 +138,10 @@ class TugasController extends Controller
 
     public function update(Request $request, int $id)
     {
+        $tugas = Tugas::findOrFail($id);
+
         $validatedData = $request->validate([
+            'kode_tugas' => 'required|string|max:50|unique:tugases,kode_tugas,' . $id, // Diabaikan untuk tugas ini sendiri saat update
             'judul' => 'required|string|max:100',
             'deskripsi' => 'nullable|string',
             'jenis' => 'required|in:individu,tim,angkatan',
@@ -146,7 +151,6 @@ class TugasController extends Controller
 
         $validatedData['deskripsi'] = $this->sanitizeDescription($validatedData['deskripsi'] ?? null);
 
-        $tugas = Tugas::findOrFail($id);
         $tugas->update($validatedData);
 
         return redirect()->route('dashboard.tugas.index')->with('success', 'Tugas berhasil diperbarui.');
